@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/02/26 00:27:55 by kmoriyam         ###   ########.fr       */
+/*   Created: 2024/10/22 23:15:09 by kmoriyam          #+#    #+#             */
+/*   Updated: 2025/01/11 13:45:05 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include "struct.h"
+#include "libft.h"
 
-#endif
+int	ft_isalpha(int c)
+{
+	return (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'));
+}

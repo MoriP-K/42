@@ -1,17 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/02/26 00:27:55 by kmoriyam         ###   ########.fr       */
+/*   Created: 2024/10/23 14:17:53 by kmoriyam          #+#    #+#             */
+/*   Updated: 2025/01/11 13:40:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include "struct.h"
+#include "libft.h"
 
-#endif
+void	ft_bzero(void *s, size_t n)
+{
+	if (!s)
+		return ;
+	ft_memset(s, 0, n);
+}

@@ -1,10 +1,14 @@
 NAME := minishell
-CC := cc
-CPPFLAGS := -I./includes
+CC := cc -fsanitize=address
+CPPFLAGS := -I./includes -I./src/libft
 CFLAGS := -Wall -Wextra -Werror
 SRC := main.c
 OBJDIR := ./obj
 OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
+LDFLAGS := -L./src/libft
+LDLIBS := -LIBFT
+LIBFTDIR := ./src/libft
+LIBFT := $(LIBFTDIR)/libft.a
 RLFLAGS := -lreadline
 
 vpath %.c ./src
@@ -14,13 +18,13 @@ ifeq ($(DEBUG), true)
 	CFLAGS := -Wall -Wextra
 endif
 
-all: $(NAME)
+all: $(LIBFT) $(NAME)
 
-# $(LIBFT):
-# 	$(MAKE) -C $(LIBFTDIR)
+$(LIBFT):
+	$(MAKE) -C $(LIBFTDIR)
 
-$(NAME): $(OBJ)
-	$(CC) $^ -o $@ $(RLFLAGS)
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $^ -o $@ $(RLFLAGS) $(LDFLAGS) $(LDLIBS)
 
 $(OBJDIR)/%.o:%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $< -c -o $@ $(CPPFLAGS)
@@ -32,9 +36,11 @@ $(warning obj=$(OBJDIR))
 
 clean:
 	$(RM) -r $(OBJ) $(OBJDIR)
+	$(MAKE) -C $(LIBFTDIR) clean
 
 fclean: clean
 	$(RM) $(NAME)
+	$(MAKE) -C $(LIBFTDIR) fclean
 
 re: fclean
 	$(MAKE) all
