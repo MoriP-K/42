@@ -67,8 +67,8 @@ t_token	*integrate_quotes(t_token *token)
 			{
 				temp = token;
 				token = token->next;
-					if ((token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\'')) || token->kinds == TK_EOF)
-						break;
+				if ((token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\'')) || token->kinds == TK_EOF)
+					break;
 				dest->word = ft_strjoin(dest->word, token->word);
 				if (temp != dest)
 				{

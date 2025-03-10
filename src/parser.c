@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/03/10 20:41:41 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/10 21:00:57 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ t_parse	*parse(t_token *token)
 	{
 		allocate_parse(token, current_parse);
 		current_parse = current_parse->next;
-		while ((token->kinds != TK_META && token->word[0] != '|') && token->kinds != TK_EOF)
+		while (!(token->kinds == TK_META && token->word[0] == '|') && token->kinds != TK_EOF)
 			token = token->next;
 		if (token->kinds != TK_EOF)
 			token = token->next;

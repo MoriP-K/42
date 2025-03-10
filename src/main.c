@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/10 20:36:38 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/10 21:02:58 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ int main()
 	t_parse *temp;
 	char *line;
 	int		i;
-	
+
 	line = readline("> ");
 	tokens = lex(line);
+	free(line);
 	parses = parse(tokens);
 	first_parse = parses;
 	while (parses->next != NULL)
@@ -37,6 +38,10 @@ int main()
 				i++;
 			}
 		}
+		if (parses->infile != NULL)
+			printf("infile :%s\n", parses->infile);
+		if (parses->outfile != NULL)
+			printf("outfile :%s\n", parses->outfile);
 		parses = parses->next;
 	}
 	parses = first_parse;
@@ -59,7 +64,6 @@ int main()
 		parses = parses->next;
 		free(temp);
 	}
-	free(line);
 	free(parses);
 	return (0);
 }
