@@ -4,6 +4,7 @@ t_token *culling_space(t_token *token)
 {
 	t_token *first_token;
 	t_token *temp;
+	t_token	*temp2;
 	
 	while (token->kinds == TK_SPACE && token->kinds != TK_EOF)
 	{
@@ -20,9 +21,10 @@ t_token *culling_space(t_token *token)
 		{
 			while (token->kinds == TK_SPACE && token->kinds != TK_EOF)
 			{
-				free(token->word);
-				free(token);
+				temp2 = token;
 				token = token->next;
+				free(temp2->word);
+				free(temp2);
 			}
 			temp->next = token;
 		}
@@ -42,6 +44,7 @@ t_token	*integrate_quotes(t_token *token)
 	int		first_char_quote;
 	int		i;
 
+	temp2 = NULL;
 	first_char_quote = 0;
 	if (token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\''))
 		first_char_quote = 1;
@@ -85,7 +88,8 @@ t_token	*integrate_quotes(t_token *token)
 				free(temp->word);
 				free(temp);
 			}
-			temp2->next = dest;
+			if (temp2 != NULL)
+				temp2->next = dest;
 		}
 		token = token->next;
 	}

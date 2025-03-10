@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/03/10 21:00:57 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/10 21:55:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,11 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 	}
 	if (new_parse->cmd != NULL)
 		new_parse->args[0] = ft_strdup(new_parse->cmd);
+	else
+	{
+		free(new_parse->args);
+		new_parse->args = NULL;
+	}
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;
 	return(new_parse);

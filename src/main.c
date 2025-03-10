@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/10 21:02:58 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/10 21:43:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ int main()
 	while (parses->next != NULL)
 	{
 		i = 0;
-		printf("cmd :%s\n", parses->cmd);
+		if (parses->cmd != NULL)
+			printf("cmd :%s\n", parses->cmd);
 		if (parses->args != NULL)
 		{
 			while (parses->args[i])
