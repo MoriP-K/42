@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/03/10 12:18:36 by root             ###   ########.fr       */
+/*   Updated: 2025/03/10 20:41:41 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,10 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 	new_parse->next = NULL;
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
-	if (!count_args(token))
-		new_parse->args = NULL;
-	else
-	{
-		new_parse->args = (char **)malloc((count_args(token) + 1) * sizeof(char *));
-		new_parse->args[count_args(token)] = NULL;
-	}
-	i = 0;
+	new_parse->args = NULL;
+	new_parse->args = (char **)malloc((count_args(token) + 2) * sizeof(char *));
+	new_parse->args[count_args(token) + 1] = NULL;
+	i = 1;
 	while (token->kinds != TK_EOF && !(token->kinds == TK_META && token->word[0] == '|'))
 	{
 		if (token->kinds != TK_META)
@@ -80,6 +76,8 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 			token = token->next;
 		}
 	}
+	if (new_parse->cmd != NULL)
+		new_parse->args[0] = ft_strdup(new_parse->cmd);
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;
 	return(new_parse);
