@@ -1,8 +1,8 @@
 NAME := minishell
-CC := cc -fsanitize=address
+CC := cc #-fsanitize=address
 CPPFLAGS := -I./includes -I./src/libft
 CFLAGS := -Wall -Wextra -Werror
-SRC := main.c
+SRC := main.c lexer.c split_meta.c integrate_quotes.c parser.c
 OBJDIR := ./obj
 OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
 LDFLAGS := -L./src/libft
