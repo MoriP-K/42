@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/10 12:12:51 by root             ###   ########.fr       */
+/*   Updated: 2025/03/16 16:58:37 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <readline/history.h>
 # include "../src/libft/libft.h"
 
-typedef enum
+typedef enum s_kinds
 {
 	TK_META = 1,
 	TK_WORD = 2,
@@ -42,8 +42,22 @@ typedef struct s_parse
 	char			*cmd;
 	char			**args;
 	char			*infile;
-	char 			*outfile;
-	struct	s_parse	*next;
+	char			*outfile;
+	struct s_parse	*next;
 }	t_parse;
+
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
+
+typedef struct s_ms
+{
+	t_token	*token;
+	t_parse	*parse;
+	t_env	*env;
+}	t_ms;
 
 #endif
