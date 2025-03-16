@@ -3,17 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/10 21:43:51 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/16 16:29:19 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int main()
+void	init_ms(t_ms *ms, char *envp[])
 {
+	ms->token = NULL;
+	ms->parse = NULL;
+	ms->env = NULL;
+	// init_token(ms->token); // 初期化しながら入力の処理をする
+	// init_parse(ms->parse); // 同じく
+	init_env(&(ms->env), envp);
+}
+
+int main(int ac, char *av[], char *envp[])
+{
+	t_ms	ms;
 	t_token	*tokens;
 	t_parse *parses;
 	t_parse *first_parse;
@@ -21,6 +32,9 @@ int main()
 	char *line;
 	int		i;
 
+	(void)ac;
+	(void)av;
+	init_ms(&ms, envp);
 	line = readline("> ");
 	tokens = lex(line);
 	free(line);

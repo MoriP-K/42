@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:07:44 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/11 14:17:38 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:17:36 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void		ft_putnbr_fd(int n, int fd);
 size_t		ft_arrlen(char **array);
 int			ft_isint(const char *nptr);
 long		ft_strtol(const char *nptr, char **endptr);
+int			ft_strnchr(char const *str, char search);
 
 typedef struct s_list
 {

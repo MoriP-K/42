@@ -1,17 +1,36 @@
 NAME := minishell
+
 CC := cc #-fsanitize=address
+
 CPPFLAGS := -I./includes -I./src/libft
+
 CFLAGS := -Wall -Wextra -Werror
-SRC := main.c lexer.c split_meta.c integrate_quotes.c parser.c
-OBJDIR := ./obj
-OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
+
 LDFLAGS := -L./src/libft
+
 LDLIBS := -LIBFT
+
 LIBFTDIR := ./src/libft
+
 LIBFT := $(LIBFTDIR)/libft.a
+
 RLFLAGS := -lreadline
 
-vpath %.c ./src
+SRC := main.c \
+	lexer.c \
+	split_meta.c integrate_quotes.c parser.c \
+	env.c \
+
+OBJDIR := ./obj
+
+OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
+
+vpath %.c ./src: \
+./src/built-in: \
+./src/env: \
+./src/executer: \
+./src/lexer: \
+./src/parser: \
 
 ifeq ($(DEBUG), true)
 	CFLAGS += -g -O0 -fsanitize=address
