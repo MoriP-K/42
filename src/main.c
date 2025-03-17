@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/16 16:29:19 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:03:22 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,13 @@ int main(int ac, char *av[], char *envp[])
 	line = readline("> ");
 	tokens = lex(line);
 	free(line);
+	t_token *temp2 = tokens;
+	while (tokens->kinds != TK_EOF)
+	{
+		printf("word: %s\n", tokens->word);
+		tokens = tokens->next;
+	}
+	tokens = temp2;
 	parses = parse(tokens);
 	first_parse = parses;
 	while (parses->next != NULL)
