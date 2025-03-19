@@ -87,7 +87,7 @@ void	expand_token(t_token *token)
 {
 	while (token->kinds != TK_EOF)
 	{
-		if (token->kinds == TK_WORD)
+		if (token->kinds == TK_WORD && token->single_quote != 1)
 			token = expand_env(token);
 		token = token->next;
 	}

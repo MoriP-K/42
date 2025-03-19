@@ -33,7 +33,7 @@ typedef struct s_token
 	t_kinds			kinds;
 	char			*word;
 	size_t			len;
-	int				double_quote;
+	int				single_quote;
 	struct s_token	*next;
 }	t_token;
 

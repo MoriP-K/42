@@ -36,7 +36,7 @@ void	add_word_list(t_token *first_token, char *word)
 	new_token->kinds = get_kinds(word);
 	new_token->word = word;
 	new_token->len = ft_strlen(word);
-	new_token->double_quote = 0;
+	new_token->single_quote = 0;
 	new_token->next = NULL;
 	token = first_token;
 	while (token->next != NULL)
@@ -77,8 +77,8 @@ t_token	*lex(char *line)
 		add_word_list(first_token, words[i++]);
 	free(words);
 	AddEOF(first_token);
-	expand_token(first_token);
 	first_token = integrate_quotes(first_token);
+	expand_token(first_token);
 	first_token = culling_space(first_token);
 	return (first_token);
 }
