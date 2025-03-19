@@ -73,6 +73,7 @@ t_token	*lex(char *line)
 	first_token->kinds = get_kinds(words[0]);
 	first_token->word = words[0];
 	first_token->len = ft_strlen(words[0]);
+	first_token->single_quote = 0;
 	while (words[i])
 		add_word_list(first_token, words[i++]);
 	free(words);

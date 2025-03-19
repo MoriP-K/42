@@ -51,6 +51,8 @@ char	*expand_join(char *word)
 	}
 	else
 		result = ft_strdup(env);
+	if (!env)
+		result = ft_strdup("");
 	if (end_word != NULL)
 	{
 		result = ft_strjoin(result, end_word);
@@ -73,7 +75,7 @@ t_token	*expand_env(t_token *token)
 		if (token->word[i] == '$' && token->word[i + 1])
 		{
 			token->word = expand_join(token->word);
-			i = 0;
+			i = -1;
 			has_dollor = 1;
 		}
 		i++;
