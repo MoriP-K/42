@@ -12,25 +12,78 @@
 
 #include "../includes/minishell.h"
 
-char *set_new_word(char *word)
+char	*expand_join(char *word)
 {
-		
+	char	*first_word;
+	char	*variable;
+	char	*env;
+	char	*end_word;
+	char	*start;
+	char	*result;
+
+	first_word = NULL;
+	end_word = NULL;
+	if (*word != '$')
+	{
+		start = word;
+		while (*word != '$')
+			word++;
+		first_word = ft_strndup(start, word);
+	}
+	word++;
+	start = word;
+	while(*word != '$' && *word)
+		word++;
+	variable = ft_strndup(start, word);
+	env = getenv(variable);
+	free(variable);
+	if (*word == '$')
+	{
+		start = word;
+		while(*word)
+			word++;
+		end_word = ft_strndup(start, word);
+	}
+	if (first_word != NULL)
+	{
+		result = ft_strjoin(first_word, env);
+		free(first_word);
+	}
+	else
+		result = ft_strdup(env);
+	if (end_word != NULL)
+	{
+		result = ft_strjoin(result, end_word);
+		free(end_word);
+	}
+	return (result);
 }
 
 t_token	*expand_env(t_token *token)
 {
-	int	i;
+	int		i;
+	int		has_dollor;
+	char	*temp;
 
 	i = 0;
+	has_dollor = 0;
+	temp = token->word;
 	while (token->word[i])
 	{
 		if (token->word[i] == '$' && token->word[i + 1])
-			token->word = set_new_word(token->word);
+		{
+			token->word = expand_join(token->word);
+			i = 0;
+			has_dollor = 1;
+		}
+		i++;
 	}
+	if (has_dollor == 1)
+		free(temp);
 	return (token);
 }
 
-t_token	*expand_parse(t_token *token)
+void	expand_token(t_token *token)
 {
 	while (token->kinds != TK_EOF)
 	{

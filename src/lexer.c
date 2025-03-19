@@ -77,6 +77,7 @@ t_token	*lex(char *line)
 		add_word_list(first_token, words[i++]);
 	free(words);
 	AddEOF(first_token);
+	expand_token(first_token);
 	first_token = integrate_quotes(first_token);
 	first_token = culling_space(first_token);
 	return (first_token);

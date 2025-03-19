@@ -15,19 +15,24 @@
 # include "struct.h"
 
 # ifndef META_CHARS
-#  define META_CHARS "\'\"$<>| "
+#  define META_CHARS "\'\"<>| "
 # endif
 
 // minishell
 void		init_ms(t_ms *ms, char *envp[]);
 
 t_token		*lex(char *line);
+void		expand_token(t_token *token);
 int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
 t_parse		*parse(t_token *token);
+
+// utils
+
+char		*ft_strndup(const char *start, const char *end);
 
 // env
 void		init_env(t_env **env, char *envp[]);
