@@ -8,7 +8,7 @@ CFLAGS := -Wall -Wextra -Werror
 
 LDFLAGS := -L./src/libft
 
-LDLIBS := -LIBFT
+LDLIBS := -lft
 
 LIBFTDIR := ./src/libft
 
