@@ -6,11 +6,29 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 16:29:09 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/16 16:29:36 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/16 22:33:34 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+void	free_env(t_env **env)
+{
+	t_env	*current;
+	t_env	*tmp;
+
+	if (!*env)
+		return ;
+	current = *env;
+	while (current)
+	{
+		tmp = current->next;
+		free(current->key);
+		free(current->value);
+		free(current);
+		current = tmp;
+	}
+}
 
 char	*get_env_key(char *env_var)
 {
@@ -28,11 +46,13 @@ char	*get_env_value(char *env_var)
 {
 	char	*value;
 	char	*tmp;
+	char	*original_tmp;
 	int		pos;
 
 	tmp = ft_strdup(env_var);
 	if (!tmp)
 		return (NULL);
+	original_tmp = tmp;
 	pos = ft_strnchr(tmp, '=');
 	while (pos)
 	{
@@ -40,9 +60,9 @@ char	*get_env_value(char *env_var)
 		pos--;
 	}
 	value = ft_substr(tmp, 0, ft_strlen(tmp));
+	free(original_tmp);
 	if (!value)
 	{
-		free(tmp);
 		return (NULL);
 	}
 	return (value);
@@ -97,7 +117,7 @@ void	init_env(t_env **env, char *envp[])
 		new_env = new_env_lst();
 		if (!new_env)
 		{
-			free(new_env);
+			free_env(env);
 			// throw_error();
 			exit(EXIT_FAILURE);
 		}

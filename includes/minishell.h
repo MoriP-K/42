@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/16 16:56:49 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/26 20:58:07 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,15 @@
 # endif
 
 // minishell
-void		init_ms(t_ms *ms, char *envp[]);
+void		init_ms(t_ms *ms, char *envp[], char *line);
 
-t_token		*lex(char *line);
+t_token		*tokenizer(char *line);
 int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
-t_parse		*parse(t_token *token);
+t_parse		*do_parse(t_token *token);
 
 // env
 void		init_env(t_env **env, char *envp[]);
@@ -36,5 +36,6 @@ t_env		*last_env_lst(t_env *node);
 t_env		*new_env_lst(void);
 char		*get_env_value(char *env_var);
 char		*get_env_key(char *env_var);
+void		free_env(t_env **env);
 
 #endif

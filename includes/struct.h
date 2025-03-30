@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/16 16:58:37 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/29 23:21:08 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,20 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../src/libft/libft.h"
+
+typedef struct s_ms t_ms;
+typedef struct s_token t_token;
+typedef struct s_parse t_parse;
+typedef struct s_env t_env;
+typedef struct s_fd t_fd;
+typedef struct s_proc t_proc;
+typedef struct s_cl t_cl;
 
 typedef enum s_kinds
 {
@@ -27,6 +38,12 @@ typedef enum s_kinds
 	TK_SPACE = 3,
 	TK_EOF = 4,
 }	t_kinds;
+
+typedef enum s_timing {
+	NONE = 0,
+	INFILE = 1,
+	OUTFILE = 2,
+}			t_timing;
 
 typedef struct s_token
 {
@@ -53,11 +70,34 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+typedef struct s_fd
+{
+	int				infile;
+	int				outfile;
+	int				**pipe;
+}	t_fd;
+
+typedef struct s_proc
+{
+	pid_t			*id;
+	int				status;
+}			t_proc;
+
+typedef struct s_cl
+{
+	size_t		cmd_count;
+	char		*path;
+}	t_cl;
+
 typedef struct s_ms
 {
-	t_token	*token;
-	t_parse	*parse;
-	t_env	*env;
+	char			**envp;
+	t_token			*token;
+	t_parse			*parse;
+	t_env			*env;
+	t_fd			fd;
+	t_proc			proc;
+	t_cl			cl;
 }	t_ms;
 
 #endif
