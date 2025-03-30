@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/03/30 13:55:55 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 13:58:26 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int count_args(t_token *token)
 	int	count;
 
 	count = 0;
-	// token = token->next; // SEGV here
+	token = token->next; // SEGV here
 	while (token && token->kinds != TK_META && token->kinds != TK_EOF)
 	{
 		count++;
