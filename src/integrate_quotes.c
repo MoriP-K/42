@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   integrate_quotes.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
+/*   Updated: 2025/03/20 15:57:55 by masa             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-t_token *culling_space(t_token *token)
+t_token	*culling_space(t_token *token)
 {
 	t_token *first_token;
 	t_token *temp;
@@ -56,8 +68,8 @@ t_token	*integrate_quotes(t_token *token)
 			temp2 = token;
 		if (token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\''))
 		{
-			if (token->word[0] == '\"')
-				token->next->double_quote = 1;
+			if (token->word[0] == '\'')
+				token->next->single_quote = 1;
 			temp = token;
 			token = token->next;
 			free(temp->word);

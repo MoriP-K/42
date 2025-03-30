@@ -15,7 +15,7 @@
 # include "struct.h"
 
 # ifndef META_CHARS
-#  define META_CHARS "\'\"$<>| "
+#  define META_CHARS "\'\"<>| "
 # endif
 
 // minishell
@@ -28,6 +28,10 @@ int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
+
+// utils
+
+char		*ft_strndup(const char *start, const char *end);
 
 // env
 void		init_env(t_env **env, char *envp[]);
