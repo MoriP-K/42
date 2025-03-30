@@ -6,29 +6,11 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 16:29:09 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/16 22:33:34 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 15:37:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-void	free_env(t_env **env)
-{
-	t_env	*current;
-	t_env	*tmp;
-
-	if (!*env)
-		return ;
-	current = *env;
-	while (current)
-	{
-		tmp = current->next;
-		free(current->key);
-		free(current->value);
-		free(current);
-		current = tmp;
-	}
-}
 
 char	*get_env_key(char *env_var)
 {
@@ -105,25 +87,3 @@ void	add_env_lst(t_env **node, t_env *new_env)
 	}
 }
 
-void	init_env(t_env **env, char *envp[])
-{
-	int		i;
-	t_env	*new_env;
-
-	i = 0;
-	*env = NULL;
-	while (envp[i])
-	{
-		new_env = new_env_lst();
-		if (!new_env)
-		{
-			free_env(env);
-			// throw_error();
-			exit(EXIT_FAILURE);
-		}
-		new_env->key = get_env_key(envp[i]);
-		new_env->value = get_env_value(envp[i]);
-		add_env_lst(env, new_env);
-		i++;
-	}
-}

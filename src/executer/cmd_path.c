@@ -1,0 +1,129 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_path.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
+/*   Updated: 2025/03/30 19:26:32 by kmoriyam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../includes/minishell.h"
+
+int	is_executable_file(char *cmd)
+{
+	if (!cmd)
+		return (0);
+	if (access(cmd, X_OK) == 0)
+		return (1);
+	return (0);
+}
+
+char	*find_path_from_env(t_env *env)
+{
+	t_env	*tmp_env;
+
+	tmp_env = env;
+	while (tmp_env)
+	{
+		if (ft_strncmp(tmp_env->key, "PATH", 4) == 0)
+			return (tmp_env->value);
+		tmp_env = tmp_env->next;
+	}
+	return (NULL);
+}
+
+char	*join_cmd_and_path(char *cmd, char **split_arr)
+{
+	int		i;
+	char	*path_cmd;
+
+	i = 0;
+	while (split_arr[i])
+	{
+		path_cmd = ft_strjoin(split_arr[i], cmd);
+		if (!path_cmd)
+		{
+			free_array(split_arr);
+			return (NULL);
+		}
+		if (access(path_cmd, X_OK) == 0)
+		{
+			free_array(split_arr);
+			return (path_cmd);
+		}
+		free(path_cmd);
+		i++;
+	}
+	free_array(split_arr);
+	return (NULL);
+}
+
+char	**add_slash(char **split_arr)
+{
+	int		i;
+	char 	**added_slash_arr;
+	int		arr_len;
+
+	arr_len = ft_arrlen(split_arr);
+	added_slash_arr = (char **)malloc(sizeof(char *) * (arr_len + 1));
+	if (!added_slash_arr)
+		return (NULL);
+	i = 0;
+	while (i < arr_len)
+	{
+		added_slash_arr[i] = ft_strjoin(split_arr[i], "/");
+		if (!added_slash_arr[i])
+		{
+			free_array(added_slash_arr);
+			free_array(split_arr);
+			return (NULL);
+		}
+		i++;
+	}
+	added_slash_arr[i] = NULL;
+	free_array(split_arr);
+	return (added_slash_arr);
+}
+
+char	*find_cmd_path(char *cmd, t_env *env)
+{
+	char	*path;
+	char	**split_arr;
+
+	path = find_path_from_env(env);
+	if (!path)
+		return (NULL);
+	split_arr = ft_split(path, ':');
+	if (!split_arr)
+		return (NULL);
+	split_arr = add_slash(split_arr);
+	if (!split_arr)
+		return (NULL);
+	return (join_cmd_and_path(cmd, split_arr));
+}
+
+void	find_cmd(t_ms *ms , t_parse *parse)
+{
+	if (ft_strchr(parse->cmd, '/'))
+	{
+		if (is_executable_file(parse->cmd))
+			ms->cl.path = parse->cmd;
+		else
+		{
+			free_ms(ms);
+			throw_error(parse->cmd);
+		}
+	}
+	else
+	{
+		ms->cl.path = find_cmd_path(parse->cmd, ms->env);
+		if (!ms->cl.path)
+		{
+			free_ms(ms);
+			throw_error(parse->cmd);
+		}
+	}
+}

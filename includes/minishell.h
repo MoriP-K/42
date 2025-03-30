@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 16:49:30 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/30 22:22:11 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,16 @@
 #  define META_CHARS "\'\"<>| "
 # endif
 
-// minishell
+// initialize
 void		init_ms(t_ms *ms, char *envp[], char *line);
+void		init_lexer(t_token **token, char *line);
+void		init_parser(t_parse **parse, t_token *token);
+void		init_env(t_env **env, char *envp[]);
+void		init_exec(t_ms *ms, t_parse *parse, t_cl *cl);
+void		init_fd(t_fd *fd, t_cl *cl);
+void		init_proc(t_proc *proc, t_cl *cl);
+void		init_cl(t_cl *cl, t_parse *parse);
+
 
 t_token		*tokenizer(char *line);
 int			check_quote_count(t_token *token);
@@ -31,18 +39,47 @@ int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
+void		expand_token(t_token *token);
+
 
 // utils
-
 char		*ft_strndup(const char *start, const char *end);
 
+
 // env
-void		init_env(t_env **env, char *envp[]);
 void		add_env_lst(t_env **node, t_env *new_env);
 t_env		*last_env_lst(t_env *node);
 t_env		*new_env_lst(void);
 char		*get_env_value(char *env_var);
 char		*get_env_key(char *env_var);
+
+
+// executer
+void		set_pipe_fds(t_ms *ms, t_fd *fd, size_t index);
+void		close_fds(t_ms *ms, t_fd *fd, size_t index);
+void		close_all_fds(t_fd *fd, int cmd_count);
+void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
+void		do_exec(t_ms *ms, t_parse *parse);
+void		do_execve(t_ms *ms, t_parse *parse);
+void		do_pipe(t_ms *ms, size_t index);
+void		fail_to_fork(t_ms *ms);
+void		find_cmd(t_ms *ms , t_parse *parse);
+char		*find_cmd_path(char *cmd, t_env *env);
+char		**add_slash(char **split_arr);
+char		*join_cmd_and_path(char *cmd, char **split_arr);
+char		*find_path_from_env(t_env *env);
+int			is_executable_file(char *cmd);
+
+
+// free
+void		free_ms(t_ms *ms);
+void		free_parser(t_parse *parse);
+void		free_array(char **array);
+void		free_fd(t_fd *fd, t_cl *cl);
 void		free_env(t_env **env);
+
+
+// error
+void		throw_error(char *cmd);
 
 #endif
