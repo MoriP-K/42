@@ -34,58 +34,64 @@ int main(int ac, char *av[], char *envp[])
 
 	(void)ac;
 	(void)av;
-	init_ms(&ms, envp);
-	line = readline("> ");
-	tokens = lex(line);
-	free(line);
-	t_token *temp2 = tokens;
-	while (tokens->kinds != TK_EOF)
+	while (1)
 	{
-		printf("word: %s\n", tokens->word);
-		tokens = tokens->next;
-	}
-	tokens = temp2;
-	parses = parse(tokens);
-	first_parse = parses;
-	while (parses->next != NULL)
-	{
-		i = 0;
-		if (parses->cmd != NULL)
-			printf("cmd :%s\n", parses->cmd);
-		if (parses->args != NULL)
+		line = readline("> ");
+		if (!line)
+			break;
+		add_history(line);
+		init_ms(&ms, envp);
+		tokens = lex(line);
+		free(line);
+		t_token *temp2 = tokens;
+		while (tokens->kinds != TK_EOF)
 		{
-			while (parses->args[i])
+			printf("word: %s\n", tokens->word);
+			tokens = tokens->next;
+		}
+		tokens = temp2;
+		parses = parse(tokens);
+		first_parse = parses;
+		while (parses->next != NULL)
+		{
+			i = 0;
+			if (parses->cmd != NULL)
+				printf("cmd :%s\n", parses->cmd);
+			if (parses->args != NULL)
 			{
-				printf("args[%d] :%s\n", i, parses->args[i]);
-				i++;
+				while (parses->args[i])
+				{
+					printf("args[%d] :%s\n", i, parses->args[i]);
+					i++;
+				}
 			}
+			if (parses->infile != NULL)
+				printf("infile :%s\n", parses->infile);
+			if (parses->outfile != NULL)
+				printf("outfile :%s\n", parses->outfile);
+			parses = parses->next;
 		}
-		if (parses->infile != NULL)
-			printf("infile :%s\n", parses->infile);
-		if (parses->outfile != NULL)
-			printf("outfile :%s\n", parses->outfile);
-		parses = parses->next;
-	}
-	parses = first_parse;
-	while (parses->next != NULL)
-	{
-		temp = parses;
-		i = 0;
-		if (parses->cmd != NULL)
-			free(parses->cmd);
-		if (parses->args != NULL)
+		parses = first_parse;
+		while (parses->next != NULL)
 		{
-			while (parses->args[i])
-				free(parses->args[i++]);
-			free(parses->args);
+			temp = parses;
+			i = 0;
+			if (parses->cmd != NULL)
+				free(parses->cmd);
+			if (parses->args != NULL)
+			{
+				while (parses->args[i])
+					free(parses->args[i++]);
+				free(parses->args);
+			}
+			if (parses->infile != NULL)
+				free(parses->infile);
+			if (parses->outfile != NULL)
+				free(parses->outfile);
+			parses = parses->next;
+			free(temp);
 		}
-		if (parses->infile != NULL)
-			free(parses->infile);
-		if (parses->outfile != NULL)
-			free(parses->outfile);
-		parses = parses->next;
-		free(temp);
+		free(parses);
 	}
-	free(parses);
 	return (0);
 }
