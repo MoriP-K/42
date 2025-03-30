@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/26 20:58:07 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:29:30 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 void		init_ms(t_ms *ms, char *envp[], char *line);
 
 t_token		*tokenizer(char *line);
+int			syntax_error_handler(t_token *token);
+void		expand_token(t_token *token);
 int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);

@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 13:56:10 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:26:20 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,6 +411,7 @@ void	set_pipe_fds(t_ms *ms, t_fd *fd, size_t index)
 				throw_error("dup2_b");
 				// all_free();
 			}
+		}
 	}
 	close_fds(ms, &(ms->fd), index);
 }
@@ -470,6 +471,7 @@ int main(int ac, char *av[], char *envp[])
 	while (1)
 	{
 		line = readline("> ");
+		add_history(line);
 		init_ms(&ms, envp, line);
 		init_exec(&ms, ms.parse, &(ms.cl));
 		do_exec(&ms, ms.parse);
