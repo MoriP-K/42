@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 13:56:10 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:18:43 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,6 +411,7 @@ void	set_pipe_fds(t_ms *ms, t_fd *fd, size_t index)
 				throw_error("dup2_b");
 				// all_free();
 			}
+		}
 	}
 	close_fds(ms, &(ms->fd), index);
 }
