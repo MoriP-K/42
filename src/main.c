@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 18:06:12 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/30 18:44:20 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -472,11 +472,14 @@ int main(int ac, char *av[], char *envp[])
 
 	(void)ac;
 	(void)av;
+	init_signal();
 	while (1)
 	{
-		line = readline("> ");
+		line = readline("minishell > ");
 		if (!line)
 			break;
+		if (*line == '\0')
+			continue;
 		add_history(line);
 		init_ms(&ms, envp, line);
 		if (ms.token == NULL || ms.parse == NULL)
