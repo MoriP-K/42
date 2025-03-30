@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/03/10 12:00:30 by root             ###   ########.fr       */
+/*   Updated: 2025/03/30 13:56:03 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	AddEOF(t_token *first_token)
 	token->next = EOF_token;
 }
 
-t_token	*lex(char *line)
+t_token	*tokenizer(char *line)
 {
     char	**words;
 	t_token	*first_token;
