@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/03/30 13:56:03 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 16:45:03 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,35 @@ void	AddEOF(t_token *first_token)
 	token->next = EOF_token;
 }
 
+t_token	*combine_redirect(t_token *token)
+{
+	t_token	*first_token;
+	char	*temp;
+	t_token	*temp2;
+	
+	first_token = token;
+	while (token->kinds != TK_EOF)
+	{
+		if (token->kinds == TK_META && (token->word[0] == '>' 
+				|| token->word[0] == '<'))
+		{
+			if (token->next->kinds == TK_META 
+				&& token->word[0] == token->next->word[0])
+			{
+				temp = token->word;
+				temp2 = token->next;
+				token->word = ft_strjoin(token->word, token->next->word);
+				free(temp);
+				free(token->next->word);
+				token->next = token->next->next;
+				free(temp2);
+			}
+		}
+		token = token->next;
+	}
+	return (first_token);
+}
+
 t_token	*tokenizer(char *line)
 {
     char	**words;
@@ -78,8 +107,13 @@ t_token	*tokenizer(char *line)
 		add_word_list(first_token, words[i++]);
 	free(words);
 	AddEOF(first_token);
+	first_token = combine_redirect(first_token);
+	if (!check_quote_count(first_token))
+		return(NULL);
 	first_token = integrate_quotes(first_token);
 	expand_token(first_token);
 	first_token = culling_space(first_token);
+	if (!syntax_error_handler(first_token))
+		return(NULL);
 	return (first_token);
 }

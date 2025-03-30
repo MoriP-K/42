@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 13:56:10 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 18:06:12 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,11 @@ void	init_ms(t_ms *ms, char *envp[], char *line)
 	ms->env = NULL;
 	ms->envp = envp;
 	init_lexer(&(ms->token), line);
+	if (!ms->token)
+		return;
 	init_parser(&(ms->parse), ms->token);
+	if (!ms->parse)
+		return;
 	init_env(&(ms->env), envp);
 }
 
@@ -411,6 +415,7 @@ void	set_pipe_fds(t_ms *ms, t_fd *fd, size_t index)
 				throw_error("dup2_b");
 				// all_free();
 			}
+		}
 	}
 	close_fds(ms, &(ms->fd), index);
 }
@@ -470,11 +475,17 @@ int main(int ac, char *av[], char *envp[])
 	while (1)
 	{
 		line = readline("> ");
+		if (!line)
+			break;
+		add_history(line);
 		init_ms(&ms, envp, line);
+		if (ms.token == NULL || ms.parse == NULL)
+			continue;
 		init_exec(&ms, ms.parse, &(ms.cl));
 		do_exec(&ms, ms.parse);
 		free_parser(ms.parse);
 		free_env(&ms.env);
 	}
+	write(1, "exit\n", 5);
 	return (0);
 }
