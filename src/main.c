@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 18:44:20 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/31 00:24:44 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,9 @@ void	free_parser(t_parse *parse)
 		if (parse->args != NULL)
 		{
 			while (parse->args[i])
+			{
 				free(parse->args[i++]);
+			}
 			free(parse->args);
 		}
 		if (parse->infile != NULL)
