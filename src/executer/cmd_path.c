@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 19:26:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/31 22:24:10 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	*join_cmd_and_path(char *cmd, char **split_arr)
 char	**add_slash(char **split_arr)
 {
 	int		i;
-	char 	**added_slash_arr;
+	char	**added_slash_arr;
 	int		arr_len;
 
 	arr_len = ft_arrlen(split_arr);
@@ -105,8 +105,30 @@ char	*find_cmd_path(char *cmd, t_env *env)
 	return (join_cmd_and_path(cmd, split_arr));
 }
 
-void	find_cmd(t_ms *ms , t_parse *parse)
+int	check_builtin_cmd(char *cmd)
 {
+	static const char	*builtins[] = {\
+		"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL\
+	};
+	int					i;
+
+	i = 0;
+	while (builtins[i])
+	{
+		if (ft_strncmp(cmd, builtins[i], ft_strlen(cmd)) == 0)
+		{
+			printf("built-in: %s\n", builtins[i]);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+void	find_cmd(t_ms *ms, t_parse *parse)
+{
+	if (check_builtin_cmd(parse->cmd))
+		return ;
 	if (ft_strchr(parse->cmd, '/'))
 	{
 		if (is_executable_file(parse->cmd))

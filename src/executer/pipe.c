@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 21:55:45 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/31 22:24:03 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,6 @@ void	do_execve(t_ms *ms, t_parse *parse)
 	// 	}
 	// 	tmp = tmp->next;
 	// }
-	int i = 0;
-    while (parse->args[i]) {
-        printf("args[%d]: %s\n", i, parse->args[i]);
-        i++;
-    }
-	printf("path : %s\n", ms->cl.path);
 	execve(ms->cl.path, parse->args, ms->envp);
 	perror("execve");
 	exit(EXIT_FAILURE);
@@ -116,8 +110,9 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			fail_to_fork(ms);
 		else if (ms->proc.id[i] == 0)
 		{
+			// if (check_builtin_cmd(parse->cmd))
+			// 	exec_builtin_cmd();
 			find_cmd(ms, current_parse);
-			printf("cmd path: %s\n", ms->cl.path);
 			set_pipe_fds(ms, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
 			do_execve(ms, current_parse);

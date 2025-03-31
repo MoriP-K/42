@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 22:22:11 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/31 21:05:36 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void		free_parser(t_parse *parse);
 void		free_array(char **array);
 void		free_fd(t_fd *fd, t_cl *cl);
 void		free_env(t_env **env);
+void		free_proc(t_proc *proc);
 
 
 // error

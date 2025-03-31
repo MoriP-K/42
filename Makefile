@@ -30,7 +30,6 @@ OBJDIR := ./obj
 OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
 
 vpath %.c ./src: \
-./src/built-in: \
 ./src/env: \
 ./src/executer: \
 ./src/lexer: \
@@ -38,6 +37,7 @@ vpath %.c ./src: \
 ./src/executer: \
 ./src/free: \
 ./src/initialize: \
+# ./src/built-in:
 
 
 ifeq ($(DEBUG), true)

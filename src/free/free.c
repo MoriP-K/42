@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 20:18:13 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/31 21:06:05 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,15 @@ void	free_ms(t_ms *ms)
 {
 	free_parser(ms->parse);
 	free_env(&(ms->env));
+	free_fd(&(ms->fd), &(ms->cl));
+	free_proc(&(ms->proc));
 	return ;
+}
+
+void	free_proc(t_proc *proc)
+{
+	if (proc->id)
+		free(proc->id);
 }
 
 void	free_parser(t_parse *parse)
