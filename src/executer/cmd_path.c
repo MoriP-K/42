@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 22:24:10 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:05:04 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,6 @@ int	check_builtin_cmd(char *cmd)
 
 void	find_cmd(t_ms *ms, t_parse *parse)
 {
-	if (check_builtin_cmd(parse->cmd))
-		return ;
 	if (ft_strchr(parse->cmd, '/'))
 	{
 		if (is_executable_file(parse->cmd))
@@ -140,7 +138,7 @@ void	find_cmd(t_ms *ms, t_parse *parse)
 		}
 	}
 	else
-	{
+	{	
 		ms->cl.path = find_cmd_path(parse->cmd, ms->env);
 		if (!ms->cl.path)
 		{

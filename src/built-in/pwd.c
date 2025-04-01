@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 21:09:04 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 22:28:03 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:10:25 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,5 @@ void	ft_pwd(void)
 	}
 	printf("%s\n", pwd);
 	free(pwd);
-}
-
-int	main(int ac, char *av[], char *envp[])
-{
-	ft_pwd();
+	exit(EXIT_SUCCESS);
 }

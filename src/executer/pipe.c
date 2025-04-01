@@ -6,11 +6,29 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 22:24:03 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:57:16 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	exec_built_in(t_ms *ms, char *cmd)
+{
+	if (ft_strcmp(cmd, "pwd") == 0)
+		ft_pwd();
+	else if (ft_strcmp(cmd, "cd") == 0)
+		ft_cd(ms->parse);
+	else if (ft_strcmp(cmd, "echo") == 0)
+		ft_echo();
+	else if (ft_strcmp(cmd, "export") == 0)
+		ft_export();
+	else if (ft_strcmp(cmd, "unset") == 0)
+		ft_unset();
+	else if (ft_strcmp(cmd, "env") == 0)
+		ft_env();
+	else if (ft_strcmp(cmd, "exit") == 0)
+		ft_exit();
+}
 
 void	do_execve(t_ms *ms, t_parse *parse)
 {
@@ -110,8 +128,8 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			fail_to_fork(ms);
 		else if (ms->proc.id[i] == 0)
 		{
-			// if (check_builtin_cmd(parse->cmd))
-			// 	exec_builtin_cmd();
+			if (is_redirection(ms, parse))
+				
 			find_cmd(ms, current_parse);
 			set_pipe_fds(ms, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);

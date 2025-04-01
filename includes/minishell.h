@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 21:05:36 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:09:36 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ char		**add_slash(char **split_arr);
 char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
+int			check_builtin_cmd(char *cmd);
 
 
 // free
@@ -79,6 +80,8 @@ void		free_fd(t_fd *fd, t_cl *cl);
 void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 
+// built-in
+void		ft_pwd(void);
 
 // error
 void		throw_error(char *cmd);
