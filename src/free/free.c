@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 22:36:57 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/02 23:56:26 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	free_ms(t_ms *ms)
 	free_env(&(ms->env));
 	free_fd(&(ms->fd), &(ms->cl));
 	free_proc(&(ms->proc));
-	return ;
 }
 
 void	free_proc(t_proc *proc)
@@ -51,7 +50,7 @@ void	free_parser(t_parse *parse)
 		free(parse);
 		parse = tmp;
 	}
-	// free(parse);
+	free(parse);
 }
 
 void	free_array(char **array)

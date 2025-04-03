@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 19:58:44 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/03 21:53:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,11 @@ void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 void	init_lexer(t_token **token, char *line)
 {
 	*token = tokenizer(line);
+	while (*token)
+	{
+		printf("%s\n", (*token)->word);
+		(*token) = (*token)->next;
+	}
 	free(line);
 }
 

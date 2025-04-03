@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/03/30 21:58:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:18:36 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,19 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 {
 	t_parse *new_parse;
 	int		i;
+	int		arg_count;
 
+	arg_count = count_args(token);
 	new_parse = (t_parse *)malloc(sizeof(t_parse));
 	new_parse->cmd = NULL;
 	new_parse->next = NULL;
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
 	new_parse->args = NULL;
-	new_parse->args = (char **)malloc((count_args(token) + 1) * sizeof(char *));
-	new_parse->args[count_args(token) + 1] = NULL;
+	new_parse->args = (char **)malloc((arg_count + 1) * sizeof(char *));
+	i = 0;
+	while (i <= arg_count)
+		new_parse->args[i++] = NULL;
 	i = 1;
 	while (token && token->kinds != TK_EOF && !(token->kinds == TK_META && token->word[0] == '|'))
 	{
