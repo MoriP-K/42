@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/03 21:53:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:56:31 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	init_cl(t_cl *cl, t_parse *parse)
 			count++;
 		tmp = tmp->next;
 	}
-	printf("cmd count = %d\n\n", count);
+	// printf("cmd count = %d\n\n", count);
 	cl->cmd_count = count;
 	cl->path = NULL;
 }
@@ -84,11 +84,6 @@ void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 void	init_lexer(t_token **token, char *line)
 {
 	*token = tokenizer(line);
-	while (*token)
-	{
-		printf("%s\n", (*token)->word);
-		(*token) = (*token)->next;
-	}
 	free(line);
 }
 
@@ -102,8 +97,8 @@ void	init_parser(t_parse **parse, t_token *token)
 	while (*parse)
 	{
 		i = 0;
-		if ((*parse)->cmd != NULL)
-			printf("cmd :%s\n", (*parse)->cmd);
+		// if ((*parse)->cmd != NULL)
+		// 	printf("cmd :%s\n", (*parse)->cmd);
 		// if ((*parse)->args != NULL)
 		// {
 		// 	while ((*parse)->args[i])

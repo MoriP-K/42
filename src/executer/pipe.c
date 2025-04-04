@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/03 22:36:28 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:58:02 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	do_execve(t_ms *ms, t_parse *parse)
 void	fail_to_fork(t_ms *ms)
 {
 	throw_error("fork");
-	(void)ms;
 	free_ms(ms);
 }
 
