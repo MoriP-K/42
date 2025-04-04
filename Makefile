@@ -19,6 +19,10 @@ RLFLAGS := -lreadline
 SRC := main.c \
 	lexer.c expander.c\
 	split_meta.c integrate_quotes.c parser.c \
+	pipe.c close_fd.c cmd_path.c \
+	free.c \
+	init.c \
+	pwd.c \
 	env.c syntax_error_handler.c signal_handler.c \
 
 OBJDIR := ./obj
@@ -26,11 +30,15 @@ OBJDIR := ./obj
 OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
 
 vpath %.c ./src: \
-./src/built-in: \
 ./src/env: \
 ./src/executer: \
 ./src/lexer: \
 ./src/parser: \
+./src/executer: \
+./src/free: \
+./src/initialize: \
+./src/built-in: \
+
 
 ifeq ($(DEBUG), true)
 	CFLAGS += -g -O0 -fsanitize=address

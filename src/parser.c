@@ -31,7 +31,6 @@ int count_args(t_token *token)
 	int	count;
 
 	count = 0;
-	token = token->next; // SEGV here
 	while (token && token->kinds != TK_META && token->kinds != TK_EOF)
 	{
 		count++;
@@ -44,15 +43,18 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 {
 	t_parse *new_parse;
 	int		i;
+	int		arg_count;
 
+	arg_count = count_args(token);
 	new_parse = (t_parse *)malloc(sizeof(t_parse));
 	new_parse->cmd = NULL;
 	new_parse->next = NULL;
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
 	new_parse->args = NULL;
-	new_parse->args = (char **)malloc((count_args(token) + 2) * sizeof(char *));
-	new_parse->args[count_args(token) + 1] = NULL;
+	i = 0;
+	while (i <= arg_count)
+		new_parse->args[i++] = NULL;
 	i = 1;
 	while (token && token->kinds != TK_EOF && !(token->kinds == TK_META && token->word[0] == '|'))
 	{
