@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/01 22:05:04 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:57:02 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	check_builtin_cmd(char *cmd)
 	{
 		if (ft_strncmp(cmd, builtins[i], ft_strlen(cmd)) == 0)
 		{
-			printf("built-in: %s\n", builtins[i]);
+			// printf("built-in: %s\n", builtins[i]);
 			return (1);
 		}
 		i++;
