@@ -19,12 +19,11 @@ RLFLAGS := -lreadline
 SRC := main.c \
 	lexer.c expander.c\
 	split_meta.c integrate_quotes.c parser.c \
-	env.c syntax_error_handler.c \
-	env.c \
 	pipe.c close_fd.c cmd_path.c \
 	free.c \
 	init.c \
 	pwd.c \
+	env.c syntax_error_handler.c signal_handler.c \
 
 OBJDIR := ./obj
 

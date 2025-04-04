@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/02 22:52:10 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/30 18:22:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
 void		expand_token(t_token *token);
 
+// signal
+void		init_signal();
 
 // utils
 char		*ft_strndup(const char *start, const char *end);

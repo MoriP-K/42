@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/03 20:18:36 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/03/31 00:32:42 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
 	new_parse->args = NULL;
-	new_parse->args = (char **)malloc((arg_count + 1) * sizeof(char *));
 	i = 0;
 	while (i <= arg_count)
 		new_parse->args[i++] = NULL;
