@@ -16,7 +16,6 @@ vpath %.c ./src:
 
 all: $(NAME)
 
-
 $(NAME): $(OBJ)
 	$(CC) $^ -o $@
 
@@ -30,11 +29,9 @@ $(warning obj=$(OBJDIR))
 
 clean:
 	$(RM) -r $(OBJ) $(OBJDIR)
-	$(MAKE) -C clean
 
 fclean: clean
 	$(RM) $(NAME)
-	$(MAKE) -C fclean
 
 re: fclean
 	$(MAKE) all
