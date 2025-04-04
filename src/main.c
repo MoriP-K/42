@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 18:06:12 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/31 00:24:44 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,9 @@ void	free_parser(t_parse *parse)
 		if (parse->args != NULL)
 		{
 			while (parse->args[i])
+			{
 				free(parse->args[i++]);
+			}
 			free(parse->args);
 		}
 		if (parse->infile != NULL)
@@ -472,11 +474,14 @@ int main(int ac, char *av[], char *envp[])
 
 	(void)ac;
 	(void)av;
+	init_signal();
 	while (1)
 	{
-		line = readline("> ");
+		line = readline("minishell > ");
 		if (!line)
 			break;
+		if (*line == '\0')
+			continue;
 		add_history(line);
 		init_ms(&ms, envp, line);
 		if (ms.token == NULL || ms.parse == NULL)

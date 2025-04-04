@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 16:49:30 by motomo           ###   ########.fr       */
+/*   Updated: 2025/03/30 18:22:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,10 @@ int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
+
+// signal
+
+void		init_signal();
 
 // utils
 
