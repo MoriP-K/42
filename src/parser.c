@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/04 20:00:42 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/05 20:26:58 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int count_args(t_token *token)
 	int	count;
 
 	count = 0;
-	while (token && token->kinds != TK_META && token->kinds != TK_EOF)
+	while (token && token->kinds != TK_META && token->kinds != TK_EOF && token->kinds != TK_IN_REDIRECT && token->kinds != TK_OUT_REDIRECT)
 	{
 		count++;
 		token = token->next;
@@ -58,7 +58,7 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 	i = 1;
 	while (token && token->kinds != TK_EOF && !(token->kinds == TK_META && token->word[0] == '|'))
 	{
-		if (token->kinds != TK_META)
+		if (token->kinds != TK_META && token->kinds != TK_IN_REDIRECT && token->kinds != TK_OUT_REDIRECT)
 			new_parse->cmd = ft_strdup(token->word);
 		else if (token->word[0] == '>')
 		{
@@ -72,7 +72,7 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 		}
 		if (token->kinds != TK_EOF)
 			token = token->next;
-		while (new_parse->cmd != NULL && token->kinds != TK_META && token->kinds != TK_EOF)
+		while (new_parse->cmd != NULL && token->kinds == TK_WORD)
 		{
 			new_parse->args[i++] = ft_strdup(token->word);
 			token = token->next;
@@ -129,5 +129,6 @@ t_parse	*do_parse(t_token *token)
 	}
 	add_EOF(first_parse);
 	free_tokens(first_token);
+	printf("infile: %s\n", current_parse->infile);
 	return (first_parse);
 }

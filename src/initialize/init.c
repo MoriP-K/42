@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/04 19:56:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/06 00:28:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,12 @@ void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 void	init_lexer(t_token **token, char *line)
 {
 	*token = tokenizer(line);
+	t_token *tmp = *token;
+	while (tmp)
+	{
+		printf("%s\n", tmp->word);
+		tmp = tmp->next;
+	}
 	free(line);
 }
 
@@ -98,18 +104,16 @@ void	init_parser(t_parse **parse, t_token *token)
 	{
 		i = 0;
 		// if ((*parse)->cmd != NULL)
-		// 	printf("cmd :%s\n", (*parse)->cmd);
+		// 	printf("cmd: %s\n", (*parse)->cmd);
 		// if ((*parse)->args != NULL)
 		// {
 		// 	while ((*parse)->args[i])
 		// 	{
-		// 		printf("args[%d] :%s\n", i, (*parse)->args[i]);
+		// 		printf("args[%d]: %s\n", i, (*parse)->args[i]);
 		// 		i++;
 		// 	}
 		// 	write(1, "\n", 1);
 		// }
-		first_parse->infile = NULL;
-		first_parse->outfile = NULL;
 		if ((*parse)->infile != NULL)
 			printf("infile :%s\n", (*parse)->infile);
 		if ((*parse)->outfile != NULL)
