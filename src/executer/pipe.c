@@ -6,29 +6,30 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/04 19:58:02 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/08 23:43:37 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// void	exec_built_in(t_ms *ms, char *cmd)
-// {
-// 	if (ft_strcmp(cmd, "pwd") == 0)
-// 		ft_pwd();
-// 	else if (ft_strcmp(cmd, "cd") == 0)
-// 		ft_cd(ms->parse);
-// 	else if (ft_strcmp(cmd, "echo") == 0)
-// 		ft_echo();
-// 	else if (ft_strcmp(cmd, "export") == 0)
-// 		ft_export();
-// 	else if (ft_strcmp(cmd, "unset") == 0)
-// 		ft_unset();
-// 	else if (ft_strcmp(cmd, "env") == 0)
-// 		ft_env();
-// 	else if (ft_strcmp(cmd, "exit") == 0)
-// 		ft_exit();
-// }
+void	exec_built_in(t_ms *ms, char *cmd)
+{
+	(void)ms;
+	if (ft_strcmp(cmd, "pwd") == 0)
+		ft_pwd();
+	// else if (ft_strcmp(cmd, "cd") == 0)
+	// 	ft_cd(ms->parse);
+	// else if (ft_strcmp(cmd, "echo") == 0)
+	// 	ft_echo();
+	// else if (ft_strcmp(cmd, "export") == 0)
+	// 	ft_export();
+	// else if (ft_strcmp(cmd, "unset") == 0)
+	// 	ft_unset();
+	// else if (ft_strcmp(cmd, "env") == 0)
+	// 	ft_env();
+	// else if (ft_strcmp(cmd, "exit") == 0)
+	// 	ft_exit();
+}
 
 void	do_execve(t_ms *ms, t_parse *parse)
 {
@@ -73,7 +74,10 @@ void	switch_fd(t_ms *ms, t_fd *fd, char *infile, char *outfile)
 	}
 	if (outfile)
 	{
-		fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (ms->parse->append)
+			fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd->outfile < 0)
 		{
 			throw_error("open outfile error");
@@ -126,6 +130,26 @@ void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 	close_fds(ms, &(ms->fd), index);
 }
 
+void	reset_fds(t_ms *ms , t_fd *fd)
+{
+	if (fd->tmp_in >= 0)
+	{
+		if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
+		{
+			throw_error("dup2 infile");
+			free_ms(ms);
+		}
+	}
+	if (fd->tmp_out >= 0)
+	{
+		if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
+		{
+			throw_error("dup2 outfile");
+			free_ms(ms);
+		}
+	}
+}
+
 int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 {
 	(void)fd;
@@ -134,7 +158,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 		write(1, "builtin\n", 8);
 		if (parse->infile)
 		{
-			fd->infile = dup(STDIN_FILENO);
+			fd->tmp_in = dup(STDIN_FILENO);
 			if (dup(STDIN_FILENO) == -1)
 			{
 				throw_error("dup");
@@ -144,7 +168,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 		}
 		if (parse->outfile)
 		{
-			fd->outfile = dup(STDOUT_FILENO);
+			fd->tmp_out = dup(STDOUT_FILENO);
 			if (dup(STDOUT_FILENO) == -1)
 			{
 				throw_error("dup");
@@ -152,6 +176,10 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 				exit(EXIT_FAILURE);
 			}
 		}
+		switch_fd(ms, fd, parse->infile, parse->outfile);
+		exec_built_in(ms, parse->cmd);
+		reset_fds(ms, fd);
+		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);
 	}
 	return (0);
@@ -162,8 +190,8 @@ void	do_exec(t_ms *ms, t_parse *parse)
 	size_t	i;
 	t_parse	*current_parse;
 
-	// if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
-	// 	return ;
+	if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
+		return ;
 	current_parse = parse;
 	i = 0;
 	while (i < ms->cl.cmd_count && current_parse)

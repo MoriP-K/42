@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/05 20:50:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/08 23:26:51 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_parse
 	char			*infile;
 	char			*outfile;
 	char			*delimiter;
+	int				append;
 	struct s_parse	*next;
 }	t_parse;
 
@@ -80,6 +81,8 @@ typedef struct s_fd
 {
 	int				infile;
 	int				outfile;
+	int				tmp_in;
+	int				tmp_out;
 	int				**pipe;
 }	t_fd;
 
