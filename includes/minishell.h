@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 18:22:26 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 21:36:54 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void		init_signal();
 // utils
 char		*ft_strndup(const char *start, const char *end);
 
-
 // env
 void		add_env_lst(t_env **node, t_env *new_env);
 t_env		*last_env_lst(t_env *node);
@@ -55,6 +54,10 @@ t_env		*new_env_lst(void);
 char		*get_env_value(char *env_var);
 char		*get_env_key(char *env_var);
 
+//envp
+char 		**envp_dup(char **envp);
+void		free_old_envp(char **envp);
+int			find_env_index(char **envp, char *key);
 
 // executer
 void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
@@ -72,6 +75,7 @@ char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
+void		exec_built_in(t_ms *ms, t_parse *parse);
 
 
 // free
@@ -82,8 +86,14 @@ void		free_fd(t_fd *fd, t_cl *cl);
 void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 
-// built-in
-void		ft_pwd(void);
+// builtins
+void		builtin_pwd(void);
+void		builtin_env(t_ms *ms);
+void		builtin_export(t_ms *ms, t_parse *parse);
+void		builtin_unset(t_ms *ms, t_parse *parse);
+void		builtin_echo(t_parse *parse);
+void		builtin_cd(t_ms *ms, t_parse *parse);
+void		builtin_exit(t_ms *ms, t_parse *parse);
 
 // error
 void		throw_error(char *cmd);

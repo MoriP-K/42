@@ -98,6 +98,11 @@ typedef struct s_cl
 	char		*path;
 }	t_cl;
 
+typedef struct s_envp
+{
+	char			**envp;
+}			t_envp;
+
 typedef struct s_ms
 {
 	char			**envp;

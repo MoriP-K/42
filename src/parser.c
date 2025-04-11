@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
 /*   Updated: 2025/04/11 00:01:13 by kmoriyam         ###   ########.fr       */

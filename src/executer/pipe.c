@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
 /*   Updated: 2025/04/08 23:43:37 by kmoriyam         ###   ########.fr       */
@@ -12,23 +12,22 @@
 
 #include "../../includes/minishell.h"
 
-void	exec_built_in(t_ms *ms, char *cmd)
+void	exec_built_in(t_ms *ms, t_parse *parse)
 {
-	(void)ms;
-	if (ft_strcmp(cmd, "pwd") == 0)
-		ft_pwd();
-	// else if (ft_strcmp(cmd, "cd") == 0)
-	// 	ft_cd(ms->parse);
-	// else if (ft_strcmp(cmd, "echo") == 0)
-	// 	ft_echo();
-	// else if (ft_strcmp(cmd, "export") == 0)
-	// 	ft_export();
-	// else if (ft_strcmp(cmd, "unset") == 0)
-	// 	ft_unset();
-	// else if (ft_strcmp(cmd, "env") == 0)
-	// 	ft_env();
-	// else if (ft_strcmp(cmd, "exit") == 0)
-	// 	ft_exit();
+	if (ft_strcmp(parse->cmd, "pwd") == 0)
+		builtin_pwd();
+	else if (ft_strcmp(parse->cmd, "cd") == 0)
+		builtin_cd(ms, parse);
+	else if (ft_strcmp(parse->cmd, "echo") == 0)
+		builtin_echo(parse);
+	else if (ft_strcmp(parse->cmd, "export") == 0)
+		builtin_export(ms, parse);
+	else if (ft_strcmp(parse->cmd, "unset") == 0)
+		builtin_unset(ms, parse);
+	else if (ft_strcmp(parse->cmd, "env") == 0)
+		builtin_env(ms);
+	else if (ft_strcmp(parse->cmd, "exit") == 0)
+		builtin_exit(ms, parse);
 }
 
 void	do_execve(t_ms *ms, t_parse *parse)

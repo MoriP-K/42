@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/04 19:57:02 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 21:21:40 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,11 @@ int	check_builtin_cmd(char *cmd)
 
 void	find_cmd(t_ms *ms, t_parse *parse)
 {
+	if (check_builtin_cmd(parse->cmd))
+	{
+		exec_built_in(ms, parse);
+		return;
+	}
 	if (ft_strchr(parse->cmd, '/'))
 	{
 		if (is_executable_file(parse->cmd))
