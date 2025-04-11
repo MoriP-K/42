@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:43:40 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 19:51:45 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 23:51:49 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	**envp_dup(char **envp)
 	char	**new_envp;
 
 	count = 0;
+	if (envp == NULL)
+		return (NULL);
 	while (envp[count])
 		count++;
 	new_envp = (char **)malloc(sizeof(char *) * (count + 1));
