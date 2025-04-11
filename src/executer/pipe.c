@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/08 23:43:37 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 21:57:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 			}
 		}
 		switch_fd(ms, fd, parse->infile, parse->outfile);
-		exec_built_in(ms, parse->cmd);
+		exec_built_in(ms, parse);
 		reset_fds(ms, fd);
 		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);
