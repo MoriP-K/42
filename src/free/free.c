@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/10 19:25:29 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 23:14:18 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	free_ms(t_ms *ms)
 {
 	free_parser(ms->parse);
-	free_env(&(ms->env));
 	free_fd(&(ms->fd), &(ms->cl));
 	free_proc(&(ms->proc));
 }

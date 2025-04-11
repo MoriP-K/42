@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:36:54 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 23:26:36 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # endif
 
 // initialize
-void		init_ms(t_ms *ms, char *envp[], char *line);
+void		init_ms(t_ms *ms, char *envp[]);
 void		init_lexer(t_token **token, char *line);
 void		init_parser(t_parse **parse, t_token *token);
 void		init_env(t_env **env, char *envp[]);
