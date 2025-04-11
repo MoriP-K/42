@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 16:19:42 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/10 22:38:31 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ void	init_fd(t_fd *fd, t_cl *cl)
 	}
 	fd->infile = -1;
 	fd->outfile = - 1;
+	fd->tmp_in = -1;
+	fd->tmp_out = -1;
 	i = 0;
 	while (i < cl->cmd_count)
 	{
@@ -84,6 +86,12 @@ void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 void	init_lexer(t_token **token, char *line)
 {
 	*token = tokenizer(line);
+	// t_token *tmp = *token;
+	// while (tmp)
+	// {
+	// 	printf("tmp->word: %s\n", tmp->word);
+	// 	tmp = tmp->next;
+	// }
 	free(line);
 }
 
@@ -98,22 +106,20 @@ void	init_parser(t_parse **parse, t_token *token)
 	{
 		//i = 0;
 		// if ((*parse)->cmd != NULL)
-		// 	printf("cmd :%s\n", (*parse)->cmd);
+		// 	printf("cmd: %s\n", (*parse)->cmd);
 		// if ((*parse)->args != NULL)
 		// {
 		// 	while ((*parse)->args[i])
 		// 	{
-		// 		printf("args[%d] :%s\n", i, (*parse)->args[i]);
+		// 		printf("args[%d]: %s\n", i, (*parse)->args[i]);
 		// 		i++;
 		// 	}
 		// 	write(1, "\n", 1);
 		// }
-		first_parse->infile = NULL;
-		first_parse->outfile = NULL;
 		if ((*parse)->infile != NULL)
-			printf("infile :%s\n", (*parse)->infile);
+			printf("infile: %s\n", (*parse)->infile);
 		if ((*parse)->outfile != NULL)
-			printf("outfile :%s\n", (*parse)->outfile);
+			printf("outfile: %s\n", (*parse)->outfile);
 		*parse = (*parse)->next;
 	}
 	*parse = first_parse;

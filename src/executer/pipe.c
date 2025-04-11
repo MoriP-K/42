@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:40:13 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 21:57:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,10 @@ void	switch_fd(t_ms *ms, t_fd *fd, char *infile, char *outfile)
 	}
 	if (outfile)
 	{
-		fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (ms->parse->append)
+			fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			fd->outfile = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd->outfile < 0)
 		{
 			throw_error("open outfile error");
@@ -126,59 +129,59 @@ void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 	close_fds(ms, &(ms->fd), index);
 }
 
-void    reset_fds(t_ms *ms , t_fd *fd)
+void	reset_fds(t_ms *ms , t_fd *fd)
 {
-    if (fd->tmp_in >= 0)
-    {
-        if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
-        {
-            throw_error("dup2 infile");
-            free_ms(ms);
-        }
-    }
-    if (fd->tmp_out >= 0)
-    {
-        if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
-        {
-            throw_error("dup2 outfile");
-            free_ms(ms);
-        }
-    }
+	if (fd->tmp_in >= 0)
+	{
+		if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
+		{
+			throw_error("dup2 infile");
+			free_ms(ms);
+		}
+	}
+	if (fd->tmp_out >= 0)
+	{
+		if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
+		{
+			throw_error("dup2 outfile");
+			free_ms(ms);
+		}
+	}
 }
 
-int    is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
+int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 {
-    (void)fd;
-    if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
-    {
-        write(1, "builtin\n", 8);
-        if (parse->infile)
-        {
-            fd->tmp_in = dup(STDIN_FILENO);
-            if (dup(STDIN_FILENO) == -1)
-            {
-                throw_error("dup");
-                free_ms(ms);
-                exit(EXIT_FAILURE);
-            }
-        }
-        if (parse->outfile)
-        {
-            fd->tmp_out = dup(STDOUT_FILENO);
-            if (dup(STDOUT_FILENO) == -1)
-            {
-                throw_error("dup");
-                free_ms(ms);
-                exit(EXIT_FAILURE);
-            }
-        }
-        switch_fd(ms, fd, parse->infile, parse->outfile);
-        exec_built_in(ms, parse);
-        reset_fds(ms, fd);
-        close_all_fds(fd, ms->cl.cmd_count);
-        return (1);
-    }
-    return (0);
+	(void)fd;
+	if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
+	{
+		write(1, "builtin\n", 8);
+		if (parse->infile)
+		{
+			fd->tmp_in = dup(STDIN_FILENO);
+			if (dup(STDIN_FILENO) == -1)
+			{
+				throw_error("dup");
+				free_ms(ms);
+				exit(EXIT_FAILURE);
+			}
+		}
+		if (parse->outfile)
+		{
+			fd->tmp_out = dup(STDOUT_FILENO);
+			if (dup(STDOUT_FILENO) == -1)
+			{
+				throw_error("dup");
+				free_ms(ms);
+				exit(EXIT_FAILURE);
+			}
+		}
+		switch_fd(ms, fd, parse->infile, parse->outfile);
+		exec_built_in(ms, parse);
+		reset_fds(ms, fd);
+		close_all_fds(fd, ms->cl.cmd_count);
+		return (1);
+	}
+	return (0);
 }
 
 void	do_exec(t_ms *ms, t_parse *parse)

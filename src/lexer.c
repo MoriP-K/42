@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/03/30 16:45:03 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/10 22:32:14 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ t_kinds	get_kinds(char *word)
 		kind = TK_EOF;
 	else if (word[0] == ' ')
 		kind = TK_SPACE;
+	else if (word[0] == '<') 
+		kind = TK_IN_REDIRECT;
+	else if (word[0] == '>')
+		kind = TK_OUT_REDIRECT;
 	else if (is_meta_char(word[0]))
 		kind = TK_META;
 	else
@@ -39,7 +43,7 @@ void	add_word_list(t_token *first_token, char *word)
 	new_token->single_quote = 0;
 	new_token->next = NULL;
 	token = first_token;
-	while (token->next != NULL)
+	while (token->next)
 		token = token->next;
 	token->next = new_token;
 }
@@ -69,20 +73,23 @@ t_token	*combine_redirect(t_token *token)
 	first_token = token;
 	while (token->kinds != TK_EOF)
 	{
-		if (token->kinds == TK_META && (token->word[0] == '>' 
-				|| token->word[0] == '<'))
+		if ((token->kinds == TK_IN_REDIRECT && token->next->kinds == TK_IN_REDIRECT) 
+			|| (token->kinds == TK_OUT_REDIRECT && token->next->kinds == TK_OUT_REDIRECT))
 		{
-			if (token->next->kinds == TK_META 
-				&& token->word[0] == token->next->word[0])
+			temp = token->word;
+			temp2 = token->next;
+			token->word = ft_strjoin(token->word, token->next->word);
+			if (token->kinds == TK_IN_REDIRECT)
+				token->kinds = TK_HEREDOC;
+			else if (token->kinds == TK_OUT_REDIRECT)
 			{
-				temp = token->word;
-				temp2 = token->next;
-				token->word = ft_strjoin(token->word, token->next->word);
-				free(temp);
-				free(token->next->word);
-				token->next = token->next->next;
-				free(temp2);
+				write(1, "A\n", 2);
+				token->kinds = TK_APPEND;
 			}
+			free(temp);
+			free(token->next->word);
+			token->next = token->next->next;
+			free(temp2);
 		}
 		token = token->next;
 	}

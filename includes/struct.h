@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:19:03 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/08 23:26:51 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,11 @@ typedef enum s_kinds
 	TK_META = 1,
 	TK_WORD = 2,
 	TK_SPACE = 3,
-	TK_EOF = 4,
+	TK_IN_REDIRECT = 4,
+	TK_OUT_REDIRECT = 5,
+	TK_HEREDOC = 6,
+	TK_APPEND = 7,
+	TK_EOF = 8,
 }	t_kinds;
 
 typedef enum s_timing {
@@ -61,6 +65,8 @@ typedef struct s_parse
 	char			**args;
 	char			*infile;
 	char			*outfile;
+	char			*delimiter;
+	int				append;
 	struct s_parse	*next;
 }	t_parse;
 
