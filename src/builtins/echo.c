@@ -3,14 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:05:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 01:22:57 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:08:50 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	is_n_option(char *arg)
+{
+	int	i = 1;
+	
+	if (arg[0] != '-')
+		return(0);
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return(0);
+		i++;
+	}
+	return(1);
+}
 
 void	builtin_echo(t_parse *parse)
 {
@@ -24,15 +39,18 @@ void	builtin_echo(t_parse *parse)
 		write(1, "\n", 1);
 		return;
 	}
-	if (parse->args[1] && string_compare(parse->args[1], "-n"))
+	while (parse->args[i])
 	{
-		newline = 0;
+		if (is_n_option(parse->args[i]))
+			newline = 0;
+		else
+			break;
 		i++;
 	}
 	while (parse->args[i])
 	{
 		write(1, parse->args[i], ft_strlen(parse->args[i]));
-		if (parse->next != NULL)
+		if (parse->args[i + 1] != NULL)
 			write(1, " ", 1);
 		i++;
 	}

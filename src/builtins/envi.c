@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   envi.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:42:16 by masa              #+#    #+#             */
-/*   Updated: 2025/04/10 16:14:09 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:24:45 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	builtin_env(t_ms ms)
+void	builtin_env(t_ms *ms)
 {
 	t_env	*env;
 	
-	env = ms.env;
+	env = ms->env;
 	while (env != NULL)
 	{
 		ft_putstr_fd(env->key, 1);

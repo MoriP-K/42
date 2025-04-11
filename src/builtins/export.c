@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 00:47:13 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 20:39:37 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,16 @@ int	split_key_value(char *arg, char **out_key, char **out_value)
 void	free_old_envp(char **envp)
 {
 	int	i;
+	int	count;
 
 	i = 0;
 	if (!envp)
 		return;
-	while (envp[i])
+	count = 0;
+	while (envp[i++])
+		count++;
+	i = 0;
+	while (envp[i] && i < count)
 		free(envp[i++]);
 	free(envp);
 }
@@ -92,16 +97,20 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 		{
 			while (ms->envp && ms->envp[count])
 				count++;
+			printf("count1 %d\n", count);
 			new_envp = (char **)malloc(sizeof(char *) * (count + 2));
 			count = 0;
 			while (ms->envp && ms->envp[count])
 			{
+				write(1, "Z\n", 2);
 				new_envp[count] = ft_strdup(ms->envp[count]);
+				write(1, "P\n", 2);
 				count++;
 			}
 			free_old_envp(ms->envp);
 			new_envp[count] = parse->args[i];
 			new_envp[count + 1] = NULL;
+			printf("count2 %d\n", count);
 			ms->envp = new_envp;
 		}
 		else

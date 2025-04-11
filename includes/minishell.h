@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 13:56:25 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:36:54 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # endif
 
 // initialize
-void		init_ms(t_ms *ms, char *envp[], char *line, int is_first_init);
+void		init_ms(t_ms *ms, char *envp[], char *line);
 void		init_lexer(t_token **token, char *line);
 void		init_parser(t_parse **parse, t_token *token);
 void		init_env(t_env **env, char *envp[]);
@@ -46,7 +46,6 @@ void		init_signal();
 
 // utils
 char		*ft_strndup(const char *start, const char *end);
-int			string_compare(char *s1, char *s2);
 
 // env
 void		add_env_lst(t_env **node, t_env *new_env);
@@ -76,6 +75,7 @@ char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
+void		exec_built_in(t_ms *ms, t_parse *parse);
 
 
 // free
@@ -88,7 +88,7 @@ void		free_proc(t_proc *proc);
 
 // builtins
 void		builtin_pwd(void);
-void		builtin_env(t_ms ms);
+void		builtin_env(t_ms *ms);
 void		builtin_export(t_ms *ms, t_parse *parse);
 void		builtin_unset(t_ms *ms, t_parse *parse);
 void		builtin_echo(t_parse *parse);

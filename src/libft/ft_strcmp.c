@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:25:32 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 21:45:08 by motomo           ###   ########.fr       */
+/*   Created: 2025/04/11 21:36:12 by motomo            #+#    #+#             */
+/*   Updated: 2025/04/11 21:36:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-void	builtin_pwd()
+int    ft_strcmp(char *s1, char *s2)
 {
-	char	*cwd;
-	
-	cwd = getcwd(NULL, 0);
-	if (cwd != NULL)
-	{
-		ft_putstr_fd(cwd, 1);
-		write(1, "\n", 1);
-		free(cwd);
-	}
-	else
-		perror("pwd");
+    int i;
+
+    i = 0;
+    while (s1[i] && s2[i] && s1[i] == s2[i])
+        i++;
+    return (s1[i] - s2[i]);
 }

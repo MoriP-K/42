@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 01:18:50 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:37:03 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*find_value(t_env *env, char *key)
 {
 	while (env)
 	{
-		if (string_compare(env->key, key))
+		if (ft_strcmp(env->key, key))
 			return (env->value);
 		env = env->next;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/10 21:01:56 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 16:19:42 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void	init_env(t_env **env, char *envp[])
 {
 	int		i;
 	t_env	*new_env;
-
+	
 	i = 0;
 	*env = NULL;
 	while (envp[i])

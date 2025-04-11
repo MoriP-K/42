@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 14:01:37 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:42:22 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,12 @@ void	throw_error(char *cmd)
 	exit(EXIT_FAILURE);
 }
 
-void	init_ms(t_ms *ms, char *envp[], char *line, int is_first_init)
+void	init_ms(t_ms *ms, char *envp[], char *line)
 {
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
-	if (is_first_init)
-		ms->envp = envp_dup(envp);
-	else
-		ms->envp = envp;
+	ms->envp = envp_dup(envp);
 	init_lexer(&(ms->token), line);
 	if (!ms->token)
 		return;
@@ -51,14 +48,14 @@ void	wait_child_process(t_proc *proc, size_t cmd_count)
 
 int main(int ac, char *av[], char *envp[])
 {
-	t_ms		ms;
-	char 		*line;
-	static char	**new_envp;
-	static int	is_first_init = 1;
+	t_ms	ms;
+	char 	*line;
+	char	**new_envp;
 
 	(void)ac;
 	(void)av;
 	init_signal();
+	new_envp = envp_dup(envp);
 	while (1)
 	{
 		line = readline("minishell > ");
@@ -67,20 +64,17 @@ int main(int ac, char *av[], char *envp[])
 		if (*line == '\0')
 			continue;
 		add_history(line);
-		if (is_first_init)
-		{
-			init_ms(&ms, envp, line, is_first_init);
-			is_first_init = 0;
-		}
-		else
-			init_ms(&ms, new_envp, line, is_first_init);
+		init_ms(&ms, new_envp, line);
+		if (ms.parse->outfile != NULL)
+			printf("test\n");
+		free_old_envp(new_envp);
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
 		do_exec(&ms, ms.parse);
 		wait_child_process(&(ms).proc, ms.cl.cmd_count);
 		// free_parser(ms.parse);
 		new_envp = envp_dup(ms.envp);
-		//free_old_envp(ms.envp); freeすると２回目以降壊れる
+		free_old_envp(ms.envp);
 		free_ms(&ms);
 	}
 	if (new_envp != NULL)

@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 18:18:47 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 21:19:03 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ typedef struct s_fd
 {
 	int				infile;
 	int				outfile;
+	int				tmp_in;
+	int				tmp_out;
 	int				**pipe;
 }	t_fd;
 
@@ -89,6 +91,11 @@ typedef struct s_cl
 	size_t		cmd_count;
 	char		*path;
 }	t_cl;
+
+typedef struct s_envp
+{
+	char			**envp;
+}			t_envp;
 
 typedef struct s_ms
 {

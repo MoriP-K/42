@@ -3,28 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 21:17:44 by masa              #+#    #+#             */
-/*   Updated: 2025/04/10 21:59:52 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:37:18 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	string_compare(char *s1, char *s2)
-{
-	while (*s1 && *s2)
-	{
-		if (*s1 != *s2)
-			return (0);
-		s1++;
-		s2++;
-	}
-	if (*s1 != *s2)
-		return (0);
-	return (1);
-}
+// int	string_compare(char *s1, char *s2)
+// {
+// 	while (*s1 && *s2)
+// 	{
+// 		if (*s1 != *s2)
+// 			return (0);
+// 		s1++;
+// 		s2++;
+// 	}
+// 	if (*s1 != *s2)
+// 		return (0);
+// 	return (1);
+// }
 
 int	find_key_index(char *key, t_env	*env)
 {
@@ -33,7 +33,7 @@ int	find_key_index(char *key, t_env	*env)
 	count = 0;
 	while (env)
 	{
-		if (string_compare(env->key, key))
+		if (ft_strcmp(env->key, key))
 			return(count);
 		count++;
 		env = env->next;
