@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/31 00:24:44 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/11 21:42:22 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ void	init_ms(t_ms *ms, char *envp[], char *line)
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
-	ms->envp = envp;
+	ms->envp = envp_dup(envp);
 	init_lexer(&(ms->token), line);
 	if (!ms->token)
 		return;
 	init_parser(&(ms->parse), ms->token);
 	if (!ms->parse)
 		return;
-	init_env(&(ms->env), envp);
+	init_env(&(ms->env), ms->envp);
 	init_exec(ms, ms->parse, &(ms->cl));
 }
 
@@ -49,11 +49,13 @@ void	wait_child_process(t_proc *proc, size_t cmd_count)
 int main(int ac, char *av[], char *envp[])
 {
 	t_ms	ms;
-	char *line;
+	char 	*line;
+	char	**new_envp;
 
 	(void)ac;
 	(void)av;
 	init_signal();
+	new_envp = envp_dup(envp);
 	while (1)
 	{
 		line = readline("minishell > ");
@@ -62,14 +64,21 @@ int main(int ac, char *av[], char *envp[])
 		if (*line == '\0')
 			continue;
 		add_history(line);
-		init_ms(&ms, envp, line);
+		init_ms(&ms, new_envp, line);
+		if (ms.parse->outfile != NULL)
+			printf("test\n");
+		free_old_envp(new_envp);
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
 		do_exec(&ms, ms.parse);
 		wait_child_process(&(ms).proc, ms.cl.cmd_count);
 		// free_parser(ms.parse);
+		new_envp = envp_dup(ms.envp);
+		free_old_envp(ms.envp);
 		free_ms(&ms);
 	}
+	if (new_envp != NULL)
+		free_old_envp(new_envp);
 	write(1, "exit\n", 5);
 	return (0);
 }

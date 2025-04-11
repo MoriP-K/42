@@ -22,7 +22,7 @@ SRC := main.c \
 	pipe.c close_fd.c cmd_path.c \
 	free.c \
 	init.c \
-	pwd.c \
+	pwd.c envi.c export.c export_utils.c unset.c echo.c cd.c exit.c \
 	env.c syntax_error_handler.c signal_handler.c \
 
 OBJDIR := ./obj
@@ -37,7 +37,7 @@ vpath %.c ./src: \
 ./src/executer: \
 ./src/free: \
 ./src/initialize: \
-./src/built-in: \
+./src/builtins: \
 
 
 ifeq ($(DEBUG), true)
