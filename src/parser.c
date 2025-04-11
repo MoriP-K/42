@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/11 00:01:13 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 21:59:49 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,42 +92,6 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 		if (token && token->kinds != TK_EOF)
 			token = token->next;
 	}
-	// while (token && token->kinds != TK_EOF && !(token->kinds == TK_META && token->word[0] == '|'))
-	// {
-	// 	// printf("word: %s, kinds: %d\n", token->word, token->kinds);
-	// 	if (token->kinds != TK_META && token->kinds != TK_IN_REDIRECT && token->kinds != TK_OUT_REDIRECT)
-	// 		new_parse->cmd = ft_strdup(token->word);
-	// 	else if ((token->kinds == TK_OUT_REDIRECT || token->kinds == TK_APPEND) && token->next)
-	// 	{
-	// 		write(1, "B\n", 2);
-	// 		new_parse->outfile = ft_strdup(token->next->word);
-	// 		if (token->kinds == TK_APPEND)
-	// 		{
-	// 			printf("append\n");
-	// 			new_parse->append = 1;
-	// 		}
-	// 		token = token->next;
-	// 	}
-	// 	else if (token->word[0] == '<')
-	// 	{
-	// 		new_parse->infile = ft_strdup(token->next->word);
-	// 		token = token->next;
-	// 	}
-	// 	if (token->kinds != TK_EOF)
-	// 		token = token->next;
-	// 	while (new_parse->cmd != NULL && token->kinds == TK_WORD)
-	// 	{
-	// 		new_parse->args[i++] = ft_strdup(token->word);
-	// 		token = token->next;
-	// 	}
-	// }
-	// if (new_parse->cmd != NULL)
-	// 	new_parse->args[0] = ft_strdup(new_parse->cmd);
-	// else
-	// {
-	// 	free(new_parse->args);
-	// 	new_parse->args = NULL;
-	// }
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;
 	return(new_parse);
