@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/04 19:56:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:01:56 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,13 @@ void	init_lexer(t_token **token, char *line)
 void	init_parser(t_parse **parse, t_token *token)
 {
 	t_parse *first_parse;
-	int		i;
+	//int		i;
 
 	*parse = do_parse(token);
 	first_parse = *parse;
 	while (*parse)
 	{
-		i = 0;
+		//i = 0;
 		// if ((*parse)->cmd != NULL)
 		// 	printf("cmd :%s\n", (*parse)->cmd);
 		// if ((*parse)->args != NULL)
