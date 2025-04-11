@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 20:39:37 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 22:41:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,7 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 			count = 0;
 			while (ms->envp && ms->envp[count])
 			{
-				write(1, "Z\n", 2);
 				new_envp[count] = ft_strdup(ms->envp[count]);
-				write(1, "P\n", 2);
 				count++;
 			}
 			free_old_envp(ms->envp);

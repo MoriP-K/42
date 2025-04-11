@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:57:22 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 22:19:51 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,11 @@ void	exec_built_in(t_ms *ms, t_parse *parse)
 
 void	do_execve(t_ms *ms, t_parse *parse)
 {
+	if (check_builtin_cmd(parse->cmd))
+	{
+		exec_built_in(ms, parse);
+		return;
+	}
 	execve(ms->cl.path, parse->args, ms->envp);
 	perror("execve");
 	exit(EXIT_FAILURE);

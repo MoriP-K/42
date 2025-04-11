@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:42:22 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/11 22:47:32 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,6 @@ int main(int ac, char *av[], char *envp[])
 			continue;
 		add_history(line);
 		init_ms(&ms, new_envp, line);
-		if (ms.parse->outfile != NULL)
-			printf("test\n");
 		free_old_envp(new_envp);
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
