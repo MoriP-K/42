@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:49:51 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 19:42:35 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,16 @@ int main(int ac, char *av[], char *envp[])
 		add_history(line);
 		init_lexer(&ms, &(ms.token), line);
 		if (!ms.token)
-			return (0);
+		{
+			free_ms(&ms);
+			continue;
+		}
 		init_parser(&(ms.parse), ms.token);
 		if (!ms.parse)
-			return (0);
+		{
+			free_ms(&ms);
+			continue;
+		}
 		init_exec(&ms, ms.parse, &(ms.cl));
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;

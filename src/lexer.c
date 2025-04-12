@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/04/12 12:47:21 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 20:23:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	add_word_list(t_token *first_token, char *word)
 	new_token->word = word;
 	new_token->len = ft_strlen(word);
 	new_token->single_quote = 0;
+	new_token->quote = Q_NONE;
 	new_token->next = NULL;
 	token = first_token;
 	while (token->next)
@@ -57,6 +58,7 @@ void	AddEOF(t_token *first_token)
 	EOF_token->kinds = TK_EOF;
 	EOF_token->word = "";
 	EOF_token->len = 0;
+	EOF_token->quote = Q_NONE;
 	EOF_token->next = NULL;
 	token = first_token;
 	while (token->next != NULL)
@@ -117,8 +119,8 @@ t_token	*tokenizer(t_ms *ms, char *line)
 	first_token = combine_redirect(first_token);
 	if (!check_quote_count(first_token))
 		return(NULL);
+	expand_token(ms, first_token);	
 	first_token = integrate_quotes(first_token);
-	expand_token(ms, first_token);
 	first_token = culling_space(first_token);
 	if (!syntax_error_handler(first_token))
 		return(NULL);
