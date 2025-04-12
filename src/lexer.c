@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/04/10 22:32:14 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:47:21 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ t_token	*combine_redirect(t_token *token)
 	return (first_token);
 }
 
-t_token	*tokenizer(char *line)
+t_token	*tokenizer(t_ms *ms, char *line)
 {
     char	**words;
 	t_token	*first_token;
@@ -118,7 +118,7 @@ t_token	*tokenizer(char *line)
 	if (!check_quote_count(first_token))
 		return(NULL);
 	first_token = integrate_quotes(first_token);
-	expand_token(first_token);
+	expand_token(ms, first_token);
 	first_token = culling_space(first_token);
 	if (!syntax_error_handler(first_token))
 		return(NULL);

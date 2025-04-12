@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:27:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 12:49:38 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 // initialize
 void		init_ms(t_ms *ms, char *envp[]);
-void		init_lexer(t_token **token, char *line);
+void		init_lexer(t_ms *ms, t_token **token, char *line);
 void		init_parser(t_parse **parse, t_token *token);
 void		init_env(t_env **env, char *envp[]);
 void		init_exec(t_ms *ms, t_parse *parse, t_cl *cl);
@@ -29,17 +29,17 @@ void		init_proc(t_proc *proc, t_cl *cl);
 void		init_cl(t_cl *cl, t_parse *parse);
 
 
-t_token		*tokenizer(char *line);
+t_token		*tokenizer(t_ms *ms, char *line);
 int			check_quote_count(t_token *token);
 int			syntax_error_handler(t_token *token);
-void		expand_token(t_token *token);
+//void		expand_token(t_token *token);
 int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
-void		expand_token(t_token *token);
+void		expand_token(t_ms *ms, t_token *token);
 
 // signal
 void		init_signal();

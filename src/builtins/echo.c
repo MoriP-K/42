@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:05:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/12 12:43:55 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 12:54:45 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	builtin_echo(t_parse *parse)
 	}
 	while (parse->args[i])
 	{
-		printf("test %s\n", parse->args[i]);
 		write(1, parse->args[i], ft_strlen(parse->args[i]));
 		if (parse->args[i + 1] != NULL)
 			write(1, " ", 1);

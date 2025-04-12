@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/10 22:38:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:49:28 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 	init_fd(&(ms->fd), cl);
 }
 
-void	init_lexer(t_token **token, char *line)
+void	init_lexer(t_ms *ms, t_token **token, char *line)
 {
-	*token = tokenizer(line);
+	*token = tokenizer(ms, line);
 	// t_token *tmp = *token;
 	// while (tmp)
 	// {

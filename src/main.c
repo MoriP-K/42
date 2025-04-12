@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:38:21 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 12:49:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int main(int ac, char *av[], char *envp[])
 		if (*line == '\0')
 			continue;
 		add_history(line);
-		init_lexer(&(ms.token), line);
+		init_lexer(&ms, &(ms.token), line);
 		if (!ms.token)
 			return (0);
 		init_parser(&(ms.parse), ms.token);

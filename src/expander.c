@@ -6,13 +6,24 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 18:52:45 by motomo            #+#    #+#             */
-/*   Updated: 2025/03/17 21:51:43 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/12 12:54:09 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*expand_join(char *word)
+char	*get_value(t_env *env, char *key)
+{
+	while (env)
+	{
+		if (ft_strcmp(env->key, key) == 0)
+			return (env->value);
+		env = env->next;
+	}
+	return (NULL);
+}
+
+char	*expand_join(t_ms *ms, char *word)
 {
 	char	*first_word;
 	char	*variable;
@@ -35,7 +46,7 @@ char	*expand_join(char *word)
 	while(*word != '$' && *word)
 		word++;
 	variable = ft_strndup(start, word);
-	env = getenv(variable);
+	env = get_value(ms->env, variable);
 	free(variable);
 	if (*word == '$')
 	{
@@ -61,7 +72,7 @@ char	*expand_join(char *word)
 	return (result);
 }
 
-t_token	*expand_env(t_token *token)
+t_token	*expand_env(t_ms *ms, t_token *token)
 {
 	int		i;
 	int		has_dollor;
@@ -74,7 +85,7 @@ t_token	*expand_env(t_token *token)
 	{
 		if (token->word[i] == '$' && token->word[i + 1])
 		{
-			token->word = expand_join(token->word);
+			token->word = expand_join(ms, token->word);
 			i = -1;
 			has_dollor = 1;
 		}
@@ -85,12 +96,12 @@ t_token	*expand_env(t_token *token)
 	return (token);
 }
 
-void	expand_token(t_token *token)
+void	expand_token(t_ms *ms, t_token *token)
 {
 	while (token->kinds != TK_EOF)
 	{
 		if (token->kinds == TK_WORD && token->single_quote != 1)
-			token = expand_env(token);
+			token = expand_env(ms, token);
 		token = token->next;
 	}
 }
