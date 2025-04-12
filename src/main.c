@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 22:47:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 23:24:59 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,13 @@ void	throw_error(char *cmd)
 	exit(EXIT_FAILURE);
 }
 
-void	init_ms(t_ms *ms, char *envp[], char *line)
+void	init_ms(t_ms *ms, char *envp[])
 {
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
 	ms->envp = envp_dup(envp);
-	init_lexer(&(ms->token), line);
-	if (!ms->token)
-		return;
-	init_parser(&(ms->parse), ms->token);
-	if (!ms->parse)
-		return;
 	init_env(&(ms->env), ms->envp);
-	init_exec(ms, ms->parse, &(ms->cl));
 }
 
 void	wait_child_process(t_proc *proc, size_t cmd_count)
@@ -50,12 +43,11 @@ int main(int ac, char *av[], char *envp[])
 {
 	t_ms	ms;
 	char 	*line;
-	char	**new_envp;
 
 	(void)ac;
 	(void)av;
+	init_ms(&ms, envp);
 	init_signal();
-	new_envp = envp_dup(envp);
 	while (1)
 	{
 		line = readline("minishell > ");
@@ -64,19 +56,20 @@ int main(int ac, char *av[], char *envp[])
 		if (*line == '\0')
 			continue;
 		add_history(line);
-		init_ms(&ms, new_envp, line);
-		free_old_envp(new_envp);
+		init_lexer(&(ms.token), line);
+		if (!ms.token)
+			return (0);
+		init_parser(&(ms.parse), ms.token);
+		if (!ms.parse)
+			return (0);
+		init_exec(&ms, ms.parse, &(ms.cl));
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
 		do_exec(&ms, ms.parse);
 		wait_child_process(&(ms).proc, ms.cl.cmd_count);
-		// free_parser(ms.parse);
-		new_envp = envp_dup(ms.envp);
-		free_old_envp(ms.envp);
 		free_ms(&ms);
 	}
-	if (new_envp != NULL)
-		free_old_envp(new_envp);
+	free_env(&(ms.env));
 	write(1, "exit\n", 5);
 	return (0);
 }

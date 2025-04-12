@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 22:41:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/11 23:26:26 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 				count++;
 			}
 			free_old_envp(ms->envp);
-			new_envp[count] = parse->args[i];
+			new_envp[count] = ft_strdup(parse->args[i]);
 			new_envp[count + 1] = NULL;
 			printf("count2 %d\n", count);
 			ms->envp = new_envp;
@@ -114,7 +114,7 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 		else
 		{
 			free(ms->envp[index]);
-			ms->envp[index] = parse->args[i];
+			ms->envp[index] = ft_strdup(parse->args[i]);
 		}
 		free(key);
 		free(value);
