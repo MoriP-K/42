@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 21:57:22 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:27:06 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	exec_built_in(t_ms *ms, t_parse *parse)
+void	exec_built_in(t_ms *ms, t_parse *parse, size_t index)
 {
 	if (ft_strcmp(parse->cmd, "pwd") == 0)
-		builtin_pwd();
+		builtin_pwd(ms, index);
 	else if (ft_strcmp(parse->cmd, "cd") == 0)
 		builtin_cd(ms, parse);
 	else if (ft_strcmp(parse->cmd, "echo") == 0)
@@ -30,8 +30,13 @@ void	exec_built_in(t_ms *ms, t_parse *parse)
 		builtin_exit(ms, parse);
 }
 
-void	do_execve(t_ms *ms, t_parse *parse)
+void	do_execve(t_ms *ms, t_parse *parse, size_t index)
 {
+	if (check_builtin_cmd(parse->cmd))
+	{
+		exec_built_in(ms, parse, index);
+		return;
+	}
 	execve(ms->cl.path, parse->args, ms->envp);
 	perror("execve");
 	exit(EXIT_FAILURE);
@@ -149,7 +154,7 @@ void	reset_fds(t_ms *ms , t_fd *fd)
 	}
 }
 
-int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
+int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 {
 	(void)fd;
 	if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
@@ -176,7 +181,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 			}
 		}
 		switch_fd(ms, fd, parse->infile, parse->outfile);
-		exec_built_in(ms, parse);
+		exec_built_in(ms, parse, index);
 		reset_fds(ms, fd);
 		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);
@@ -184,12 +189,12 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	return (0);
 }
 
-void	do_exec(t_ms *ms, t_parse *parse)
+void	do_exec(t_ms *ms, t_parse *parse,int index)
 {
 	size_t	i;
 	t_parse	*current_parse;
 
-	if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
+	if (is_only_builtin_cmd(ms, parse, &(ms->fd), index))
 		return ;
 	current_parse = parse;
 	i = 0;
@@ -205,7 +210,7 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			find_cmd(ms, current_parse);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
-			do_execve(ms, current_parse);
+			do_execve(ms, current_parse, i);
 		}
 		else
 		{

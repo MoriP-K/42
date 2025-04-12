@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 23:26:26 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:44:57 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 		{
 			while (ms->envp && ms->envp[count])
 				count++;
-			printf("count1 %d\n", count);
 			new_envp = (char **)malloc(sizeof(char *) * (count + 2));
 			count = 0;
 			while (ms->envp && ms->envp[count])
@@ -108,7 +107,6 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 			free_old_envp(ms->envp);
 			new_envp[count] = ft_strdup(parse->args[i]);
 			new_envp[count + 1] = NULL;
-			printf("count2 %d\n", count);
 			ms->envp = new_envp;
 		}
 		else

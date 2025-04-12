@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/11 23:26:36 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:27:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
 void		close_fds(t_ms *ms, t_fd *fd, size_t index);
 void		close_all_fds(t_fd *fd, int cmd_count);
 void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
-void		do_exec(t_ms *ms, t_parse *parse);
-void		do_execve(t_ms *ms, t_parse *parse);
+void		do_exec(t_ms *ms, t_parse *parse,int index);
+void		do_execve(t_ms *ms, t_parse *parse, size_t index);
 void		do_pipe(t_ms *ms, size_t index);
 void		fail_to_fork(t_ms *ms);
 void		find_cmd(t_ms *ms , t_parse *parse);
@@ -75,7 +75,7 @@ char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
-void		exec_built_in(t_ms *ms, t_parse *parse);
+void		exec_built_in(t_ms *ms, t_parse *parse, size_t index);
 
 
 // free
@@ -87,7 +87,7 @@ void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 
 // builtins
-void		builtin_pwd(void);
+void		builtin_pwd(t_ms *ms, size_t index);
 void		builtin_env(t_ms *ms);
 void		builtin_export(t_ms *ms, t_parse *parse);
 void		builtin_unset(t_ms *ms, t_parse *parse);
