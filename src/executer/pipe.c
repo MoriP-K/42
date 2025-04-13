@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/13 19:36:37 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:41:29 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,42 +99,55 @@ void	switch_fd(t_ms *ms, t_fd *fd, char *infile, char *outfile)
 
 void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 {
-	if (parse->infile || parse->outfile)
-		switch_fd(ms, fd, parse->infile, parse->outfile);
 	if (ms->cl.cmd_count > 1)
 	{
 		if (index == 0)
 		{
-			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
 			{
-				throw_error("dup2_a");
-				free_ms(ms);
+				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+				{
+					throw_error("dup2_a");
+					free_ms(ms);
+				}
+				fd->tmp_in = fd->pipe[index][1];
 			}
-			fd->tmp_in = fd->pipe[index][1];
 		}
 		else if (index == ms->cl.cmd_count - 1)
 		{
-			if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
 			{
-				throw_error("dup2_b");
-				free_ms(ms);
+				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+				{
+					throw_error("dup2_b");
+					free_ms(ms);
+				}
+				fd->tmp_out = fd->pipe[index - 1][0];
 			}
-			fd->tmp_out = fd->pipe[index - 1][0];
 		}
 		else
 		{
-			if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
-			{
-				throw_error("dup2_aa");
-				free_ms(ms);
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
+			{	
+				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+				{
+					throw_error("dup2_aa");
+					free_ms(ms);
+				}
+				fd->tmp_in = fd->pipe[index - 1][0];
+				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+				{
+					throw_error("dup2_bb");
+					free_ms(ms);
+				}
+				fd->tmp_out = fd->pipe[index][1];
 			}
-			fd->tmp_in = fd->pipe[index - 1][0];
-			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
-			{
-				throw_error("dup2_bb");
-				free_ms(ms);
-			}
-			fd->tmp_out = fd->pipe[index][1];
 		}
 	}
 	close_fds(ms, &(ms->fd), index);
@@ -219,6 +232,9 @@ void	do_exec(t_ms *ms, t_parse *parse)
 		else if (ms->proc.id[i] == 0)
 		{
 			find_cmd(ms, current_parse);
+			// int j = -1;
+			// while (ms->fd.pipe[++j])
+			// 	printf("pfd[0]: %d, pfd[1]: %d\n", ms->fd.pipe[j][0], ms->fd.pipe[j][1]);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
 			do_execve(ms, current_parse);

@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:40:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 21:39:36 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:46:04 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,14 @@ void	close_fds(t_ms *ms, t_fd *fd, size_t index)
 		if (index == 0)
 		{
 			close(fd->pipe[index][1]);
+			if (fd->infile != -1)
+				close(fd->infile);
 		}
 		else if (index == ms->cl.cmd_count - 1)
 		{
 			close(fd->pipe[index - 1][0]);
+			if (fd->outfile != -1)
+				close(fd->outfile);
 		}
 		else
 		{	
@@ -36,16 +40,16 @@ void	close_all_fds(t_fd *fd, int cmd_count)
 {
 	int	i;
 
-	if (fd->infile >= 0)
+	if (fd->infile != -1)
 		close(fd->infile);
-	if (fd->outfile >= 0)
+	if (fd->outfile != -1)
 		close(fd->outfile);
 	i = 0;
 	while (i < cmd_count - 1)
 	{
-		if (fd->pipe[i][0] >= 0)
+		if (fd->pipe[i][0] != -1)
 			close(fd->pipe[i][0]);
-		if (fd->pipe[i][1] >= 0)
+		if (fd->pipe[i][1] != -1)
 			close(fd->pipe[i][1]);
 		i++;
 	}
