@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 15:44:17 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:40:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
-int			exec_built_in(t_ms *ms, t_parse *parse, size_t index);
+int			exec_built_in(t_ms *ms, t_parse *parse);
 
 
 // free
@@ -88,7 +88,7 @@ void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 
 // builtins
-int			builtin_pwd(t_ms *ms, size_t index);
+int			builtin_pwd(void);
 int			builtin_env(t_ms *ms);
 int			builtin_export(t_ms *ms, t_parse *parse);
 int			builtin_unset(t_ms *ms, t_parse *parse);

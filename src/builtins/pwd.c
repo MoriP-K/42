@@ -6,17 +6,15 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:25:32 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 14:54:25 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:23:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	builtin_pwd(t_ms *ms, size_t index)
+int	builtin_pwd(void)
 {
 	char	*cwd;
-	(void)index;
-	(void)ms;
 	
 	cwd = getcwd(NULL, 0);
 	if (cwd != NULL)

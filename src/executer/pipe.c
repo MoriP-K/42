@@ -6,16 +6,16 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 15:46:41 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:41:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	exec_built_in(t_ms *ms, t_parse *parse, size_t index)
+int	exec_built_in(t_ms *ms, t_parse *parse)
 {
 	if (ft_strcmp(parse->cmd, "pwd") == 0)
-		return(builtin_pwd(ms, index));
+		return(builtin_pwd());
 	else if (ft_strcmp(parse->cmd, "cd") == 0)
 		return(builtin_cd(ms, parse));
 	else if (ft_strcmp(parse->cmd, "echo") == 0)
@@ -33,9 +33,10 @@ int	exec_built_in(t_ms *ms, t_parse *parse, size_t index)
 
 void	do_execve(t_ms *ms, t_parse *parse, size_t index)
 {
+	(void)index;
 	if (check_builtin_cmd(parse->cmd))
 	{
-		ms->exit_status = exec_built_in(ms, parse, index);
+		ms->exit_status = exec_built_in(ms, parse);
 		return;
 	}
 	execve(ms->cl.path, parse->args, ms->envp);
@@ -155,7 +156,7 @@ void	reset_fds(t_ms *ms , t_fd *fd)
 	}
 }
 
-int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
+int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 {
 	(void)fd;
 	if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
@@ -182,7 +183,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 			}
 		}
 		switch_fd(ms, fd, parse->infile, parse->outfile);
-		ms->exit_status = exec_built_in(ms, parse, index);
+		ms->exit_status = exec_built_in(ms, parse);
 		reset_fds(ms, fd);
 		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);
@@ -190,12 +191,13 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 	return (0);
 }
 
-void	do_exec(t_ms *ms, t_parse *parse,int index)
+void	do_exec(t_ms *ms, t_parse *parse, int index)
 {
 	size_t	i;
 	t_parse	*current_parse;
+	(void)index;
 
-	if (is_only_builtin_cmd(ms, parse, &(ms->fd), index))
+	if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
 		return ;
 	current_parse = parse;
 	i = 0;
