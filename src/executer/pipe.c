@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 15:00:35 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:46:41 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ void	do_exec(t_ms *ms, t_parse *parse,int index)
 		else if (ms->proc.id[i] == 0)
 		{
 			// if (handle_redirection(ms, parse))
+			signal(SIGINT, SIG_DFL);
 			find_cmd(ms, current_parse);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);

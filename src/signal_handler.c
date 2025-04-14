@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:17:29 by motomo            #+#    #+#             */
-/*   Updated: 2025/03/30 18:38:59 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:47:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ void	sigint_handler()
 	rl_redisplay();
 }
 
-void	init_signal()
+void	set_sigint_ign()
+{
+	signal(SIGINT, SIG_IGN);
+}
+
+void	set_sigint_redisplay()
 {
 	struct sigaction sa;
 	sa.sa_handler = sigint_handler;

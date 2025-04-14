@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 14:51:56 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:44:17 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ t_parse		*do_parse(t_token *token);
 void		expand_token(t_ms *ms, t_token *token);
 
 // signal
-void		init_signal();
+void		set_sigint_redisplay();
+void		set_sigint_ign();
 
 // utils
 char		*ft_strndup(const char *start, const char *end);

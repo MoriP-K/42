@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 15:24:51 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:49:18 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 		if (WIFEXITED(proc->status))
 			ms->exit_status = WEXITSTATUS(proc->status);
 		else if (WIFSIGNALED(proc->status))
+		{
+			write(1, "\n", 1);
 			ms->exit_status = 128 + WTERMSIG(proc->status);
+		}
 		i++;
 	}
 }
@@ -52,10 +55,11 @@ int main(int ac, char *av[], char *envp[])
 	(void)ac;
 	(void)av;
 	init_ms(&ms, envp);
-	init_signal();
 	while (1)
 	{
+		set_sigint_redisplay();
 		line = readline("minishell > ");
+		set_sigint_ign();
 		if (!line)
 			break;
 		if (*line == '\0')
