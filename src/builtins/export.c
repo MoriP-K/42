@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 18:04:11 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 18:28:01 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	find_env_index(char **envp, char *key)
 	return (-1);
 }
 
-int	split_key_value(char *arg, char **out_key, char **out_value)
+int	split_key_value(char *arg, char **out_key)
 {
 	char	*eq;
 	int		key_len;
@@ -36,14 +36,13 @@ int	split_key_value(char *arg, char **out_key, char **out_value)
 	eq = ft_strchr(arg, '=');
 	if (!eq)
 	{
-		out_key = NULL;
-		out_value = NULL;
+		*out_key = NULL;
+		return (0);
 	}
 	key_len = eq - arg;
 	if (key_len == 0)
 		return (0);
 	*out_key = ft_strndup(arg, arg + key_len);
-	*out_value = ft_strdup(eq + 1);
 	return (1);
 }
 
@@ -172,7 +171,6 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 	int 	count;
 	int		index;
 	char	*key;
-	char	*value;
 	char	**new_envp;
 
 	index = 0;
@@ -180,9 +178,10 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 	i = 1;
 	while (parse->args[i])
 	{
-		if (!split_key_value(parse->args[i], &key, &value))
+		if (!split_key_value(parse->args[i], &key))
 		{
-			return_value = error(parse->args[i]);
+			if (key != NULL)
+				return_value = error(parse->args[i]);
 			i++;
 			continue;
 		}
@@ -209,7 +208,6 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 			ms->envp[index] = ft_strdup(parse->args[i]);
 		}
 		free(key);
-		free(value);
 		i++;
 	}
 	if (i != 1)
