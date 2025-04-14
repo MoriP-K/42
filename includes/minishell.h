@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:20:13 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 23:06:38 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int			exec_built_in(t_ms *ms, t_parse *parse);
 
 // free
 void		free_ms(t_ms *ms);
+void		free_tokens(t_token *token);
 void		free_parser(t_parse *parse);
 void		free_array(char **array);
 void		free_fd(t_fd *fd, t_cl *cl);

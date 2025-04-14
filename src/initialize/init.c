@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:49:28 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 23:11:25 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ void	init_parser(t_parse **parse, t_token *token)
 	t_parse *first_parse;
 	//int		i;
 
+	if (!token)
+		return;
 	*parse = do_parse(token);
 	first_parse = *parse;
 	while (*parse)
