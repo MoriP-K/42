@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/08 23:26:51 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/14 14:35:02 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,13 @@ typedef enum s_kinds
 	TK_EOF = 8,
 }	t_kinds;
 
+typedef enum s_quote
+{
+	Q_NONE = 0,
+	Q_SINGLE = 1,
+	Q_DOUBLE = 2,
+}	t_quote;
+
 typedef enum s_timing {
 	NONE = 0,
 	INFILE = 1,
@@ -56,6 +63,7 @@ typedef struct s_token
 	char			*word;
 	size_t			len;
 	int				single_quote;
+	t_quote			quote;
 	struct s_token	*next;
 }	t_token;
 
@@ -109,6 +117,7 @@ typedef struct s_ms
 	t_token			*token;
 	t_parse			*parse;
 	t_env			*env;
+	int				exit_status;
 	t_fd			fd;
 	t_proc			proc;
 	t_cl			cl;

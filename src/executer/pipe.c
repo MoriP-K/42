@@ -3,45 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/13 21:41:29 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/14 21:28:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	exec_built_in(t_ms *ms, t_parse *parse)
+int	exec_built_in(t_ms *ms, t_parse *parse)
 {
 	if (ft_strcmp(parse->cmd, "pwd") == 0)
-		builtin_pwd();
+		return(builtin_pwd());
 	else if (ft_strcmp(parse->cmd, "cd") == 0)
-		builtin_cd(ms, parse);
+		return(builtin_cd(ms, parse));
 	else if (ft_strcmp(parse->cmd, "echo") == 0)
-		builtin_echo(parse);
+		return(builtin_echo(parse));
 	else if (ft_strcmp(parse->cmd, "export") == 0)
-		builtin_export(ms, parse);
+		return(builtin_export(ms, parse));
 	else if (ft_strcmp(parse->cmd, "unset") == 0)
-		builtin_unset(ms, parse);
+		return(builtin_unset(ms, parse));
 	else if (ft_strcmp(parse->cmd, "env") == 0)
-		builtin_env(ms);
+		return(builtin_env(ms));
 	else if (ft_strcmp(parse->cmd, "exit") == 0)
 		builtin_exit(ms, parse);
+	return (0);
 }
 
 void	do_execve(t_ms *ms, t_parse *parse)
 {
 	if (check_builtin_cmd(parse->cmd))
 	{
-		exec_built_in(ms, parse);
+		ms->exit_status = exec_built_in(ms, parse);
+		return;
 	}
-	else
-	{	
-		execve(ms->cl.path, parse->args, ms->envp);
-		perror("execve");
-		exit(EXIT_FAILURE);
-	}
+	execve(ms->cl.path, parse->args, ms->envp);
+	perror("execve");
+	exit(EXIT_FAILURE);
 }
 
 void	fail_to_fork(t_ms *ms)
@@ -205,8 +204,8 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 				exit(EXIT_FAILURE);
 			}
 		}
-		switch_fd(ms, fd, NULL, parse->outfile);
-		exec_built_in(ms, parse);
+		switch_fd(ms, fd, parse->infile, parse->outfile);
+		ms->exit_status = exec_built_in(ms, parse);
 		reset_fds(ms, fd);
 		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);
@@ -231,6 +230,8 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			fail_to_fork(ms);
 		else if (ms->proc.id[i] == 0)
 		{
+			// if (handle_redirection(ms, parse))
+			signal(SIGINT, SIG_DFL);
 			find_cmd(ms, current_parse);
 			// int j = -1;
 			// while (ms->fd.pipe[++j])

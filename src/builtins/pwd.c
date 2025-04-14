@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   envi.c                                             :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/10 15:42:16 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 14:44:26 by motomo           ###   ########.fr       */
+/*   Created: 2025/04/10 15:25:32 by masa              #+#    #+#             */
+/*   Updated: 2025/04/14 19:23:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	builtin_env(t_ms *ms)
+int	builtin_pwd(void)
 {
-	t_env	*env;
+	char	*cwd;
 	
-	env = ms->env;
-	while (env != NULL)
+	cwd = getcwd(NULL, 0);
+	if (cwd != NULL)
 	{
-		ft_putstr_fd(env->key, 1);
-		write(1, "=", 1);
-		ft_putstr_fd(env->value, 1);
+		ft_putstr_fd(cwd, 1);
 		write(1, "\n", 1);
-		env = env->next;
+		free(cwd);
 	}
-	return (0);
+	else
+	{
+		perror("pwd");
+		return (1);
+	}
+	return(0);
 }

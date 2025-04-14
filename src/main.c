@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/13 19:38:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/14 21:27:20 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,12 @@ void	init_ms(t_ms *ms, char *envp[])
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
+	ms->exit_status = 0;
 	ms->envp = envp_dup(envp);
 	init_env(&(ms->env), ms->envp);
 }
 
-void	wait_child_process(t_proc *proc, size_t cmd_count)
+void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 {
 	size_t	i;
 
@@ -36,6 +37,13 @@ void	wait_child_process(t_proc *proc, size_t cmd_count)
 	while (i < cmd_count)
 	{
 		waitpid(proc->id[i], &(proc)->status, 0);
+		if (WIFEXITED(proc->status))
+			ms->exit_status = WEXITSTATUS(proc->status);
+		else if (WIFSIGNALED(proc->status))
+		{
+			write(1, "\n", 1);
+			ms->exit_status = 128 + WTERMSIG(proc->status);
+		}
 		i++;
 	}
 }
@@ -47,22 +55,30 @@ int main(int ac, char *av[], char *envp[])
 
 	(void)ac;
 	(void)av;
+	signal(SIGQUIT, SIG_IGN);
 	init_ms(&ms, envp);
-	init_signal();
 	while (1)
 	{
+		set_sigint_redisplay();
 		line = readline("minishell > ");
+		set_sigint_ign();
 		if (!line)
 			break;
 		if (*line == '\0')
 			continue;
 		add_history(line);
-		init_lexer(&(ms.token), line);
+		init_lexer(&ms, &(ms.token), line);
 		if (!ms.token)
-			return (0);
+		{
+			free_ms(&ms);
+			continue;
+		}
 		init_parser(&(ms.parse), ms.token);
 		if (!ms.parse)
-			return (0);
+		{
+			free_ms(&ms);
+			continue;
+		}
 		init_exec(&ms, ms.parse, &(ms.cl));
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
@@ -71,6 +87,7 @@ int main(int ac, char *av[], char *envp[])
 		close_all_fds(&(ms.fd), ms.cl.cmd_count);
 		free_ms(&ms);
 	}
+	free_old_envp(ms.envp);
 	free_env(&(ms.env));
 	write(1, "exit\n", 5);
 	return (0);

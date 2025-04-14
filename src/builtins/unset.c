@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 21:17:44 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 21:37:18 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:10:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	find_key_index(char *key, t_env	*env)
 	return (-1);
 }
 
-void	builtin_unset(t_ms *ms, t_parse *parse)
+int	builtin_unset(t_ms *ms, t_parse *parse)
 {
 	int	index;
 	int	i;
@@ -66,4 +66,5 @@ void	builtin_unset(t_ms *ms, t_parse *parse)
 		init_env(&ms->env, ms->envp);
 		i++;
 	}
+	return (0);
 }

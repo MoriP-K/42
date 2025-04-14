@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/11 21:37:03 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:11:40 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,95 @@ char	*find_value(t_env *env, char *key)
 {
 	while (env)
 	{
-		if (ft_strcmp(env->key, key))
+		if (ft_strcmp(env->key, key) == 0)
+		{
+			return (env->value);
+		}
+		env = env->next;
+	}
+	return (NULL);
+}
+
+char	*get_pwd_value(t_ms *ms)
+{
+	t_env	*env;
+
+	env = ms->env;
+	while (env)
+	{
+		if (ft_strcmp(env->key, "PWD") == 0)
 			return (env->value);
 		env = env->next;
 	}
 	return (NULL);
 }
 
-void	builtin_cd(t_ms *ms, t_parse *parse)
+int	env_oldpwd_changer(t_ms *ms)
+{
+	t_parse	*parse;
+	char	**args;
+	char	*key;
+	char 	*value;
+	char 	*pwd;
+
+	parse = (t_parse *)malloc(1);
+	args = (char **)malloc(3);
+	args[2] = NULL;
+	pwd = get_pwd_value(ms);
+	if (pwd == NULL)
+	{
+		write(1, "testaaa\n", 8);
+		args[1] = ft_strdup("OLDPWD");
+		builtin_unset(ms, parse);
+	}
+	else
+	{
+		key = ft_strdup("OLDPWD=");
+		value = ft_strdup(pwd);
+		args[1] = ft_strjoin(key, value);
+		free(key);
+		free(value);
+		parse->args = args;
+		parse->next = NULL;
+		builtin_export(ms, parse);
+	}
+	free(args[1]);
+	free(args);
+	free(parse);
+	if (pwd == NULL)
+		return (0);
+	return (1);
+}
+
+void	env_pwd_changer(t_ms *ms)
+{
+	t_parse	*parse;
+	char	**args;
+	char	*key;
+	char 	*value;
+	char 	*cwd;
+
+	if (!env_oldpwd_changer(ms))
+		return ;
+	parse = (t_parse *)malloc(1);
+	args = (char **)malloc(3);
+	key = ft_strdup("PWD=");
+	cwd = getcwd(NULL, 0);
+	value = ft_strdup(cwd);
+	free(cwd);
+	args[1] = ft_strjoin(key, value);
+	free(key);
+	free(value);
+	args[2] = NULL;
+	parse->args = args;
+	parse->next = NULL;
+	builtin_export(ms, parse);
+	free(args[1]);
+	free(args);
+	free(parse);
+}
+
+int	builtin_cd(t_ms *ms, t_parse *parse)
 {
 	char	*env_value;
 
@@ -39,18 +120,24 @@ void	builtin_cd(t_ms *ms, t_parse *parse)
 		env_value = find_value(ms->env, "HOME");
 		if (!env_value)
 		{
-			write(2, "cd: HOME not set", 16);
-			return;
+			write(2, "cd: HOME not set\n", 17);
+			return (1);
 		}
-		if (chdir(env_value) != 0)
+		else if (chdir(env_value) != 0)
 			write_cd_error(env_value);
-		return;
+		return (1);
 	}
 	if (parse->args[2] != NULL)
 	{
-		write(2, "cd: too many arguments", 1);
-		return;
+		write(2, "cd: too many arguments\n", 23);
+		return (1);
 	}
 	if (chdir(parse->args[1]) != 0)
-		write_cd_error(parse->args[1]);				
+	{
+		write_cd_error(parse->args[1]);
+		return (1);
+	}
+	// else
+	// 	env_pwd_changer(ms);
+	return (0);
 }
