@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 15:49:18 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:54:14 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int main(int ac, char *av[], char *envp[])
 
 	(void)ac;
 	(void)av;
+	signal(SIGQUIT, SIG_IGN);
 	init_ms(&ms, envp);
 	while (1)
 	{
