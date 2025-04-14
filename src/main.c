@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:21:06 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:27:20 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	throw_error(char *cmd)
 {
+	// dprintf(2, "Error: %s\n", cmd);
 	printf("Error: %s\n", cmd);
 	exit(EXIT_FAILURE);
 }
@@ -82,7 +83,8 @@ int main(int ac, char *av[], char *envp[])
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
 		do_exec(&ms, ms.parse);
-		wait_child_process(&(ms), &(ms).proc, ms.cl.cmd_count);
+		wait_child_process(&(ms).proc, ms.cl.cmd_count);
+		close_all_fds(&(ms.fd), ms.cl.cmd_count);
 		free_ms(&ms);
 	}
 	free_old_envp(ms.envp);

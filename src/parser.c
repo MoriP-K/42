@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/14 20:37:18 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:27:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,10 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 				new_parse->delimiter = ft_strdup(token->next->word);
 			else
 				new_parse->infile = ft_strdup(token->next->word);
-			printf("delimiter: %s\n", new_parse->delimiter);
+			printf("delimiter: %s\n", token->next->word);
 			token = token->next;
 		}
-		if (token && token->kinds != TK_EOF)
-			token = token->next;
+		token = token->next;
 	}
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;

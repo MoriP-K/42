@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:21:53 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:28:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,37 +98,54 @@ void	switch_fd(t_ms *ms, t_fd *fd, char *infile, char *outfile)
 
 void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 {
-	if (parse->infile || parse->outfile)
-		switch_fd(ms, fd, parse->infile, parse->outfile);
 	if (ms->cl.cmd_count > 1)
 	{
 		if (index == 0)
 		{
-			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
 			{
-				throw_error("dup2_a");
-				free_ms(ms);
+				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+				{
+					throw_error("dup2_a");
+					free_ms(ms);
+				}
+				fd->tmp_in = fd->pipe[index][1];
 			}
 		}
 		else if (index == ms->cl.cmd_count - 1)
 		{
-			if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
 			{
-				throw_error("dup2_b");
-				free_ms(ms);
+				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+				{
+					throw_error("dup2_b");
+					free_ms(ms);
+				}
+				fd->tmp_out = fd->pipe[index - 1][0];
 			}
 		}
 		else
 		{
-			if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
-			{
-				throw_error("dup2_a");
-				free_ms(ms);
-			}
-			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
-			{
-				throw_error("dup2_bb");
-				free_ms(ms);
+			if (parse->infile || parse->outfile)
+				switch_fd(ms, fd, parse->infile, parse->outfile);
+			else
+			{	
+				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
+				{
+					throw_error("dup2_aa");
+					free_ms(ms);
+				}
+				fd->tmp_in = fd->pipe[index - 1][0];
+				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+				{
+					throw_error("dup2_bb");
+					free_ms(ms);
+				}
+				fd->tmp_out = fd->pipe[index][1];
 			}
 		}
 	}
@@ -139,19 +156,25 @@ void	reset_fds(t_ms *ms , t_fd *fd)
 {
 	if (fd->tmp_in >= 0)
 	{
+		dprintf(2, "tmp_in: %d, STDIN: %d\n", fd->tmp_in, STDIN_FILENO);
 		if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
 		{
 			throw_error("dup2 infile");
 			free_ms(ms);
 		}
+		close(fd->tmp_in);
+		fd->tmp_in = -1;
 	}
 	if (fd->tmp_out >= 0)
 	{
+		dprintf(2, "tmp_out: %d, STDOUT: %d\n", fd->tmp_out, STDOUT_FILENO);
 		if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
 		{
-			throw_error("dup2 outfile");
+			throw_error("reset dup2 outfile");
 			free_ms(ms);
 		}
+		close(fd->tmp_out);
+		fd->tmp_out = -1;
 	}
 }
 
@@ -161,20 +184,20 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
 	{
 		write(1, "builtin\n", 8);
-		if (parse->infile)
-		{
-			fd->tmp_in = dup(STDIN_FILENO);
-			if (dup(STDIN_FILENO) == -1)
-			{
-				throw_error("dup");
-				free_ms(ms);
-				exit(EXIT_FAILURE);
-			}
-		}
+		// if (parse->infile)
+		// {
+		// 	fd->tmp_in = dup(STDIN_FILENO);
+		// 	if (fd->tmp_in == -1)
+		// 	{
+		// 		throw_error("dup");
+		// 		free_ms(ms);
+		// 		exit(EXIT_FAILURE);
+		// 	}
+		// }
 		if (parse->outfile)
 		{
 			fd->tmp_out = dup(STDOUT_FILENO);
-			if (dup(STDOUT_FILENO) == -1)
+			if (fd->tmp_out == -1)
 			{
 				throw_error("dup");
 				free_ms(ms);
@@ -210,9 +233,14 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			// if (handle_redirection(ms, parse))
 			signal(SIGINT, SIG_DFL);
 			find_cmd(ms, current_parse);
+			// int j = -1;
+			// while (ms->fd.pipe[++j])
+			// 	printf("pfd[0]: %d, pfd[1]: %d\n", ms->fd.pipe[j][0], ms->fd.pipe[j][1]);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
 			do_execve(ms, current_parse);
+			reset_fds(ms, &(ms->fd));
+			exit(EXIT_SUCCESS);
 		}
 		else
 		{
