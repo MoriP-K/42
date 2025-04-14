@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:27:20 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:31:29 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int main(int ac, char *av[], char *envp[])
 		if (ms.token == NULL || ms.parse == NULL)
 			continue;
 		do_exec(&ms, ms.parse);
-		wait_child_process(&(ms).proc, ms.cl.cmd_count);
+		wait_child_process(&ms, &(ms).proc, ms.cl.cmd_count);
 		close_all_fds(&(ms.fd), ms.cl.cmd_count);
 		free_ms(&ms);
 	}
