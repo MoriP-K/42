@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:49:38 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:51:56 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char		*join_cmd_and_path(char *cmd, char **split_arr);
 char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
-void		exec_built_in(t_ms *ms, t_parse *parse, size_t index);
+int			exec_built_in(t_ms *ms, t_parse *parse, size_t index);
 
 
 // free
@@ -87,12 +87,12 @@ void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 
 // builtins
-void		builtin_pwd(t_ms *ms, size_t index);
-void		builtin_env(t_ms *ms);
-void		builtin_export(t_ms *ms, t_parse *parse);
-void		builtin_unset(t_ms *ms, t_parse *parse);
-void		builtin_echo(t_parse *parse);
-void		builtin_cd(t_ms *ms, t_parse *parse);
+int			builtin_pwd(t_ms *ms, size_t index);
+int			builtin_env(t_ms *ms);
+int			builtin_export(t_ms *ms, t_parse *parse);
+int			builtin_unset(t_ms *ms, t_parse *parse);
+int			builtin_echo(t_parse *parse);
+int			builtin_cd(t_ms *ms, t_parse *parse);
 void		builtin_exit(t_ms *ms, t_parse *parse);
 
 // error

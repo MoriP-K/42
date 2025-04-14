@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 19:56:35 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:35:02 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ typedef struct s_ms
 	t_token			*token;
 	t_parse			*parse;
 	t_env			*env;
+	int				exit_status;
 	t_fd			fd;
 	t_proc			proc;
 	t_cl			cl;

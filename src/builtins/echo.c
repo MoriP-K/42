@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:05:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/12 12:54:45 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:52:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	is_n_option(char *arg)
 	return(1);
 }
 
-void	builtin_echo(t_parse *parse)
+int	builtin_echo(t_parse *parse)
 {
 	int	i;
 	int	newline;
@@ -37,7 +37,7 @@ void	builtin_echo(t_parse *parse)
 	if (parse->args == NULL || parse->args[1] == NULL)
 	{
 		write(1, "\n", 1);
-		return;
+		return (0);
 	}
 	while (parse->args[i])
 	{
@@ -56,4 +56,5 @@ void	builtin_echo(t_parse *parse)
 	}
 	if (newline)
 		write(1, "\n", 1);
+	return (0);
 }

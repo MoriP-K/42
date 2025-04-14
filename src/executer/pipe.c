@@ -6,35 +6,36 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/12 12:27:06 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 15:00:35 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	exec_built_in(t_ms *ms, t_parse *parse, size_t index)
+int	exec_built_in(t_ms *ms, t_parse *parse, size_t index)
 {
 	if (ft_strcmp(parse->cmd, "pwd") == 0)
-		builtin_pwd(ms, index);
+		return(builtin_pwd(ms, index));
 	else if (ft_strcmp(parse->cmd, "cd") == 0)
-		builtin_cd(ms, parse);
+		return(builtin_cd(ms, parse));
 	else if (ft_strcmp(parse->cmd, "echo") == 0)
-		builtin_echo(parse);
+		return(builtin_echo(parse));
 	else if (ft_strcmp(parse->cmd, "export") == 0)
-		builtin_export(ms, parse);
+		return(builtin_export(ms, parse));
 	else if (ft_strcmp(parse->cmd, "unset") == 0)
-		builtin_unset(ms, parse);
+		return(builtin_unset(ms, parse));
 	else if (ft_strcmp(parse->cmd, "env") == 0)
-		builtin_env(ms);
+		return(builtin_env(ms));
 	else if (ft_strcmp(parse->cmd, "exit") == 0)
 		builtin_exit(ms, parse);
+	return (0);
 }
 
 void	do_execve(t_ms *ms, t_parse *parse, size_t index)
 {
 	if (check_builtin_cmd(parse->cmd))
 	{
-		exec_built_in(ms, parse, index);
+		ms->exit_status = exec_built_in(ms, parse, index);
 		return;
 	}
 	execve(ms->cl.path, parse->args, ms->envp);
@@ -181,7 +182,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 			}
 		}
 		switch_fd(ms, fd, parse->infile, parse->outfile);
-		exec_built_in(ms, parse, index);
+		ms->exit_status = exec_built_in(ms, parse, index);
 		reset_fds(ms, fd);
 		close_all_fds(fd, ms->cl.cmd_count);
 		return (1);

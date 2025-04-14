@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 18:52:45 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/12 19:59:26 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:40:24 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ char	*get_value(t_env *env, char *key)
 		env = env->next;
 	}
 	return (NULL);
+}
+
+char	*get_exit_status(t_ms *ms)
+{
+	return(ft_itoa(ms->exit_status));	
 }
 
 char	*expand_join(t_ms *ms, char *word)
@@ -85,7 +90,10 @@ t_token	*expand_env(t_ms *ms, t_token *token)
 	{
 		if (token->word[i] == '$' && token->word[i + 1])
 		{
-			token->word = expand_join(ms, token->word);
+			if (ft_strcmp(token->word, "$?") == 0)
+				token->word = get_exit_status(ms);
+			else
+				token->word = expand_join(ms, token->word);
 			i = -1;
 			has_dollor = 1;
 		}

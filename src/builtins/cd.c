@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/12 12:37:41 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:42:37 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*find_value(t_env *env, char *key)
 	return (NULL);
 }
 
-void	builtin_cd(t_ms *ms, t_parse *parse)
+int	builtin_cd(t_ms *ms, t_parse *parse)
 {
 	char	*env_value;
 
@@ -42,17 +42,21 @@ void	builtin_cd(t_ms *ms, t_parse *parse)
 		if (!env_value)
 		{
 			write(2, "cd: HOME not set\n", 17);
-			return;
+			return (1);
 		}
 		else if (chdir(env_value) != 0)
 			write_cd_error(env_value);
-		return;
+		return (1);
 	}
 	if (parse->args[2] != NULL)
 	{
 		write(2, "cd: too many arguments\n", 23);
-		return;
+		return (1);
 	}
 	if (chdir(parse->args[1]) != 0)
-		write_cd_error(parse->args[1]);				
+	{
+		write_cd_error(parse->args[1]);
+		return (1);
+	}
+	return (0);
 }

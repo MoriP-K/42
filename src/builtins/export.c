@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/12 12:44:57 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 14:48:07 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int	split_key_value(char *arg, char **out_key, char **out_value)
 		out_key = NULL;
 		out_value = NULL;
 	}
-
 	key_len = eq - arg;
 	if (key_len == 0)
 		return (0);
@@ -65,16 +64,18 @@ void	free_old_envp(char **envp)
 	free(envp);
 }
 
-void	error(char *arg)
+int	error(char *arg)
 {
 	write(2, "export: `", 8);
 	write(2, arg, ft_strlen(arg));
 	write(2, "': not a valid identifier\n", 26);
+	return (1);
 }
 
-void	builtin_export(t_ms *ms, t_parse *parse)
+int	builtin_export(t_ms *ms, t_parse *parse)
 {
 	int		i;
+	int		return_value;
 	int 	count;
 	int		index;
 	char	*key;
@@ -88,7 +89,7 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 	{
 		if (!split_key_value(parse->args[i], &key, &value))
 		{
-			error(parse->args[i]);
+			return_value = error(parse->args[i]);
 			i++;
 			continue;
 		}
@@ -123,4 +124,5 @@ void	builtin_export(t_ms *ms, t_parse *parse)
 		free_env(&ms->env);
 		init_env(&ms->env, ms->envp);
 	}
+	return (return_value);
 }
