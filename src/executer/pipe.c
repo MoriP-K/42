@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 19:41:51 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:21:53 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,8 @@ int	exec_built_in(t_ms *ms, t_parse *parse)
 	return (0);
 }
 
-void	do_execve(t_ms *ms, t_parse *parse, size_t index)
+void	do_execve(t_ms *ms, t_parse *parse)
 {
-	(void)index;
 	if (check_builtin_cmd(parse->cmd))
 	{
 		ms->exit_status = exec_built_in(ms, parse);
@@ -191,11 +190,10 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	return (0);
 }
 
-void	do_exec(t_ms *ms, t_parse *parse, int index)
+void	do_exec(t_ms *ms, t_parse *parse)
 {
 	size_t	i;
 	t_parse	*current_parse;
-	(void)index;
 
 	if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
 		return ;
@@ -214,7 +212,7 @@ void	do_exec(t_ms *ms, t_parse *parse, int index)
 			find_cmd(ms, current_parse);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
-			do_execve(ms, current_parse, i);
+			do_execve(ms, current_parse);
 		}
 		else
 		{

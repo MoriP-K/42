@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 19:40:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:20:13 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
 void		close_fds(t_ms *ms, t_fd *fd, size_t index);
 void		close_all_fds(t_fd *fd, int cmd_count);
 void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
-void		do_exec(t_ms *ms, t_parse *parse,int index);
-void		do_execve(t_ms *ms, t_parse *parse, size_t index);
+void		do_exec(t_ms *ms, t_parse *parse);
+void		do_execve(t_ms *ms, t_parse *parse);
 void		do_pipe(t_ms *ms, size_t index);
 void		fail_to_fork(t_ms *ms);
 void		find_cmd(t_ms *ms , t_parse *parse);
