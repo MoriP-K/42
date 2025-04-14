@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 18:28:01 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 19:03:49 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,21 @@ int	split_key_value(char *arg, char **out_key)
 	if (key_len == 0)
 		return (0);
 	*out_key = ft_strndup(arg, arg + key_len);
+	
 	return (1);
+}
+
+int	has_wrong_char(char *arg)
+{
+	if (!(ft_isalpha(arg[0]) || ft_memcmp(arg, "_", 1) == 0))		
+		return (1);
+	while (*arg && *arg != '=')
+	{
+		if (!(ft_isalnum((int)*arg) || ft_memcmp(arg, "_", 1) == 0))
+			return (1);
+		arg++;
+	}
+	return (0);
 }
 
 void	free_old_envp(char **envp)
@@ -178,10 +192,14 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 	i = 1;
 	while (parse->args[i])
 	{
+		if (has_wrong_char(parse->args[i]))
+		{
+			return_value = error(parse->args[i]);
+			i++;
+			continue;
+		}
 		if (!split_key_value(parse->args[i], &key))
 		{
-			if (key != NULL)
-				return_value = error(parse->args[i]);
 			i++;
 			continue;
 		}
