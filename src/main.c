@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 23:06:11 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 15:19:29 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,18 +72,18 @@ int main(int ac, char *av[], char *envp[])
 		if (!ms.token || !ms.parse)
 			continue;
 		//
-		t_parse *temp = ms.parse;
-		while (temp->cmd)
-		{
-			printf("cmd %s, infile %s, outfile %s, delimiter %s, append %d\n", temp->cmd, temp->infile, temp->outfile, temp->delimiter, temp->append);
-			int k = 0;
-			while (temp->args[k])
-			{
-				printf("args[%d] %s\n", k, temp->args[k]);
-				k++;
-			}
-			temp = temp->next;
-		}
+		//t_parse *temp = ms.parse;
+		// while (temp->cmd)
+		// {
+		// 	printf("cmd %s, infile %s, outfile %s, delimiter %s, append %d\n", temp->cmd, temp->infile, temp->outfile, temp->delimiter, temp->append);
+		// 	int k = 0;
+		// 	while (temp->args[k])
+		// 	{
+		// 		printf("args[%d] %s\n", k, temp->args[k]);
+		// 		k++;
+		// 	}
+		// 	temp = temp->next;
+		// }
 		//
 		init_exec(&ms, ms.parse, &(ms.cl));
 		// if (ms.token == NULL || ms.parse == NULL)
