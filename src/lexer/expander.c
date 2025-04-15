@@ -6,7 +6,7 @@
 /*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 18:52:45 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/15 20:39:08 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/15 21:05:17 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	expand_token(t_ms *ms, t_token *token)
 			else
 				token->kinds = TK_WORD;
 		}
-		if (token->kinds == TK_WORD && token->single_quote != 1 && (!in_single_quote || in_double_quote))
+		if (token->kinds == TK_WORD && (!in_single_quote || in_double_quote))
 			token = expand_env(ms, token);
 		token = token->next;
 	}

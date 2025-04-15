@@ -17,8 +17,8 @@ LIBFT := $(LIBFTDIR)/libft.a
 RLFLAGS := -lreadline
 
 SRC := main.c \
-	lexer.c expander.c expander_utils.c \
-	split_meta.c integrate_quotes.c parser.c \
+	lexer.c expander.c expander_utils.c culling_space.c \
+	split_meta.c integrate_quotes.c parser.c conbine_quotes.c \
 	pipe.c close_fd.c cmd_path.c \
 	free.c utils.c \
 	init.c \
