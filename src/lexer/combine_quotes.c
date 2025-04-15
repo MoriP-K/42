@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   conbine_quotes.c                                   :+:      :+:    :+:   */
+/*   combine_quotes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 21:23:48 by masa              #+#    #+#             */
-/*   Updated: 2025/04/15 22:32:30 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/15 23:00:32 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	get_strcmp(t_token *token, t_token *start)
 	return(ft_strcmp(token->word, start->word));
 }
 
-void	conbine_quotes(t_token **token, t_token **start, t_token **result)
+void	combine_quotes(t_token **token, t_token **start, t_token **result)
 {
 	t_token	*tff;
 	char	*temp_for_free2;
@@ -55,7 +55,7 @@ void	conbine_quotes(t_token **token, t_token **start, t_token **result)
 	free(*start);
 }
 
-t_token	*conbine_all(t_token *token)
+t_token	*combine_all(t_token *token)
 {
 	t_token	*result;
 	t_token	*temp_for_free;
@@ -80,6 +80,6 @@ t_token	*conbine_all(t_token *token)
 	token = token->next;
 	free(temp_for_free->word);
 	free(temp_for_free);
-	conbine_quotes(&token, &start_quate, &result);
+	combine_quotes(&token, &start_quate, &result);
 	return (result);
 }

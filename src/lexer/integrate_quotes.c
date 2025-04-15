@@ -6,7 +6,7 @@
 /*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/15 21:25:48 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/15 22:59:43 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_token	*get_empty_token(t_token *next)
 	return (empty_token);
 }
 
-void	conbine_adjacent_quotes(t_token *token)
+void	combine_adjacent_quotes(t_token *token)
 {
 	t_token	*temp_for_free;
 	char	*temp_for_free2;
@@ -44,7 +44,7 @@ t_token	*integrate_quotes(t_token *token)
 	result = token;
 	if (token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\''))
 	{
-		token = conbine_all(token);
+		token = combine_all(token);
 		if (token->kinds == TK_EOF)
 			return (get_empty_token(token));
 		result = token;
@@ -53,14 +53,14 @@ t_token	*integrate_quotes(t_token *token)
 	while (token->kinds != TK_EOF)
 	{
 		if (token->next->kinds == TK_META && (token->next->word[0] == '\"' || token->next->word[0] == '\''))
-			token->next = conbine_all(token->next);
+			token->next = combine_all(token->next);
 		token = token->next;
 	}
 	token = result;
 	while (token->kinds != TK_EOF)
 	{
 		while (token->kinds == TK_WORD && token->next->kinds == TK_WORD)
-			conbine_adjacent_quotes(token);
+			combine_adjacent_quotes(token);
 		token = token->next;
 	}
 	return (result);

@@ -6,7 +6,7 @@
 /*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/15 21:26:28 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/15 22:59:05 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
-t_token		*conbine_all(t_token *token);
+t_token		*combine_all(t_token *token);
 t_token		*get_empty_token(t_token *next);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
