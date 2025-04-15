@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:31:29 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 21:03:34 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,26 @@ int main(int ac, char *av[], char *envp[])
 			continue;
 		add_history(line);
 		init_lexer(&ms, &(ms.token), line);
-		if (!ms.token)
-		{
-			free_ms(&ms);
-			continue;
-		}
 		init_parser(&(ms.parse), ms.token);
-		if (!ms.parse)
-		{
-			free_ms(&ms);
+		if (!ms.token || !ms.parse)
 			continue;
-		}
+		//
+		//t_parse *temp = ms.parse;
+		// while (temp->cmd)
+		// {
+		// 	printf("cmd %s, infile %s, outfile %s, delimiter %s, append %d\n", temp->cmd, temp->infile, temp->outfile, temp->delimiter, temp->append);
+		// 	int k = 0;
+		// 	while (temp->args[k])
+		// 	{
+		// 		printf("args[%d] %s\n", k, temp->args[k]);
+		// 		k++;
+		// 	}
+		// 	temp = temp->next;
+		// }
+		//
 		init_exec(&ms, ms.parse, &(ms.cl));
-		if (ms.token == NULL || ms.parse == NULL)
-			continue;
+		// if (ms.token == NULL || ms.parse == NULL)
+		// 	continue;
 		do_exec(&ms, ms.parse);
 		wait_child_process(&ms, &(ms).proc, ms.cl.cmd_count);
 		close_all_fds(&(ms.fd), ms.cl.cmd_count);

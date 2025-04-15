@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 21:17:44 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 21:10:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:59:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	find_key_index(char *key, t_env	*env)
 	count = 0;
 	while (env)
 	{
-		if (ft_strcmp(env->key, key))
+		if (ft_strcmp(env->key, key) == 0)
 			return(count);
 		count++;
 		env = env->next;
