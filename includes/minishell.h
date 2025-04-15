@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:20:13 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 22:59:05 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,19 @@ void		init_cl(t_cl *cl, t_parse *parse);
 t_token		*tokenizer(t_ms *ms, char *line);
 int			check_quote_count(t_token *token);
 int			syntax_error_handler(t_token *token);
-//void		expand_token(t_token *token);
 int			is_meta_char(char c);
 char		**split_meta(char *line);
 int			count_words(char *line);
 t_token		*integrate_quotes(t_token *token);
+t_token		*combine_all(t_token *token);
+t_token		*get_empty_token(t_token *next);
 t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token);
+
+// expander
 void		expand_token(t_ms *ms, t_token *token);
+char		*get_exit_status(t_ms *ms);
+char		*expand_join(t_ms *ms, char *word);
 
 // signal
 void		set_sigint_redisplay();
@@ -54,6 +59,8 @@ t_env		*last_env_lst(t_env *node);
 t_env		*new_env_lst(void);
 char		*get_env_value(char *env_var);
 char		*get_env_key(char *env_var);
+char		*get_value(t_env *env, char *key);
+
 
 //envp
 char 		**envp_dup(char **envp);
@@ -81,6 +88,7 @@ int			exec_built_in(t_ms *ms, t_parse *parse);
 
 // free
 void		free_ms(t_ms *ms);
+void		free_tokens(t_token *token);
 void		free_parser(t_parse *parse);
 void		free_array(char **array);
 void		free_fd(t_fd *fd, t_cl *cl);

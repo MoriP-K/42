@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 21:11:40 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/14 21:59:43 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,14 @@ int	env_oldpwd_changer(t_ms *ms)
 	char 	*value;
 	char 	*pwd;
 
-	parse = (t_parse *)malloc(1);
-	args = (char **)malloc(3);
+	parse = (t_parse *)malloc(sizeof(t_parse) * 1);
+	args = (char **)malloc(sizeof(char *) * 3);
 	args[2] = NULL;
 	pwd = get_pwd_value(ms);
 	if (pwd == NULL)
 	{
-		write(1, "testaaa\n", 8);
 		args[1] = ft_strdup("OLDPWD");
+		parse->args = args;
 		builtin_unset(ms, parse);
 	}
 	else
@@ -93,8 +93,8 @@ void	env_pwd_changer(t_ms *ms)
 
 	if (!env_oldpwd_changer(ms))
 		return ;
-	parse = (t_parse *)malloc(1);
-	args = (char **)malloc(3);
+	parse = (t_parse *)malloc(sizeof(t_parse) * 1);
+	args = (char **)malloc(sizeof(char *) * 3);
 	key = ft_strdup("PWD=");
 	cwd = getcwd(NULL, 0);
 	value = ft_strdup(cwd);
@@ -137,7 +137,7 @@ int	builtin_cd(t_ms *ms, t_parse *parse)
 		write_cd_error(parse->args[1]);
 		return (1);
 	}
-	// else
-	// 	env_pwd_changer(ms);
+	else
+		env_pwd_changer(ms);
 	return (0);
 }
