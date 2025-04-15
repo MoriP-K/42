@@ -20,7 +20,7 @@ SRC := main.c \
 	lexer.c expander.c expander_utils.c \
 	split_meta.c integrate_quotes.c parser.c \
 	pipe.c close_fd.c cmd_path.c \
-	free.c \
+	free.c utils.c \
 	init.c \
 	pwd.c envi.c export.c export_utils.c unset.c echo.c cd.c exit.c \
 	env.c syntax_error_handler.c signal_handler.c \
@@ -39,7 +39,6 @@ vpath %.c ./src: \
 ./src/initialize: \
 ./src/builtins: \
 ./lexer: \
-
 
 ifeq ($(DEBUG), true)
 	CFLAGS += -g -O0 -fsanitize=address

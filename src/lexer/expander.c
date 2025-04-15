@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 18:52:45 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/15 16:55:54 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 20:39:08 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,23 @@
 t_token	*expand_env(t_ms *ms, t_token *token)
 {
 	int		i;
-	int		has_dollor;
 	char	*temp;
 
 	i = 0;
-	has_dollor = 0;
-	temp = token->word;
 	while (token->word[i])
 	{
 		if (token->word[i] == '$' && token->word[i + 1])
 		{
+			temp = token->word;
 			if (ft_strcmp(token->word, "$?") == 0)
 				token->word = get_exit_status(ms);
 			else
 				token->word = expand_join(ms, token->word);
+			free(temp);
 			i = -1;
-			has_dollor = 1;
 		}
 		i++;
 	}
-	if (has_dollor == 1)
-		free(temp);
 	return (token);
 }
 

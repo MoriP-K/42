@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   integrate_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/15 15:18:10 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 19:29:38 by masa             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,12 @@ t_token	*conbine_all(t_token *token)
 	start_quate = token;
 	if (token->next->kinds == TK_META && ft_strcmp(token->next->word, start_quate->word) == 0)
 	{
+		result = get_empty_token(token->next->next); 
 		free(token->next->word);
 		free(token->next);
 		free(token->word);
 		free(token);
-		return (get_empty_token(token->next->next));
+		return (result);
 	}
 	else
 	{
