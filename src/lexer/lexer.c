@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/04/14 22:22:24 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 15:33:28 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,7 @@ t_token	*combine_redirect(t_token *token)
 			if (token->kinds == TK_IN_REDIRECT)
 				token->kinds = TK_HEREDOC;
 			else if (token->kinds == TK_OUT_REDIRECT)
-			{
-				write(1, "A\n", 2);
 				token->kinds = TK_APPEND;
-			}
 			free(temp);
 			free(token->next->word);
 			token->next = token->next->next;

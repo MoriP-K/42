@@ -17,7 +17,7 @@ LIBFT := $(LIBFTDIR)/libft.a
 RLFLAGS := -lreadline
 
 SRC := main.c \
-	lexer.c expander.c\
+	lexer.c expander.c expander_utils.c \
 	split_meta.c integrate_quotes.c parser.c \
 	pipe.c close_fd.c cmd_path.c \
 	free.c \
@@ -38,6 +38,7 @@ vpath %.c ./src: \
 ./src/free: \
 ./src/initialize: \
 ./src/builtins: \
+./lexer: \
 
 
 ifeq ($(DEBUG), true)
