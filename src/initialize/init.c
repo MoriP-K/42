@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 23:11:25 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 19:16:14 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,32 +30,22 @@ void	init_cl(t_cl *cl, t_parse *parse)
 	cl->path = NULL;
 }
 
-void	init_proc(t_proc *proc, t_cl *cl)
+void	init_proc(t_proc *proc, t_cl *cl, t_ms *ms)
 {
 	size_t	i;
 
-	proc->id = malloc(sizeof(int) * cl->cmd_count);
-	if (!proc->id)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
+	proc->id = ms_malloc(sizeof(int) * cl->cmd_count, ms);
 	i = 0;
 	while (i < cl->cmd_count)
 		proc->id[i++] = -1;
 	proc->status = 0;
 }
 
-void	init_fd(t_fd *fd, t_cl *cl)
+void	init_fd(t_fd *fd, t_cl *cl, t_ms *ms)
 {
 	size_t	i;
 
-	fd->pipe = malloc(sizeof(int *) * cl->cmd_count);
-	if (!fd->pipe)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
+	fd->pipe = ms_malloc(sizeof(int *) * cl->cmd_count, ms);
 	fd->infile = -1;
 	fd->outfile = - 1;
 	fd->tmp_in = -1;
@@ -63,13 +53,7 @@ void	init_fd(t_fd *fd, t_cl *cl)
 	i = 0;
 	while (i < cl->cmd_count)
 	{
-		fd->pipe[i] = malloc(sizeof(int) * 2);
-		if (!fd->pipe[i])
-		{
-			perror("malloc");
-			free_fd(fd, cl);
-			exit(EXIT_FAILURE);
-		}
+		fd->pipe[i] = ms_malloc(sizeof(int) * 2, ms);
 		fd->pipe[i][0] = -1;
 		fd->pipe[i][1] = -1;
 		i++;
@@ -79,8 +63,8 @@ void	init_fd(t_fd *fd, t_cl *cl)
 void	init_exec(t_ms *ms, t_parse *parse, t_cl *cl)
 {
 	init_cl(&(ms->cl), parse);
-	init_proc(&(ms->proc), cl);
-	init_fd(&(ms->fd), cl);
+	init_proc(&(ms->proc), cl, ms);
+	init_fd(&(ms->fd), cl, ms);
 }
 
 void	init_lexer(t_ms *ms, t_token **token, char *line)
@@ -95,14 +79,14 @@ void	init_lexer(t_ms *ms, t_token **token, char *line)
 	free(line);
 }
 
-void	init_parser(t_parse **parse, t_token *token)
+void	init_parser(t_parse **parse, t_token *token, t_ms *ms)
 {
 	t_parse *first_parse;
 	//int		i;
 
 	if (!token)
 		return;
-	*parse = do_parse(token);
+	*parse = do_parse(token, ms);
 	first_parse = *parse;
 	while (*parse)
 	{
@@ -127,7 +111,7 @@ void	init_parser(t_parse **parse, t_token *token)
 	*parse = first_parse;
 }
 
-void	init_env(t_env **env, char *envp[])
+void	init_env(t_env **env, char *envp[], t_ms *ms)
 {
 	int		i;
 	t_env	*new_env;
@@ -136,15 +120,15 @@ void	init_env(t_env **env, char *envp[])
 	*env = NULL;
 	while (envp[i])
 	{
-		new_env = new_env_lst();
+		new_env = new_env_lst(ms);
 		if (!new_env)
 		{
 			free_env(env);
 			// throw_error();
 			exit(EXIT_FAILURE);
 		}
-		new_env->key = get_env_key(envp[i]);
-		new_env->value = get_env_value(envp[i]);
+		new_env->key = get_env_key(envp[i], ms);
+		new_env->value = get_env_value(envp[i], ms);
 		add_env_lst(env, new_env);
 		i++;
 	}

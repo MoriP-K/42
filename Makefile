@@ -20,7 +20,7 @@ SRC := main.c \
 	lexer.c expander.c expander_utils.c culling_space.c \
 	split_meta.c integrate_quotes.c parser.c combine_quotes.c \
 	pipe.c close_fd.c cmd_path.c \
-	free.c utils.c \
+	free.c utils.c ms_malloc.c \
 	init.c \
 	pwd.c envi.c export.c export_utils.c unset.c echo.c cd.c exit.c \
 	env.c syntax_error_handler.c signal_handler.c \

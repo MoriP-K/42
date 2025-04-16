@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/15 23:24:42 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:00:24 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,20 @@ int count_args(t_token *token)
 	return (count);
 }
 
-t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
+t_parse	*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms)
 {
 	t_parse *new_parse;
 	int		i;
 	int		arg_count;
 
 	arg_count = count_args(token);
-	new_parse = (t_parse *)malloc(sizeof(t_parse));
+	new_parse = (t_parse *)ms_malloc(sizeof(t_parse), ms);
 	new_parse->cmd = NULL;
 	new_parse->next = NULL;
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
 	new_parse->append = 0;
-	new_parse->args = (char **)malloc(sizeof(char *) * (arg_count + 1));
+	new_parse->args = (char **)ms_malloc(sizeof(char *) * (arg_count + 1), ms);
 	i = 0;
 	while (i <= arg_count)
 		new_parse->args[i++] = NULL;
@@ -63,17 +63,17 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 		{
 			if (!new_parse->cmd)
 			{
-				new_parse->cmd = ft_strdup(token->word);
-				new_parse->args[0] = ft_strdup(token->word);
+				new_parse->cmd = ms_strdup(token->word, ms);
+				new_parse->args[0] = ms_strdup(token->word, ms);
 			}
 			else
-				new_parse->args[i++] = ft_strdup(token->word);
+				new_parse->args[i++] = ms_strdup(token->word, ms);
 		}
 		else if ((token->kinds == TK_OUT_REDIRECT || token->kinds == TK_APPEND) && token->next)
 		{
 			if (new_parse->outfile)
 				free(new_parse->outfile);
-			new_parse->outfile = ft_strdup(token->next->word);
+			new_parse->outfile = ms_strdup(token->next->word, ms);
 			if (token->kinds == TK_APPEND)
 				new_parse->append = 1;
 			token = token->next;
@@ -83,9 +83,9 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 			if (new_parse->infile)
 				free(new_parse->infile);
 			if (token->kinds == TK_HEREDOC)
-				new_parse->delimiter = ft_strdup(token->next->word);
+				new_parse->delimiter = ms_strdup(token->next->word, ms);
 			else
-				new_parse->infile = ft_strdup(token->next->word);
+				new_parse->infile = ms_strdup(token->next->word, ms);
 			// printf("delimiter: %s\n", token->next->word);
 			token = token->next;
 		}
@@ -96,11 +96,11 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 	return(new_parse);
 }
 
-void add_EOF(t_parse *parse)
+void add_EOF(t_parse *parse, t_ms *ms)
 {
 	t_parse	*EOF_parse;
 
-	EOF_parse = (t_parse *)malloc(sizeof(t_parse));
+	EOF_parse = (t_parse *)ms_malloc(sizeof(t_parse), ms);
 	EOF_parse->cmd = NULL;
 	EOF_parse->args = NULL;
 	EOF_parse->infile = NULL;
@@ -111,14 +111,14 @@ void add_EOF(t_parse *parse)
 	parse->next = EOF_parse;
 }
 
-t_parse	*do_parse(t_token *token)
+t_parse	*do_parse(t_token *token, t_ms *ms)
 {
 	t_token *first_token;
 	t_parse	*first_parse;
 	t_parse *current_parse;
 
 	first_token = token;
-	first_parse = allocate_parse(token, NULL);
+	first_parse = allocate_parse(token, NULL, ms);
 	current_parse = first_parse;
 	while (token && !(token->kinds == TK_META && token->word[0] == '|') && token->kinds != TK_EOF)
 		token = token->next;
@@ -126,14 +126,14 @@ t_parse	*do_parse(t_token *token)
 		token = token->next;
 	while (token && token->kinds != TK_EOF)
 	{
-		allocate_parse(token, current_parse);
+		allocate_parse(token, current_parse, ms);
 		current_parse = current_parse->next;
 		while (!(token->kinds == TK_META && token->word[0] == '|') && token->kinds != TK_EOF)
 			token = token->next;
 		if (token->kinds != TK_EOF)
 			token = token->next;
 	}
-	add_EOF(first_parse);
+	add_EOF(first_parse, ms);
 	free_tokens(first_token);
 	return (first_parse);
 }

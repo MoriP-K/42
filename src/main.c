@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/15 21:03:34 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/16 19:54:37 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@ void	init_ms(t_ms *ms, char *envp[])
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
+	ms->cl.path = NULL;
+	ms->fd.pipe = NULL;
+	ms->proc.id = NULL;
 	ms->exit_status = 0;
-	ms->envp = envp_dup(envp);
-	init_env(&(ms->env), ms->envp);
+	ms->envp = NULL;
+	ms->envp = envp_dup(envp, ms);
+	init_env(&(ms->env), ms->envp, ms);
 }
 
 void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
@@ -68,7 +72,7 @@ int main(int ac, char *av[], char *envp[])
 			continue;
 		add_history(line);
 		init_lexer(&ms, &(ms.token), line);
-		init_parser(&(ms.parse), ms.token);
+		init_parser(&(ms.parse), ms.token, &ms);
 		if (!ms.token || !ms.parse)
 			continue;
 		//

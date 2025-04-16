@@ -6,17 +6,31 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 23:02:36 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 19:51:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+void	free_all(t_ms *ms)
+{
+	if (!ms)
+		return;
+	free_ms(ms);
+	if (ms->envp)
+		free_old_envp(ms->envp);
+	if (ms->env)
+		free_env(&ms->env);
+}
+
 void	free_ms(t_ms *ms)
 {
-	free_parser(ms->parse);
-	free_fd(&(ms->fd), &(ms->cl));
-	free_proc(&(ms->proc));
+	if (ms->parse)
+		free_parser(ms->parse);
+	if (ms->fd.pipe)
+		free_fd(&(ms->fd), &(ms->cl));
+	if(ms->proc.id)
+		free_proc(&(ms->proc));
 }
 
 void	free_proc(t_proc *proc)

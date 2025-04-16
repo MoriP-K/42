@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_meta.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 12:23:57 by root              #+#    #+#             */
-/*   Updated: 2025/03/10 12:14:56 by root             ###   ########.fr       */
+/*   Updated: 2025/04/16 19:44:30 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,30 +28,17 @@ int	is_meta_char(char c)
 
 char	*ft_strndup(const char *start, const char *end)
 {
-	char	*dest;
-	size_t	len;
-	size_t	index;
+	if (!start || !end || end < start)
+        return NULL;
 
-	if (start == end)
-	{
-		dest = malloc(2);
-		dest[0] = *start;
-		dest[1] = '\0';
-		return (dest);
-	}
-	len = end - start;
-	dest = (char *)malloc(len + 1);
-	if (!dest)
-		return (NULL);
-	index = 0;
-	while (start < end)
-	{
-		dest[index] = *start;
-		index++;
-		start++;
-	}
-	dest[index] = '\0';
-	return (dest);
+    size_t len = (size_t)(end - start);
+    char *dup = malloc(len + 1);
+    if (!dup)
+        return NULL;
+
+    ft_memcpy(dup, start, len);
+    dup[len] = '\0';
+    return dup;
 }
 
 int count_words(char *line)
@@ -78,7 +65,7 @@ int count_words(char *line)
 	return (count);
 }
 
-char	**allocate_words(char *line, char **words)
+char	**allocate_words(char *line, char **words, t_ms *ms)
 {
 	int	i;
 	char *start_char;
@@ -91,11 +78,11 @@ char	**allocate_words(char *line, char **words)
 			start_char = line;
 			while (!is_meta_char(*(line)) && *(line))
 				line++;
-			words[i++] = ft_strndup(start_char, line);
+			words[i++] = ms_strndup(start_char, line, ms);
 		}
 		if (is_meta_char(*line))
 		{
-			words[i++] = ft_strndup(line, line);
+			words[i++] = ms_strndup(line, line, ms);
 			line++;
 		}
 	}
@@ -103,13 +90,13 @@ char	**allocate_words(char *line, char **words)
 	return (words);
 }
 
-char **split_meta(char *line)
+char **split_meta(char *line, t_ms *ms)
 {
 	char    **words;
 
-	words = (char **)malloc((count_words(line) + 1) * sizeof(char *));
+	words = (char **)ms_malloc((count_words(line) + 1) * sizeof(char *), ms);
 	if (!words)
 		return (NULL);
-	words = allocate_words(line, words);
+	words = allocate_words(line, words, ms);
 	return (words);
 }

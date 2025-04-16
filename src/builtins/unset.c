@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 21:17:44 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 21:59:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 18:49:08 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	builtin_unset(t_ms *ms, t_parse *parse)
 		}
 		ms->envp[index] = NULL;
 		free_env(&ms->env);
-		init_env(&ms->env, ms->envp);
+		init_env(&ms->env, ms->envp, ms);
 		i++;
 	}
 	return (0);

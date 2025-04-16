@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 19:03:49 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 19:03:34 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	find_env_index(char **envp, char *key)
 	return (-1);
 }
 
-int	split_key_value(char *arg, char **out_key)
+int	split_key_value(char *arg, char **out_key, t_ms *ms)
 {
 	char	*eq;
 	int		key_len;
@@ -42,7 +42,7 @@ int	split_key_value(char *arg, char **out_key)
 	key_len = eq - arg;
 	if (key_len == 0)
 		return (0);
-	*out_key = ft_strndup(arg, arg + key_len);
+	*out_key = ms_strndup(arg, arg + key_len, ms);
 	
 	return (1);
 }
@@ -164,12 +164,12 @@ void	export_sort(t_ms *ms)
 		count++;
 		env = env->next;
 	}
-	keys = malloc(sizeof(char *) * (count + 1));
+	keys = ms_malloc(sizeof(char *) * (count + 1), ms);
 	count = 0;
 	env = first_env;
 	while (env)
 	{
-		keys[count] = ft_strdup(env->key);
+		keys[count] = ms_strdup(env->key, ms);
 		env = env->next;
 		count++;
 	}
@@ -198,7 +198,7 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 			i++;
 			continue;
 		}
-		if (!split_key_value(parse->args[i], &key))
+		if (!split_key_value(parse->args[i], &key, ms))
 		{
 			i++;
 			continue;
@@ -208,22 +208,22 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 		{
 			while (ms->envp && ms->envp[count])
 				count++;
-			new_envp = (char **)malloc(sizeof(char *) * (count + 2));
+			new_envp = (char **)ms_malloc(sizeof(char *) * (count + 2), ms);
 			count = 0;
 			while (ms->envp && ms->envp[count])
 			{
-				new_envp[count] = ft_strdup(ms->envp[count]);
+				new_envp[count] = ms_strdup(ms->envp[count], ms);
 				count++;
 			}
 			free_old_envp(ms->envp);
-			new_envp[count] = ft_strdup(parse->args[i]);
+			new_envp[count] = ms_strdup(parse->args[i], ms);
 			new_envp[count + 1] = NULL;
 			ms->envp = new_envp;
 		}
 		else
 		{
 			free(ms->envp[index]);
-			ms->envp[index] = ft_strdup(parse->args[i]);
+			ms->envp[index] = ms_strdup(parse->args[i], ms);
 		}
 		free(key);
 		i++;
@@ -231,7 +231,7 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 	if (i != 1)
 	{
 		free_env(&ms->env);
-		init_env(&ms->env, ms->envp);
+		init_env(&ms->env, ms->envp, ms);
 	}
 	else
 		export_sort(ms);

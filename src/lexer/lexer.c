@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/04/15 15:33:28 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 19:16:25 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ t_kinds	get_kinds(char *word)
 	return (kind);
 }
 
-void	add_word_list(t_token *first_token, char *word)
+void	add_word_list(t_token *first_token, char *word, t_ms *ms)
 {
 	t_token	*token;
 	t_token *new_token;
 
-	new_token = (t_token *)malloc(sizeof(t_token));
+	new_token = (t_token *)ms_malloc(sizeof(t_token), ms);
 	new_token->kinds = get_kinds(word);
 	new_token->word = word;
 	new_token->len = ft_strlen(word);
@@ -49,12 +49,12 @@ void	add_word_list(t_token *first_token, char *word)
 	token->next = new_token;
 }
 
-void	AddEOF(t_token *first_token)
+void	AddEOF(t_token *first_token, t_ms *ms)
 {
 	t_token	*token;
 	t_token *EOF_token;
 
-	EOF_token = (t_token *)malloc(sizeof(t_token));
+	EOF_token = (t_token *)ms_malloc(sizeof(t_token), ms);
 	EOF_token->kinds = TK_EOF;
 	EOF_token->word = "";
 	EOF_token->len = 0;
@@ -66,7 +66,7 @@ void	AddEOF(t_token *first_token)
 	token->next = EOF_token;
 }
 
-t_token	*combine_redirect(t_token *token)
+t_token	*combine_redirect(t_token *token, t_ms *ms)
 {
 	t_token	*first_token;
 	char	*temp;
@@ -80,7 +80,7 @@ t_token	*combine_redirect(t_token *token)
 		{
 			temp = token->word;
 			temp2 = token->next;
-			token->word = ft_strjoin(token->word, token->next->word);
+			token->word = ms_strjoin(token->word, token->next->word, ms);
 			if (token->kinds == TK_IN_REDIRECT)
 				token->kinds = TK_HEREDOC;
 			else if (token->kinds == TK_OUT_REDIRECT)
@@ -102,22 +102,22 @@ t_token	*tokenizer(t_ms *ms, char *line)
 	int		i;
 	
 	i = 1;
-    words = split_meta(line);
-	first_token = (t_token *)malloc(sizeof(t_token));
+    words = split_meta(line, ms);
+	first_token = (t_token *)ms_malloc(sizeof(t_token), ms);
 	first_token->next = NULL;
 	first_token->kinds = get_kinds(words[0]);
 	first_token->word = words[0];
 	first_token->len = ft_strlen(words[0]);
 	first_token->single_quote = 0;
 	while (words[i])
-		add_word_list(first_token, words[i++]);
+		add_word_list(first_token, words[i++], ms);
 	free(words);
-	AddEOF(first_token);
-	first_token = combine_redirect(first_token);
+	AddEOF(first_token, ms);
+	first_token = combine_redirect(first_token, ms);
 	if (!check_quote_count(first_token))
 		return(NULL);
 	expand_token(ms, first_token);	
-	first_token = integrate_quotes(first_token);
+	first_token = integrate_quotes(first_token, ms);
 	first_token = culling_space(first_token);
 	if (!syntax_error_handler(first_token))
 		return(NULL);

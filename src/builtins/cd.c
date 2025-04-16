@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 21:59:43 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 18:44:12 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,21 +54,21 @@ int	env_oldpwd_changer(t_ms *ms)
 	char 	*value;
 	char 	*pwd;
 
-	parse = (t_parse *)malloc(sizeof(t_parse) * 1);
-	args = (char **)malloc(sizeof(char *) * 3);
+	parse = (t_parse *)ms_malloc(sizeof(t_parse) * 1, ms);
+	args = (char **)ms_malloc(sizeof(char *) * 3, ms);
 	args[2] = NULL;
 	pwd = get_pwd_value(ms);
 	if (pwd == NULL)
 	{
-		args[1] = ft_strdup("OLDPWD");
+		args[1] = ms_strdup("OLDPWD", ms);
 		parse->args = args;
 		builtin_unset(ms, parse);
 	}
 	else
 	{
-		key = ft_strdup("OLDPWD=");
-		value = ft_strdup(pwd);
-		args[1] = ft_strjoin(key, value);
+		key = ms_strdup("OLDPWD=", ms);
+		value = ms_strdup(pwd, ms);
+		args[1] = ms_strjoin(key, value, ms);
 		free(key);
 		free(value);
 		parse->args = args;
@@ -93,13 +93,13 @@ void	env_pwd_changer(t_ms *ms)
 
 	if (!env_oldpwd_changer(ms))
 		return ;
-	parse = (t_parse *)malloc(sizeof(t_parse) * 1);
-	args = (char **)malloc(sizeof(char *) * 3);
-	key = ft_strdup("PWD=");
+	parse = (t_parse *)ms_malloc(sizeof(t_parse) * 1, ms);
+	args = (char **)ms_malloc(sizeof(char *) * 3, ms);
+	key = ms_strdup("PWD=", ms);
 	cwd = getcwd(NULL, 0);
-	value = ft_strdup(cwd);
+	value = ms_strdup(cwd, ms);
 	free(cwd);
-	args[1] = ft_strjoin(key, value);
+	args[1] = ms_strjoin(key, value, ms);
 	free(key);
 	free(value);
 	args[2] = NULL;
