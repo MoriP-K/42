@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/14 21:27:26 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/15 23:24:42 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse)
 				new_parse->delimiter = ft_strdup(token->next->word);
 			else
 				new_parse->infile = ft_strdup(token->next->word);
-			printf("delimiter: %s\n", token->next->word);
+			// printf("delimiter: %s\n", token->next->word);
 			token = token->next;
 		}
 		token = token->next;

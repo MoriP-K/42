@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 21:28:26 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/16 00:01:27 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,56 +98,47 @@ void	switch_fd(t_ms *ms, t_fd *fd, char *infile, char *outfile)
 
 void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 {
-	if (ms->cl.cmd_count > 1)
+	if (index == 0)
 	{
-		if (index == 0)
+		if (parse->infile || parse->outfile)
+			switch_fd(ms, fd, parse->infile, parse->outfile);
+		if (ms->cl.cmd_count != 1)
 		{
-			if (parse->infile || parse->outfile)
-				switch_fd(ms, fd, parse->infile, parse->outfile);
-			else
+			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
 			{
-				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
-				{
-					throw_error("dup2_a");
-					free_ms(ms);
-				}
-				fd->tmp_in = fd->pipe[index][1];
+				throw_error("dup2_a");
+				free_ms(ms);
 			}
+			fd->tmp_in = fd->pipe[index][1];
 		}
-		else if (index == ms->cl.cmd_count - 1)
+	}
+	else if (index == ms->cl.cmd_count - 1)
+	{
+		if (parse->infile || parse->outfile)
+			switch_fd(ms, fd, parse->infile, parse->outfile);
+		if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
 		{
-			if (parse->infile || parse->outfile)
-				switch_fd(ms, fd, parse->infile, parse->outfile);
-			else
-			{
-				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
-				{
-					throw_error("dup2_b");
-					free_ms(ms);
-				}
-				fd->tmp_out = fd->pipe[index - 1][0];
-			}
+			throw_error("dup2_b");
+			free_ms(ms);
 		}
-		else
+		fd->tmp_out = fd->pipe[index - 1][0];
+	}
+	else
+	{
+		if (parse->infile || parse->outfile)
+			switch_fd(ms, fd, parse->infile, parse->outfile);
+		if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
 		{
-			if (parse->infile || parse->outfile)
-				switch_fd(ms, fd, parse->infile, parse->outfile);
-			else
-			{	
-				if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
-				{
-					throw_error("dup2_aa");
-					free_ms(ms);
-				}
-				fd->tmp_in = fd->pipe[index - 1][0];
-				if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
-				{
-					throw_error("dup2_bb");
-					free_ms(ms);
-				}
-				fd->tmp_out = fd->pipe[index][1];
-			}
+			throw_error("dup2_aa");
+			free_ms(ms);
 		}
+		fd->tmp_in = fd->pipe[index - 1][0];
+		if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
+		{
+			throw_error("dup2_bb");
+			free_ms(ms);
+		}
+		fd->tmp_out = fd->pipe[index][1];
 	}
 	close_fds(ms, &(ms->fd), index);
 }
@@ -156,7 +147,7 @@ void	reset_fds(t_ms *ms , t_fd *fd)
 {
 	if (fd->tmp_in >= 0)
 	{
-		dprintf(2, "tmp_in: %d, STDIN: %d\n", fd->tmp_in, STDIN_FILENO);
+		// dprintf(2, "tmp_in: %d, STDIN: %d\n", fd->tmp_in, STDIN_FILENO);
 		if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
 		{
 			throw_error("dup2 infile");
@@ -167,7 +158,7 @@ void	reset_fds(t_ms *ms , t_fd *fd)
 	}
 	if (fd->tmp_out >= 0)
 	{
-		dprintf(2, "tmp_out: %d, STDOUT: %d\n", fd->tmp_out, STDOUT_FILENO);
+		// dprintf(2, "tmp_out: %d, STDOUT: %d\n", fd->tmp_out, STDOUT_FILENO);
 		if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
 		{
 			throw_error("reset dup2 outfile");
@@ -183,7 +174,7 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	(void)fd;
 	if (ms->cl.cmd_count == 1 && check_builtin_cmd(parse->cmd))
 	{
-		write(1, "builtin\n", 8);
+		// write(1, "builtin\n", 8);
 		// if (parse->infile)
 		// {
 		// 	fd->tmp_in = dup(STDIN_FILENO);
@@ -233,9 +224,8 @@ void	do_exec(t_ms *ms, t_parse *parse)
 			// if (handle_redirection(ms, parse))
 			signal(SIGINT, SIG_DFL);
 			find_cmd(ms, current_parse);
-			// int j = -1;
-			// while (ms->fd.pipe[++j])
-			// 	printf("pfd[0]: %d, pfd[1]: %d\n", ms->fd.pipe[j][0], ms->fd.pipe[j][1]);
+			// printf("cmd: %s\n", ms->cl.path);
+			// printf("infile: %s\n", parse->infile);
 			set_pipe_fds(ms, current_parse, &(ms->fd), i);
 			close_all_fds(&(ms->fd), ms->cl.cmd_count);
 			do_execve(ms, current_parse);

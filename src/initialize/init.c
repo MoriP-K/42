@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
 /*   Updated: 2025/04/14 23:11:25 by motomo           ###   ########.fr       */
@@ -118,10 +118,10 @@ void	init_parser(t_parse **parse, t_token *token)
 		// 	}
 		// 	write(1, "\n", 1);
 		// }
-		if ((*parse)->infile != NULL)
-			printf("infile: %s\n", (*parse)->infile);
-		if ((*parse)->outfile != NULL)
-			printf("outfile: %s\n", (*parse)->outfile);
+		// if ((*parse)->infile != NULL)
+		// 	printf("infile: %s\n", (*parse)->infile);
+		// if ((*parse)->outfile != NULL)
+		// 	printf("outfile: %s\n", (*parse)->outfile);
 		*parse = (*parse)->next;
 	}
 	*parse = first_parse;
