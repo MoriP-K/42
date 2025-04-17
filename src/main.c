@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/16 19:54:37 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:16:38 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ int main(int ac, char *av[], char *envp[])
 	t_ms	ms;
 	char 	*line;
 
-	(void)ac;
 	(void)av;
 	signal(SIGQUIT, SIG_IGN);
 	init_ms(&ms, envp);
@@ -92,13 +91,14 @@ int main(int ac, char *av[], char *envp[])
 		init_exec(&ms, ms.parse, &(ms.cl));
 		// if (ms.token == NULL || ms.parse == NULL)
 		// 	continue;
-		do_exec(&ms, ms.parse);
-		wait_child_process(&ms, &(ms).proc, ms.cl.cmd_count);
+		if (do_exec(&ms, ms.parse))
+			wait_child_process(&ms, &(ms).proc, ms.cl.cmd_count);
 		close_all_fds(&(ms.fd), ms.cl.cmd_count);
 		free_ms(&ms);
 	}
+	ac = ms.exit_status;
 	free_old_envp(ms.envp);
 	free_env(&(ms.env));
 	write(1, "exit\n", 5);
-	return (0);
+	return (ac);
 }

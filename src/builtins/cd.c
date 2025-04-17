@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/16 18:44:12 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 15:45:07 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,14 @@
 
 void	write_cd_error(char *path)
 {
+	char	*error_msg;
+	
+	error_msg = strerror(errno);
 	write(2, "cd: ", 4);
 	write(2, path, ft_strlen(path));
-	write(2, ": No such file or directory\n", 29);
+	write(2, ": ", 2);
+	write(2, error_msg, ft_strlen(error_msg));
+	write(2, "\n", 1);
 }
 
 char	*find_value(t_env *env, char *key)

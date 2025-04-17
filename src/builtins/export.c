@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/16 19:03:34 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 16:18:24 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 
 	index = 0;
 	count = 0;
+	return_value = 0;
 	i = 1;
 	while (parse->args[i])
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/16 00:01:27 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:11:01 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,13 +204,13 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	return (0);
 }
 
-void	do_exec(t_ms *ms, t_parse *parse)
+int	do_exec(t_ms *ms, t_parse *parse)
 {
 	size_t	i;
 	t_parse	*current_parse;
 
 	if (is_only_builtin_cmd(ms, parse, &(ms->fd)))
-		return ;
+		return (0);
 	current_parse = parse;
 	i = 0;
 	while (i < ms->cl.cmd_count && current_parse)
@@ -239,4 +239,5 @@ void	do_exec(t_ms *ms, t_parse *parse)
 		}
 		i++;
 	}
+	return (1);
 }
