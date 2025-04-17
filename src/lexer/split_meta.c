@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 12:23:57 by root              #+#    #+#             */
-/*   Updated: 2025/04/16 19:44:30 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 15:33:00 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,22 @@ int	is_meta_char(char c)
 
 char	*ft_strndup(const char *start, const char *end)
 {
+	size_t	len;
+	char	*dup;
+
 	if (!start || !end || end < start)
         return NULL;
-
-    size_t len = (size_t)(end - start);
-    char *dup = malloc(len + 1);
+	if (start == end)
+	{
+		dup = malloc(sizeof(char) * 2);
+		dup = ft_memcpy(dup, start, 1);
+		dup[1] = '\0';
+		return (dup);
+	}
+    len = (size_t)(end - start);
+    dup = malloc(len + 1);
     if (!dup)
         return NULL;
-
     ft_memcpy(dup, start, len);
     dup[len] = '\0';
     return dup;
