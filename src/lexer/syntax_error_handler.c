@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/14 23:12:02 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:53:31 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 void	print_error(t_token *token)
 {
 	if (token->word == NULL || !*(token->word))
-		write(1, "minishell: syntax error near unexpected token `newline'\n", 56);
+		write(1, "minishell: syntax error near unexpected token `newline'\n",
+			56);
 	else
 	{
 		write(1, "minishell: syntax error near unexpected token `", 47);
@@ -28,7 +29,7 @@ int	check_quote_count(t_token *token)
 {
 	int	double_quote_count;
 	int	single_quote_count;
-	
+
 	double_quote_count = 0;
 	single_quote_count = 0;
 	while (token->kinds != TK_EOF)
@@ -42,9 +43,9 @@ int	check_quote_count(t_token *token)
 	if (double_quote_count % 2 == 1 || single_quote_count % 2 == 1)
 	{
 		print_error(token);
-		return(0);
+		return (0);
 	}
-	return(1);
+	return (1);
 }
 
 int	pipe_error(t_token *token, t_token *first_token)
@@ -74,7 +75,7 @@ int	redirect_error(t_token *token, t_token *first_token)
 int	syntax_error_handler(t_token *token)
 {
 	t_token	*first_token;
-	
+
 	first_token = token;
 	if (token->kinds == TK_META && token->word[0] == '|')
 	{
@@ -89,7 +90,8 @@ int	syntax_error_handler(t_token *token)
 				return (0);
 		}
 		if (token->kinds == TK_APPEND || token->kinds == TK_HEREDOC
-			|| token->kinds == TK_IN_REDIRECT || token->kinds == TK_OUT_REDIRECT)
+			|| token->kinds == TK_IN_REDIRECT
+			|| token->kinds == TK_OUT_REDIRECT)
 		{
 			if (!redirect_error(token, first_token))
 				return (0);
