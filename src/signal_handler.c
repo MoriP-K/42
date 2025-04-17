@@ -6,13 +6,13 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:17:29 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/14 16:01:57 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 21:44:55 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	sigint_handler()
+void	sigint_handler(void)
 {
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -20,17 +20,17 @@ void	sigint_handler()
 	rl_redisplay();
 }
 
-void	set_sigint_ign()
+void	set_sigint_ign(void)
 {
 	signal(SIGINT, SIG_IGN);
 }
 
-void	set_sigint_redisplay()
+void	set_sigint_redisplay(void)
 {
-	struct sigaction sa;
+	struct sigaction	sa;
+
 	sa.sa_handler = sigint_handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
-
 	sigaction(SIGINT, &sa, NULL);
 }
