@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 16:06:49 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:32:20 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void		init_fd(t_fd *fd, t_cl *cl, t_ms *ms);
 void		init_proc(t_proc *proc, t_cl *cl, t_ms *ms);
 void		init_cl(t_cl *cl, t_parse *parse);
 
-
 t_token		*tokenizer(t_ms *ms, char *line);
 int			check_quote_count(t_token *token);
 int			syntax_error_handler(t_token *token);
@@ -39,7 +38,7 @@ t_token		*integrate_quotes(t_token *token, t_ms *ms);
 t_token		*combine_all(t_token *token, t_ms *ms);
 t_token		*get_empty_token(t_token *next, t_ms *ms);
 t_token		*culling_space(t_token *token);
-t_parse		*do_parse(t_token *token, t_ms* ms);
+t_parse		*do_parse(t_token *token, t_ms *ms);
 
 // expander
 void		expand_token(t_ms *ms, t_token *token);
@@ -47,8 +46,8 @@ char		*get_exit_status(t_ms *ms);
 char		*expand_join(t_ms *ms, char *word);
 
 // signal
-void		set_sigint_redisplay();
-void		set_sigint_ign();
+void		set_sigint_redisplay(void);
+void		set_sigint_ign(void);
 
 // utils
 
@@ -69,9 +68,8 @@ char		*get_env_value(char *env_var, t_ms *ms);
 char		*get_env_key(char *env_var, t_ms *ms);
 char		*get_value(t_env *env, char *key);
 
-
 //envp
-char 		**envp_dup(char **envp, t_ms *ms);
+char		**envp_dup(char **envp, t_ms *ms);
 void		free_old_envp(char **envp);
 int			find_env_index(char **envp, char *key);
 
@@ -84,7 +82,7 @@ int			do_exec(t_ms *ms, t_parse *parse);
 void		do_execve(t_ms *ms, t_parse *parse);
 void		do_pipe(t_ms *ms, size_t index);
 void		fail_to_fork(t_ms *ms);
-void		find_cmd(t_ms *ms , t_parse *parse);
+void		find_cmd(t_ms *ms, t_parse *parse);
 char		*find_cmd_path(char *cmd, t_env *env, t_ms *ms);
 char		**add_slash(char **split_arr, t_ms *ms);
 char		*join_cmd_and_path(char *cmd, char **split_arr, t_ms *ms);
@@ -92,7 +90,6 @@ char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
 int			exec_built_in(t_ms *ms, t_parse *parse);
-
 
 // free
 void		free_all(t_ms *ms);

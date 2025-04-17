@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:05:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 14:52:51 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:19:31 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,30 @@
 
 int	is_n_option(char *arg)
 {
-	int	i = 1;
-	
+	int	i;
+
+	i = 1;
 	if (arg[0] != '-')
-		return(0);
+		return (0);
 	while (arg[i])
 	{
 		if (arg[i] != 'n')
-			return(0);
+			return (0);
 		i++;
 	}
-	return(1);
+	return (1);
+}
+
+void	if_newline(t_parse *parse, int	*i, int *newline)
+{
+	while (parse->args[*i])
+	{
+		if (is_n_option(parse->args[*i]))
+			*newline = 0;
+		else
+			break ;
+		(*i)++;
+	}
 }
 
 int	builtin_echo(t_parse *parse)
@@ -39,14 +52,7 @@ int	builtin_echo(t_parse *parse)
 		write(1, "\n", 1);
 		return (0);
 	}
-	while (parse->args[i])
-	{
-		if (is_n_option(parse->args[i]))
-			newline = 0;
-		else
-			break;
-		i++;
-	}
+	if_newline(parse, &i, &newline);
 	while (parse->args[i])
 	{
 		write(1, parse->args[i], ft_strlen(parse->args[i]));

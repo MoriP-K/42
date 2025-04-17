@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 12:23:57 by root              #+#    #+#             */
-/*   Updated: 2025/04/17 15:33:00 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:01:15 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	is_meta_char(char c)
 {
 	int	i;
-	
+
 	i = 0;
 	while (META_CHARS[i])
 	{
@@ -32,7 +32,7 @@ char	*ft_strndup(const char *start, const char *end)
 	char	*dup;
 
 	if (!start || !end || end < start)
-        return NULL;
+		return (NULL);
 	if (start == end)
 	{
 		dup = malloc(sizeof(char) * 2);
@@ -40,19 +40,19 @@ char	*ft_strndup(const char *start, const char *end)
 		dup[1] = '\0';
 		return (dup);
 	}
-    len = (size_t)(end - start);
-    dup = malloc(len + 1);
-    if (!dup)
-        return NULL;
-    ft_memcpy(dup, start, len);
-    dup[len] = '\0';
-    return dup;
+	len = (size_t)(end - start);
+	dup = malloc(len + 1);
+	if (!dup)
+		return (NULL);
+	ft_memcpy(dup, start, len);
+	dup[len] = '\0';
+	return (dup);
 }
 
-int count_words(char *line)
+int	count_words(char *line)
 {
 	int	i;
-	int count;
+	int	count;
 
 	i = 0;
 	count = 0;
@@ -62,7 +62,7 @@ int count_words(char *line)
 	{
 		if (!is_meta_char(line[i]))
 			count++;
-		while(!is_meta_char(line[i]) && line[i])
+		while (!is_meta_char(line[i]) && line[i])
 			i++;
 		if (is_meta_char(line[i]) && line[i])
 		{
@@ -75,8 +75,8 @@ int count_words(char *line)
 
 char	**allocate_words(char *line, char **words, t_ms *ms)
 {
-	int	i;
-	char *start_char;
+	int		i;
+	char	*start_char;
 
 	i = 0;
 	while (*line)
@@ -98,9 +98,9 @@ char	**allocate_words(char *line, char **words, t_ms *ms)
 	return (words);
 }
 
-char **split_meta(char *line, t_ms *ms)
+char	**split_meta(char *line, t_ms *ms)
 {
-	char    **words;
+	char	**words;
 
 	words = (char **)ms_malloc((count_words(line) + 1) * sizeof(char *), ms);
 	if (!words)

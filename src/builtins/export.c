@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/17 16:18:24 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:25:16 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	find_env_index(char **envp, char *key)
 
 	key_len = ft_strlen(key);
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 	{
 		if (ft_strncmp(envp[i], key, key_len) == 0 && envp[i][key_len] == '=')
 			return (i);
@@ -43,13 +43,12 @@ int	split_key_value(char *arg, char **out_key, t_ms *ms)
 	if (key_len == 0)
 		return (0);
 	*out_key = ms_strndup(arg, arg + key_len, ms);
-	
 	return (1);
 }
 
 int	has_wrong_char(char *arg)
 {
-	if (!(ft_isalpha(arg[0]) || ft_memcmp(arg, "_", 1) == 0))		
+	if (!(ft_isalpha(arg[0]) || ft_memcmp(arg, "_", 1) == 0))
 		return (1);
 	while (*arg && *arg != '=')
 	{
@@ -67,7 +66,7 @@ void	free_old_envp(char **envp)
 
 	i = 0;
 	if (!envp)
-		return;
+		return ;
 	count = 0;
 	while (envp[i++])
 		count++;
@@ -88,7 +87,7 @@ int	error(char *arg)
 void	free_string(char **str)
 {
 	int	i;
-	
+
 	i = 0;
 	while (str[i])
 		free(str[i++]);
@@ -98,8 +97,8 @@ void	free_string(char **str)
 void	print_sorted_envs_and_free(t_env *env, char **keys)
 {
 	t_env	*first_env;
-	int			i;
-	
+	int		i;
+
 	first_env = env;
 	i = 0;
 	while (keys[i])
@@ -128,7 +127,7 @@ void	sort_keys(char **keys, int count)
 	int		i;
 	int		j;
 	char	*temp;
-	
+
 	while (count > 0)
 	{
 		i = 0;
@@ -151,9 +150,9 @@ void	sort_keys(char **keys, int count)
 
 void	export_sort(t_ms *ms)
 {
-	char		**keys;
-	int			count;
-	t_env		*env;
+	char	**keys;
+	int		count;
+	t_env	*env;
 	t_env	*first_env;
 
 	first_env = ms->env;
@@ -182,7 +181,7 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 {
 	int		i;
 	int		return_value;
-	int 	count;
+	int		count;
 	int		index;
 	char	*key;
 	char	**new_envp;
@@ -197,12 +196,12 @@ int	builtin_export(t_ms *ms, t_parse *parse)
 		{
 			return_value = error(parse->args[i]);
 			i++;
-			continue;
+			continue ;
 		}
 		if (!split_key_value(parse->args[i], &key, ms))
 		{
 			i++;
-			continue;
+			continue ;
 		}
 		index = find_env_index(ms->envp, key);
 		if (index == -1)

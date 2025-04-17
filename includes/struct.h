@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 15:37:29 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:30:42 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@
 # include <signal.h>
 # include "../src/libft/libft.h"
 
-typedef struct s_ms t_ms;
-typedef struct s_token t_token;
-typedef struct s_parse t_parse;
-typedef struct s_env t_env;
-typedef struct s_fd t_fd;
-typedef struct s_proc t_proc;
-typedef struct s_cl t_cl;
+typedef struct s_ms		t_ms;
+typedef struct s_token	t_token;
+typedef struct s_parse	t_parse;
+typedef struct s_env	t_env;
+typedef struct s_fd		t_fd;
+typedef struct s_proc	t_proc;
+typedef struct s_cl		t_cl;
 
 typedef enum s_kinds
 {

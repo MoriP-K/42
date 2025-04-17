@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/16 19:09:17 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:58:55 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 	t_token	*result;
 
 	result = token;
-	if (token->kinds == TK_META && (token->word[0] == '\"' || token->word[0] == '\''))
+	if (token->kinds == TK_META && (token->word[0] == '\"'
+			|| token->word[0] == '\''))
 	{
 		token = combine_all(token, ms);
 		if (token->kinds == TK_EOF)
@@ -52,7 +53,8 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 	}
 	while (token->kinds != TK_EOF)
 	{
-		if (token->next->kinds == TK_META && (token->next->word[0] == '\"' || token->next->word[0] == '\''))
+		if (token->next->kinds == TK_META
+			&& (token->next->word[0] == '\"' || token->next->word[0] == '\''))
 			token->next = combine_all(token->next, ms);
 		token = token->next;
 	}

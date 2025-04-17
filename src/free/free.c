@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/16 19:51:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:28:11 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	free_all(t_ms *ms)
 {
 	if (!ms)
-		return;
+		return ;
 	free_ms(ms);
 	if (ms->envp)
 		free_old_envp(ms->envp);
@@ -29,7 +29,7 @@ void	free_ms(t_ms *ms)
 		free_parser(ms->parse);
 	if (ms->fd.pipe)
 		free_fd(&(ms->fd), &(ms->cl));
-	if(ms->proc.id)
+	if (ms->proc.id)
 		free_proc(&(ms->proc));
 }
 

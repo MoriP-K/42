@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 15:25:32 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 19:23:36 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:20:34 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	builtin_pwd(void)
 {
 	char	*cwd;
-	
+
 	cwd = getcwd(NULL, 0);
 	if (cwd != NULL)
 	{
@@ -28,5 +28,5 @@ int	builtin_pwd(void)
 		perror("pwd");
 		return (1);
 	}
-	return(0);
+	return (0);
 }

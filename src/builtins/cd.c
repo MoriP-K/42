@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/17 15:45:07 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:21:22 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	write_cd_error(char *path)
 {
 	char	*error_msg;
-	
+
 	error_msg = strerror(errno);
 	write(2, "cd: ", 4);
 	write(2, path, ft_strlen(path));
@@ -56,8 +56,8 @@ int	env_oldpwd_changer(t_ms *ms)
 	t_parse	*parse;
 	char	**args;
 	char	*key;
-	char 	*value;
-	char 	*pwd;
+	char	*value;
+	char	*pwd;
 
 	parse = (t_parse *)ms_malloc(sizeof(t_parse) * 1, ms);
 	args = (char **)ms_malloc(sizeof(char *) * 3, ms);
@@ -93,8 +93,8 @@ void	env_pwd_changer(t_ms *ms)
 	t_parse	*parse;
 	char	**args;
 	char	*key;
-	char 	*value;
-	char 	*cwd;
+	char	*value;
+	char	*cwd;
 
 	if (!env_oldpwd_changer(ms))
 		return ;

@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 16:29:09 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/16 19:11:22 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:26:18 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,6 @@ t_env	*new_env_lst(t_ms *ms)
 	t_env	*new_env;
 
 	new_env = (t_env *)ms_malloc(sizeof(t_env), ms);
-	if (!new_env)
-	{
-		return (NULL);
-	}
 	new_env->key = NULL;
 	new_env->value = NULL;
 	new_env->next = NULL;
@@ -86,4 +82,3 @@ void	add_env_lst(t_env **node, t_env *new_env)
 		current->next = new_env;
 	}
 }
-

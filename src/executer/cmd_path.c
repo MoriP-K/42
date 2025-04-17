@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/16 19:07:20 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:27:21 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,7 @@ int	check_builtin_cmd(char *cmd)
 	while (builtins[i])
 	{
 		if (ft_strncmp(cmd, builtins[i], ft_strlen(cmd)) == 0)
-		{
-			// printf("built-in: %s\n", builtins[i]);
 			return (1);
-		}
 		i++;
 	}
 	return (0);
@@ -123,7 +120,7 @@ int	check_builtin_cmd(char *cmd)
 void	find_cmd(t_ms *ms, t_parse *parse)
 {
 	if (check_builtin_cmd(parse->cmd))
-		return;
+		return ;
 	else if (ft_strchr(parse->cmd, '/'))
 	{
 		if (is_executable_file(parse->cmd))
