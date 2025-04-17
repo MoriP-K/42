@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 00:34:43 by masa              #+#    #+#             */
-/*   Updated: 2025/04/17 18:21:22 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 21:41:21 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,100 +37,31 @@ char	*find_value(t_env *env, char *key)
 	return (NULL);
 }
 
-char	*get_pwd_value(t_ms *ms)
+int	home_not_set(t_ms *ms)
 {
-	t_env	*env;
+	char	*env_value;
 
-	env = ms->env;
-	while (env)
+	env_value = find_value(ms->env, "HOME");
+	if (!env_value)
 	{
-		if (ft_strcmp(env->key, "PWD") == 0)
-			return (env->value);
-		env = env->next;
+		write(2, "cd: HOME not set\n", 17);
+		return (1);
 	}
-	return (NULL);
-}
-
-int	env_oldpwd_changer(t_ms *ms)
-{
-	t_parse	*parse;
-	char	**args;
-	char	*key;
-	char	*value;
-	char	*pwd;
-
-	parse = (t_parse *)ms_malloc(sizeof(t_parse) * 1, ms);
-	args = (char **)ms_malloc(sizeof(char *) * 3, ms);
-	args[2] = NULL;
-	pwd = get_pwd_value(ms);
-	if (pwd == NULL)
+	else if (chdir(env_value) != 0)
 	{
-		args[1] = ms_strdup("OLDPWD", ms);
-		parse->args = args;
-		builtin_unset(ms, parse);
+		write_cd_error(env_value);
+		return (1);
 	}
-	else
-	{
-		key = ms_strdup("OLDPWD=", ms);
-		value = ms_strdup(pwd, ms);
-		args[1] = ms_strjoin(key, value, ms);
-		free(key);
-		free(value);
-		parse->args = args;
-		parse->next = NULL;
-		builtin_export(ms, parse);
-	}
-	free(args[1]);
-	free(args);
-	free(parse);
-	if (pwd == NULL)
-		return (0);
-	return (1);
-}
-
-void	env_pwd_changer(t_ms *ms)
-{
-	t_parse	*parse;
-	char	**args;
-	char	*key;
-	char	*value;
-	char	*cwd;
-
-	if (!env_oldpwd_changer(ms))
-		return ;
-	parse = (t_parse *)ms_malloc(sizeof(t_parse) * 1, ms);
-	args = (char **)ms_malloc(sizeof(char *) * 3, ms);
-	key = ms_strdup("PWD=", ms);
-	cwd = getcwd(NULL, 0);
-	value = ms_strdup(cwd, ms);
-	free(cwd);
-	args[1] = ms_strjoin(key, value, ms);
-	free(key);
-	free(value);
-	args[2] = NULL;
-	parse->args = args;
-	parse->next = NULL;
-	builtin_export(ms, parse);
-	free(args[1]);
-	free(args);
-	free(parse);
+	return (0);
 }
 
 int	builtin_cd(t_ms *ms, t_parse *parse)
 {
-	char	*env_value;
-
 	if (parse->args == NULL || parse->args[1] == NULL)
 	{
-		env_value = find_value(ms->env, "HOME");
-		if (!env_value)
-		{
-			write(2, "cd: HOME not set\n", 17);
+		if (home_not_set(ms))
 			return (1);
-		}
-		else if (chdir(env_value) != 0)
-			write_cd_error(env_value);
-		return (1);
+		return (0);
 	}
 	if (parse->args[2] != NULL)
 	{

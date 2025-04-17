@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 18:32:20 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 21:20:08 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void		init_fd(t_fd *fd, t_cl *cl, t_ms *ms);
 void		init_proc(t_proc *proc, t_cl *cl, t_ms *ms);
 void		init_cl(t_cl *cl, t_parse *parse);
 
+//lexer
 t_token		*tokenizer(t_ms *ms, char *line);
 int			check_quote_count(t_token *token);
 int			syntax_error_handler(t_token *token);
@@ -38,7 +39,11 @@ t_token		*integrate_quotes(t_token *token, t_ms *ms);
 t_token		*combine_all(t_token *token, t_ms *ms);
 t_token		*get_empty_token(t_token *next, t_ms *ms);
 t_token		*culling_space(t_token *token);
+
+//parser
 t_parse		*do_parse(t_token *token, t_ms *ms);
+t_parse		*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms);
+t_parse		*get_new_parse(t_ms *ms, t_token *token);
 
 // expander
 void		expand_token(t_ms *ms, t_token *token);
@@ -108,7 +113,12 @@ int			builtin_export(t_ms *ms, t_parse *parse);
 int			builtin_unset(t_ms *ms, t_parse *parse);
 int			builtin_echo(t_parse *parse);
 int			builtin_cd(t_ms *ms, t_parse *parse);
+void		env_pwd_changer(t_ms *ms);
 void		builtin_exit(t_ms *ms, t_parse *parse);
+void		export_sort(t_ms *ms);
+int			find_env_index(char **envp, char *key);
+int			export_error(char *arg);
+int			export_has_wrong_char(char *arg);
 
 // error
 void		throw_error(char *cmd);
