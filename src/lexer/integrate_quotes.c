@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/17 17:58:55 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 13:36:50 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,26 @@ t_token	*get_empty_token(t_token *next, t_ms *ms)
 	return (empty_token);
 }
 
-void	combine_adjacent_quotes(t_token *token, t_ms *ms)
+void	combine_adjacent_quotes(t_token **token, t_ms *ms)
 {
 	t_token	*temp_for_free;
 	char	*temp_for_free2;
 
-	temp_for_free = token->next;
-	temp_for_free2 = token->word;
-	token->word = ms_strjoin(token->word, token->next->word, ms);
-	free(temp_for_free->word);
-	free(temp_for_free);
-	free(temp_for_free2);
-	token->next = token->next->next;
+	while ((*token)->kinds != TK_EOF)
+	{
+		while ((*token)->kinds == TK_WORD && (*token)->next->kinds == TK_WORD)
+		{
+			temp_for_free = (*token)->next;
+			temp_for_free2 = (*token)->word;
+			(*token)->word
+				= ms_strjoin((*token)->word, (*token)->next->word, ms);
+			free(temp_for_free->word);
+			free(temp_for_free);
+			free(temp_for_free2);
+			(*token)->next = (*token)->next->next;
+		}
+		(*token) = (*token)->next;
+	}
 }
 
 t_token	*integrate_quotes(t_token *token, t_ms *ms)
@@ -59,11 +67,6 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 		token = token->next;
 	}
 	token = result;
-	while (token->kinds != TK_EOF)
-	{
-		while (token->kinds == TK_WORD && token->next->kinds == TK_WORD)
-			combine_adjacent_quotes(token, ms);
-		token = token->next;
-	}
+	combine_adjacent_quotes(&token, ms);
 	return (result);
 }
