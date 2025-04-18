@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/17 17:53:31 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 20:33:39 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ void	print_error(t_token *token)
 
 int	check_quote_count(t_token *token)
 {
-	int	double_quote_count;
-	int	single_quote_count;
+	int		double_quote_count;
+	int		single_quote_count;
+	t_token	*first_token;
 
+	first_token = token;
 	double_quote_count = 0;
 	single_quote_count = 0;
 	while (token->kinds != TK_EOF)
@@ -43,6 +45,7 @@ int	check_quote_count(t_token *token)
 	if (double_quote_count % 2 == 1 || single_quote_count % 2 == 1)
 	{
 		print_error(token);
+		free_tokens(first_token);
 		return (0);
 	}
 	return (1);
