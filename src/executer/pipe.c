@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 16:11:01 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:37:58 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ int	do_exec(t_ms *ms, t_parse *parse)
 		{
 			// if (handle_redirection(ms, parse))
 			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			find_cmd(ms, current_parse);
 			// printf("cmd: %s\n", ms->cl.path);
 			// printf("infile: %s\n", parse->infile);

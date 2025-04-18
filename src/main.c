@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 16:16:38 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:41:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,10 @@ void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 			ms->exit_status = WEXITSTATUS(proc->status);
 		else if (WIFSIGNALED(proc->status))
 		{
-			write(1, "\n", 1);
 			ms->exit_status = 128 + WTERMSIG(proc->status);
+			if (ms->exit_status == 131)
+				write(1, "Quit (core dumped)", 18);
+			write(1, "\n", 1);
 		}
 		i++;
 	}
