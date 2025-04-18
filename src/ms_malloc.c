@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:08:06 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/16 19:56:22 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:48:13 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ char	*ms_strjoin(char *s1, char *s2, t_ms *ms)
 	return (join);
 }
 
-char	*ms_strndup(char *start, char *end, t_ms *ms)
+char	*ms_strndup_pointer(char *start, char *end, t_ms *ms)
 {
 	char	*dup;
 
-	dup = ft_strndup(start, end);
+	dup = ft_strndup_pointer(start, end);
 	if (!dup)
 	{
 		free_all(ms);

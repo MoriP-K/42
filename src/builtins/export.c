@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 16:18:19 by masa              #+#    #+#             */
-/*   Updated: 2025/04/18 14:03:41 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:48:19 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	split_key_value(char *arg, char **out_key, t_ms *ms)
 	key_len = eq - arg;
 	if (key_len == 0)
 		return (0);
-	*out_key = ms_strndup(arg, arg + key_len, ms);
+	*out_key = ms_strndup_pointer(arg, arg + key_len, ms);
 	return (1);
 }
 

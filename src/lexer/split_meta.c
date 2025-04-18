@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 12:23:57 by root              #+#    #+#             */
-/*   Updated: 2025/04/17 18:01:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:48:52 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	is_meta_char(char c)
 	return (0);
 }
 
-char	*ft_strndup(const char *start, const char *end)
+char	*ft_strndup_pointer(const char *start, const char *end)
 {
 	size_t	len;
 	char	*dup;
@@ -86,11 +86,11 @@ char	**allocate_words(char *line, char **words, t_ms *ms)
 			start_char = line;
 			while (!is_meta_char(*(line)) && *(line))
 				line++;
-			words[i++] = ms_strndup(start_char, line, ms);
+			words[i++] = ms_strndup_pointer(start_char, line, ms);
 		}
 		if (is_meta_char(*line))
 		{
-			words[i++] = ms_strndup(line, line, ms);
+			words[i++] = ms_strndup_pointer(line, line, ms);
 			line++;
 		}
 	}

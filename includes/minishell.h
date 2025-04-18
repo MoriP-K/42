@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/18 13:38:30 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:47:57 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,13 @@ void		set_sigint_ign(void);
 
 // utils
 
-char		*ft_strndup(const char *start, const char *end);
+char		*ft_strndup_pointer(const char *start, const char *end);
 
 // malloc
 void		*ms_malloc(size_t size, t_ms *ms);
 char		*ms_strdup(char *str, t_ms *ms);
 char		*ms_strjoin(char *s1, char *s2, t_ms *ms);
-char		*ms_strndup(char *start, char *end, t_ms *ms);
+char		*ms_strndup_pointer(char *start, char *end, t_ms *ms);
 char		*ms_substr(char *str, unsigned int start, size_t len, t_ms *ms);
 
 // env

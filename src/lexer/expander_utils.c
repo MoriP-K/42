@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:36:38 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/16 19:08:03 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:48:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ char	*set_start(char **start, char **word, char **first, t_ms *ms)
 		*start = *word;
 		while (**word != '$')
 			(*word)++;
-		*first = ms_strndup(*start, *word, ms);
+		*first = ms_strndup_pointer(*start, *word, ms);
 	}
 	(*word)++;
 	*start = *word;
 	while (**word != '$' && **word)
 		(*word)++;
-	variable = ms_strndup(*start, *word, ms);
+	variable = ms_strndup_pointer(*start, *word, ms);
 	env = get_value(ms->env, variable);
 	free(variable);
 	return (env);
@@ -94,7 +94,7 @@ char	*expand_join(t_ms *ms, char *word)
 		start = word;
 		while (*word)
 			word++;
-		end_word = ms_strndup(start, word, ms);
+		end_word = ms_strndup_pointer(start, word, ms);
 	}
 	set_env(&first_word, &env, &result, ms);
 	set_end(&result, &end_word, ms);
