@@ -21,7 +21,7 @@ SRC := main.c \
 	split_meta.c integrate_quotes.c combine_quotes.c \
 	parser.c allocate_parse.c parser_utils.c \
 	pipe.c close_fd.c cmd_path.c \
-	free.c utils.c ms_malloc.c \
+	free.c free2.c utils.c ms_malloc.c \
 	init.c \
 	pwd.c envi.c export.c export_utils.c unset.c echo.c cd.c exit.c \
 	export_sort.c cd_pwd_changer.c \
