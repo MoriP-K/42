@@ -6,14 +6,15 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:17:29 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/17 21:44:55 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 13:27:26 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	sigint_handler(void)
+void	sigint_handler(int sig)
 {
+	(void)sig;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
