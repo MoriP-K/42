@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   culling_space.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 21:10:56 by masa              #+#    #+#             */
-/*   Updated: 2025/04/15 21:19:01 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/17 17:55:16 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	culling_first_space(t_token **token)
 {
-	t_token *temp;
+	t_token	*temp;
 
 	while ((*token)->kinds == TK_SPACE && (*token)->kinds != TK_EOF)
 	{
@@ -27,10 +27,10 @@ void	culling_first_space(t_token **token)
 
 t_token	*culling_space(t_token *token)
 {
-	t_token *first_token;
-	t_token *temp;
+	t_token	*first_token;
+	t_token	*temp;
 	t_token	*temp2;
-	
+
 	culling_first_space(&token);
 	first_token = token;
 	temp = token;

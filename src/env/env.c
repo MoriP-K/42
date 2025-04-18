@@ -3,35 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 16:29:09 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/03/30 15:37:55 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:26:18 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*get_env_key(char *env_var)
+char	*get_env_key(char *env_var, t_ms *ms)
 {
 	char	*key;
 	char	*tmp;
 
 	tmp = env_var;
-	key = ft_substr(tmp, 0, ft_strnchr(tmp, '=') - 1);
+	key = ms_substr(tmp, 0, ft_strnchr(tmp, '=') - 1, ms);
 	if (!key)
 		return (NULL);
 	return (key);
 }
 
-char	*get_env_value(char *env_var)
+char	*get_env_value(char *env_var, t_ms *ms)
 {
 	char	*value;
 	char	*tmp;
 	char	*original_tmp;
 	int		pos;
 
-	tmp = ft_strdup(env_var);
+	tmp = ms_strdup(env_var, ms);
 	if (!tmp)
 		return (NULL);
 	original_tmp = tmp;
@@ -41,7 +41,7 @@ char	*get_env_value(char *env_var)
 		tmp++;
 		pos--;
 	}
-	value = ft_substr(tmp, 0, ft_strlen(tmp));
+	value = ms_substr(tmp, 0, ft_strlen(tmp), ms);
 	free(original_tmp);
 	if (!value)
 	{
@@ -50,15 +50,11 @@ char	*get_env_value(char *env_var)
 	return (value);
 }
 
-t_env	*new_env_lst(void)
+t_env	*new_env_lst(t_ms *ms)
 {
 	t_env	*new_env;
 
-	new_env = (t_env *)malloc(sizeof(t_env));
-	if (!new_env)
-	{
-		return (NULL);
-	}
+	new_env = (t_env *)ms_malloc(sizeof(t_env), ms);
 	new_env->key = NULL;
 	new_env->value = NULL;
 	new_env->next = NULL;
@@ -86,4 +82,3 @@ void	add_env_lst(t_env **node, t_env *new_env)
 		current->next = new_env;
 	}
 }
-

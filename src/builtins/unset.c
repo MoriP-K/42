@@ -6,25 +6,11 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 21:17:44 by masa              #+#    #+#             */
-/*   Updated: 2025/04/14 21:59:15 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/17 18:25:54 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-// int	string_compare(char *s1, char *s2)
-// {
-// 	while (*s1 && *s2)
-// 	{
-// 		if (*s1 != *s2)
-// 			return (0);
-// 		s1++;
-// 		s2++;
-// 	}
-// 	if (*s1 != *s2)
-// 		return (0);
-// 	return (1);
-// }
 
 int	find_key_index(char *key, t_env	*env)
 {
@@ -34,7 +20,7 @@ int	find_key_index(char *key, t_env	*env)
 	while (env)
 	{
 		if (ft_strcmp(env->key, key) == 0)
-			return(count);
+			return (count);
 		count++;
 		env = env->next;
 	}
@@ -53,7 +39,7 @@ int	builtin_unset(t_ms *ms, t_parse *parse)
 		if (index == -1)
 		{
 			i++;
-			continue;
+			continue ;
 		}
 		free(ms->envp[index]);
 		while (ms->envp[index + 1])
@@ -63,7 +49,7 @@ int	builtin_unset(t_ms *ms, t_parse *parse)
 		}
 		ms->envp[index] = NULL;
 		free_env(&ms->env);
-		init_env(&ms->env, ms->envp);
+		init_env(&ms->env, ms->envp, ms);
 		i++;
 	}
 	return (0);

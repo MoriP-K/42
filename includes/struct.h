@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/14 22:59:05 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:59:38 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <fcntl.h>
+# include <errno.h> 
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
@@ -24,15 +25,15 @@
 # include <signal.h>
 # include "../src/libft/libft.h"
 
-typedef struct s_ms t_ms;
-typedef struct s_token t_token;
-typedef struct s_parse t_parse;
-typedef struct s_env t_env;
-typedef struct s_fd t_fd;
-typedef struct s_proc t_proc;
-typedef struct s_cl t_cl;
+typedef struct s_ms		t_ms;
+typedef struct s_token	t_token;
+typedef struct s_parse	t_parse;
+typedef struct s_env	t_env;
+typedef struct s_fd		t_fd;
+typedef struct s_proc	t_proc;
+typedef struct s_cl		t_cl;
 
-typedef enum s_kinds
+typedef enum e_kinds
 {
 	TK_META = 1,
 	TK_WORD = 2,
@@ -44,14 +45,14 @@ typedef enum s_kinds
 	TK_EOF = 8,
 }	t_kinds;
 
-typedef enum s_quote
+typedef enum e_quote
 {
 	Q_NONE = 0,
 	Q_SINGLE = 1,
 	Q_DOUBLE = 2,
 }	t_quote;
 
-typedef enum s_timing {
+typedef enum e_timing {
 	NONE = 0,
 	INFILE = 1,
 	OUTFILE = 2,

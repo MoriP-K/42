@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:36:38 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/15 20:39:27 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/18 14:48:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,45 +33,45 @@ char	*set_start(char **start, char **word, char **first, t_ms *ms)
 		*start = *word;
 		while (**word != '$')
 			(*word)++;
-		*first = ft_strndup(*start, *word);
+		*first = ms_strndup_pointer(*start, *word, ms);
 	}
 	(*word)++;
 	*start = *word;
 	while (**word != '$' && **word)
 		(*word)++;
-	variable = ft_strndup(*start, *word);
+	variable = ms_strndup_pointer(*start, *word, ms);
 	env = get_value(ms->env, variable);
 	free(variable);
 	return (env);
 }
 
-void	set_env(char **first, char **env, char **result)
+void	set_env(char **first, char **env, char **result, t_ms *ms)
 {
 	if (*first != NULL)
 	{
 		if (*env)
-			*result = ft_strjoin(*first, *env);
+			*result = ms_strjoin(*first, *env, ms);
 		else
-			*result = ft_strdup(*first);
+			*result = ms_strdup(*first, ms);
 		free((*first));
 	}
 	else
 	{
 		if (*env)
-			*result = ft_strdup(*env);
+			*result = ms_strdup(*env, ms);
 		else
-			*result = ft_strdup("");
+			*result = ms_strdup("", ms);
 	}
 }
 
-void	set_end(char **result, char **end)
+void	set_end(char **result, char **end, t_ms *ms)
 {
 	char	*temp_for_free;
 
 	if (*end != NULL)
 	{
 		temp_for_free = *result;
-		*result = ft_strjoin(*result, *end);
+		*result = ms_strjoin(*result, *end, ms);
 		free(temp_for_free);
 		free(*end);
 	}
@@ -94,9 +94,9 @@ char	*expand_join(t_ms *ms, char *word)
 		start = word;
 		while (*word)
 			word++;
-		end_word = ft_strndup(start, word);
+		end_word = ms_strndup_pointer(start, word, ms);
 	}
-	set_env(&first_word, &env, &result);
-	set_end(&result, &end_word);
+	set_env(&first_word, &env, &result, ms);
+	set_end(&result, &end_word, ms);
 	return (result);
 }
