@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 18:30:42 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/18 14:59:38 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_fd		t_fd;
 typedef struct s_proc	t_proc;
 typedef struct s_cl		t_cl;
 
-typedef enum s_kinds
+typedef enum e_kinds
 {
 	TK_META = 1,
 	TK_WORD = 2,
@@ -45,14 +45,14 @@ typedef enum s_kinds
 	TK_EOF = 8,
 }	t_kinds;
 
-typedef enum s_quote
+typedef enum e_quote
 {
 	Q_NONE = 0,
 	Q_SINGLE = 1,
 	Q_DOUBLE = 2,
 }	t_quote;
 
-typedef enum s_timing {
+typedef enum e_timing {
 	NONE = 0,
 	INFILE = 1,
 	OUTFILE = 2,
