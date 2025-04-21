@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:23:12 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/18 13:25:20 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/20 17:56:26 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ t_kinds	get_kinds(char *word)
 		kind = TK_IN_REDIRECT;
 	else if (word[0] == '>')
 		kind = TK_OUT_REDIRECT;
+	else if (word[0] == '|')
+		kind = TK_PIPE;
 	else if (is_meta_char(word[0]))
 		kind = TK_META;
 	else

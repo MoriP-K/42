@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:01:55 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/17 21:02:29 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 19:36:58 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,14 @@ t_parse	*get_new_parse(t_ms *ms, t_token *token)
 
 	arg_count = count_args(token);
 	new_parse = (t_parse *)ms_malloc(sizeof(t_parse), ms);
+	new_parse->fd = (t_fd *)ms_malloc(sizeof(t_fd), ms);
+	new_parse->token = NULL;
 	new_parse->cmd = NULL;
 	new_parse->next = NULL;
 	new_parse->infile = NULL;
 	new_parse->outfile = NULL;
+	new_parse->delimiter = NULL;
+	new_parse->heredoc_file = NULL;
 	new_parse->append = 0;
 	new_parse->args = (char **)ms_malloc(sizeof(char *) * (arg_count + 1), ms);
 	i = 0;

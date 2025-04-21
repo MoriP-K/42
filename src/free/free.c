@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/18 14:12:26 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:28:32 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ void	free_ms(t_ms *ms)
 {
 	if (ms->parse)
 		free_parser(ms->parse);
-	if (ms->fd.pipe)
-		free_fd(&(ms->fd), &(ms->cl));
-	if (ms->proc.id)
-		free_proc(&(ms->proc));
+	if (ms->fd->pipe)
+		free_fd(ms->fd, ms->cl);
+	if (ms->proc->id)
+		free_proc(ms->proc);
 }
 
 void	free_proc(t_proc *proc)

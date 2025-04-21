@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/17 21:04:17 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 22:06:00 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,7 @@ t_parse	*do_parse(t_token *token, t_ms *ms)
 	first_token = token;
 	first_parse = allocate_parse(token, NULL, ms);
 	current_parse = first_parse;
-	while (token && !(token->kinds == TK_META && token->word[0] == '|')
-		&& token->kinds != TK_EOF)
+	while (token && token->kinds != TK_PIPE && token->kinds != TK_EOF)
 		token = token->next;
 	if (token && token->kinds != TK_EOF)
 		token = token->next;
@@ -59,13 +58,12 @@ t_parse	*do_parse(t_token *token, t_ms *ms)
 	{
 		allocate_parse(token, current_parse, ms);
 		current_parse = current_parse->next;
-		while (!(token->kinds == TK_META && token->word[0] == '|')
-			&& token->kinds != TK_EOF)
+		while (token->kinds != TK_PIPE && token->kinds != TK_EOF)
 			token = token->next;
 		if (token->kinds != TK_EOF)
 			token = token->next;
 	}
 	add_eof_parse(first_parse, ms);
-	free_tokens(first_token);
+	// free_tokens(first_token);
 	return (first_parse);
 }

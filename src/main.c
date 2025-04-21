@@ -1,21 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/24 15:13:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/18 15:19:34 by motomo           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/minishell.h"
 
 void	throw_error(char *cmd)
 {
 	// dprintf(2, "Error: %s\n", cmd);
-	printf("Error: %s\n", cmd);
+	ft_putstr_fd("bash: ", 2);
+	perror(cmd);
 	exit(EXIT_FAILURE);
 }
 
@@ -24,9 +13,9 @@ void	init_ms(t_ms *ms, char *envp[])
 	ms->token = NULL;
 	ms->parse = NULL;
 	ms->env = NULL;
-	ms->cl.path = NULL;
-	ms->fd.pipe = NULL;
-	ms->proc.id = NULL;
+	ms->cl = NULL;
+	ms->fd = NULL;
+	ms->proc = NULL;
 	ms->exit_status = 0;
 	ms->envp = NULL;
 	ms->envp = envp_dup(envp, ms);
@@ -54,18 +43,12 @@ void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 	}
 }
 
-int main(int ac, char *av[], char *envp[])
+void	do_minishell(t_ms *ms, char *line)
 {
-	t_ms	ms;
-	char 	*line;
-
-	(void)av;
-	signal(SIGQUIT, SIG_IGN);
-	init_ms(&ms, envp);
 	while (1)
 	{
 		set_sigint_redisplay();
-		line = readline("minishell > ");
+		line = readline("minishell$ ");
 		set_sigint_ign();
 		if (!line)
 			break;
@@ -75,32 +58,28 @@ int main(int ac, char *av[], char *envp[])
 			continue;
 		}
 		add_history(line);
-		init_lexer(&ms, &(ms.token), line);
-		init_parser(&(ms.parse), ms.token, &ms);
-		if (!ms.token || !ms.parse)
+		init_lexer(ms, &(ms->token), line);
+		init_parser(&(ms->parse), ms->token, ms);
+		if (!ms->token || !ms->parse)
 			continue;
-		//
-		//t_parse *temp = ms.parse;
-		// while (temp->cmd)
-		// {
-		// 	printf("cmd %s, infile %s, outfile %s, delimiter %s, append %d\n", temp->cmd, temp->infile, temp->outfile, temp->delimiter, temp->append);
-		// 	int k = 0;
-		// 	while (temp->args[k])
-		// 	{
-		// 		printf("args[%d] %s\n", k, temp->args[k]);
-		// 		k++;
-		// 	}
-		// 	temp = temp->next;
-		// }
-		//
-		init_exec(&ms, ms.parse, &(ms.cl));
-		// if (ms.token == NULL || ms.parse == NULL)
-		// 	continue;
-		if (do_exec(&ms, ms.parse))
-			wait_child_process(&ms, &(ms).proc, ms.cl.cmd_count);
-		close_all_fds(&(ms.fd), ms.cl.cmd_count);
-		free_ms(&ms);
+		init_exec(ms, ms->parse);
+		if (do_exec(ms, ms->parse))
+			wait_child_process(ms, ms->proc, ms->cl->cmd_count);
+		close_all_fds(ms->fd, ms->cl->cmd_count);
+		free_ms(ms);
 	}
+}
+
+int main(int ac, char *av[], char *envp[])
+{
+	t_ms	ms;
+	char 	*line;
+
+	(void)av;
+	line = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	init_ms(&ms, envp);
+	do_minishell(&ms, line);
 	ac = ms.exit_status;
 	free_old_envp(ms.envp);
 	free_env(&(ms.env));
