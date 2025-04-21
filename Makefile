@@ -18,7 +18,7 @@ RLFLAGS := -lreadline
 
 SRC := main.c \
 	lexer.c lexer_utils.c expander.c expander_utils.c culling_space.c \
-	split_meta.c integrate_quotes.c combine_quotes.c \
+	split_meta.c integrate_quotes.c combine_quotes.c quotes_checker.c \
 	parser.c allocate_parse.c parser_utils.c \
 	pipe.c close_fd.c cmd_path.c \
 	free.c free2.c utils.c ms_malloc.c \

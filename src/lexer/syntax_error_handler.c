@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void	print_error(t_token *token)
+void	print_syntax_error(t_token *token)
 {
 	if (token->word == NULL || !*(token->word))
 		write(1, "bash: syntax error near unexpected token `newline'\n",
@@ -25,32 +25,6 @@ void	print_error(t_token *token)
 	}
 }
 
-int	check_quote_count(t_token *token)
-{
-	int		double_quote_count;
-	int		single_quote_count;
-	t_token	*first_token;
-
-	first_token = token;
-	double_quote_count = 0;
-	single_quote_count = 0;
-	while (token->kinds != TK_EOF)
-	{
-		if (token->kinds == TK_META && token->word[0] == '\"')
-			double_quote_count++;
-		if (token->kinds == TK_META && token->word[0] == '\'')
-			single_quote_count++;
-		token = token->next;
-	}
-	if (double_quote_count % 2 == 1 || single_quote_count % 2 == 1)
-	{
-		print_error(token);
-		free_tokens(first_token);
-		return (0);
-	}
-	return (1);
-}
-
 int	pipe_error(t_token *token, t_token *first_token)
 {
 	token = token->next;
@@ -58,7 +32,7 @@ int	pipe_error(t_token *token, t_token *first_token)
 	{
 		return (1);
 	}
-	print_error(token);
+	print_syntax_error(token);
 	free_tokens(first_token);
 	first_token = NULL;
 	return (0);
@@ -69,7 +43,7 @@ int	redirect_error(t_token *token, t_token *first_token)
 	token = token->next;
 	if (token->kinds == TK_WORD)
 		return (1);
-	print_error(token);
+	print_syntax_error(token);
 	free_tokens(first_token);
 	first_token = NULL;
 	return (0);
@@ -82,7 +56,7 @@ int	syntax_error_handler(t_token *token)
 	first_token = token;
 	if (token->kinds == TK_PIPE)
 	{
-		print_error(token);
+		print_syntax_error(token);
 		return (0);
 	}
 	while (token->kinds != TK_EOF)
