@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/18 14:47:57 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 22:01:59 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # include "struct.h"
 
 # ifndef META_CHARS
-#  define META_CHARS "\'\"<>| "
+#  define META_CHARS "\'\" <>"
 # endif
 
 // initialize
@@ -23,10 +23,10 @@ void		init_ms(t_ms *ms, char *envp[]);
 void		init_lexer(t_ms *ms, t_token **token, char *line);
 void		init_parser(t_parse **parse, t_token *token, t_ms *ms);
 void		init_env(t_env **env, char *envp[], t_ms *ms);
-void		init_exec(t_ms *ms, t_parse *parse, t_cl *cl);
-void		init_fd(t_fd *fd, t_cl *cl, t_ms *ms);
-void		init_proc(t_proc *proc, t_cl *cl, t_ms *ms);
-void		init_cl(t_cl *cl, t_parse *parse);
+void		init_exec(t_ms *ms, t_parse *parse);
+void		init_fd(t_fd **fd, t_cl *cl, t_ms *ms);
+void		init_proc(t_proc **proc, t_cl *cl, t_ms *ms);
+void		init_cl(t_cl **cl, t_parse *parse, t_ms *ms);
 
 //lexer
 t_token		*tokenizer(t_ms *ms, char *line);

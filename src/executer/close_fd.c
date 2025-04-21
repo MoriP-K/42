@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:40:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/15 23:56:33 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:29:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	close_fds(t_ms *ms, t_fd *fd, size_t index)
 {
-	if (ms->cl.cmd_count > 1)
+	if (ms->cl->cmd_count > 1)
 	{
 		if (index == 0)
 		{
@@ -22,7 +22,7 @@ void	close_fds(t_ms *ms, t_fd *fd, size_t index)
 			if (fd->infile != -1)
 				close(fd->infile);
 		}
-		else if (index == ms->cl.cmd_count - 1)
+		else if (index == ms->cl->cmd_count - 1)
 		{
 			close(fd->pipe[index - 1][0]);
 			if (fd->outfile != -1)
@@ -45,7 +45,7 @@ void	close_all_fds(t_fd *fd, int cmd_count)
 	if (fd->outfile != -1)
 		close(fd->outfile);
 	i = 0;
-	while (i < cmd_count - 1)
+	while (cmd_count > 1 && i < cmd_count - 1)
 	{
 		if (fd->pipe[i][0] != -1)
 			close(fd->pipe[i][0]);
@@ -57,10 +57,10 @@ void	close_all_fds(t_fd *fd, int cmd_count)
 
 void	close_parent_fd(t_ms *ms, t_fd *fd, size_t index)
 {
-	if (!fd->pipe)
+	if (!fd->pipe || ms->cl->cmd_count < 1)
 		return ;
-	if (index < ms->cl.cmd_count - 1 && fd->pipe[index])
+	if (index < ms->cl->cmd_count - 1 && fd->pipe[index])
 		close(fd->pipe[index][1]);
-	if (index > 0 && index <= ms->cl.cmd_count - 1 && fd->pipe[index - 1])
+	if (index > 0 && index <= ms->cl->cmd_count - 1 && fd->pipe[index - 1])
 		close(fd->pipe[index - 1][0]);
 }

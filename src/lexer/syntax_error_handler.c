@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error_handler.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/18 20:33:39 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 20:40:07 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 void	print_error(t_token *token)
 {
 	if (token->word == NULL || !*(token->word))
-		write(1, "minishell: syntax error near unexpected token `newline'\n",
+		write(1, "bash: syntax error near unexpected token `newline'\n",
 			56);
 	else
 	{
-		write(1, "minishell: syntax error near unexpected token `", 47);
+		write(1, "bash: syntax error near unexpected token `", 47);
 		write(1, token->word, ft_strlen(token->word));
 		write(1, "\'\n", 2);
 	}
@@ -80,14 +80,14 @@ int	syntax_error_handler(t_token *token)
 	t_token	*first_token;
 
 	first_token = token;
-	if (token->kinds == TK_META && token->word[0] == '|')
+	if (token->kinds == TK_PIPE)
 	{
 		print_error(token);
 		return (0);
 	}
 	while (token->kinds != TK_EOF)
 	{
-		if (token->kinds == TK_META && token->word[0] == '|')
+		if (token->kinds == TK_PIPE)
 		{
 			if (!pipe_error(token, first_token))
 				return (0);

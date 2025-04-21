@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/18 14:59:38 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:26:11 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ typedef enum e_kinds
 	TK_OUT_REDIRECT = 5,
 	TK_HEREDOC = 6,
 	TK_APPEND = 7,
-	TK_EOF = 8,
+	TK_PIPE = 8,
+	TK_EOF = 9,
 }	t_kinds;
 
 typedef enum e_quote
@@ -70,12 +71,15 @@ typedef struct s_token
 
 typedef struct s_parse
 {
+	t_token			*token;
 	char			*cmd;
 	char			**args;
 	char			*infile;
 	char			*outfile;
 	char			*delimiter;
+	char			*heredoc_file;
 	int				append;
+	t_fd			*fd;
 	struct s_parse	*next;
 }	t_parse;
 
@@ -92,6 +96,7 @@ typedef struct s_fd
 	int				outfile;
 	int				tmp_in;
 	int				tmp_out;
+	int				here_doc;
 	int				**pipe;
 }	t_fd;
 
@@ -119,9 +124,9 @@ typedef struct s_ms
 	t_parse			*parse;
 	t_env			*env;
 	int				exit_status;
-	t_fd			fd;
-	t_proc			proc;
-	t_cl			cl;
+	t_fd			*fd;
+	t_proc			*proc;
+	t_cl			*cl;
 }	t_ms;
 
 #endif

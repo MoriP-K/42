@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/17 18:27:21 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/21 22:19:39 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ char	*find_cmd_path(char *cmd, t_env *env, t_ms *ms)
 	char	*path;
 	char	**split_arr;
 
+	if (ft_strlen(cmd) == 0)
+		return (NULL);
 	path = find_path_from_env(env);
 	if (!path)
 		return (NULL);
@@ -102,42 +104,59 @@ char	*find_cmd_path(char *cmd, t_env *env, t_ms *ms)
 
 int	check_builtin_cmd(char *cmd)
 {
-	static const char	*builtins[] = {\
-		"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL\
-	};
+	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
+			"env", "exit", NULL};
 	int					i;
+	size_t					len;
 
+	len = ft_strlen(cmd);
+	if (!cmd || len == 0)
+		return (0);
 	i = 0;
 	while (builtins[i])
 	{
-		if (ft_strncmp(cmd, builtins[i], ft_strlen(cmd)) == 0)
+		if (ft_strncmp(cmd, builtins[i], len) == 0)
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
+void	cmd_not_found(t_ms *ms, char *cmd)
+{
+	ft_putstr_fd(cmd, STDERR_FILENO);
+	ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	free_ms(ms);
+	// ms->exit_status = 127;
+	exit(127);
+}
+
 void	find_cmd(t_ms *ms, t_parse *parse)
 {
-	if (check_builtin_cmd(parse->cmd))
+	if (!parse->cmd)
+		return ;
+	if (ms->cl->cmd_count > 0 && check_builtin_cmd(parse->cmd))
 		return ;
 	else if (ft_strchr(parse->cmd, '/'))
 	{
 		if (is_executable_file(parse->cmd))
-			ms->cl.path = parse->cmd;
+			ms->cl->path = parse->cmd;
 		else
 		{
-			free_ms(ms);
 			throw_error(parse->cmd);
+			free_ms(ms);
 		}
+		return ;
 	}
 	else
-	{	
-		ms->cl.path = find_cmd_path(parse->cmd, ms->env, ms);
-		if (!ms->cl.path)
+	{
+		ms->cl->path = find_cmd_path(parse->cmd, ms->env, ms);
+		if (!ms->cl->path)
 		{
-			free_ms(ms);
+			cmd_not_found(ms, parse->cmd);
 			throw_error(parse->cmd);
+			free_ms(ms);
 		}
+		return ;
 	}
 }
