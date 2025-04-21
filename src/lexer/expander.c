@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: masa <masa@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 18:52:45 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/15 21:05:17 by masa             ###   ########.fr       */
+/*   Updated: 2025/04/21 19:23:50 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	expand_token(t_ms *ms, t_token *token)
 				token->kinds = TK_WORD;
 		}
 		else if (token->kinds == TK_META && token->word[0] == '\"')
-		{	
+		{
 			if (!in_single_quote)
 				in_double_quote = !in_double_quote;
 			else
