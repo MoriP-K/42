@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:11:48 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/18 14:12:29 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/22 19:58:23 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,13 @@ void	free_array(char **array)
 	free(array);
 }
 
+void	free_cl(t_cl *cl)
+{
+	if (cl->path)
+		free(cl->path);
+	free(cl);
+}
+
 void	free_fd(t_fd *fd, t_cl *cl)
 {
 	size_t	i;
@@ -37,6 +44,7 @@ void	free_fd(t_fd *fd, t_cl *cl)
 		i++;
 	}
 	free(fd->pipe);
+	free(fd);
 }
 
 void	free_env(t_env **env)

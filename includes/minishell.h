@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/21 22:01:59 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:58:35 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void		free_tokens(t_token *token);
 void		free_parser(t_parse *parse);
 void		free_array(char **array);
 void		free_fd(t_fd *fd, t_cl *cl);
+void		free_cl(t_cl *cl);
 void		free_env(t_env **env);
 void		free_proc(t_proc *proc);
 

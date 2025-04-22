@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/21 22:06:00 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:58:49 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,5 @@ t_parse	*do_parse(t_token *token, t_ms *ms)
 			token = token->next;
 	}
 	add_eof_parse(first_parse, ms);
-	// free_tokens(first_token);
 	return (first_parse);
 }
