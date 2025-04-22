@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate_parse.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 19:38:13 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/21 21:15:45 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:20:46 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,6 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms)
 		if (token)
 			token = token->next;
 	}
-	if (token && token->kinds == TK_PIPE && token->next)
-		allocate_parse(token->next, new_parse, ms);
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;
 	return (new_parse);
