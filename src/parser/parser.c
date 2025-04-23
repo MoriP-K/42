@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/22 19:58:49 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/23 22:44:50 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,37 +32,67 @@ void	add_eof_parse(t_parse *parse, t_ms *ms)
 
 	eof_parse = (t_parse *)ms_malloc(sizeof(t_parse), ms);
 	eof_parse->cmd = NULL;
+	eof_parse->token = NULL;
+	eof_parse->delimiter = NULL;
+	eof_parse->heredoc_file= NULL;
 	eof_parse->args = NULL;
 	eof_parse->infile = NULL;
 	eof_parse->outfile = NULL;
 	eof_parse->next = NULL;
+	eof_parse->append= 0;
+	eof_parse->fd= NULL;
 	while (parse->next != NULL)
 		parse = parse->next;
 	parse->next = eof_parse;
 }
 
-t_parse	*do_parse(t_token *token, t_ms *ms)
+t_parse *do_parse(t_token *token, t_ms *ms)
 {
-	t_token	*first_token;
-	t_parse	*first_parse;
-	t_parse	*current_parse;
+    t_token	*current_token;
+    t_parse	*first_parse;
+    t_parse	*current_parse;
 
-	first_token = token;
-	first_parse = allocate_parse(token, NULL, ms);
-	current_parse = first_parse;
-	while (token && token->kinds != TK_PIPE && token->kinds != TK_EOF)
-		token = token->next;
-	if (token && token->kinds != TK_EOF)
-		token = token->next;
-	while (token && token->kinds != TK_EOF)
-	{
-		allocate_parse(token, current_parse, ms);
-		current_parse = current_parse->next;
-		while (token->kinds != TK_PIPE && token->kinds != TK_EOF)
-			token = token->next;
-		if (token->kinds != TK_EOF)
-			token = token->next;
-	}
-	add_eof_parse(first_parse, ms);
-	return (first_parse);
+	current_token = token;
+    first_parse = allocate_parse(current_token, NULL, ms);
+    current_parse = first_parse;
+    while (current_token && current_token->kinds != TK_PIPE && current_token->kinds != TK_EOF)
+        current_token = current_token->next;    
+    if (current_token && current_token->kinds == TK_PIPE)
+        current_token = current_token->next;    
+    while (current_token && current_token->kinds != TK_EOF)
+    {
+        current_parse = allocate_parse(current_token, current_parse, ms);
+        while (current_token && current_token->kinds != TK_PIPE && current_token->kinds != TK_EOF)
+            current_token = current_token->next;
+        if (current_token && current_token->kinds == TK_PIPE)
+            current_token = current_token->next;
+    }
+    add_eof_parse(first_parse, ms);
+    return (first_parse);
 }
+
+// t_parse	*do_parse(t_token *token, t_ms *ms)
+// {
+// 	t_token	*first_token;
+// 	t_parse	*first_parse;
+// 	t_parse	*current_parse;
+
+// 	first_token = token;
+// 	first_parse = allocate_parse(token, NULL, ms);
+// 	current_parse = first_parse;
+// 	while (token && token->kinds != TK_PIPE && token->kinds != TK_EOF)
+// 		token = token->next;
+// 	if (token && token->kinds != TK_EOF)
+// 		token = token->next;
+// 	while (token && token->kinds != TK_EOF)
+// 	{
+// 		current_parse = allocate_parse(token, current_parse, ms);
+// 		current_parse = current_parse->next;
+// 		while (token->kinds != TK_PIPE && token->kinds != TK_EOF)
+// 			token = token->next;
+// 		if (token->kinds != TK_EOF)
+// 			token = token->next;
+// 	}
+// 	add_eof_parse(first_parse, ms);
+// 	return (first_parse);
+// }

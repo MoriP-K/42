@@ -44,8 +44,7 @@ vpath %.c ./src: \
 ./parser: \
 
 ifeq ($(DEBUG), true)
-	CFLAGS += -g -O0 -fsanitize=address
-	CFLAGS := -Wall -Wextra
+	CFLAGS += -g3
 endif
 
 all: $(LIBFT) $(NAME)

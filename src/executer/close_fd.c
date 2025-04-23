@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:40:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/21 21:29:55 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/24 00:07:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	close_fds(t_ms *ms, t_fd *fd, size_t index)
 {
+	if (fd->here_doc != -1)
+		close(fd->here_doc);
 	if (ms->cl->cmd_count > 1)
 	{
 		if (index == 0)
@@ -44,6 +46,8 @@ void	close_all_fds(t_fd *fd, int cmd_count)
 		close(fd->infile);
 	if (fd->outfile != -1)
 		close(fd->outfile);
+	if (fd->here_doc != -1)
+		close(fd->here_doc);
 	i = 0;
 	while (cmd_count > 1 && i < cmd_count - 1)
 	{
@@ -60,7 +64,13 @@ void	close_parent_fd(t_ms *ms, t_fd *fd, size_t index)
 	if (!fd->pipe || ms->cl->cmd_count < 1)
 		return ;
 	if (index < ms->cl->cmd_count - 1 && fd->pipe[index])
+	{
 		close(fd->pipe[index][1]);
+		fd->pipe[index][1] = -1;
+	}
 	if (index > 0 && index <= ms->cl->cmd_count - 1 && fd->pipe[index - 1])
+	{
 		close(fd->pipe[index - 1][0]);
+		fd->pipe[index - 1][0] = -1;
+	}
 }

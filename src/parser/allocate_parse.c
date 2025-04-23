@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate_parse.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 19:38:13 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/22 20:20:46 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/22 23:31:09 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,13 @@ void	allocate_heredoc(t_ms *ms, t_parse **new_parse, t_token **token)
 t_parse	*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms)
 {
 	t_parse	*new_parse;
+	t_token	*start;
+	t_token	*prev;
 	int		i;
 
 	new_parse = get_new_parse(ms, token);
-	new_parse->token = token;
+	start = token;
+	prev = NULL;
 	i = 1;
 	while (token && token->kinds != TK_EOF && token->kinds != TK_PIPE)
 	{
@@ -62,9 +65,12 @@ t_parse	*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms)
 		else if ((token->kinds == TK_IN_REDIRECT
 				|| token->kinds == TK_HEREDOC) && token->next)
 			allocate_heredoc(ms, &new_parse, &token);
-		if (token)
-			token = token->next;
+		prev = token;
+		token = token->next;
 	}
+	if (token && token->kinds == TK_PIPE && prev)
+        prev->next = NULL;
+	new_parse->token = start;
 	if (pre_parse != NULL)
 		pre_parse->next = new_parse;
 	return (new_parse);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:11:48 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/22 19:58:23 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/23 20:08:45 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,16 @@ void	free_fd(t_fd *fd, t_cl *cl)
 	size_t	i;
 
 	i = 0;
-	while (i < cl->cmd_count)
+	if (fd->pipe)
 	{
-		if (fd->pipe[i])
-			free(fd->pipe[i]);
-		i++;
+		while (i < cl->cmd_count)
+		{
+			if (fd->pipe[i])
+				free(fd->pipe[i]);
+			i++;
+		}
+		free(fd->pipe);
 	}
-	free(fd->pipe);
 	free(fd);
 }
 
