@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/24 00:07:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:10:32 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	switch_fd(t_ms *ms, t_fd *fd, t_parse *parse, t_token *token)
 		{
 			if (fd->infile >= 0)
 				close(fd->infile);
-			write(1, "I\n", 2);
+			// write(1, "I\n", 2);
 			fd->infile = open(tmp_token->next->word, O_RDONLY);
 			if (fd->infile < 0)
 			{
@@ -108,7 +108,7 @@ void	switch_fd(t_ms *ms, t_fd *fd, t_parse *parse, t_token *token)
 		}
 		else if (tmp_token->kinds == TK_OUT_REDIRECT || tmp_token->kinds == TK_APPEND)
 		{
-			write(1, "O\n", 2);
+			// write(1, "O\n", 2);
 			if (fd->outfile >= 0)
 				close(fd->outfile);
 			if (parse->append)
@@ -132,47 +132,47 @@ void	switch_fd(t_ms *ms, t_fd *fd, t_parse *parse, t_token *token)
 
 void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 {
+	if (parse->infile || parse->outfile || fd->here_doc > 0)
+		switch_fd(ms, parse->fd, parse, parse->token);
 	if (index == 0)
 	{
-		if (parse->infile || parse->outfile || fd->here_doc > 0)
-			switch_fd(ms, fd, parse, parse->token);
 		if (ms->cl->cmd_count > 1)
 		{
+			// fd->tmp_in = ;
 			if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
 			{
 				throw_error("dup2_a");
 				free_ms(ms);
+				exit(EXIT_FAILURE);
 			}
-			fd->tmp_in = fd->pipe[index][1];
 		}
 	}
 	else if (index == ms->cl->cmd_count - 1)
 	{
-		if (parse->infile || parse->outfile || fd->here_doc > 0)
-			switch_fd(ms, fd, parse, parse->token);
 		if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
 		{
 			throw_error("dup2_b");
 			free_ms(ms);
+			exit(EXIT_FAILURE);
 		}
-		fd->tmp_out = fd->pipe[index - 1][0];
+		// fd->tmp_out = fd->pipe[index - 1][0];
 	}
 	else
 	{
-		if (parse->infile || parse->outfile || fd->here_doc > 0)
-			switch_fd(ms, fd, parse, parse->token);
 		if (dup2(fd->pipe[index - 1][0], STDIN_FILENO) == -1)
 		{
 			throw_error("dup2_aa");
 			free_ms(ms);
+			exit(EXIT_FAILURE);
 		}
 		fd->tmp_in = fd->pipe[index - 1][0];
 		if (dup2(fd->pipe[index][1], STDOUT_FILENO) == -1)
 		{
 			throw_error("dup2_bb");
 			free_ms(ms);
+			exit(EXIT_FAILURE);
 		}
-		fd->tmp_out = fd->pipe[index][1];
+		// fd->tmp_out = fd->pipe[index][1];
 	}
 	close_fds(ms, ms->fd, index);
 }
@@ -230,6 +230,7 @@ void	exec_heredoc(t_ms *ms, t_parse *parse, char *delimiter, size_t index)
 	char	*line;
 	char	*file;
 
+	// begin while make heredoc file
 	// if (parse->heredoc_file)
 	// 	free(parse->heredoc_file);
 	// if (parse->fd->here_doc >= 0)
@@ -248,11 +249,17 @@ void	exec_heredoc(t_ms *ms, t_parse *parse, char *delimiter, size_t index)
 		free_ms(ms);
 		exit(EXIT_FAILURE);
 	}
+	// end
 	while (1)
 	{
 		line = readline("> ");
 		if (!line || ft_strcmp(line, delimiter) == 0)
 		{
+			// if (check_next_delimiter())
+			// {
+			// 	// parse = parse->next;
+			// 	// continue;
+			// }
 			free(line);
 			break ;
 		}
@@ -322,9 +329,9 @@ int	do_exec(t_ms *ms, t_parse *parse)
 		return (1);
 	current_parse = parse;
 	i = 0;
-	if (!parse->cmd)
+	if (!current_parse || !current_parse->cmd)
 		return (0);
-	while (current_parse && (i < ms->cl->cmd_count || current_parse->cmd))
+	while (current_parse && i < ms->cl->cmd_count)
 	{
 		do_pipe(ms, i);
 		ms->proc->id[i] = fork();
@@ -335,9 +342,10 @@ int	do_exec(t_ms *ms, t_parse *parse)
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
 			find_cmd(ms, current_parse);
+			// printf("cmd: %s\n", current_parse->cmd);
 			set_pipe_fds(ms, current_parse, ms->fd, i);
-			close_all_fds(ms->fd, ms->cl->cmd_count);
 			do_execve(ms, current_parse);
+			// close_all_fds(ms->fd, parse->fd, ms->cl->cmd_count);
 			// reset_fds(ms, ms->fd);
 			exit(EXIT_SUCCESS);
 		}

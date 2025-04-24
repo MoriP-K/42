@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/21 22:22:08 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:10:54 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,50 +82,55 @@ void	init_lexer(t_ms *ms, t_token **token, char *line)
 	free(line);
 }
 
+void	check_parser(t_parse *parse)
+{
+	int		i;
+	int j = 0;
+	t_parse	*p = NULL;
+	t_token	*t = NULL;
+
+	p = parse;
+	while (p)
+	{
+		i = 0;
+		if (p->cmd)
+			printf("--parse[%d]--\n", j++);
+		if (p->cmd)
+			printf("cmd: %s\n", p->cmd);
+		if (p->args)
+		{
+			while (p->args[i])
+			{
+				printf("args[%d]: %s\n", i, p->args[i]);
+				i++;
+			}
+		}
+		t = p->token;
+		if (p->token)
+		{
+			while (t)
+			{
+				printf("token->word: %s\n", t->word);
+				t = t->next;
+			}
+		}
+		if (p->infile)
+			printf("infile: %s\n", p->infile);
+		if (p->outfile)
+			printf("outfile: %s\n", p->outfile);
+		if (p->delimiter)
+			printf("delimiter: %s\n", p->delimiter);
+		write(1, "\n", 1);
+		p = p->next;
+	}
+}
+
 void	init_parser(t_parse **parse, t_token *token, t_ms *ms)
 {
-	t_parse *first_parse;
-	int		i;
-
 	if (!token)
 		return;
 	*parse = do_parse(token, ms);
-	first_parse = *parse;
-	// int j = 0;
-	while (*parse)
-	{
-		i = 0;
-		// if (*parse)
-		// 	printf("--parse[%d]--\n", j++);
-		// if ((*parse)->cmd != NULL)
-		// 	printf("cmd: %s\n", (*parse)->cmd);
-		// if ((*parse)->args != NULL)
-		// {
-		// 	while ((*parse)->args[i])
-		// 	{
-		// 		printf("args[%d]: %s\n", i, (*parse)->args[i]);
-		// 		i++;
-		// 	}
-		// 	write(1, "\n", 1);
-		// }
-		// if ((*parse)->token)
-		// {
-		// 	while ((*parse)->token)
-		// 	{
-		// 		printf("token->word: %s\n", (*parse)->token->word);
-		// 		*parse = (*parse)->next;
-		// 	}
-		// 	write(1, "\n", 1);
-		// }
-		// if ((*parse)->infile != NULL)
-		// 	printf("infile: %s\n", (*parse)->infile);
-		// if ((*parse)->outfile != NULL)
-		// 	printf("outfile: %s\n", (*parse)->outfile);
-		// if ((*parse)->delimiter != NULL)
-		// 	printf("delimiter: %s\n\n", (*parse)->delimiter);
-		*parse = (*parse)->next;
-	}
-	*parse = first_parse;
+	check_parser(*parse);
 }
 
 void	init_env(t_env **env, char *envp[], t_ms *ms)

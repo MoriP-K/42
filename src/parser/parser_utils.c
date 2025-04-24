@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:01:55 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/22 20:13:54 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/24 23:22:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,20 @@ int	count_args(t_token *token)
 	return (count);
 }
 
+t_fd	*init_parse_fd(t_ms *ms)
+{
+	t_fd	*fd;
+
+	fd = (t_fd *)ms_malloc(sizeof(t_fd), ms);
+	fd->pipe = NULL;
+	fd->infile = -1;
+	fd->outfile = -1;
+	fd->tmp_in = -1;
+	fd->tmp_out = -1;
+	fd->here_doc = -1;
+	return (fd);
+}
+
 t_parse	*get_new_parse(t_ms *ms, t_token *token)
 {
 	t_parse	*new_parse;
@@ -36,7 +50,7 @@ t_parse	*get_new_parse(t_ms *ms, t_token *token)
 
 	arg_count = count_args(token);
 	new_parse = (t_parse *)ms_malloc(sizeof(t_parse), ms);
-	new_parse->fd = (t_fd *)ms_malloc(sizeof(t_fd), ms);
+	new_parse->fd = init_parse_fd(ms);
 	new_parse->token = NULL;
 	new_parse->cmd = NULL;
 	new_parse->next = NULL;
