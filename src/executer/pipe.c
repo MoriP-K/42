@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/25 00:10:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/25 23:53:28 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ void	set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index)
 
 void	reset_fds(t_ms *ms, t_fd *fd)
 {
-	if (fd->tmp_in >= 0)
+	if (fd->tmp_in != -1)
 	{
 		if (dup2(fd->tmp_in, STDIN_FILENO) == -1)
 		{
@@ -189,7 +189,7 @@ void	reset_fds(t_ms *ms, t_fd *fd)
 		close(fd->tmp_in);
 		fd->tmp_in = -1;
 	}
-	if (fd->tmp_out >= 0)
+	if (fd->tmp_out != -1)
 	{
 		// printf("tmp-out: %d\n", fd->tmp_out);
 		if (dup2(fd->tmp_out, STDOUT_FILENO) == -1)
@@ -225,98 +225,124 @@ int	is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd)
 	return (0);
 }
 
-void	exec_heredoc(t_ms *ms, t_parse *parse, char *delimiter, size_t index)
+int	check_next_delimiter(t_parse *parse, t_ms *ms)
+{
+	t_parse	*tmp;
+
+	tmp = parse;
+	while (tmp)
+	{
+		if (tmp->delimiter)
+		{
+			tmp->fd->here_doc = open(tmp->heredoc_file,
+				O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (tmp->fd->here_doc < 0)
+			{
+				throw_error("open heredoc");
+				free_ms(ms);
+				exit(EXIT_FAILURE);
+			}
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+void	exec_heredoc(t_ms *ms, t_parse *parse)
 {
 	char	*line;
-	char	*file;
+	char	*file_num;
+	t_parse	*tmp;
+	int		index;
 
-	// begin while make heredoc file
-	// if (parse->heredoc_file)
-	// 	free(parse->heredoc_file);
-	// if (parse->fd->here_doc >= 0)
-	// {
-	// 	close(parse->fd->here_doc);
-	// 	parse->fd->here_doc = -1;
-	// }
-	file = ft_itoa(index);
-	parse->heredoc_file = ms_strdup(ms_strjoin("/tmp/heredoc", file, ms), ms);
-	free(file);
-	parse->fd->here_doc = open(parse->heredoc_file,
-			O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (parse->fd->here_doc < 0)
+	tmp = parse;
+	index = 1;
+	while (tmp)
 	{
-		throw_error("open heredoc");
-		free_ms(ms);
-		exit(EXIT_FAILURE);
+		if (tmp->delimiter)
+		{
+			file_num = ft_itoa(index++);
+			tmp->heredoc_file = ms_strjoin("/tmp/heredoc_", file_num, ms);
+			free(file_num);
+			tmp->fd->here_doc = open(tmp->heredoc_file, O_RDONLY);
+			if (tmp->fd->here_doc < 0)
+			{
+				throw_error("read heredoc");
+				unlink(tmp->heredoc_file);
+				free_ms(ms);
+				exit(EXIT_FAILURE);
+			}
+		}
+		tmp = tmp->next;
 	}
 	// end
+	tmp = parse;
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || ft_strcmp(line, delimiter) == 0)
+		if (!line || ft_strcmp(line, tmp->delimiter) == 0)
 		{
-			// if (check_next_delimiter())
-			// {
-			// 	// parse = parse->next;
-			// 	// continue;
-			// }
+			close(tmp->fd->here_doc);
+			if (check_next_delimiter(tmp->next, ms))
+			{
+				tmp = tmp->next;
+				continue ;
+			}
 			free(line);
 			break ;
 		}
-		write(parse->fd->here_doc, line, ft_strlen(line));
-		write(parse->fd->here_doc, "\n", 1);
+		write(tmp->fd->here_doc, line, ft_strlen(line));
+		write(tmp->fd->here_doc, "\n", 1);
 		free(line);
 	}
-	close(parse->fd->here_doc);
-	parse->fd->here_doc = open(parse->heredoc_file, O_RDONLY);
-	if (parse->fd->here_doc < 0)
-	{
-		throw_error("read heredoc");
-		unlink(parse->heredoc_file);
-		free_ms(ms);
-		exit(EXIT_FAILURE);
-	}
+	// close(parse->fd->here_doc);
+	// parse->fd->here_doc = open(parse->heredoc_file, O_RDONLY);
+	// if (parse->fd->here_doc < 0)
+	// {
+	// 	throw_error("read heredoc");
+	// 	unlink(parse->heredoc_file);
+	// 	free_ms(ms);
+	// 	exit(EXIT_FAILURE);
+	// }
 }
 
 void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter)
 {
 	t_parse	*tmp_parse;
 	t_token	*token;
-	size_t	hd_index;
 
 	if (!delimiter || !parse->token)
 		return ;
 	tmp_parse = parse;
-	hd_index = 1;
-	while (tmp_parse)
+	// while (tmp_parse)
+	// {
+	tmp_parse->fd = fd;
+	if (tmp_parse->token)
 	{
-		tmp_parse->fd = fd;
-		if (tmp_parse->token)
+		token = tmp_parse->token;
+		while (token)
 		{
-			token = tmp_parse->token;
-			while (token)
+			if (token->kinds == TK_HEREDOC && token->next)
 			{
-				if (token->kinds == TK_HEREDOC && token->next)
+				fd->tmp_in = dup(STDIN_FILENO);
+				fd->tmp_out = dup(STDOUT_FILENO);
+				if (fd->tmp_in < 0 || fd->tmp_out < 0)
 				{
-					fd->tmp_in = dup(STDIN_FILENO);
-					fd->tmp_out = dup(STDOUT_FILENO);
-					if (fd->tmp_in < 0 || fd->tmp_out < 0)
-					{
-						throw_error("dup hd error");
-						free_ms(ms);
-						exit(EXIT_FAILURE);
-					}
-					token = token->next;
-					exec_heredoc(ms, tmp_parse, token->word, hd_index);
-					reset_fds(ms, tmp_parse->fd);
+					throw_error("dup hd error");
+					free_ms(ms);
+					exit(EXIT_FAILURE);
 				}
-				else
-					token = token->next;
+				token = token->next;
+				exec_heredoc(ms, tmp_parse);
+				reset_fds(ms, ms->fd);
 			}
+			else
+				token = token->next;
 		}
-		tmp_parse = tmp_parse->next;
-		hd_index++;
 	}
+	// 	tmp_parse = tmp_parse->next;
+	// }
 }
 
 int	do_exec(t_ms *ms, t_parse *parse)

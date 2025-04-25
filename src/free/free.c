@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/23 20:18:56 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/25 19:35:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,14 @@ void	free_parser2(t_parse *parse)
 	if (parse->outfile)
 		free(parse->outfile);
 	if (parse->heredoc_file)
+	{
+		unlink(parse->heredoc_file);
 		free(parse->heredoc_file);
-	// if (parse->fd)
-	// 	free_fd(parse->fd, cl);
+	}
+	if (parse->delimiter)
+		free(parse->delimiter);
+	if (parse->fd)
+		free(parse->fd);
 }
 
 void	free_parser(t_parse *parse)
