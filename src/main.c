@@ -2,7 +2,6 @@
 
 void	throw_error(char *cmd)
 {
-	// dprintf(2, "Error: %s\n", cmd);
 	ft_putstr_fd("bash: ", 2);
 	perror(cmd);
 	exit(EXIT_FAILURE);
@@ -65,7 +64,7 @@ void	do_minishell(t_ms *ms, char *line)
 		init_exec(ms, ms->parse);
 		if (do_exec(ms, ms->parse))
 			wait_child_process(ms, ms->proc, ms->cl->cmd_count);
-		close_all_fds(ms->fd, ms->cl->cmd_count);
+		close_all_fds(ms->fd, ms->parse, ms->cl->cmd_count);
 		free_ms(ms);
 	}
 }

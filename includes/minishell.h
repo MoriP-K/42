@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/25 00:03:46 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:16:06 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ int			find_env_index(char **envp, char *key);
 
 // executer
 void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
-void		close_fds(t_ms *ms, t_fd *fd, size_t index);
-void		close_all_fds(t_fd *fd, int cmd_count);
+void		close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index);
+void		close_all_fds(t_fd *fd, t_parse *parse, int cmd_count);
 void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
 int			do_exec(t_ms *ms, t_parse *parse);
 void		do_execve(t_ms *ms, t_parse *parse);
