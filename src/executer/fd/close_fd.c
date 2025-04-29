@@ -6,11 +6,11 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:40:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/28 23:43:56 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/29 20:22:09 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 void	close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index)
 {
@@ -23,7 +23,7 @@ void	close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index)
 		else if (index == ms->cl->cmd_count - 1)
 			close(fd->pipe[index - 1][0]);
 		else
-		{	
+		{
 			close(fd->pipe[index][0]);
 			close(fd->pipe[index - 1][1]);
 		}
@@ -35,7 +35,6 @@ void	close_parse_fds(t_parse *parse)
 	t_parse	*tmp_parse;
 
 	tmp_parse = parse;
-	// tmp_parse->fd = parse->fd;
 	while (tmp_parse)
 	{
 		if (tmp_parse->fd)
@@ -78,25 +77,14 @@ void	close_all_fds(t_fd *fd, t_parse *parse, int cmd_count)
 
 void	close_parent_fd(t_ms *ms, t_fd *fd, size_t index)
 {
-	// if (!fd->pipe || ms->cl->cmd_count < 1)
-	// 	return ;
-	// if (index < ms->cl->cmd_count - 1 && fd->pipe[index])
-	// {
-	// 	close(fd->pipe[index][1]);
-	// 	fd->pipe[index][1] = -1;
-	// }
-	// if (index > 0 && index <= ms->cl->cmd_count - 1 && fd->pipe[index - 1])
-	// {
-	// 	close(fd->pipe[index - 1][0]);
-	// 	fd->pipe[index - 1][0] = -1;
-	// }
-	if (index < ms->cl->cmd_count - 1) {
-        close(fd->pipe[index][1]);
-        fd->pipe[index][1] = -1;
-    }
-    
-    if (index > 0) {
-        close(fd->pipe[index - 1][0]);
-        fd->pipe[index - 1][0] = -1;
-    }
+	if (index < ms->cl->cmd_count - 1)
+	{
+		close(fd->pipe[index][1]);
+		fd->pipe[index][1] = -1;
+	}
+	if (index > 0)
+	{
+		close(fd->pipe[index - 1][0]);
+		fd->pipe[index - 1][0] = -1;
+	}
 }

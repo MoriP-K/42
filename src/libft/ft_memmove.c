@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 15:41:40 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/11 13:39:03 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/29 21:29:09 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 	if (dest_p < src_p)
 	{
 		while (i < n)
-		{	
+		{
 			dest_p[i] = src_p[i];
 			i++;
 		}
