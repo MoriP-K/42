@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 21:26:42 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/29 22:13:31 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ t_parse		*get_new_parse(t_ms *ms, t_token *token);
 t_token		*copy_token_list(t_token *start, t_token *end, t_ms *ms);
 t_token		*init_token(t_ms *ms);
 
-
 // expander
 void		expand_token(t_ms *ms, t_token *token);
 char		*get_exit_status(t_ms *ms);
@@ -74,7 +73,6 @@ int			ms_dup(int fd, t_ms *ms);
 void		ms_dup2(int fd_1, int fd_2, t_ms *ms);
 int			ms_open(char *file, int flag, t_ms *ms);
 int			ms_open_mode(char *file, int flag, int permission, t_ms *ms);
-
 
 // env
 void		add_env_lst(t_env **node, t_env *new_env);
@@ -108,11 +106,10 @@ int			check_builtin_cmd(char *cmd);
 int			exec_built_in(t_ms *ms, t_parse *parse);
 int			is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd);
 
-
 // heredoc
-void		prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter);
+void		prepare_heredoc(t_ms *ms, t_fd *fd,
+				t_parse *parse, char *delimiter);
 void		exec_heredoc(t_ms *ms, t_parse *parse);
-
 
 // fd
 void		close_all_fds(t_fd *fd, t_parse *parse, int cmd_count);
@@ -122,7 +119,6 @@ void		close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index);
 void		reset_fds(t_ms *ms, t_fd *fd);
 void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
 void		switch_fd(t_ms *ms, t_fd *fd, t_parse *parse, t_token *token);
-
 
 // free
 void		free_all(t_ms *ms);

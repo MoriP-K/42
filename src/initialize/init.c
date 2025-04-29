@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_1.c                                           :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 20:50:34 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/29 22:15:12 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void	init_parser(t_parse **parse, t_token *token, t_ms *ms)
 	if (!token)
 		return ;
 	*parse = do_parse(token, ms);
-	// check_parser(*parse);
 }
 
 void	init_env(t_env **env, char *envp[], t_ms *ms)
