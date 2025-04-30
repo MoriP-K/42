@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 19:38:13 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/29 20:53:01 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 23:10:11 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ void	allocate_append(t_ms *ms, t_parse **new_parse, t_token **token)
 
 void	allocate_heredoc(t_ms *ms, t_parse **new_parse, t_token **token)
 {
-	if ((*new_parse)->infile)
-		free((*new_parse)->infile);
 	if ((*token)->kinds == TK_HEREDOC)
 		(*new_parse)->delimiter = ms_strdup((*token)->next->word, ms);
 	else

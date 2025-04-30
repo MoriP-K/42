@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 20:47:22 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:53:24 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,12 @@ void	free_ms(t_ms *ms)
 {
 	if (ms->parse)
 		free_parser(ms->parse);
+	if (ms->token)
+		free(ms->token);
 	if (ms->proc)
 		free_proc(ms->proc);
+	if (ms->fd)
+		free_fd(ms->fd, ms->cl);
 	if (ms->cl)
 		free_cl(ms->cl);
 }

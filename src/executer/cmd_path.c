@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/30 17:53:06 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:00:46 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	cmd_not_found(t_ms *ms, char *cmd)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
-	free_ms(ms);
+	free_all(ms);
 	exit(127);
 }
 
