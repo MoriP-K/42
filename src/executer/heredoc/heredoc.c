@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_1.c                                        :+:      :+:    :+:   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 19:28:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 20:21:01 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 23:09:09 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter)
 	if (!delimiter || !parse->token)
 		return ;
 	tmp_parse = parse;
-	tmp_parse->fd = fd;
 	if (tmp_parse->token)
 	{
 		token = tmp_parse->token;

@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 18:53:21 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 20:58:57 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 22:04:57 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ms_open(char *file, int flag, t_ms *ms)
 	if (fd < 0)
 	{
 		throw_error("open");
-		free_ms(ms);
+		free_all(ms);
 		exit(EXIT_FAILURE);
 	}
 	return (fd);
