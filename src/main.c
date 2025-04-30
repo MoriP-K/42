@@ -2,7 +2,6 @@
 
 void	throw_error(char *cmd)
 {
-	// dprintf(2, "Error: %s\n", cmd);
 	ft_putstr_fd("bash: ", 2);
 	perror(cmd);
 	exit(EXIT_FAILURE);
@@ -51,29 +50,29 @@ void	do_minishell(t_ms *ms, char *line)
 		line = readline("minishell$ ");
 		set_sigint_ign();
 		if (!line)
-			break;
+			break ;
 		if (*line == '\0')
 		{
 			free(line);
-			continue;
+			continue ;
 		}
 		add_history(line);
 		init_lexer(ms, &(ms->token), line);
 		init_parser(&(ms->parse), ms->token, ms);
 		if (!ms->token || !ms->parse)
-			continue;
+			continue ;
 		init_exec(ms, ms->parse);
 		if (do_exec(ms, ms->parse))
 			wait_child_process(ms, ms->proc, ms->cl->cmd_count);
-		close_all_fds(ms->fd, ms->cl->cmd_count);
+		close_all_fds(ms->fd, ms->parse, ms->cl->cmd_count);
 		free_ms(ms);
 	}
 }
 
-int main(int ac, char *av[], char *envp[])
+int	main(int ac, char *av[], char *envp[])
 {
 	t_ms	ms;
-	char 	*line;
+	char	*line;
 
 	(void)av;
 	line = NULL;

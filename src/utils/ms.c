@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_malloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:08:06 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/18 14:48:13 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/23 22:29:49 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*ms_strdup(char *str, t_ms *ms)
 	if (!dup)
 	{
 		free_all(ms);
-		perror("malloc");
+		perror("ft_strdup");
 		exit(EXIT_FAILURE);
 	}
 	return (dup);
@@ -48,7 +48,7 @@ char	*ms_strjoin(char *s1, char *s2, t_ms *ms)
 	if (!join)
 	{
 		free_all(ms);
-		perror("malloc");
+		perror("ft_strjoin");
 		exit(EXIT_FAILURE);
 	}
 	return (join);
@@ -62,7 +62,7 @@ char	*ms_strndup_pointer(char *start, char *end, t_ms *ms)
 	if (!dup)
 	{
 		free_all(ms);
-		perror("malloc");
+		perror("ft_strndup_pointer");
 		exit(EXIT_FAILURE);
 	}
 	return (dup);
@@ -76,7 +76,7 @@ char	*ms_substr(char *str, unsigned int start, size_t len, t_ms *ms)
 	if (!result)
 	{
 		free_all(ms);
-		perror("malloc");
+		perror("ft_substr");
 		exit(EXIT_FAILURE);
 	}
 	return (result);

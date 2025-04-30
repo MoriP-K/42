@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 21:57:53 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/01 21:58:40 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/29 20:50:02 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strcmp(char *s1, char *s2)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s1[i] && s2[i] && s1[i] == s2[i])

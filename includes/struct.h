@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/21 21:26:11 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:28:49 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,6 @@ typedef enum e_quote
 	Q_SINGLE = 1,
 	Q_DOUBLE = 2,
 }	t_quote;
-
-typedef enum e_timing {
-	NONE = 0,
-	INFILE = 1,
-	OUTFILE = 2,
-}			t_timing;
 
 typedef struct s_token
 {

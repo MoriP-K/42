@@ -85,5 +85,5 @@ echo "\\n<<<<< ohters >>>>>\\n"
 
 # test_command "ls | | cat" #OK
 # test_command "nonecmd" #OK
-test_command "cat < infile << EOF > outfile"
+# test_command "cat < infile << EOF > outfile"
 echo "==========================\\n"

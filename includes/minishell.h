@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/22 19:58:35 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/29 22:13:31 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # include "struct.h"
 
 # ifndef META_CHARS
-#  define META_CHARS "\'\" <>"
+#  define META_CHARS "\'\" <>|"
 # endif
 
 // initialize
@@ -47,6 +47,8 @@ t_token		*culling_space(t_token *token);
 t_parse		*do_parse(t_token *token, t_ms *ms);
 t_parse		*allocate_parse(t_token *token, t_parse *pre_parse, t_ms *ms);
 t_parse		*get_new_parse(t_ms *ms, t_token *token);
+t_token		*copy_token_list(t_token *start, t_token *end, t_ms *ms);
+t_token		*init_token(t_ms *ms);
 
 // expander
 void		expand_token(t_ms *ms, t_token *token);
@@ -61,12 +63,16 @@ void		set_sigint_ign(void);
 
 char		*ft_strndup_pointer(const char *start, const char *end);
 
-// malloc
+// ms
 void		*ms_malloc(size_t size, t_ms *ms);
 char		*ms_strdup(char *str, t_ms *ms);
 char		*ms_strjoin(char *s1, char *s2, t_ms *ms);
 char		*ms_strndup_pointer(char *start, char *end, t_ms *ms);
 char		*ms_substr(char *str, unsigned int start, size_t len, t_ms *ms);
+int			ms_dup(int fd, t_ms *ms);
+void		ms_dup2(int fd_1, int fd_2, t_ms *ms);
+int			ms_open(char *file, int flag, t_ms *ms);
+int			ms_open_mode(char *file, int flag, int permission, t_ms *ms);
 
 // env
 void		add_env_lst(t_env **node, t_env *new_env);
@@ -83,8 +89,8 @@ int			find_env_index(char **envp, char *key);
 
 // executer
 void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
-void		close_fds(t_ms *ms, t_fd *fd, size_t index);
-void		close_all_fds(t_fd *fd, int cmd_count);
+void		close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index);
+void		close_all_fds(t_fd *fd, t_parse *parse, int cmd_count);
 void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
 int			do_exec(t_ms *ms, t_parse *parse);
 void		do_execve(t_ms *ms, t_parse *parse);
@@ -98,6 +104,21 @@ char		*find_path_from_env(t_env *env);
 int			is_executable_file(char *cmd);
 int			check_builtin_cmd(char *cmd);
 int			exec_built_in(t_ms *ms, t_parse *parse);
+int			is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd);
+
+// heredoc
+void		prepare_heredoc(t_ms *ms, t_fd *fd,
+				t_parse *parse, char *delimiter);
+void		exec_heredoc(t_ms *ms, t_parse *parse);
+
+// fd
+void		close_all_fds(t_fd *fd, t_parse *parse, int cmd_count);
+void		close_parent_fd(t_ms *ms, t_fd *fd, size_t index);
+void		close_parse_fds(t_parse *parse);
+void		close_fds(t_ms *ms, t_fd *fd, t_parse *parse, size_t index);
+void		reset_fds(t_ms *ms, t_fd *fd);
+void		set_pipe_fds(t_ms *ms, t_parse *parse, t_fd *fd, size_t index);
+void		switch_fd(t_ms *ms, t_fd *fd, t_parse *parse, t_token *token);
 
 // free
 void		free_all(t_ms *ms);

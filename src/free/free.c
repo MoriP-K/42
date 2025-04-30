@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/22 20:20:59 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/29 20:47:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ void	free_ms(t_ms *ms)
 {
 	if (ms->parse)
 		free_parser(ms->parse);
-	if (ms->fd && ms->cl)
-		free_fd(ms->fd, ms->cl);
 	if (ms->proc)
 		free_proc(ms->proc);
 	if (ms->cl)
@@ -50,11 +48,15 @@ void	free_parser2(t_parse *parse)
 		free(parse->infile);
 	if (parse->outfile)
 		free(parse->outfile);
-	// if (parse->fd)
-	// {
-	// 	free(parse->fd);
-	// 	 parse->fd = NULL;
-	// }
+	if (parse->heredoc_file)
+	{
+		unlink(parse->heredoc_file);
+		free(parse->heredoc_file);
+	}
+	if (parse->delimiter)
+		free(parse->delimiter);
+	if (parse->fd)
+		free(parse->fd);
 }
 
 void	free_parser(t_parse *parse)
