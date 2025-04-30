@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_path_1.c                                       :+:      :+:    :+:   */
+/*   cmd_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:44:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 20:09:59 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:53:06 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ int	check_builtin_cmd(char *cmd)
 	int					i;
 	size_t				len;
 
+	if (!cmd)
+		return (0);
 	len = ft_strlen(cmd);
-	if (!cmd || len == 0)
+	if (len == 0)
 		return (0);
 	i = 0;
 	while (builtins[i])
