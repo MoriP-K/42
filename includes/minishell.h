@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 22:13:31 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 18:30:46 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # ifndef META_CHARS
 #  define META_CHARS "\'\" <>|"
 # endif
+
+extern volatile sig_atomic_t	g_sigint_received;
 
 // initialize
 void		init_ms(t_ms *ms, char *envp[]);
@@ -58,6 +60,7 @@ char		*expand_join(t_ms *ms, char *word);
 // signal
 void		set_sigint_redisplay(void);
 void		set_sigint_ign(void);
+void		set_heredoc_sigint(void);
 
 // utils
 

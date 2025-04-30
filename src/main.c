@@ -46,8 +46,10 @@ void	do_minishell(t_ms *ms, char *line)
 {
 	while (1)
 	{
+
 		set_sigint_redisplay();
 		line = readline("minishell$ ");
+		g_sigint_received = 0;
 		set_sigint_ign();
 		if (!line)
 			break ;
