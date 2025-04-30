@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_1.c                                           :+:      :+:    :+:   */
+/*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 19:43:44 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:23:37 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ int	do_exec(t_ms *ms, t_parse *parse)
 	t_parse	*current_parse;
 
 	prepare_heredoc(ms, ms->fd, parse, parse->delimiter);
+	dup2(0, STDIN_FILENO);
 	if (is_only_builtin_cmd(ms, parse, ms->fd))
 		return (1);
 	current_parse = parse;

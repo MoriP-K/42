@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 19:28:33 by kmoriyam          #+#    #+#             */
 /*   Updated: 2025/04/30 23:09:09 by kmoriyam         ###   ########.fr       */
@@ -41,6 +41,8 @@ void	exec_readline(t_parse *tmp_parse, t_token *tmp_token)
 	while (1)
 	{
 		line = readline("> ");
+		if (g_sigint_received == 1)
+			break;
 		if (!line || ft_strcmp(line, tmp_token->word) == 0)
 		{
 			close(tmp_parse->fd->here_doc);
@@ -68,6 +70,8 @@ void	write_to_heredoc_file(t_parse *parse)
 			{
 				tmp_token = tmp_token->next;
 				exec_readline(tmp_parse, tmp_token);
+				if (g_sigint_received == 1)
+					break;
 			}
 			tmp_token = tmp_token->next;
 		}
@@ -83,6 +87,8 @@ void	exec_heredoc(t_ms *ms, t_parse *parse)
 
 	make_heredoc_file(parse, ms);
 	write_to_heredoc_file(parse);
+	if (g_sigint_received == 1)
+		return ;
 	tmp_parse = parse;
 	while (tmp_parse)
 	{
@@ -100,6 +106,7 @@ void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter)
 	t_parse	*tmp_parse;
 	t_token	*token;
 
+	set_heredoc_sigint();
 	if (!delimiter || !parse->token)
 		return ;
 	tmp_parse = parse;
@@ -108,6 +115,11 @@ void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter)
 		token = tmp_parse->token;
 		while (token)
 		{
+			if (g_sigint_received == 1)
+			{
+				g_sigint_received = 0;
+				return ;
+			}
 			if (token->kinds == TK_HEREDOC && token->next)
 			{
 				fd->tmp_in = ms_dup(STDIN_FILENO, ms);
