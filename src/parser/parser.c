@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 17:39:25 by root              #+#    #+#             */
-/*   Updated: 2025/04/29 20:58:42 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 23:18:24 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@ void	free_tokens(t_token *token)
 		free(temp->word);
 		free(temp);
 	}
-	free(token);
+	if (token)
+	{
+		free(token->word);
+		free(token);
+	}
 }
 
 void	add_eof_parse(t_parse *parse, t_ms *ms)

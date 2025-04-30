@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 21:46:02 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/23 20:28:49 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 00:04:00 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include <errno.h> 
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <readline/readline.h>

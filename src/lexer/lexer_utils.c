@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:23:12 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/20 17:56:26 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 23:14:36 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	lexer_add_eof(t_token *first_token, t_ms *ms)
 
 	eof_token = (t_token *)ms_malloc(sizeof(t_token), ms);
 	eof_token->kinds = TK_EOF;
-	eof_token->word = "";
+	eof_token->word = ms_strdup("", ms);
 	eof_token->len = 0;
 	eof_token->quote = Q_NONE;
 	eof_token->next = NULL;

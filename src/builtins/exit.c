@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:41:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/17 18:15:44 by motomo           ###   ########.fr       */
+/*   Updated: 2025/04/30 23:51:32 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	builtin_exit(t_ms *ms, t_parse *parse)
 	if (parse->args[1] == NULL)
 	{
 		free_ms(ms);
+		write(1, "exit\n", 5);
 		exit(0);
 	}
 	else if (!ft_isint(parse->args[1]))
@@ -43,5 +44,6 @@ void	builtin_exit(t_ms *ms, t_parse *parse)
 		too_much_args_error_exit(ms);
 	exit_status = ft_atoi(parse->args[1]) % 256;
 	free_ms(ms);
+	write(1, "exit\n", 5);
 	exit(exit_status);
 }
