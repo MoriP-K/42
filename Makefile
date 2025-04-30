@@ -1,6 +1,6 @@
 NAME := minishell
 
-CC := cc -fsanitize=address
+CC := cc #-fsanitize=address
 
 CPPFLAGS := -I./includes -I./src/libft
 

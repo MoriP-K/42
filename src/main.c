@@ -26,6 +26,8 @@ void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 	size_t	i;
 
 	i = 0;
+	if (ms->cl->cmd_count == 1 && check_builtin_cmd(ms->parse->cmd))
+		return ;
 	while (i < cmd_count)
 	{
 		waitpid(proc->id[i], &(proc)->status, 0);
@@ -46,7 +48,6 @@ void	do_minishell(t_ms *ms, char *line)
 {
 	while (1)
 	{
-
 		set_sigint_redisplay();
 		line = readline("minishell$ ");
 		g_sigint_received = 0;

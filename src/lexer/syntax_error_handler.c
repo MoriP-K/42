@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error_handler.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/21 20:40:07 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 00:05:27 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 void	print_syntax_error(t_token *token)
 {
 	if (token->word == NULL || !*(token->word))
-		write(1, "bash: syntax error near unexpected token `newline'\n",
-			56);
+		write(1, "minishell: syntax error near unexpected token `newline'\n",
+			61);
 	else
 	{
-		write(1, "bash: syntax error near unexpected token `", 47);
+		write(1, "minishell: syntax error near unexpected token `", 52);
 		write(1, token->word, ft_strlen(token->word));
 		write(1, "\'\n", 2);
 	}
