@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:08 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/30 19:53:24 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/04/30 23:21:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	free_ms(t_ms *ms)
 	if (ms->parse)
 		free_parser(ms->parse);
 	if (ms->token)
-		free(ms->token);
+		free_tokens(ms->token);
 	if (ms->proc)
 		free_proc(ms->proc);
 	if (ms->fd)
@@ -68,12 +68,12 @@ void	free_parser(t_parse *parse)
 	t_parse	*tmp;
 	int		i;
 
-	if (parse->token)
-		free_tokens(parse->token);
 	while (parse)
 	{
 		tmp = parse->next;
 		i = 0;
+		if (parse->token)
+			free_tokens(parse->token);
 		if (parse->args)
 		{
 			while (parse->args[i])
