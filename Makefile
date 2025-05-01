@@ -22,7 +22,7 @@ SRC := main.c \
 	parser.c allocate_parse.c allocate_parse_2.c parser_utils.c \
 	pipe.c pipe_2.c fd.c close_fd.c cmd_path.c cmd_path_2.c \
 	free.c free2.c utils.c ms.c ms_2.c\
-	heredoc.c heredoc_signal.c \
+	heredoc.c heredoc_2.c heredoc_signal.c \
 	init.c init_2.c \
 	pwd.c envi.c export.c export_utils.c unset.c echo.c cd.c exit.c \
 	export_sort.c cd_pwd_changer.c \
@@ -65,7 +65,7 @@ $(OBJDIR)/%.o:%.c | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-$(warning obj=$(OBJDIR))
+# $(warning obj=$(OBJDIR))
 
 clean:
 	$(RM) -r $(OBJ) $(OBJDIR)

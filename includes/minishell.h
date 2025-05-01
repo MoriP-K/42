@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/01 20:30:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 21:32:20 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ int			is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd);
 // heredoc
 void		prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse);
 void		exec_heredoc(t_ms *ms, t_parse *parse);
+void		write_to_heredoc_file(t_parse *parse);
+void		make_heredoc_file(t_parse *parse, t_ms *ms);
 
 // fd
 void		close_all_fds(t_fd *fd, t_parse *parse, int cmd_count);
