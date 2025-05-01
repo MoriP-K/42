@@ -6,18 +6,18 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 18:17:50 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/30 20:21:39 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:45:52 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-volatile sig_atomic_t g_sigint_received = 0;
+volatile sig_atomic_t	g_sigint_received = 0;
 
 void	heredoc_int_handler(int signo)
 {
 	int	devnull;
-	
+
 	(void)signo;
 	write(1, "\n", 1);
 	g_sigint_received = 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 19:28:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/01 20:30:04 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 20:46:12 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	exec_readline(t_parse *tmp_parse, t_token *tmp_token)
 	{
 		line = readline("> ");
 		if (g_sigint_received == 1)
-			break;
+			break ;
 		if (!line || ft_strcmp(line, tmp_token->word) == 0)
 		{
 			close(tmp_parse->fd->here_doc);
@@ -71,7 +71,7 @@ void	write_to_heredoc_file(t_parse *parse)
 				tmp_token = tmp_token->next;
 				exec_readline(tmp_parse, tmp_token);
 				if (g_sigint_received == 1)
-					break;
+					break ;
 			}
 			tmp_token = tmp_token->next;
 		}
