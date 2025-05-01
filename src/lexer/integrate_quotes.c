@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/05/01 18:24:50 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:54:59 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,34 @@ void	combine_adjacent_quotes(t_token **token, t_ms *ms)
 	}
 }
 
+void	set_garbage_token(t_token **garbage, t_token **result, t_token **token,
+					t_ms *ms)
+{
+	*garbage = malloc(sizeof(t_token));
+	(*garbage)->kinds = TK_WORD;
+	(*garbage)->word = ms_strdup("a", ms);
+	(*garbage)->next = (*token);
+	(*token) = (*garbage);
+	(*result) = (*token);
+}
+
+void	free_garbage(t_token **result, t_token **token)
+{
+	t_token	*tmp_token2;
+
+	tmp_token2 = (*result);
+	(*result) = (*result)->next;
+	(*token) = (*result);
+	free(tmp_token2->word);
+	free(tmp_token2);
+}
+
 t_token	*integrate_quotes(t_token *token, t_ms *ms)
 {
 	t_token	*result;
-	t_token *tmp_token;
-	t_token *tmp_token2;
+	t_token	*tmp_token;
 
-	tmp_token = malloc(sizeof(t_token));
-	tmp_token->kinds = TK_WORD;
-	tmp_token->word = ms_strdup("a", ms);
-	tmp_token->next = token;
-	token = tmp_token;
-	result = token;
+	set_garbage_token(&tmp_token, &result, &token, ms);
 	if (token->kinds == TK_META && (token->word[0] == '\"'
 			|| token->word[0] == '\''))
 	{
@@ -73,11 +89,7 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 			token->next = combine_all(token->next, ms);
 		token = token->next;
 	}
-	tmp_token2 = result;
-	result = result->next;
-	token = result;
-	free(tmp_token2->word);
-	free(tmp_token2);
+	free_garbage(&result, &token);
 	combine_adjacent_quotes(&token, ms);
 	return (result);
 }

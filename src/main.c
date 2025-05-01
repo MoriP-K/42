@@ -1,11 +1,16 @@
-#include "../includes/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/01 20:44:32 by motomo            #+#    #+#             */
+/*   Updated: 2025/05/01 20:59:24 by motomo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	throw_error(char *cmd)
-{
-	ft_putstr_fd("bash: ", 2);
-	perror(cmd);
-	exit(EXIT_FAILURE);
-}
+#include "../includes/minishell.h"
 
 void	init_ms(t_ms *ms, char *envp[])
 {
@@ -44,16 +49,21 @@ void	wait_child_process(t_ms *ms, t_proc *proc, size_t cmd_count)
 	}
 }
 
+void	sigint_check(t_ms *ms)
+{
+	if (g_sigint_received == 1)
+		ms->exit_status = 130;
+	g_sigint_received = 0;
+	set_sigint_ign();
+}
+
 void	do_minishell(t_ms *ms, char *line)
 {
 	while (1)
 	{
 		set_sigint_redisplay();
 		line = readline("minishell$ ");
-		if (g_sigint_received == 1)
-			ms->exit_status = 130;
-		g_sigint_received = 0;
-		set_sigint_ign();
+		sigint_check(ms);
 		if (!line)
 			break ;
 		if (*line == '\0')
