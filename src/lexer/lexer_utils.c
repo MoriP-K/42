@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:23:12 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/30 23:14:36 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:13:40 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_kinds	get_kinds(char *word)
 
 	if (word[0] == EOF)
 		kind = TK_EOF;
-	else if (word[0] == ' ' || word[0] == '\t')
+	else if (word[0] == ' ' || word[0] == '\t' || word[0] == '\n')
 		kind = TK_SPACE;
 	else if (word[0] == '<')
 		kind = TK_IN_REDIRECT;
