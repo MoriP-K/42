@@ -6,13 +6,13 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/05/01 19:22:08 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:28:51 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_syntax_error(t_token *token)
+void	print_syntax_error(t_token *token, t_ms *ms)
 {
 	if (token->word == NULL || !*(token->word))
 		write(1, "minishell: syntax error near unexpected token `newline'\n",
@@ -23,6 +23,7 @@ void	print_syntax_error(t_token *token)
 		write(1, token->word, ft_strlen(token->word));
 		write(1, "\'\n", 2);
 	}
+	ms->exit_status = 2;
 }
 
 int	pipe_error(t_token *token, t_token *first_token, t_ms *ms)
@@ -32,10 +33,9 @@ int	pipe_error(t_token *token, t_token *first_token, t_ms *ms)
 	{
 		return (1);
 	}
-	print_syntax_error(token);
+	print_syntax_error(token, ms);
 	free_tokens(first_token);
 	first_token = NULL;
-	ms->exit_status = 2;
 	return (0);
 }
 
@@ -44,10 +44,9 @@ int	redirect_error(t_token *token, t_token *first_token, t_ms *ms)
 	token = token->next;
 	if (token->kinds == TK_WORD)
 		return (1);
-	print_syntax_error(token);
+	print_syntax_error(token, ms);
 	free_tokens(first_token);
 	first_token = NULL;
-	ms->exit_status = 2;
 	return (0);
 }
 
@@ -58,7 +57,7 @@ int	syntax_error_handler(t_token *token, t_ms *ms)
 	first_token = token;
 	if (token->kinds == TK_PIPE)
 	{
-		print_syntax_error(token);
+		print_syntax_error(token, ms);
 		return (0);
 	}
 	while (token->kinds != TK_EOF)
