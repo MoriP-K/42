@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:27:27 by motomo            #+#    #+#             */
-/*   Updated: 2025/05/01 00:05:27 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:22:08 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	print_syntax_error(t_token *token)
 	}
 }
 
-int	pipe_error(t_token *token, t_token *first_token)
+int	pipe_error(t_token *token, t_token *first_token, t_ms *ms)
 {
 	token = token->next;
 	if (token->kinds == TK_WORD)
@@ -35,10 +35,11 @@ int	pipe_error(t_token *token, t_token *first_token)
 	print_syntax_error(token);
 	free_tokens(first_token);
 	first_token = NULL;
+	ms->exit_status = 2;
 	return (0);
 }
 
-int	redirect_error(t_token *token, t_token *first_token)
+int	redirect_error(t_token *token, t_token *first_token, t_ms *ms)
 {
 	token = token->next;
 	if (token->kinds == TK_WORD)
@@ -46,10 +47,11 @@ int	redirect_error(t_token *token, t_token *first_token)
 	print_syntax_error(token);
 	free_tokens(first_token);
 	first_token = NULL;
+	ms->exit_status = 2;
 	return (0);
 }
 
-int	syntax_error_handler(t_token *token)
+int	syntax_error_handler(t_token *token, t_ms *ms)
 {
 	t_token	*first_token;
 
@@ -63,14 +65,14 @@ int	syntax_error_handler(t_token *token)
 	{
 		if (token->kinds == TK_PIPE)
 		{
-			if (!pipe_error(token, first_token))
+			if (!pipe_error(token, first_token, ms))
 				return (0);
 		}
 		if (token->kinds == TK_APPEND || token->kinds == TK_HEREDOC
 			|| token->kinds == TK_IN_REDIRECT
 			|| token->kinds == TK_OUT_REDIRECT)
 		{
-			if (!redirect_error(token, first_token))
+			if (!redirect_error(token, first_token, ms))
 				return (0);
 		}
 		token = token->next;

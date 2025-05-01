@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/04/18 13:31:18 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:22:57 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ t_token	*tokenizer(t_ms *ms, char *line)
 	expand_token(ms, first_token);
 	first_token = integrate_quotes(first_token, ms);
 	first_token = culling_space(first_token);
-	if (!syntax_error_handler(first_token))
+	if (!syntax_error_handler(first_token, ms))
 		return (NULL);
 	return (first_token);
 }

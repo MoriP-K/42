@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/30 18:30:46 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:22:17 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_kinds		get_kinds(char *word);
 void		lexer_add_eof(t_token *first_token, t_ms *ms);
 int			check_quote_count(t_token *token);
 void		print_syntax_error(t_token *token);
-int			syntax_error_handler(t_token *token);
+int			syntax_error_handler(t_token *token, t_ms *ms);
 int			is_meta_char(char c);
 char		**split_meta(char *line, t_ms *ms);
 int			count_words(char *line);
