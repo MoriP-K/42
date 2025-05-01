@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:01:55 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/24 23:22:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:05:49 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@ int	count_args(t_token *token)
 
 	count = 0;
 	while (token && token->kinds != TK_META
-		&& token->kinds != TK_EOF
-		&& token->kinds != TK_IN_REDIRECT
-		&& token->kinds != TK_OUT_REDIRECT)
+		&& token->kinds != TK_EOF)
 	{
-		count++;
+		if (token->kinds != TK_IN_REDIRECT
+			&& token->kinds != TK_OUT_REDIRECT)
+			count++;
+		else if (token->next)
+			token = token->next;
 		token = token->next;
 	}
 	return (count);
@@ -61,7 +63,8 @@ t_parse	*get_new_parse(t_ms *ms, t_token *token)
 	new_parse->append = 0;
 	new_parse->args = (char **)ms_malloc(sizeof(char *) * (arg_count + 1), ms);
 	i = 0;
-	while (i <= arg_count)
-		new_parse->args[i++] = NULL;
+	while (i < arg_count)
+		i++;
+	new_parse->args[i] = NULL;
 	return (new_parse);
 }
