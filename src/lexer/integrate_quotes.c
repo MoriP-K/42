@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/05/01 15:45:54 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 18:24:50 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 			token->next = combine_all(token->next, ms);
 		token = token->next;
 	}
-	token = result;
 	tmp_token2 = result;
 	result = result->next;
+	token = result;
 	free(tmp_token2->word);
 	free(tmp_token2);
 	combine_adjacent_quotes(&token, ms);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:32:24 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/29 22:15:12 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 18:58:00 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	init_lexer(t_ms *ms, t_token **token, char *line)
 // 			printf("outfile: %s\n", p->outfile);
 // 		if (p->delimiter)
 // 			printf("delimiter: %s\n", p->delimiter);
+// 		printf("-------------\n");
 // 		write(1, "\n", 1);
 // 		p = p->next;
 // 	}
