@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:01:55 by motomo            #+#    #+#             */
-/*   Updated: 2025/05/01 19:43:29 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:00:11 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	count_args(t_token *token)
 
 	count = 0;
 	while (token && token->kinds != TK_META
+		&& token->kinds != TK_PIPE
 		&& token->kinds != TK_EOF)
 	{
 		if (token->kinds != TK_IN_REDIRECT

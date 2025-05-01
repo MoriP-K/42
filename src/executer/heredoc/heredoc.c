@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 19:28:33 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/30 23:09:09 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/01 20:30:04 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,36 +101,40 @@ void	exec_heredoc(t_ms *ms, t_parse *parse)
 	}
 }
 
-void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse, char *delimiter)
+void	prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse)
 {
 	t_parse	*tmp_parse;
 	t_token	*token;
 
 	set_heredoc_sigint();
-	if (!delimiter || !parse->token)
+	if (!parse->token)
 		return ;
 	tmp_parse = parse;
-	if (tmp_parse->token)
+	while (tmp_parse)
 	{
-		token = tmp_parse->token;
-		while (token)
+		if (tmp_parse->token)
 		{
-			if (g_sigint_received == 1)
+			token = tmp_parse->token;
+			while (token)
 			{
-				g_sigint_received = 0;
-				return ;
+				if (g_sigint_received == 1)
+				{
+					g_sigint_received = 0;
+					return ;
+				}
+				if (token->kinds == TK_HEREDOC && token->next)
+				{
+					fd->tmp_in = ms_dup(STDIN_FILENO, ms);
+					fd->tmp_out = ms_dup(STDOUT_FILENO, ms);
+					token = token->next;
+					exec_heredoc(ms, tmp_parse);
+					reset_fds(ms, ms->fd);
+					break ;
+				}
+				else
+					token = token->next;
 			}
-			if (token->kinds == TK_HEREDOC && token->next)
-			{
-				fd->tmp_in = ms_dup(STDIN_FILENO, ms);
-				fd->tmp_out = ms_dup(STDOUT_FILENO, ms);
-				token = token->next;
-				exec_heredoc(ms, tmp_parse);
-				reset_fds(ms, ms->fd);
-				break ;
-			}
-			else
-				token = token->next;
 		}
+		tmp_parse = tmp_parse->next;
 	}
 }

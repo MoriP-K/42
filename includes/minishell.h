@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:13:50 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/01 19:37:02 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:30:32 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,7 @@ int			exec_built_in(t_ms *ms, t_parse *parse);
 int			is_only_builtin_cmd(t_ms *ms, t_parse *parse, t_fd *fd);
 
 // heredoc
-void		prepare_heredoc(t_ms *ms, t_fd *fd,
-				t_parse *parse, char *delimiter);
+void		prepare_heredoc(t_ms *ms, t_fd *fd, t_parse *parse);
 void		exec_heredoc(t_ms *ms, t_parse *parse);
 
 // fd

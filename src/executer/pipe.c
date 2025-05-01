@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:18:41 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/04/30 20:23:37 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:31:26 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	do_exec(t_ms *ms, t_parse *parse)
 	size_t	i;
 	t_parse	*current_parse;
 
-	prepare_heredoc(ms, ms->fd, parse, parse->delimiter);
+	prepare_heredoc(ms, ms->fd, parse);
 	dup2(0, STDIN_FILENO);
 	if (is_only_builtin_cmd(ms, parse, ms->fd))
 		return (1);
