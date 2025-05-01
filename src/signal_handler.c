@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:17:29 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/30 20:07:17 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 14:39:22 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	sigint_handler(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	g_sigint_received = 1;
 }
 
 void	set_sigint_ign(void)
