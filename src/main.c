@@ -50,6 +50,8 @@ void	do_minishell(t_ms *ms, char *line)
 	{
 		set_sigint_redisplay();
 		line = readline("minishell$ ");
+		if (g_sigint_received == 1)
+			ms->exit_status = 130;
 		g_sigint_received = 0;
 		set_sigint_ign();
 		if (!line)
