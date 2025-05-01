@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 15:57:12 by masa              #+#    #+#             */
-/*   Updated: 2025/04/18 13:36:50 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 15:45:54 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,14 @@ void	combine_adjacent_quotes(t_token **token, t_ms *ms)
 t_token	*integrate_quotes(t_token *token, t_ms *ms)
 {
 	t_token	*result;
+	t_token *tmp_token;
+	t_token *tmp_token2;
 
+	tmp_token = malloc(sizeof(t_token));
+	tmp_token->kinds = TK_WORD;
+	tmp_token->word = ms_strdup("a", ms);
+	tmp_token->next = token;
+	token = tmp_token;
 	result = token;
 	if (token->kinds == TK_META && (token->word[0] == '\"'
 			|| token->word[0] == '\''))
@@ -67,6 +74,10 @@ t_token	*integrate_quotes(t_token *token, t_ms *ms)
 		token = token->next;
 	}
 	token = result;
+	tmp_token2 = result;
+	result = result->next;
+	free(tmp_token2->word);
+	free(tmp_token2);
 	combine_adjacent_quotes(&token, ms);
 	return (result);
 }
