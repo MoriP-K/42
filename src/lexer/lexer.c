@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 11:39:55 by root              #+#    #+#             */
-/*   Updated: 2025/05/01 19:22:57 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:39:48 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_token	*tokenizer(t_ms *ms, char *line)
 	free(words);
 	lexer_add_eof(first_token, ms);
 	first_token = combine_redirect(first_token, ms);
-	if (!check_quote_count(first_token))
+	if (!check_quote_count(first_token, ms))
 		return (NULL);
 	expand_token(ms, first_token);
 	first_token = integrate_quotes(first_token, ms);

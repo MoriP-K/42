@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:01:55 by motomo            #+#    #+#             */
-/*   Updated: 2025/05/01 19:05:49 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:43:29 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ int	count_args(t_token *token)
 		&& token->kinds != TK_EOF)
 	{
 		if (token->kinds != TK_IN_REDIRECT
-			&& token->kinds != TK_OUT_REDIRECT)
+			&& token->kinds != TK_OUT_REDIRECT
+			&& token->kinds != TK_APPEND
+			&& token->kinds != TK_HEREDOC)
 			count++;
 		else if (token->next)
 			token = token->next;
