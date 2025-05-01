@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:41:12 by masa              #+#    #+#             */
-/*   Updated: 2025/05/01 14:40:44 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:33:59 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	print_nonnumeric_error_exit(t_ms *ms, char *arg)
 	write(2, arg, ft_strlen(arg));
 	write(2, ": numeric argument required\n", 28);
 	free_ms(ms);
-	exit(1);
+	exit(2);
 }
 
 void	builtin_exit(t_ms *ms, t_parse *parse)
@@ -44,6 +44,7 @@ void	builtin_exit(t_ms *ms, t_parse *parse)
 	else if (parse->args[2] != NULL)
 	{
 		too_much_args_error_exit();
+		ms->exit_status = 1;
 		return ;
 	}
 	exit_status = ft_atoi(parse->args[1]) % 256;

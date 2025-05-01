@@ -6,7 +6,7 @@
 /*   By: motomo <motomo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 19:19:59 by motomo            #+#    #+#             */
-/*   Updated: 2025/04/21 19:22:48 by motomo           ###   ########.fr       */
+/*   Updated: 2025/05/01 19:36:45 by motomo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	count_quotes(t_token **token, int *doubleq, int *singleq)
 	}
 }
 
-int	check_quote_count(t_token *token)
+int	check_quote_count(t_token *token, t_ms *ms)
 {
 	int		double_quote_count;
 	int		single_quote_count;
@@ -57,7 +57,7 @@ int	check_quote_count(t_token *token)
 	count_quotes(&token, &double_quote_count, &single_quote_count);
 	if (double_quote_count % 2 == 1 || single_quote_count % 2 == 1)
 	{
-		print_syntax_error(token);
+		print_syntax_error(token, ms);
 		free_tokens(first_token);
 		return (0);
 	}
