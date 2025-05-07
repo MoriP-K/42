@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:22:01 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/06 21:51:35 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/07 22:00:49 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,28 @@ void	parse_input(t_table *table, char **av)
 	table->time_to_die = ft_atoi(av[2]);
 	table->time_to_eat = ft_atoi(av[3]);
 	table->time_to_sleep = ft_atoi(av[4]);
+	table->nbr_limit_meals = ft_atoi(av[5]);
 }
 
+t_fork	*init_fork(t_table *table)
+{
+	t_fork	*fork;
+	size_t	i;
+
+	fork = (t_fork *)malloc(sizeof(t_fork) * table->philo_nbr);
+	if (!fork)
+		return (NULL);
+	
+}
+
+void	init_table(t_table *table)
+{
+	table->forks = (t_fork *)malloc(sizeof(t_fork) * table->philo_nbr);
+	if (!table->forks)
+		return (EXIT_FAILURE);
+}
+
+// ./philo [nbr] [die] [eat] [sleep] [eat_time]
 int main(int ac, char *av[])
 {
 	t_table	table;
@@ -57,7 +77,13 @@ int main(int ac, char *av[])
 		// correct input
 		// 1. parse input
 		parse_input(&table, av);
+		printf("nbr: %ld\n", table.philo_nbr);
+		printf("die: %ld\n", table.time_to_die);
+		printf("eat: %ld\n", table.time_to_eat);
+		printf("sleep: %ld\n", table.time_to_sleep);
+		printf("meals: %ld\n", table.nbr_limit_meals);
 		// 2. init struct
+		init_table(&table);
 		// 3. start dinner 
 	}
 	else
