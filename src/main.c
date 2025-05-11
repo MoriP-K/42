@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:22:01 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/07 22:00:49 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/11 15:23:43 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,54 +17,174 @@
 //time to ear 
 //time to sleep
 
-void	error_exit(char *s)
-{
-	printf("%s\n", s);
-	exit(EXIT_FAILURE);
-}
-
-int	is_space(char c)
-{
-	return ((9 <= c && c <= 13) || c == 32);
-}
-
-int	ft_atoi(char *str)
-{
-	size_t	i;
-	long	num;
-
-	i = 0;
-	while(is_space(str[i]))
-		i++;
-	num = 0;
-	return (num);
-}
-
 void	parse_input(t_table *table, char **av)
 {
-	table->philo_nbr = ft_atoi(av[1]);
-	table->time_to_die = ft_atoi(av[2]);
-	table->time_to_eat = ft_atoi(av[3]);
-	table->time_to_sleep = ft_atoi(av[4]);
-	table->nbr_limit_meals = ft_atoi(av[5]);
+	table->num_of_philo = ft_atoi(av[1], table);
+	table->time_to_die = ft_atoi(av[2], table);
+	table->time_to_eat = ft_atoi(av[3], table);
+	table->time_to_sleep = ft_atoi(av[4], table);
+	if (av[5])
+		table->nbr_limit_meals = ft_atoi(av[5], table);
+	else
+		table->nbr_limit_meals = -1;
+	table->philos = NULL;
 }
 
-t_fork	*init_fork(t_table *table)
+t_philo	*find_first_philo_list(t_philo *head, t_table *table)
 {
-	t_fork	*fork;
-	size_t	i;
+	t_philo	*current;
+	t_philo	*first;
+	int		i;
 
-	fork = (t_fork *)malloc(sizeof(t_fork) * table->philo_nbr);
-	if (!fork)
+	if (!head)
 		return (NULL);
-	
+	current = head;
+	first = current;
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		if (current->id < first->id)
+			first = current;
+		current = current->left_side;
+		if (current == head)
+			break ;
+		i++;
+	}
+	return (first);
 }
 
-void	init_table(t_table *table)
+t_philo	*last_philo_list(t_philo *head, t_table *table)
 {
-	table->forks = (t_fork *)malloc(sizeof(t_fork) * table->philo_nbr);
-	if (!table->forks)
-		return (EXIT_FAILURE);
+	t_philo	*first;
+
+	if (!head)
+		return (NULL);
+	first = find_first_philo_list(head, table);
+	return (first->right_side);
+}
+
+void	add_first_philo(t_philo *new_philo, t_philo *first, t_philo *last)
+{
+	new_philo->left_side = first;
+	new_philo->right_side = last;
+	first->left_side = new_philo;
+	last->right_side = new_philo;
+}
+
+void	add_philo_to_left(t_philo *new_philo, t_philo *prev_philo)
+{
+	new_philo->right_side = prev_philo;
+	new_philo->left_side = prev_philo->left_side;
+	prev_philo->left_side->right_side = new_philo;
+	prev_philo->left_side = new_philo;
+}
+
+void	add_philo_list(t_philo **head, t_philo *new_philo, t_philo *prev_philo, t_table *table)
+{
+	t_philo	*first;
+	t_philo	*last;
+
+	if (!*head)
+	{
+		*head = new_philo;
+		new_philo->right_side = new_philo;
+		new_philo->left_side = new_philo;
+	}
+	else
+	{
+		first = find_first_philo_list(*head, table);
+		last = first->right_side;
+		if (!prev_philo)
+			add_first_philo(new_philo, first, last);
+		else
+			add_philo_to_left(new_philo, prev_philo);
+	}
+}
+
+t_philo	*new_philo_list(t_table *table)
+{
+	t_philo *new_philo;
+
+	new_philo = ft_malloc(sizeof(t_philo), table);
+	new_philo->id = -1;
+	new_philo->left_fork = NULL;
+	new_philo->right_fork = NULL;
+	new_philo->left_side = NULL;
+	new_philo->right_side = NULL;
+	return (new_philo);
+}
+
+void	assign_fork(t_table *table)
+{
+	t_philo	*tmp;
+	t_fork	*next_right_fork;
+	int	i;
+// アドレスをコピーしてフォークのアドレスを共有する
+// 1つのフォークに対して2つのポインタが存在することになる
+	tmp = table->philos;
+	next_right_fork = NULL;
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		if (i != 0)
+			tmp->right_fork = next_right_fork;
+		tmp->left_fork = ft_malloc(sizeof(t_fork), table);
+		tmp->left_fork->id = i + 1;
+		next_right_fork = tmp->left_fork;
+		// if (i != 0)
+		// 	printf("id: %d, left_fork_id: %d, right_fork_id: %d\n", tmp->id, tmp->left_fork->id, tmp->right_fork->id);
+		tmp = tmp->left_side;
+		i++;
+	}
+	tmp->right_fork = next_right_fork;
+	// printf("id: %d, left_fork_id: %d, right_fork_id: %d\n", tmp->id, tmp->left_fork->id, tmp->right_fork->id);
+}
+
+void	init_philo(t_table *table, t_philo **head)
+{
+	t_philo	*new_philo;
+	t_philo	*prev; // right
+	int		i;
+
+	*head = NULL;
+	prev = NULL;
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		new_philo = new_philo_list(table);
+		new_philo->id = i + 1;
+		add_philo_list(head, new_philo, prev, table);
+		prev = new_philo;
+		i++;
+	}
+	assign_fork(table);
+}
+
+void	debug(t_table *table)
+{
+	printf("nbr: %ld\n", table->num_of_philo);
+	printf("die: %ld\n", table->time_to_die);
+	printf("eat: %ld\n", table->time_to_eat);
+	printf("sleep: %ld\n", table->time_to_sleep);
+	printf("meals: %ld\n", table->nbr_limit_meals);
+}
+
+void	debug_philo(t_table *table, t_philo	*philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		printf("id: %d\n", philo->id);
+		philo = philo->left_side;
+		i++;
+	}
+}
+
+void	start_dinner(t_table *table)
+{
+	debug_philo(table, table->philos);
 }
 
 // ./philo [nbr] [die] [eat] [sleep] [eat_time]
@@ -74,107 +194,42 @@ int main(int ac, char *av[])
 
 	if (ac == 5 || ac == 6)
 	{
-		// correct input
 		// 1. parse input
 		parse_input(&table, av);
-		printf("nbr: %ld\n", table.philo_nbr);
-		printf("die: %ld\n", table.time_to_die);
-		printf("eat: %ld\n", table.time_to_eat);
-		printf("sleep: %ld\n", table.time_to_sleep);
-		printf("meals: %ld\n", table.nbr_limit_meals);
+		debug(&table);
 		// 2. init struct
-		init_table(&table);
+		init_philo(&table, &table.philos);
 		// 3. start dinner 
+		start_dinner(&table);
+		free_table(&table);
 	}
 	else
-		error_exit("Invalid arguments\n");
+		error_exit("Invalid argument, innit??", &table);
 	return 0;
 }
 
+/*
+考える
+フォークを取る
+右 左
+両方取れたら食事する
+フォークを戻す
+食事できたら眠る
+起きたら考える
+死ぬ
+誰か死んだら終了
 
 
-// static volatile int	glob = 0;
-// static	pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+・スレッドに仕事をさせる
+哲学者にフォーク2本で食事をさせたい
 
-// void	*thread_func(void *arg)
-// {
-// 	int	loop = *((int *)arg);
-// 	int	loc, j, s;
+仕事を分割しそれぞれのスレッドに仕事をさせる
+→関数を作成するでも良いし、渡す引数を変えるでも良い
 
-// 	for (j = 0; j < loop; j++)
-// 	{
-// 		s = pthread_mutex_lock(&mtx);
-// 		if (s != 0)
-// 			printf("pthread_mutex_lock\n");
-// 		loc = glob;
-// 		loc++;
-// 		glob = loc;
-// 		s = pthread_mutex_unlock(&mtx);
-// 		if (s != 0)
-// 			printf("pthred_mutex_lock\n");
-// 	}
-// 	return (NULL);
-// }
+pthread_create()でスレッドを生成する
+→引数に分割した仕事を記述した関数を指定する
+→コアがこの仕事をしてくれる
 
-// int main(int ac, char const *av[])
-// {
-// 	(void)ac;
-// 	(void)av;
+同期をすることで他のスレッドの処理を待つことができる
 
-// 	pthread_t t1, t2;
-// 	int		loop, s;
-
-// 	loop = (ac > 1) ? atoi(av[1]) : 10000000;
-// 	s = pthread_create(&t1, NULL, thread_func, &loop);
-// 	if (s != 0)
-// 		printf("pthread_create1\n");
-// 	s = pthread_create(&t2, NULL, thread_func, &loop);
-// 	if (s != 0)
-// 		printf("pthread_create2\n");
-// 	s = pthread_join(t1, NULL);
-// 	if (s != 0)
-// 		printf("pthread_join1\n");
-// 	s = pthread_join(t2, NULL);
-// 	if (s != 0)
-// 		printf("pthread_join2\n");
-// 	printf("glob = %d\n", glob);
-// 	return (0);
-// }
-
-// typedef struct s_mut
-// {
-// 	pthread_mutex_t *mutex;
-// 	int *cnt;
-// }	t_mut;
-
-
-// void	*f(void *p)
-// {
-// 	t_mut	*t;
-
-// 	t = p;
-// 	for (int i = 0; i < 10000; i++)
-// 	{
-// 		pthread_mutex_lock(t->mutex);
-// 		++*t->cnt;
-// 		pthread_mutex_unlock(t->mutex);
-// 	}
-// 	return (NULL);
-// }
-
-// int	main()
-// {
-// 	int cnt = 0;
-// 	pthread_t t1, t2;
-// 	pthread_mutex_t mutex;
-
-// 	pthread_mutex_init(&mutex, NULL);
-// 	t_mut t;
-// 	t.mutex = &mutex;
-// 	t.cnt = &cnt;
-// 	pthread_create(&t1, NULL, &f, &t);
-// 	pthread_create(&t2, NULL, &f, &t);
-// 	pthread_join(t1, NULL);
-// 	pthread_join(t2, NULL);
-// 	printf("t.cnt = %d\n", *t.cnt);
-// }
+*/

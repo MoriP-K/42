@@ -6,13 +6,17 @@ CPPFLAGS := -I./includes
 
 CFLAGS := -Wall -Wextra -Werror
 
-SRC := main.c
+SRC := main.c utils.c
 
 OBJDIR := ./obj
 
 OBJ := $(SRC:%.c=$(OBJDIR)/%.o)
 
 vpath %.c ./src:
+
+ifeq ($(DEBUG), true)
+	CFLAGS += -g3
+endif
 
 all: $(NAME)
 
@@ -38,5 +42,8 @@ re: fclean
 
 rr:
 	$(MAKE) re && $(MAKE) clean
+
+d: clean
+	$(MAKE) DEBUG=true
 
 .PHONY: all clean fclean re rr

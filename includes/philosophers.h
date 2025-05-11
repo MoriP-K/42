@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:20:48 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/06 19:59:58 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/11 15:09:00 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,41 +20,56 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <limits.h>
+# include <errno.h>
 
 # include <string.h>
 
 typedef pthread_mutex_t	t_mtx;
 
+typedef enum e_option
+{
+	LOCK,
+	UNLOCK,
+	INIT,
+	DESTROY,
+	CREATE,
+	JOIN,
+	DETACH,
+}	t_option;
+
 typedef struct s_fork
 {
 	t_mtx	fork;
-	int		fork_id;
+	int		id;
 }			t_fork;
-
 
 typedef struct s_philo
 {
-	int			id;
-	long		meals_counter;
-	bool		full;
-	long		last_meal_time;
-	t_fork		*left_fork;
-	t_fork		*right_fork;
-	pthread_t	thread_id;
+	int					id;
+	t_fork				*right_fork;
+	t_fork				*left_fork;
+	struct s_philo		*right_side;
+	struct s_philo		*left_side;
 }				t_philo;
 
 typedef struct s_table
 {
-	long	philo_nbr;
+	long	num_of_philo;
 	long	time_to_die;
 	long	time_to_eat;
 	long	time_to_sleep;
 	long	nbr_limit_meals;
-	bool	end_simulation;
-	t_fork	*forks;
 	t_philo	*philos;
 }	t_table;
 
+// utils
+void	error_exit(char *s, t_table *table);
+void	*ft_malloc(size_t bytes, t_table *table);
+int		ft_atoi(char *str, t_table *table);
 
+// free
+void	free_table(t_table *table);
+
+// handle
 
 #endif
