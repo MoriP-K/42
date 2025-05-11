@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:20:48 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/11 15:09:00 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/11 18:16:45 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_fork
 {
 	t_mtx	fork;
 	int		id;
+	int		sum;
 }			t_fork;
 
 typedef struct s_philo
@@ -50,6 +51,7 @@ typedef struct s_philo
 	t_fork				*left_fork;
 	struct s_philo		*right_side;
 	struct s_philo		*left_side;
+	pthread_t			p_id;
 }				t_philo;
 
 typedef struct s_table

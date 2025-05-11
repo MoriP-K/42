@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:22:01 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/11 15:23:43 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/11 18:29:57 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,15 @@ t_philo	*find_first_philo_list(t_philo *head, t_table *table)
 	return (first);
 }
 
-t_philo	*last_philo_list(t_philo *head, t_table *table)
-{
-	t_philo	*first;
+// t_philo	*last_philo_list(t_philo *head, t_table *table)
+// {
+// 	t_philo	*first;
 
-	if (!head)
-		return (NULL);
-	first = find_first_philo_list(head, table);
-	return (first->right_side);
-}
+// 	if (!head)
+// 		return (NULL);
+// 	first = find_first_philo_list(head, table);
+// 	return (first->right_side);
+// }
 
 void	add_first_philo(t_philo *new_philo, t_philo *first, t_philo *last)
 {
@@ -119,8 +119,7 @@ void	assign_fork(t_table *table)
 	t_philo	*tmp;
 	t_fork	*next_right_fork;
 	int	i;
-// アドレスをコピーしてフォークのアドレスを共有する
-// 1つのフォークに対して2つのポインタが存在することになる
+
 	tmp = table->philos;
 	next_right_fork = NULL;
 	i = 0;
@@ -130,6 +129,7 @@ void	assign_fork(t_table *table)
 			tmp->right_fork = next_right_fork;
 		tmp->left_fork = ft_malloc(sizeof(t_fork), table);
 		tmp->left_fork->id = i + 1;
+		tmp->left_fork->sum = 0;
 		next_right_fork = tmp->left_fork;
 		// if (i != 0)
 		// 	printf("id: %d, left_fork_id: %d, right_fork_id: %d\n", tmp->id, tmp->left_fork->id, tmp->right_fork->id);
@@ -143,7 +143,7 @@ void	assign_fork(t_table *table)
 void	init_philo(t_table *table, t_philo **head)
 {
 	t_philo	*new_philo;
-	t_philo	*prev; // right
+	t_philo	*prev;
 	int		i;
 
 	*head = NULL;
@@ -180,10 +180,50 @@ void	debug_philo(t_table *table, t_philo	*philo)
 		philo = philo->left_side;
 		i++;
 	}
+	printf("sum: %d\n", philo->left_fork->sum);
+}
+
+void	*philosopher_lifecycle(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	pthread_mutex_lock(&philo->left_fork->fork);
+	pthread_mutex_lock(&philo->right_fork->fork);
+	philo->sum++;
+	pthread_mutex_unlock(&philo->fork);
+	return (NULL);
 }
 
 void	start_dinner(t_table *table)
 {
+	t_philo	*philos;
+	int		i;
+
+	philos = table->philos;
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		pthread_mutex_init(&philos->left_fork->fork, NULL);
+		philos = philos->left_side;
+		i++;
+	}
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		pthread_create(&philos->p_id, NULL, philosopher_lifecycle, philos);
+		// pthread_create(&philos->p_id, NULL, philosopher_lifecycle, philos->right_fork);
+		philos = philos->left_side;
+		i++;
+		printf("index: %d\n", i);
+	}
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		pthread_join(philos->p_id, NULL);
+		philos = philos->left_side;
+		i++;
+	}
 	debug_philo(table, table->philos);
 }
 
@@ -196,7 +236,7 @@ int main(int ac, char *av[])
 	{
 		// 1. parse input
 		parse_input(&table, av);
-		debug(&table);
+		// debug(&table);
 		// 2. init struct
 		init_philo(&table, &table.philos);
 		// 3. start dinner 
