@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:20:48 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/11 18:16:45 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:08:25 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 # include <errno.h>
 
 # include <string.h>
+
+typedef struct s_table	t_table;
+typedef struct s_fork	t_fork;
+typedef struct s_philo	t_philo;
 
 typedef pthread_mutex_t	t_mtx;
 
@@ -41,7 +45,6 @@ typedef struct s_fork
 {
 	t_mtx	fork;
 	int		id;
-	int		sum;
 }			t_fork;
 
 typedef struct s_philo
@@ -52,6 +55,10 @@ typedef struct s_philo
 	struct s_philo		*right_side;
 	struct s_philo		*left_side;
 	pthread_t			p_id;
+	t_table				*table;
+	t_mtx				meal_mtx;
+	long				last_meal_time;
+	int					meals_eaten;
 }				t_philo;
 
 typedef struct s_table
@@ -62,6 +69,10 @@ typedef struct s_table
 	long	time_to_sleep;
 	long	nbr_limit_meals;
 	t_philo	*philos;
+	long	start_time;
+	int		simulation_stop;
+	t_mtx	print_mtx;
+	t_mtx	stop_mtx;
 }	t_table;
 
 // utils
@@ -73,5 +84,10 @@ int		ft_atoi(char *str, t_table *table);
 void	free_table(t_table *table);
 
 // handle
+
+// list
+t_philo	*new_philo_list(t_table *table);
+void	add_philo_list(t_philo **head, t_philo *new_philo, t_philo *prev_philo, t_table *table);
+
 
 #endif

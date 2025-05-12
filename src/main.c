@@ -6,18 +6,23 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:22:01 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/11 18:29:57 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:08:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-//number of philos ... philos and also forks
-//time to die  ... 
-//time to ear 
-//time to sleep
+int		sum = 0;
 
-void	parse_input(t_table *table, char **av)
+long	now(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void	parse_input_to_table(t_table *table, char **av)
 {
 	table->num_of_philo = ft_atoi(av[1], table);
 	table->time_to_die = ft_atoi(av[2], table);
@@ -28,97 +33,14 @@ void	parse_input(t_table *table, char **av)
 	else
 		table->nbr_limit_meals = -1;
 	table->philos = NULL;
-}
-
-t_philo	*find_first_philo_list(t_philo *head, t_table *table)
-{
-	t_philo	*current;
-	t_philo	*first;
-	int		i;
-
-	if (!head)
-		return (NULL);
-	current = head;
-	first = current;
-	i = 0;
-	while (i < table->num_of_philo)
-	{
-		if (current->id < first->id)
-			first = current;
-		current = current->left_side;
-		if (current == head)
-			break ;
-		i++;
-	}
-	return (first);
-}
-
-// t_philo	*last_philo_list(t_philo *head, t_table *table)
-// {
-// 	t_philo	*first;
-
-// 	if (!head)
-// 		return (NULL);
-// 	first = find_first_philo_list(head, table);
-// 	return (first->right_side);
-// }
-
-void	add_first_philo(t_philo *new_philo, t_philo *first, t_philo *last)
-{
-	new_philo->left_side = first;
-	new_philo->right_side = last;
-	first->left_side = new_philo;
-	last->right_side = new_philo;
-}
-
-void	add_philo_to_left(t_philo *new_philo, t_philo *prev_philo)
-{
-	new_philo->right_side = prev_philo;
-	new_philo->left_side = prev_philo->left_side;
-	prev_philo->left_side->right_side = new_philo;
-	prev_philo->left_side = new_philo;
-}
-
-void	add_philo_list(t_philo **head, t_philo *new_philo, t_philo *prev_philo, t_table *table)
-{
-	t_philo	*first;
-	t_philo	*last;
-
-	if (!*head)
-	{
-		*head = new_philo;
-		new_philo->right_side = new_philo;
-		new_philo->left_side = new_philo;
-	}
-	else
-	{
-		first = find_first_philo_list(*head, table);
-		last = first->right_side;
-		if (!prev_philo)
-			add_first_philo(new_philo, first, last);
-		else
-			add_philo_to_left(new_philo, prev_philo);
-	}
-}
-
-t_philo	*new_philo_list(t_table *table)
-{
-	t_philo *new_philo;
-
-	new_philo = ft_malloc(sizeof(t_philo), table);
-	new_philo->id = -1;
-	new_philo->left_fork = NULL;
-	new_philo->right_fork = NULL;
-	new_philo->left_side = NULL;
-	new_philo->right_side = NULL;
-	return (new_philo);
+	table->start_time = now();
 }
 
 void	assign_fork(t_table *table)
 {
 	t_philo	*tmp;
 	t_fork	*next_right_fork;
-	int	i;
+	int		i;
 
 	tmp = table->philos;
 	next_right_fork = NULL;
@@ -129,15 +51,11 @@ void	assign_fork(t_table *table)
 			tmp->right_fork = next_right_fork;
 		tmp->left_fork = ft_malloc(sizeof(t_fork), table);
 		tmp->left_fork->id = i + 1;
-		tmp->left_fork->sum = 0;
 		next_right_fork = tmp->left_fork;
-		// if (i != 0)
-		// 	printf("id: %d, left_fork_id: %d, right_fork_id: %d\n", tmp->id, tmp->left_fork->id, tmp->right_fork->id);
 		tmp = tmp->left_side;
 		i++;
 	}
 	tmp->right_fork = next_right_fork;
-	// printf("id: %d, left_fork_id: %d, right_fork_id: %d\n", tmp->id, tmp->left_fork->id, tmp->right_fork->id);
 }
 
 void	init_philo(t_table *table, t_philo **head)
@@ -169,18 +87,99 @@ void	debug(t_table *table)
 	printf("meals: %ld\n", table->nbr_limit_meals);
 }
 
-void	debug_philo(t_table *table, t_philo	*philo)
+void	debug_philo(t_table *table, t_philo *philo)
 {
 	int	i;
 
 	i = 0;
 	while (i < table->num_of_philo)
 	{
-		printf("id: %d\n", philo->id);
+		// printf("id: %d\n", philo->id);
 		philo = philo->left_side;
 		i++;
 	}
-	printf("sum: %d\n", philo->left_fork->sum);
+	printf("sum: %d\n", sum);
+}
+
+void	stop_simulation(t_table *table)
+{
+	pthread_mutex_lock(&table->stop_mtx);
+	table->simulation_stop = 1;
+	pthread_mutex_unlock(&table->stop_mtx);
+}
+
+int	is_simulation_stopped(t_table *table)
+{
+	int	result;
+
+	pthread_mutex_lock(&table->stop_mtx);
+	result = table->simulation_stop;
+	pthread_mutex_unlock(&table->stop_mtx);
+	return (result);
+}
+
+resume here;
+void	print_status(t_philo *philo, char *text)
+{
+	printf("%ld %d %s\n", philo->table->start_time, philo->id, text);
+}
+
+void	sleeeeep(long mileseconds)
+{
+	long	start;
+	long	current;
+
+	start = now();
+	while (1)
+	{
+		current = now();
+		if (current - start >= mileseconds)
+			break;
+		usleep(500);
+	}
+}
+
+void	put_down_forks(t_philo *philo)
+{
+	pthread_mutex_unlock(&philo->left_fork->fork);
+	pthread_mutex_unlock(&philo->right_fork->fork);
+}
+
+void	eat(t_philo *philo)
+{
+	print_status(philo, "is eating");
+	pthread_mutex_lock(&philo->meal_mtx);
+	philo->last_meal_time = now();
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->meal_mtx);
+	sleeeeep(philo->table->time_to_eat);
+}
+
+void	take_forks(t_philo *philo)
+{
+	if (philo->table->num_of_philo == 1)
+	{
+		pthread_mutex_lock(&philo->left_fork->fork);
+		print_status(philo, "has taken a fork");
+		while (!is_simulation_stopped(philo->table))
+			usleep(1000);
+		pthread_mutex_unlock(&philo->left_fork->fork);
+		return ;
+	}
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_lock(&philo->right_fork->fork);
+		print_status(philo, "has taken a fork");
+		pthread_mutex_lock(&philo->left_fork->fork);
+		print_status(philo, "has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(&philo->left_fork->fork);
+		print_status(philo, "has taken a fork");
+		pthread_mutex_lock(&philo->right_fork->fork);
+		print_status(philo, "has taken a fork");
+	}
 }
 
 void	*philosopher_lifecycle(void *arg)
@@ -188,10 +187,18 @@ void	*philosopher_lifecycle(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(&philo->left_fork->fork);
-	pthread_mutex_lock(&philo->right_fork->fork);
-	philo->sum++;
-	pthread_mutex_unlock(&philo->fork);
+	if (philo->id % 2 == 0)
+		usleep(1000);
+	while (!is_simulation_stopped(philo->table))
+	{
+		print_status(philo, "is thinking");
+		take_forks(philo);
+		eat(philo);
+		sum++;
+		put_down_forks(philo);
+		print_status(philo, "is sleeping");
+		sleeeeep(philo->table->time_to_sleep);
+	}
 	return (NULL);
 }
 
@@ -215,7 +222,7 @@ void	start_dinner(t_table *table)
 		// pthread_create(&philos->p_id, NULL, philosopher_lifecycle, philos->right_fork);
 		philos = philos->left_side;
 		i++;
-		printf("index: %d\n", i);
+		// printf("index: %d\n", i);
 	}
 	i = 0;
 	while (i < table->num_of_philo)
@@ -224,28 +231,35 @@ void	start_dinner(t_table *table)
 		philos = philos->left_side;
 		i++;
 	}
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		pthread_mutex_destroy(&philos->left_fork->fork);
+		philos = philos->left_side;
+		i++;
+	}
 	debug_philo(table, table->philos);
 }
 
 // ./philo [nbr] [die] [eat] [sleep] [eat_time]
-int main(int ac, char *av[])
+int	main(int ac, char *av[])
 {
 	t_table	table;
 
 	if (ac == 5 || ac == 6)
 	{
 		// 1. parse input
-		parse_input(&table, av);
+		parse_input_to_table(&table, av);
 		// debug(&table);
 		// 2. init struct
 		init_philo(&table, &table.philos);
-		// 3. start dinner 
+		// 3. start dinner
 		start_dinner(&table);
 		free_table(&table);
 	}
 	else
 		error_exit("Invalid argument, innit??", &table);
-	return 0;
+	return (0);
 }
 
 /*

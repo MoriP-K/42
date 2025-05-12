@@ -6,7 +6,7 @@ CPPFLAGS := -I./includes
 
 CFLAGS := -Wall -Wextra -Werror
 
-SRC := main.c utils.c
+SRC := main.c utils.c philo_list.c
 
 OBJDIR := ./obj
 
