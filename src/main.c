@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:22:01 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/12 22:08:33 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/13 22:11:20 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ void	parse_input_to_table(t_table *table, char **av)
 		table->nbr_limit_meals = ft_atoi(av[5], table);
 	else
 		table->nbr_limit_meals = -1;
-	table->philos = NULL;
-	table->start_time = now();
 }
 
 void	assign_fork(t_table *table)
@@ -65,6 +63,7 @@ void	init_philo(t_table *table, t_philo **head)
 	int		i;
 
 	*head = NULL;
+	new_philo = NULL;
 	prev = NULL;
 	i = 0;
 	while (i < table->num_of_philo)
@@ -94,11 +93,10 @@ void	debug_philo(t_table *table, t_philo *philo)
 	i = 0;
 	while (i < table->num_of_philo)
 	{
-		// printf("id: %d\n", philo->id);
+		printf("id: %d\n", philo->id);
 		philo = philo->left_side;
 		i++;
 	}
-	printf("sum: %d\n", sum);
 }
 
 void	stop_simulation(t_table *table)
@@ -118,10 +116,17 @@ int	is_simulation_stopped(t_table *table)
 	return (result);
 }
 
-resume here;
 void	print_status(t_philo *philo, char *text)
 {
-	printf("%ld %d %s\n", philo->table->start_time, philo->id, text);
+	if (is_simulation_stopped(philo->table))
+		return ;
+	pthread_mutex_lock(&philo->table->print_mtx);
+	if (!is_simulation_stopped(philo->table))
+		printf("%ld %d %s\n",
+			now() - philo->table->start_time,
+			philo->id,
+			text);
+	pthread_mutex_unlock(&philo->table->print_mtx);
 }
 
 void	sleeeeep(long mileseconds)
@@ -202,35 +207,170 @@ void	*philosopher_lifecycle(void *arg)
 	return (NULL);
 }
 
-void	start_dinner(t_table *table)
+void	init_table(t_table *table)
 {
-	t_philo	*philos;
+	table->start_time = now();
+	table->simulation_stop = 0;
+	pthread_mutex_init(&table->print_mtx, NULL);
+	pthread_mutex_init(&table->stop_mtx, NULL);
+}
+
+int	is_philo_dead(t_philo *philo)
+{
+	long	current_time;
+	long	last_meal;
+
+	current_time = now();
+	pthread_mutex_lock(&philo->meal_mtx);
+	last_meal = philo->last_meal_time;
+	pthread_mutex_unlock(&philo->meal_mtx);
+	if (current_time - last_meal > philo->table->time_to_die)
+		return (1);
+	return (0);
+}
+
+int	all_philos_ate_enough(t_table *table)
+{
+	t_philo	*philo;
 	int		i;
+	int		meals_done;
+
+	if (table->nbr_limit_meals < 0)
+		return (0);
+	philo = table->philos;
+	i = 0;
+	meals_done = 1;
+	while (i < table->num_of_philo)
+	{
+		pthread_mutex_lock(&philo->meal_mtx);
+		if (philo->meals_eaten < table->nbr_limit_meals)
+		{
+			meals_done = 0;
+			pthread_mutex_unlock(&philo->meal_mtx);
+			break ;
+		}
+		pthread_mutex_unlock(&philo->meal_mtx);
+		philo = philo->left_side;
+		i++;
+	}
+	return (meals_done);
+}
+
+void	*monitor_philos(void *arg)
+{
+	t_table *table;
+	t_philo	*philo;
+	int		i;
+
+	table = (t_table *)arg;
+	while (1)
+	{
+		i = 0;
+		philo = table->philos;
+		if (all_philos_ate_enough(table))
+		{
+			stop_simulation(table);
+			return (NULL);
+		}
+		while (i < table->num_of_philo)
+		{
+			if (is_philo_dead(philo))
+			{
+				print_status(philo, "died");
+				stop_simulation(table);
+				return (NULL);
+			}
+			philo = philo->left_side;
+			i++;
+		}
+		usleep(1000);
+	}
+	return (NULL);
+}
+
+void	destroy_all_mtx(t_table *table)
+{
+	t_philo	*philo;
+	int		i;
+
+	philo = table->philos;
+	i = 0;
+	while (i < table->num_of_philo)
+	{
+		pthread_mutex_destroy(&philo->left_fork->fork);
+		pthread_mutex_destroy(&philo->meal_mtx);
+		philo = philo->left_side;
+		i++;
+	}
+	pthread_mutex_destroy(&table->print_mtx);
+	pthread_mutex_destroy(&table->stop_mtx);
+}
+
+void	init_mtx_philos(t_table *table)
+{
+	t_philo		*philos;
+	int	i;
 
 	philos = table->philos;
 	i = 0;
 	while (i < table->num_of_philo)
 	{
 		pthread_mutex_init(&philos->left_fork->fork, NULL);
+		pthread_mutex_init(&philos->meal_mtx, NULL);
+		philos->table = table;
+		philos->last_meal_time = now();
+		philos->meals_eaten = 0;
 		philos = philos->left_side;
 		i++;
 	}
+}
+
+void	create_threads_philos(t_table *table)
+{
+	t_philo	*philos;
+	int	i;
+
 	i = 0;
+	philos = table->philos;
+	// debug_philo(table, philos);
 	while (i < table->num_of_philo)
 	{
 		pthread_create(&philos->p_id, NULL, philosopher_lifecycle, philos);
-		// pthread_create(&philos->p_id, NULL, philosopher_lifecycle, philos->right_fork);
 		philos = philos->left_side;
 		i++;
 		// printf("index: %d\n", i);
 	}
+}
+
+void	monitor_philos(t_table *table)
+{
+	pthread_t	monitor;
+
+	// create threads for monitor
+	pthread_create(&monitor, NULL, monitor_philos, table);
+	pthread_join(monitor, NULL);
+}
+
+void	wait_threads_philos(t_table *table)
+{
+	t_philo	*philos;
+	int		i;
+
 	i = 0;
+	philos = table->philos;
 	while (i < table->num_of_philo)
 	{
 		pthread_join(philos->p_id, NULL);
 		philos = philos->left_side;
 		i++;
 	}
+}
+
+void	destroy_mtx_philos(t_table *table)
+{
+	t_philo	*philos;
+	int		i;
+
 	i = 0;
 	while (i < table->num_of_philo)
 	{
@@ -238,7 +378,17 @@ void	start_dinner(t_table *table)
 		philos = philos->left_side;
 		i++;
 	}
-	debug_philo(table, table->philos);
+}
+
+void	start_dinner(t_table *table)
+{
+	init_table(table);
+	init_mtx_philos(table);
+	create_threads_philos(table);
+	monitor_philos(table);
+	wait_threads_philos(table);
+	destroy_mtx_philos(table);
+	destroy_all_mtx(table);
 }
 
 // ./philo [nbr] [die] [eat] [sleep] [eat_time]
@@ -248,12 +398,9 @@ int	main(int ac, char *av[])
 
 	if (ac == 5 || ac == 6)
 	{
-		// 1. parse input
 		parse_input_to_table(&table, av);
 		// debug(&table);
-		// 2. init struct
 		init_philo(&table, &table.philos);
-		// 3. start dinner
 		start_dinner(&table);
 		free_table(&table);
 	}
@@ -262,28 +409,17 @@ int	main(int ac, char *av[])
 	return (0);
 }
 
-/*
-考える
-フォークを取る
-右 左
-両方取れたら食事する
-フォークを戻す
-食事できたら眠る
-起きたら考える
-死ぬ
-誰か死んだら終了
-
-
-・スレッドに仕事をさせる
-哲学者にフォーク2本で食事をさせたい
-
-仕事を分割しそれぞれのスレッドに仕事をさせる
-→関数を作成するでも良いし、渡す引数を変えるでも良い
-
-pthread_create()でスレッドを生成する
-→引数に分割した仕事を記述した関数を指定する
-→コアがこの仕事をしてくれる
-
-同期をすることで他のスレッドの処理を待つことができる
-
-*/
+// Do not test with more than 200 philosophers. 
+// Do not test with time_to_die or time_to_eat or time_to_sleep
+// set to values lower than 60 ms. Test 1 800 200 200.
+// The philosopher should not eat and should die.
+// Test 5 800 200 200. No philosopher should die.
+// Test 5 800 200 200 7. No philosopher should die and
+// the simulation should stop when every philosopher has eaten at least 7 times.
+// Test 4 410 200 200. No philosopher should die. 
+// Test 4 310 200 100. One philosopher should die. 
+// Test with 2 philosophers and check the different times:
+// a death delayed by more than 10 ms is unacceptable.
+// Test with any values of your choice to verify all the requirements.
+// Ensure philosophers die at the right time,
+// that they don't steal forks, and so forth.
