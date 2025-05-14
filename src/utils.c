@@ -6,47 +6,11 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 20:57:23 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/11 15:09:50 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/14 22:03:28 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
-
-void	free_philos(t_philo **philo, t_table *table)
-{
-	t_philo	*current;
-	t_philo	*start;
-	t_philo	*tmp;
-	int		i;
-
-	if (!*philo)
-		return ;
-	current = *philo;
-	start = *philo;
-	i = 0;
-	while (i < table->num_of_philo)
-	{
-		tmp = current->left_side;
-		if (current->left_fork)
-			free(current->left_fork);
-		free(current);
-		current = tmp;
-		i++;
-	}
-	*philo = NULL;
-}
-
-void	free_table(t_table *table)
-{
-	if (table)
-	{
-		if (table->philos)
-		{
-			free_philos(&table->philos, table);
-		}
-	}
-	printf("done free all!!\n");
-}
 
 void	error_exit(char *s, t_table *table)
 {
@@ -65,39 +29,31 @@ void	*ft_malloc(size_t bytes, t_table *table)
 	return (ptr);
 }
 
-static int	is_space(char c)
+long	now(void)
 {
-	return ((9 <= c && c <= 13) || c == 32);
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-static int	is_digit(char c)
+int	is_simulation_stopped(t_table *table)
 {
-	return ('0' <= c && c <= '9');
+	int	result;
+
+	pthread_mutex_lock(&table->stop_mtx);
+	result = table->simulation_stop;
+	pthread_mutex_unlock(&table->stop_mtx);
+	return (result);
 }
 
-int	ft_atoi(char *str, t_table *table)
+void	print_status(t_philo *philo, char *text)
 {
-	size_t	i;
-	long	num;
-
-	i = 0;
-	while(is_space(str[i]))
-		i++;
-	while (str[i] == '+' || str[i] == '-')
-	{
-		if (str[i] == '-')
-			error_exit("input positive number!!", table);
-		i++;
-	}
-	if (!is_digit(str[i]))
-		error_exit("input number plzzz!!", table);
-	num = 0;
-	while (is_digit(str[i]))
-	{
-		if (INT_MAX < num + (str[i] - '0'))
-			error_exit("input number up to INT_MAX!!", table);
-		num = num * 10 + (str[i] - '0');
-		i++;
-	}
-	return (num);
+	if (is_simulation_stopped(philo->table))
+		return ;
+	pthread_mutex_lock(&philo->table->print_mtx);
+	if (!is_simulation_stopped(philo->table))
+		printf("%ld %d %s\n", now() - philo->table->start_time, philo->id,
+			text);
+	pthread_mutex_unlock(&philo->table->print_mtx);
 }

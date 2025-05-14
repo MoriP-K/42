@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:53:04 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/12 21:22:04 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/14 20:31:50 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,13 @@ t_philo	*new_philo_list(t_table *table)
 
 	new_philo = ft_malloc(sizeof(t_philo), table);
 	new_philo->id = -1;
-	new_philo->left_fork = NULL;
 	new_philo->right_fork = NULL;
-	new_philo->left_side = NULL;
+	new_philo->left_fork = NULL;
 	new_philo->right_side = NULL;
+	new_philo->left_side = NULL;
+	new_philo->p_id = -1;
+	new_philo->table = NULL;
+	new_philo->last_meal_time = 0;
+	new_philo->meals_eaten = 0;
 	return (new_philo);
 }
