@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:20:48 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/14 22:10:35 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/15 20:49:30 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,13 @@ typedef struct s_table
 void					init_table(t_table *table);
 void					init_philo(t_table *table, t_philo **head);
 void					init_mtx_philos(t_table *table);
+
+// threads
+void					create_threads_philos(t_table *table);
+void					wait_threads_philos(t_table *table);
+
+// mutex
+void					destroy_all_mtx(t_table *table);
 
 //
 void					*philo_lifecycle(void *arg);

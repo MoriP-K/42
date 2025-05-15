@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 21:58:29 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/14 22:01:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/15 22:21:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	take_forks(t_philo *philo)
 		pthread_mutex_unlock(&philo->left_fork->fork);
 		return ;
 	}
-	if (philo->id % 2 == 0)
+	if (philo->left_fork->id < philo->right_fork->id)
 	{
 		pthread_mutex_lock(&philo->right_fork->fork);
 		print_status(philo, "has taken a fork");
@@ -76,7 +76,7 @@ void	*philo_lifecycle(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		usleep(1000);
+		usleep(philo->table->time_to_eat * 1000);
 	while (!is_simulation_stopped(philo->table))
 	{
 		print_status(philo, "is thinking");
