@@ -8,6 +8,7 @@ CFLAGS := -Wall -Wextra -Werror
 
 SRC := main.c utils.c philo_list.c ft_atoi.c free.c \
 		philo_lifecycle.c init.c monitor.c mutex.c threads.c \
+		utils_2.c philo_lifecycle_2.c
 
 OBJDIR := ./obj
 

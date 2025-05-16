@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:20:48 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/15 20:49:30 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/17 03:16:02 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ typedef struct s_table
 	int					simulation_stop;
 	t_mtx				print_mtx;
 	t_mtx				stop_mtx;
+	int					philo_died;
+	t_mtx				died_mtx;
 }						t_table;
 
 // init
@@ -74,15 +76,22 @@ void					wait_threads_philos(t_table *table);
 
 // mutex
 void					destroy_all_mtx(t_table *table);
+int						is_philo_died(t_table *table);
+void					set_philo_died(t_table *table);
 
-//
+// lifecycle
 void					*philo_lifecycle(void *arg);
 void					monitor_philos_status(t_table *table);
+void					*is_single_philo(t_philo *philo);
+int						stop_lifecycle(t_table *table, t_philo *philo);
+void					put_down_forks(t_philo *philo);
 
 // utils
 void					error_exit(char *s, t_table *table);
 void					*ft_malloc(size_t bytes, t_table *table);
 int						ft_atoi(char *str);
+int						ft_strcmp(char *str, char *text);
+
 long					now(void);
 void					print_status(t_philo *philo, char *text);
 int						is_simulation_stopped(t_table *table);

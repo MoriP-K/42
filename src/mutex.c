@@ -6,11 +6,28 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 22:11:43 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/14 22:12:07 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/17 03:04:18 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
+
+int	is_philo_died(t_table *table)
+{
+	int	result;
+
+	pthread_mutex_lock(&table->died_mtx);
+	result = table->philo_died;
+	pthread_mutex_unlock(&table->died_mtx);
+	return (result);
+}
+
+void	set_philo_died(t_table *table)
+{
+	pthread_mutex_lock(&table->died_mtx);
+	table->philo_died = 1;
+	pthread_mutex_unlock(&table->died_mtx);
+}
 
 void	destroy_all_mtx(t_table *table)
 {
@@ -30,4 +47,5 @@ void	destroy_all_mtx(t_table *table)
 	}
 	pthread_mutex_destroy(&table->print_mtx);
 	pthread_mutex_destroy(&table->stop_mtx);
+	pthread_mutex_destroy(&table->died_mtx);
 }

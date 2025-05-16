@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 22:06:16 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/14 22:07:32 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/17 03:06:16 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,17 @@ void	*monitoring_philos(void *arg)
 	int		i;
 
 	table = (t_table *)arg;
-	while (1)
+	while (!is_simulation_stopped(table))
 	{
 		i = 0;
 		philo = table->philos;
 		if (all_philos_ate_enough(table))
 			return (NULL);
-		while (i < table->num_of_philo)
+		while (i < table->num_of_philo && !is_simulation_stopped(table))
 		{
 			if (is_philo_dead(philo))
 			{
+				set_philo_died(table);
 				print_status(philo, "died");
 				stop_simulation(table);
 				return (NULL);
@@ -86,7 +87,6 @@ void	*monitoring_philos(void *arg)
 			philo = philo->left_side;
 			i++;
 		}
-		usleep(1000);
 	}
 	return (NULL);
 }

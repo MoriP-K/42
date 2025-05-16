@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 22:08:28 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/05/15 21:44:43 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/05/16 22:49:59 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,10 @@ void	init_mtx_philos(t_table *table)
 
 void	init_table(t_table *table)
 {
-	table->start_time = now();
-	printf("time: %ld\n", table->start_time);
 	table->simulation_stop = 0;
+	table->philo_died = 0;
 	pthread_mutex_init(&table->print_mtx, NULL);
 	pthread_mutex_init(&table->stop_mtx, NULL);
+	pthread_mutex_init(&table->died_mtx, NULL);
+	table->start_time = now();
 }
