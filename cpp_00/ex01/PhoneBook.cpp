@@ -4,8 +4,10 @@
 #include <sstream>
 #include <limits>
 
+// constructor
 PhoneBook::PhoneBook() : contactCount(0), oldestIndex(0) {}
 
+// destructor
 PhoneBook::~PhoneBook() {}
 
 void PhoneBook::addContact()
@@ -120,7 +122,7 @@ std::string PhoneBook::truncateString(const std::string& str, size_t witdh) cons
 {
 	if (str.length() <= witdh)
 		return str;
-	std::string truncated = str.substr(0, witdh - 1);
+	std::string truncated = str.substr(0, witdh - 2);
 	truncated += ".";
 	return truncated;
 }
