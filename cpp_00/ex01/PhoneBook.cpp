@@ -4,10 +4,7 @@
 #include <sstream>
 #include <limits>
 
-// constructor
 PhoneBook::PhoneBook() : contactCount(0), oldestIndex(0) {}
-
-// destructor
 PhoneBook::~PhoneBook() {}
 
 void PhoneBook::addContact()

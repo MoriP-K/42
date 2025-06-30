@@ -2,9 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-// constructor
 Contact::Contact() {}
-
 Contact::~Contact() {}
 
 void Contact::setFirstName(const std::string& name)

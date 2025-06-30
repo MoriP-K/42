@@ -1,9 +1,7 @@
 #ifndef CONTACT_HPP
 #define CONTACT_HPP
-
 #include <string>
 
-// this is like prototype declare, structure in header
 class Contact
 {
 	private:
