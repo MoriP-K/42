@@ -9,7 +9,7 @@ int main(int ac, char **av)
 		{
 			for (int j = 0; av[i][j]; j++)
 			{
-				std::cout << (char)std::toupper(av[i][j]);
+				std::cout << (unsigned char)std::toupper(av[i][j]);
 			}
 		}
 	}

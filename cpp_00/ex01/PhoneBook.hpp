@@ -22,7 +22,7 @@ class PhoneBook
 	private:
 		std::string getInput(const std::string& prompt) const;
 		std::string truncateString(const std::string& str, size_t witdh) const;
-		bool isValidIndex(const std::string& input, int&index) const;
+		bool isValidIndex(const std::string& input, int& index) const;
 };
 
 #endif
