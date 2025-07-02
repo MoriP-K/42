@@ -1,6 +1,9 @@
 #ifndef PHONEBOOK_HPP
 #define PHONEBOOK_HPP
+
 #include "Contact.hpp"
+#include <sstream>
+#include <limits>
 
 class PhoneBook
 {
@@ -21,7 +24,7 @@ class PhoneBook
 
 	private:
 		std::string getInput(const std::string& prompt) const;
-		std::string truncateString(const std::string& str, size_t witdh) const;
+		std::string truncateString(const std::string& str, size_t width) const;
 		bool isValidIndex(const std::string& input, int& index) const;
 };
 

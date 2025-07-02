@@ -7,8 +7,7 @@ int main()
 	PhoneBook phoneBook;
 	std::string command;
 
-	std::cout << "Welcome to the 80s PhoneBook!" << std::endl;
-	std::cout << "Available commands: ADD, SEARCH, EXIT" << std::endl;
+	std::cout << "You can use commands: ADD, SEARCH, EXIT" << std::endl;
 	while (true)
 	{
 		std::cout << "\nEnter command: ";
@@ -24,10 +23,10 @@ int main()
 			phoneBook.searchContact();
 		else if (command == "EXIT")
 		{
-			std::cout << "Goodbye!" << std::endl;
+			std::cout << "Au revoir!" << std::endl;
 			break ;
 		}
 		else if (!command.empty())
-			std::cout << "Unknown command. Available commands: ADD, SEARCH, EXIT" << std::endl;
+			std::cout << "Unknown command. You can use commands: ADD, SEARCH, EXIT" << std::endl;
 	}
 }

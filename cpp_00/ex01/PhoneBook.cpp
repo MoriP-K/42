@@ -1,8 +1,4 @@
 #include "PhoneBook.hpp"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <limits>
 
 PhoneBook::PhoneBook() : contactCount(0), oldestIndex(0) {}
 PhoneBook::~PhoneBook() {}
@@ -70,6 +66,8 @@ void PhoneBook::searchContact() const
 
 void PhoneBook::displayContactList() const
 {
+	char originalFill = std::cout.fill();
+
 	std::cout << std::setfill(' ') << std::right;
 	std::cout << std::setw(10) << "Index" << "|";
 	std::cout << std::setw(10) << "First Name" << "|";
@@ -82,9 +80,11 @@ void PhoneBook::displayContactList() const
 			std::cout << std::setw(10) << i << "|";
 			std::cout << std::setw(10) << truncateString(contacts[i].getFirstName(), 10) << "|";
 			std::cout << std::setw(10) << truncateString(contacts[i].getLastName(), 10) << "|";
-			std::cout << std::setw(10) << truncateString(contacts[i].getNickName(), 10) << std::endl;
+			std::cout << std::setw(10) << truncateString(contacts[i].getNickName(), 10) << "|";
+			std::cout << std::endl;
 		}
 	}
+	std::cout.fill(originalFill);
 }
 
 void PhoneBook::displayContactDetails(int index) const
@@ -115,11 +115,11 @@ std::string PhoneBook::getInput(const std::string& prompt) const
 	}
 }
 
-std::string PhoneBook::truncateString(const std::string& str, size_t witdh) const
+std::string PhoneBook::truncateString(const std::string& str, size_t width) const
 {
-	if (str.length() <= witdh)
+	if (str.length() <= width)
 		return str;
-	std::string truncated = str.substr(0, witdh - 2);
+	std::string truncated = str.substr(0, width - 1);
 	truncated += ".";
 	return truncated;
 }
