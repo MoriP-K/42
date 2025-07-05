@@ -23,7 +23,7 @@ class PhoneBook
 		void displayContactDetails(int index) const;
 
 	private:
-		std::string getInput(const std::string& prompt) const;
+		std::string getInput(const std::string& prompt, const int no) const;
 		std::string truncateString(const std::string& str, size_t width) const;
 		bool isValidIndex(const std::string& input, int& index) const;
 };

@@ -10,23 +10,23 @@ void PhoneBook::addContact()
 
 	std::cout << "Adding new contact..." << std::endl;
 
-	input = getInput("First Name: ");
+	input = getInput("First Name: ", 1);
 	if (input.empty())
 		return ;
 	newContact.setFirstName(input);
-	input = getInput("Last Name: ");
+	input = getInput("Last Name: ", 1);
 	if (input.empty())
 		return ;
 	newContact.setLastName(input);
-	input = getInput("Nickname: ");
+	input = getInput("Nickname: ", 1);
 	if (input.empty())
 		return ;
 	newContact.setNickName(input);
-	input = getInput("Phone Number: ");
+	input = getInput("Phone Number: ", 2);
 	if (input.empty())
 		return ;
 	newContact.setPhoneNumber(input);
-	input = getInput("Darkest Secret: ");
+	input = getInput("Darkest Secret: ", 0);
 	if (input.empty())
 		return ;
 	newContact.setDarkestSecret(input);
@@ -54,7 +54,7 @@ void PhoneBook::searchContact() const
 	std::string input;
 	int index;
 
-	std::cout << "Enter contact index: ";
+	std::cout << "\nEnter contact index: ";
 	std::getline(std::cin, input);
 	if (!isValidIndex(input, index))
 	{
@@ -95,9 +95,10 @@ void PhoneBook::displayContactDetails(int index) const
 		std::cout << "Contact not found." << std::endl;
 }
 
-std::string PhoneBook::getInput(const std::string& prompt) const
+std::string PhoneBook::getInput(const std::string& prompt, const int no) const
 {
 	std::string input;
+	
 
 	while (true)
 	{
@@ -109,9 +110,45 @@ std::string PhoneBook::getInput(const std::string& prompt) const
 			std::cout << std::endl << "EOF detected. Exiting..." << std::endl;
 			exit(0);
 		}
-		if (!input.empty())
-			return input;
-		std::cout << "Field cannot be empty. Please try again." << std::endl;
+		if (input.empty())
+		{
+			std::cout << "Field cannot be empty. Please try again." << std::endl;
+			continue ;
+		}
+		if (no == 1)
+		{
+			bool hasDigit = false;
+			for (size_t i = 0; i < input.length(); i++)
+			{
+				if (isdigit(input[i]) || !isprint(input[i]))
+				{
+					hasDigit = true;
+					break ;
+				}
+			}
+			if (hasDigit)
+			{
+				std::cout << "Name can contain only characters. Please try again.." << std::endl;;
+				continue ;
+			}
+		} else if (no == 2)
+		{
+			bool hasChar = false;
+			for (size_t i = 0; i < input.length(); i++)
+			{
+				if (!isdigit(input[i]) || !isprint(input[i]))
+				{
+					hasChar = true;
+					break ;
+				}
+			}
+			if (hasChar)
+			{
+				std::cout << "Phone number can contain only numbers. Please try again.." << std::endl;;
+				continue ;
+			}
+		}
+		return input;
 	}
 }
 
@@ -126,9 +163,13 @@ std::string PhoneBook::truncateString(const std::string& str, size_t width) cons
 
 bool PhoneBook::isValidIndex(const std::string& input, int& index) const
 {
-	std::stringstream ss(input);
-
-	if (!(ss >> index) || !ss.eof())
+	if (input.empty())
 		return false;
+	for (size_t i = 0; i < input.length(); i++)
+	{
+		if (!isdigit(input[i]))
+			return false;
+	}
+	index = atoi(input.c_str());
 	return (index >= 0 && index < contactCount && !contacts[index].isEmpty());
 }

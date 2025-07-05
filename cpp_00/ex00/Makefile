@@ -1,6 +1,6 @@
 NAME := megaphone
 CC := c++
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 SRC := megaphone.cpp
 OBJDIR := ./obj
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)

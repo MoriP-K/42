@@ -1,6 +1,6 @@
 NAME := MyAwesomePhoneBook
 CC := c++
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 SRC := main.cpp Contact.cpp PhoneBook.cpp
 OBJDIR := ./obj
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
