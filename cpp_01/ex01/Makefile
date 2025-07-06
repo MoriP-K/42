@@ -1,7 +1,7 @@
-NAME := BraiiiiiiinnnzzzZ
+NAME := MoarBrainz!
 CC := c++
 CFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
-SRC := main.cpp newZombie.cpp randomChump.cpp Zombie.cpp
+SRC := main.cpp zombieHorde.cpp Zombie.cpp
 OBJDIR := ./obj
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
 
