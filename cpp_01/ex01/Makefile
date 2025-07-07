@@ -1,23 +1,20 @@
-NAME := MoarBrainz!
-CC := c++
-CFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
+NAME := MoarBrainz
+
+CXX := c++
+
+CPPFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
+
 SRC := main.cpp zombieHorde.cpp Zombie.cpp
-OBJDIR := ./obj
-OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
+
+OBJ := $(SRC:.cpp=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $^ -o $@
-
-$(OBJDIR)/%.o:%.cpp | $(OBJDIR)
-	$(CC) $(CFLAGS) $< -c -o $@
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+	$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME)
 
 clean:
-	$(RM) -r $(OBJ) $(OBJDIR)
+	$(RM) -r $(OBJ)
 
 fclean: clean
 	$(RM) $(NAME)

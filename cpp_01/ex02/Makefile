@@ -1,25 +1,17 @@
 NAME := HiThisIsBrain
 
-CXX := C++
+CXX := c++
 
-CFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
+CPPFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 
 SRC := main.cpp
 
-# OBJDIR := ./obj
-
-OBJ := $(SRC:%.cpp=%.o)
+OBJ := $(SRC:.cpp=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CXX) $^ -o $@
-
-# $(OBJDIR)/%.o:%.cpp | $(OBJDIR)
-# 	$(CXX) $(CFLAGS) $< -c -o $@
-
-# $(OBJDIR):
-# 	mkdir -p $(OBJDIR)
+	$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME)
 
 clean:
 	$(RM) -r $(OBJ)
