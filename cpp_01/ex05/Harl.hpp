@@ -6,7 +6,7 @@
 class Harl
 {
 	public:
-		Harl(/* args */);
+		Harl();
 		~Harl();
 
 		void complain(std::string level);
