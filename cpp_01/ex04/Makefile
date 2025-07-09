@@ -4,7 +4,7 @@ CXX := c++
 
 CPPFLAGS := -Wextra -Wall -Werror -std=c++98 -pedantic
 
-SRC := main.cpp 
+SRC := main.cpp
 
 OBJ := $(SRC:.cpp=.o)
 
