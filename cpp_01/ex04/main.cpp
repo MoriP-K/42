@@ -39,14 +39,14 @@ int main(int ac, char const *av[])
 
 		if (search.empty())
 		{
-			std::cout << "Error: search string cannot be empty" << std::endl;
+			std::cerr << "Error: search string cannot be empty" << std::endl;
 			return (1);
 		}
 
 		infile.open(av[1]);
 		if (infile.is_open() == true)
 		{
-			outfile.open((filename + ".replace").c_str(), std::ios::out | std::ios::trunc);
+			outfile.open((filename + ".replace").c_str());
 			if (outfile.is_open() == true)
 			{
 				while (std::getline(infile, buffer))
@@ -69,9 +69,10 @@ int main(int ac, char const *av[])
 		else
 		{
 			std::perror("Infile Error");
-			std::cout << "Outfile not created or truncated." << std::endl;
-			return (0);
+			std::cerr << "Outfile not created or truncated." << std::endl;
+			return (1);
 		}
+		std::cout << "File processed successfully. Output: " << filename << ".replace" << std::endl;
 		return (0);
 	}
 	return (1);

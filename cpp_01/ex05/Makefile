@@ -1,10 +1,10 @@
-NAME := UnnecessaryViolence
+NAME := Harl
 
 CXX := c++
 
-CPPFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
+CPPFLAGS := -Wall -Wextra -Werror -pedantic -std=c++98
 
-SRC := main.cpp Weapon.cpp HumanA.cpp HumanB.cpp
+SRC := main.cpp Harl.cpp
 
 OBJ := $(SRC:.cpp=.o)
 
