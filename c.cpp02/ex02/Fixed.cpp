@@ -23,6 +23,11 @@ Fixed::Fixed(const Fixed &copy)
 	*this = copy;
 }
 
+Fixed::~Fixed()
+{
+	std::cout << "Destructor called" << std::endl;
+}
+
 Fixed &Fixed::operator=(const Fixed &src)
 {
 	std::cout << "Copy assignment operator called" << std::endl;
@@ -31,10 +36,88 @@ Fixed &Fixed::operator=(const Fixed &src)
 	return *this;
 }
 
-Fixed::~Fixed()
+bool Fixed::operator==(Fixed src) const
 {
-	std::cout << "Destructor called" << std::endl;
+	return (this->toFloat() > src.toFloat());
 }
+
+bool Fixed::operator<(Fixed src) const
+{
+	return (this->toFloat() < src.toFloat());
+}
+
+bool Fixed::operator>=(Fixed src) const
+{
+	return (this->toFloat() >= src.toFloat());
+}
+
+bool Fixed::operator<=(Fixed src) const
+{
+	return (this->toFloat() <= src.toFloat());
+}
+
+bool Fixed::operator==(Fixed src) const
+{
+	return (this->toFloat() == src.toFloat());
+}
+
+bool Fixed::operator!=(Fixed src) const
+{
+	return (this->toFloat() != src.toFloat());
+}
+
+float Fixed::operator+(Fixed src) const
+{
+	return (this->toFloat() + src.toFloat());
+}
+
+float Fixed::operator-(Fixed src) const
+{
+	return (this->toFloat() - src.toFloat());
+}
+
+float Fixed::operator*(Fixed src) const
+{
+	return (this->toFloat() * src.toFloat());
+}
+
+float Fixed::operator/(Fixed src) const
+{
+	return (this->toFloat() / src.toFloat());
+}
+
+Fixed Fixed::operator++(void)
+{
+	this->fixedPointValue++;
+	return *this;
+}
+
+Fixed Fixed::operator--(void)
+{
+	this->fixedPointValue--;
+	return *this;
+}
+
+Fixed Fixed::operator++(int)
+{
+	Fixed tmp = *this;
+	++this->fixedPointValue;
+	return tmp;
+}
+
+Fixed Fixed::operator--(int)
+{
+	Fixed tmp = *this;
+	--this->fixedPointValue;
+	return tmp;
+}
+
+Fixed Fixed::operator--(int)
+{
+	this->fixedPointValue--;
+	return *this;
+}
+
 
 float Fixed::toFloat(void) const
 {
