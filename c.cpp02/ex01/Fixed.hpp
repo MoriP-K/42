@@ -15,7 +15,7 @@ public:
 	Fixed();
 	Fixed(const int number);
 	Fixed(const float number);
-	Fixed(const Fixed& copy);
+	Fixed(const Fixed &copy);
 	Fixed &operator=(const Fixed &src);
 	~Fixed();
 
@@ -25,7 +25,6 @@ public:
 	int getRawBits(void) const;
 	void setRawBits(int const raw);
 };
-
 
 std::ostream &operator<<(std::ostream &o, Fixed const &fixed);
 

@@ -1,10 +1,10 @@
 #include "Fixed.hpp"
 
-Fixed::Fixed(): fixedPointValue(0)
+Fixed::Fixed() : fixedPointValue(0)
 {
 }
 
-Fixed::Fixed(const int number) 
+Fixed::Fixed(const int number)
 {
 	this->fixedPointValue = number << this->fractionalBits;
 }
@@ -27,7 +27,7 @@ Fixed &Fixed::operator=(const Fixed &src)
 {
 	if (this != &src)
 		this->fixedPointValue = src.getRawBits();
-	return *this;
+	return (*this);
 }
 
 bool Fixed::operator==(Fixed src) const
@@ -83,27 +83,31 @@ Fixed Fixed::operator/(Fixed src) const
 Fixed Fixed::operator++(void)
 {
 	this->fixedPointValue++;
-	return *this;
+	return (*this);
 }
 
 Fixed Fixed::operator--(void)
 {
 	this->fixedPointValue--;
-	return *this;
+	return (*this);
 }
 
 Fixed Fixed::operator++(int)
 {
-	Fixed tmp = *this;
+	Fixed	tmp;
+
+	tmp = *this;
 	++this->fixedPointValue;
-	return tmp;
+	return (tmp);
 }
 
 Fixed Fixed::operator--(int)
 {
-	Fixed tmp = *this;
+	Fixed	tmp;
+
+	tmp = *this;
 	--this->fixedPointValue;
-	return tmp;
+	return (tmp);
 }
 
 Fixed &Fixed::min(Fixed &a, Fixed &b)
@@ -146,11 +150,11 @@ int Fixed::toInt(void) const
 
 int Fixed::getRawBits(void) const
 {
-	return this->fixedPointValue;
+	return (this->fixedPointValue);
 }
 
 std::ostream &operator<<(std::ostream &o, Fixed const &fixed)
 {
 	o << fixed.toFloat();
-	return o;
+	return (o);
 }

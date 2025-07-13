@@ -15,9 +15,10 @@ public:
 	Fixed();
 	Fixed(const int number);
 	Fixed(const float number);
-	Fixed(const Fixed& copy);
+	Fixed(const Fixed &copy);
 	~Fixed();
 
+	// operator overload
 	Fixed &operator=(const Fixed &src);
 
 	bool operator>(Fixed fixed) const;
@@ -49,7 +50,6 @@ public:
 	int getRawBits(void) const;
 	void setRawBits(int const raw);
 };
-
 
 std::ostream &operator<<(std::ostream &o, Fixed const &fixed);
 
