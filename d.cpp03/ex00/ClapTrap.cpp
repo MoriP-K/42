@@ -38,13 +38,13 @@ void ClapTrap::attack(const std::string& target)
 {
 	if (this->hitPoints == 0)
 	{
-		std::cout << this->name << " cannot attack" << target;
-		std::cout << ", because " << this->name << " has no HP." << std::endl;
+		std::cout << this->name << " cannot attack " << target;
+		std::cout << ", because " << target << " has no HP." << std::endl;
 		return ;
 	}
 	if (this->energyPoints == 0)
 	{
-		std::cout << this->name << " cannot attack" << target;
+		std::cout << this->name << " cannot attack " << target;
 		std::cout << ", because " << this->name << " has no EP left." << std::endl;
 		return ;
 	}
@@ -76,12 +76,12 @@ void ClapTrap::beRepaired(unsigned int amount)
 {
 	if (this->hitPoints == 0)
 	{
-		std::cout << this->name << " cannot repair itself, because it is dead." << std::endl;
+		std::cout << this->name << " cannot repair itself, because " << this->name << " is dead." << std::endl;
 		return ;
 	}
 	if (this->energyPoints == 0)
 	{
-		std::cout << this->name << " cannot repair itself, because it has no EP." << std::endl;
+		std::cout << this->name << " cannot repair itself, because " << this->name << " has no EP." << std::endl;
 		return ;
 	}
 	unsigned int actualReapair = amount;

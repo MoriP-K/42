@@ -5,14 +5,14 @@ int main(void)
 	ClapTrap A;
 	ClapTrap B("MoriP");
 
-	A.attack("YamaP");
-	A.takeDamage(10);
-	A.takeDamage(10);
-	A.beRepaired(5);
-	A.attack("Other YamaP");
+	A.attack(B.getName());
+	B.takeDamage(10);
+	B.takeDamage(10);
+	B.beRepaired(5);
+	A.attack(B.getName());
 	B.beRepaired(3);
 	for (int i = 0; i < 12; i++)
-		B.attack("YamaP-CLONE");
+		A.attack(B.getName());
 	B.beRepaired(3);
 	return (0);
 }

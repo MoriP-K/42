@@ -1,18 +1,36 @@
+#include "ClapTrap.hpp"
 #include "ScavTrap.hpp"
 
-int main(void)
+int	main(void)
 {
-	ClapTrap A;
-	ScavTrap B("MoriP");
+	ClapTrap	trapA("Mori");
+	ScavTrap	trapB("Yama");
 
-	A.attack(B.getName());
-	B.takeDamage(10);
-	B.takeDamage(10);
-	B.beRepaired(5);
-	A.attack(B.getName());
-	B.beRepaired(3);
-	for (int i = 0; i < 12; i++)
-		A.attack(B.getName());
-	B.beRepaired(3);
+	trapB.guardGate();
+	trapA.attack(trapB.getName());
+	trapB.takeDamage(20);
+	trapA.attack(trapB.getName());
+	trapB.takeDamage(20);
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(7);
+	trapA.beRepaired(5);
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(5);
+	trapA.beRepaired(5);
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(2);
+	trapA.attack(trapB.getName());
+	trapB.takeDamage(2);
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(7);
+	trapA.attack(trapA.getName());
+	trapA.takeDamage(5);
+	trapA.beRepaired(3);
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(2);
+	trapA.attack(trapB.getName());
+	trapB.beRepaired(5);
+	trapA.beRepaired(3);
+
 	return (0);
 }
