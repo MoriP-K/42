@@ -10,10 +10,17 @@ private:
 	
 public:
 	Animal();
-	~Animal();
+	Animal(const Animal& copy);
+	virtual ~Animal();
+
+	Animal &operator=(const Animal &src);
+
+	std::string getType();
 
 protected:
 	std::string type;
+
+	virtual void makeSound(void);
 };
 
 #endif

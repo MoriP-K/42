@@ -25,11 +25,6 @@ public:
 	virtual void beRepaired(unsigned int amount);
 
 	const std::string getName(void) const;
-
-private:
-	static unsigned int const initHitPoints = 10;
-	static unsigned int const initEnergyPoints = 10;
-	static unsigned int const initAttackDamage = 0;
 };
 
 #endif
