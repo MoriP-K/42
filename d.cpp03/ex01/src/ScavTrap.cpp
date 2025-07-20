@@ -8,7 +8,7 @@ ScavTrap::ScavTrap(): ClapTrap()
 ScavTrap::ScavTrap(std::string name): ClapTrap(name)
 {
 	this->guardingGate = false;
-	std::cout << "ScavTrap Constructor for " << this->name << " called" << std::endl;
+	std::cout << "ScavTrap Constructor for " << this->_name << " called" << std::endl;
 }
 
 ScavTrap::ScavTrap(const ScavTrap &copy): ClapTrap(copy)
@@ -19,7 +19,7 @@ ScavTrap::ScavTrap(const ScavTrap &copy): ClapTrap(copy)
 
 ScavTrap::~ScavTrap()
 {
-	std::cout << "ScavTrap Destructor for " << this->name << " called" << std::endl;
+	std::cout << "ScavTrap Destructor for " << this->_name << " called" << std::endl;
 }
 
 ScavTrap &ScavTrap::operator=(const ScavTrap &src)
@@ -37,17 +37,17 @@ void ScavTrap::attack(const std::string &target)
 {
 	if (this->hitPoints == 0)
 	{
-		std::cout << "[ScavTrap] " << this->name << " cannot attack " << target;
-		std::cout << ", because " << this->name << " has no HP." << std::endl;
+		std::cout << "[ScavTrap] " << this->_name << " cannot attack " << target;
+		std::cout << ", because " << this->_name << " has no HP." << std::endl;
 		return ;
 	}
 	if (this->energyPoints == 0)
 	{
-		std::cout << "[ScavTrap] " << this->name << " cannot attack " << target;
-		std::cout << ", because " << this->name << " has no EP left." << std::endl;
+		std::cout << "[ScavTrap] " << this->_name << " cannot attack " << target;
+		std::cout << ", because " << this->_name << " has no EP left." << std::endl;
 		return ;
 	}
-	std::cout << "[ScavTrap] " << this->name << " attacks " << target; 
+	std::cout << "[ScavTrap] " << this->_name << " attacks " << target; 
 	std::cout << ", causing " << this->attackDamage << " points of damage!" << std::endl;
 	this->energyPoints--;
 }
@@ -57,8 +57,8 @@ void ScavTrap::guardGate(void)
 	if (this->guardingGate == false)
 	{
 		this->guardingGate = true;
-		std::cout << "ScavTrap " << this->name << " is now guarding the gate." << std::endl;
+		std::cout << "ScavTrap " << this->_name << " is now guarding the gate." << std::endl;
 	}
 	else
-		std::cout << "ScavTrap " << this->name << " is already guarding gate." << std::endl;
+		std::cout << "ScavTrap " << this->_name << " is already guarding gate." << std::endl;
 }

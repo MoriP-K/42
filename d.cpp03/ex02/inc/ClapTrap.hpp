@@ -7,14 +7,14 @@
 class ClapTrap
 {
 protected:
-	std::string	name;
+	std::string	_name;
 	unsigned int 	hitPoints;
 	unsigned int	energyPoints;
 	unsigned int	attackDamage;
 
 public:
 	ClapTrap();
-	ClapTrap(std::string _name);
+	ClapTrap(std::string name);
 	ClapTrap(const ClapTrap& copy);
 	virtual ~ClapTrap();
 

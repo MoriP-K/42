@@ -5,9 +5,9 @@ FragTrap::FragTrap() : ClapTrap()
 	std::cout << "FragTrap Default constructor called" << std::endl;
 }
 
-FragTrap::FragTrap(std::string _name) : ClapTrap(_name)
+FragTrap::FragTrap(std::string name) : ClapTrap(name)
 {
-	std::cout << "FragTrap Constructor for " << _name << " called" << std::endl;
+	std::cout << "FragTrap Constructor for " << name << " called" << std::endl;
 }
 
 FragTrap::FragTrap(const FragTrap &copy) : ClapTrap(copy)
@@ -18,7 +18,7 @@ FragTrap::FragTrap(const FragTrap &copy) : ClapTrap(copy)
 
 FragTrap::~FragTrap()
 {
-	std::cout << "FragTrap Destructor for " << this->name << " called" << std::endl;
+	std::cout << "FragTrap Destructor for " << this->_name << " called" << std::endl;
 }
 
 FragTrap &FragTrap::operator=(const FragTrap &src)
@@ -26,7 +26,7 @@ FragTrap &FragTrap::operator=(const FragTrap &src)
 	std::cout << "FragTrap Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
-		this->name = src.name;
+		this->_name = src._name;
 		this->hitPoints = src.hitPoints;
 		this->energyPoints = src.energyPoints;
 		this->attackDamage = src.attackDamage;
@@ -36,5 +36,5 @@ FragTrap &FragTrap::operator=(const FragTrap &src)
 
 void FragTrap::highFivesGuys(void)
 {
-	std::cout << "FragTrap " << this->name << ": You want me a high five?\n\t*WHAMM*\nHere you go." << std::endl;
+	std::cout << "FragTrap " << this->_name << ": You want me a high five?\n\t*WHAMM*\nHere you go." << std::endl;
 }
