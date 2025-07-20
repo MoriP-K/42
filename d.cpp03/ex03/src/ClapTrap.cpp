@@ -1,29 +1,29 @@
 #include "ClapTrap.hpp"
 
-ClapTrap::ClapTrap() : _name("Default"), hitPoints(100), energyPoints(100), attackDamage(30)
+ClapTrap::ClapTrap() : _name("ClapTrap"), hitPoints(10), energyPoints(10), attackDamage(0)
 {
-	std::cout << "Default constructor called" << std::endl;
+	std::cout << "ClapTrap Default Constructor called" << std::endl;
 }
 
-ClapTrap::ClapTrap(std::string name) : _name(name), hitPoints(100), energyPoints(100), attackDamage(30)
+ClapTrap::ClapTrap(std::string name) : _name(name), hitPoints(10), energyPoints(10), attackDamage(0)
 {
-	std::cout << "Constructor for "<< name <<" called" << std::endl;
+	std::cout << "ClapTrap Constructor for "<< name <<" called" << std::endl;
 }
 
 ClapTrap::ClapTrap(const ClapTrap& copy)
 {
-	std::cout << "Copy constructor called" << std::endl;
+	std::cout << "ClapTrap Copy Constructor called" << std::endl;
 	*this = copy;
 }
 
 ClapTrap::~ClapTrap()
 {
-	std::cout << "Destructor for "<< this->_name <<" called" << std::endl;
+	std::cout << "ClapTrap Destructor for "<< this->_name <<" called" << std::endl;
 }
 
 ClapTrap &ClapTrap::operator=(const ClapTrap &src)
 {
-	std::cout << "Copy assignment operator called" << std::endl;
+	std::cout << "ClapTrap Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
 		this->_name = src._name;

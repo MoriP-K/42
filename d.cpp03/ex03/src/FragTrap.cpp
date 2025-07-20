@@ -2,17 +2,26 @@
 
 FragTrap::FragTrap() : ClapTrap()
 {
+	if (this->hitPoints == 10)
+		this->hitPoints = 100;
+	this->energyPoints = 100;
+	this->attackDamage = 30;
 	std::cout << "FragTrap Default constructor called" << std::endl;
 }
 
 FragTrap::FragTrap(std::string name) : ClapTrap(name)
 {
+	if (this->hitPoints == 10)
+		this->hitPoints = 100;
+	this->energyPoints = 100;
+	if (this->attackDamage == 0)
+		this->attackDamage = 30;
 	std::cout << "FragTrap Constructor for " << name << " called" << std::endl;
 }
 
 FragTrap::FragTrap(const FragTrap &copy) : ClapTrap(copy)
 {
-	std::cout << "FragTrap Copy constructor called" << std::endl;
+	std::cout << "FragTrap Copy Constructor called" << std::endl;
 	*this = copy;
 }
 

@@ -1,6 +1,6 @@
 #include "DiamondTrap.hpp"
 
-DiamondTrap::DiamondTrap(): ClapTrap("default-DT_clap_trap"), ScavTrap(), FragTrap()
+DiamondTrap::DiamondTrap(): ClapTrap("default-DT_clap_name"), ScavTrap(), FragTrap()
 {
 	this->_name = "default-DT";
 	this->hitPoints = FragTrap::hitPoints;
@@ -15,7 +15,7 @@ DiamondTrap::DiamondTrap(const DiamondTrap& copy): ClapTrap(copy), ScavTrap(copy
 	std::cout << "DiamondTrap Copy constructor called" << std::endl;
 }
 
-DiamondTrap::DiamondTrap(std::string name): ClapTrap(name + "_clap_trap"), ScavTrap(), FragTrap()
+DiamondTrap::DiamondTrap(std::string name): ClapTrap(name + "_clap_name"), ScavTrap(), FragTrap()
 {
 	this->_name = name;
 	this->hitPoints = FragTrap::hitPoints;
@@ -26,7 +26,7 @@ DiamondTrap::DiamondTrap(std::string name): ClapTrap(name + "_clap_trap"), ScavT
 
 DiamondTrap::~DiamondTrap()
 {
-	std::cout << "Diamond Destrcutor for " << this->_name << " called" << std::endl;
+	std::cout << "DiamondTrap Destrcutor for " << this->_name << " called" << std::endl;
 }
 
 DiamondTrap &DiamondTrap::operator=(const DiamondTrap &src)
