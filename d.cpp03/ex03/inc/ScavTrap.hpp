@@ -18,6 +18,11 @@ public:
 
 	void attack(const std::string &target);
 	void guardGate(void);
+
+protected:
+	static const unsigned int INIT_HP = 100;
+	static const unsigned int INIT_EP = 50;
+	static const unsigned int INIT_AT = 20;
 };
 
 #endif

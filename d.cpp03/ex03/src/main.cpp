@@ -21,14 +21,16 @@ int	main(void)
 	copyB.takeDamage(30);
 	A.attack(copyB.getName());
 	copyB.takeDamage(30);
+	A.attack(copyB.getName());
+	copyB.takeDamage(30);
 
     std::cout << "\n=== Special Abilities Test ===" << std::endl;
     A.guardGate();        // ScavTrapから継承
     A.highFivesGuys();    // FragTrapから継承
 
 	std::cout << "\n=== Energy System Test ===" << std::endl;
-	for (int i = 0; i < 50; i++)
-		A.attack("SandBag");
+	for (int i = 0; i < 46; i++)
+		A.attack("SandBag"); 
 
 	std::cout << "\n=== Error Hnadling Test ===" << std::endl;
 	A.attack("SandBag");

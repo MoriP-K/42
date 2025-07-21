@@ -4,62 +4,63 @@
 
 int	main(void)
 {
-	ClapTrap trapA("Alpha");
+	ClapTrap trapC("CT");
 	std::cout << std::endl;
-	ScavTrap trapB("Beta");
+	ScavTrap trapS("ST");
 	std::cout << std::endl;
-	FragTrap trapC("Ganma");
+	FragTrap trapF("FT");
 	std::cout << std::endl;
 
-	trapC.highFivesGuys();
+	trapF.highFivesGuys();
 	std::cout << std::endl;
-	trapA.attack(trapB.getName());
-	trapB.takeDamage(30);
+
+	trapC.beRepaired(3);
 	std::cout << std::endl;
-	trapB.guardGate();
+
+	for (int i = 0; i < 10; i++)
+		trapC.attack("test");
 	std::cout << std::endl;
-	trapC.attack(trapA.getName());
-	trapA.takeDamage(30);
+
+	trapS.guardGate();
 	std::cout << std::endl;
-	trapA.attack(trapB.getName());
-	trapB.takeDamage(30);
-	std::cout << std::endl;
-	trapB.attack(trapC.getName());
+
+	trapF.attack(trapC.getName());
 	trapC.takeDamage(30);
 	std::cout << std::endl;
-	trapC.attack(trapA.getName());
-	trapA.takeDamage(30);
+
+	trapF.attack(trapC.getName());
+	trapC.takeDamage(30);
 	std::cout << std::endl;
-	trapA.beRepaired(3);
+
+	trapC.beRepaired(3);
 	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(30);
+
+	trapS.attack(trapF.getName());
+	trapF.takeDamage(20);
 	std::cout << std::endl;
-	trapC.attack(trapB.getName());
-	trapB.takeDamage(30);
+
+	trapF.beRepaired(10);
 	std::cout << std::endl;
-	trapA.attack(trapB.getName());
-	trapB.takeDamage(30);
+
+
+	trapF.attack(trapS.getName());
+	trapS.takeDamage(30);
 	std::cout << std::endl;
-	trapC.attack(trapA.getName());
-	trapA.takeDamage(30);
+
+	trapF.attack(trapS.getName());
+	trapS.takeDamage(30);
 	std::cout << std::endl;
-	trapA.beRepaired(3);
+
+	trapF.attack(trapS.getName());
+	trapS.takeDamage(30);
 	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(30);
+
+	trapF.attack(trapS.getName());
+	trapS.takeDamage(30);
 	std::cout << std::endl;
-	trapC.attack(trapB.getName());
-	trapB.takeDamage(30);
-	std::cout << std::endl;
-	trapC.beRepaired(5);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
-	trapA.beRepaired(3);
+
+	trapF.attack(trapS.getName());
+	trapS.takeDamage(30);
 	std::cout << std::endl;
 
 	return (0);

@@ -71,6 +71,7 @@ void ClapTrap::takeDamage(unsigned int amount)
 
 void ClapTrap::beRepaired(unsigned int amount)
 {
+	std::cout << this->_name << "'s HP: " << this->hitPoints << ", ";
 	if (this->hitPoints == 0)
 	{
 		std::cout << this->_name << " cannot repair itself, because " << this->_name << " is dead." << std::endl;
@@ -81,17 +82,10 @@ void ClapTrap::beRepaired(unsigned int amount)
 		std::cout << this->_name << " cannot repair itself, because " << this->_name << " has no EP." << std::endl;
 		return ;
 	}
-	unsigned int actualRepair = amount;
-	if (this->hitPoints + amount > 100)
-	{
-		actualRepair = 100 - this->hitPoints;
-		this->hitPoints = 100;
-	}
-	else
-		this->hitPoints = this->hitPoints + amount;
+	this->hitPoints = this->hitPoints + amount;
 	this->energyPoints--;
 	std::cout
-		<< this->_name << " repaired " << actualRepair << " HP, he has " << this->hitPoints << " HP now. "
+		<< this->_name << " repaired " << this->hitPoints << " HP, he has " << this->hitPoints << " HP now. "
 		<< this->_name << " has " << this->energyPoints << " EP left." << std::endl;
 }
 

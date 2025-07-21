@@ -17,6 +17,10 @@ public:
 
 	void highFivesGuys(void);
 
+protected:
+	static const unsigned int INIT_HP = 100;
+	static const unsigned int INIT_EP = 100;
+	static const unsigned int INIT_AT = 30;
 };
 
 #endif

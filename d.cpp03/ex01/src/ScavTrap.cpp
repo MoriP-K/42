@@ -1,12 +1,19 @@
-#include "ScavTrap.hpp"
+#include "../inc/ScavTrap.hpp"
 
 ScavTrap::ScavTrap(): ClapTrap()
 {
+	this->hitPoints = 100;
+	this->energyPoints = 50;
+	this->attackDamage = 20;
 	this->guardingGate = false;
 	std::cout << "ScavTrap Default constructor called" << std::endl;
 }
+
 ScavTrap::ScavTrap(std::string name): ClapTrap(name)
 {
+	this->hitPoints = 100;
+	this->energyPoints = 50;
+	this->attackDamage = 20;
 	this->guardingGate = false;
 	std::cout << "ScavTrap Constructor for " << this->_name << " called" << std::endl;
 }
@@ -27,8 +34,9 @@ ScavTrap &ScavTrap::operator=(const ScavTrap &src)
 	std::cout << "Assignment operator called" << std::endl;
 	if (this != &src)
 	{
-		ClapTrap::operator=(src);
+		this->_name = src._name;
 		this->guardingGate = src.guardingGate;
+		ClapTrap::operator=(src);
 	}
 	return (*this);
 }

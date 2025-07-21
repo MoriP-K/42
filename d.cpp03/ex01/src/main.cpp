@@ -1,5 +1,5 @@
-#include "ClapTrap.hpp"
-#include "ScavTrap.hpp"
+#include "../inc/ClapTrap.hpp"
+#include "../inc/ScavTrap.hpp"
 
 int	main(void)
 {
@@ -10,44 +10,33 @@ int	main(void)
 
 	trapB.guardGate();
 	std::cout << std::endl;
+
 	trapA.attack(trapB.getName());
-	trapB.takeDamage(20);
+	trapB.takeDamage(0);
 	std::cout << std::endl;
-	trapA.attack(trapB.getName());
-	trapB.takeDamage(20);
+
+	trapA.beRepaired(5);
+	std::cout << std::endl;
+
+	for (int i = 0; i < 9; i++)
+		trapA.attack(trapB.getName());
 	std::cout << std::endl;
 
 	trapB.attack(trapA.getName());
 	trapA.takeDamage(20);
 	std::cout << std::endl;
+
+	trapB.attack(trapA.getName());
+	trapA.takeDamage(20);
+	std::cout << std::endl;
+
 	trapA.beRepaired(5);
 	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(20);
-	std::cout << std::endl;
-	trapA.beRepaired(5);
-	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(20);
-	std::cout << std::endl;
-	trapA.attack(trapB.getName());
-	trapB.takeDamage(20);
-	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(20);
-	std::cout << std::endl;
-	trapA.attack(trapA.getName());
-	trapA.takeDamage(20);
-	std::cout << std::endl;
-	trapA.beRepaired(3);
-	std::cout << std::endl;
-	trapB.attack(trapA.getName());
-	trapA.takeDamage(20);
-	std::cout << std::endl;
+
 	trapA.attack(trapB.getName());
 	std::cout << std::endl;
-	trapB.beRepaired(5);
-	trapA.beRepaired(3);
+
+	trapB.beRepaired(4);
 	std::cout << std::endl;
 
 	return (0);

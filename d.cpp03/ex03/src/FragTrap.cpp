@@ -2,8 +2,7 @@
 
 FragTrap::FragTrap() : ClapTrap()
 {
-	if (this->hitPoints == 10)
-		this->hitPoints = 100;
+	this->hitPoints = 100;
 	this->energyPoints = 100;
 	this->attackDamage = 30;
 	std::cout << "FragTrap Default constructor called" << std::endl;
@@ -11,11 +10,9 @@ FragTrap::FragTrap() : ClapTrap()
 
 FragTrap::FragTrap(std::string name) : ClapTrap(name)
 {
-	if (this->hitPoints == 10)
-		this->hitPoints = 100;
+	this->hitPoints = 100;
 	this->energyPoints = 100;
-	if (this->attackDamage == 0)
-		this->attackDamage = 30;
+	this->attackDamage = 30;
 	std::cout << "FragTrap Constructor for " << name << " called" << std::endl;
 }
 
@@ -36,9 +33,7 @@ FragTrap &FragTrap::operator=(const FragTrap &src)
 	if (this != &src)
 	{
 		this->_name = src._name;
-		this->hitPoints = src.hitPoints;
-		this->energyPoints = src.energyPoints;
-		this->attackDamage = src.attackDamage;
+		ClapTrap::operator=(src);
 	}
 	return (*this);
 }
