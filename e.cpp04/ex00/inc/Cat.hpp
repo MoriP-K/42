@@ -1,9 +1,10 @@
+#ifndef CAT_HPP
+#define CAT_HPP
+
 #include "Animal.hpp"
 
 class Cat: public Animal
 {
-private:
-	
 public:
 	Cat();
 	Cat(const Cat& copy);
@@ -11,8 +12,7 @@ public:
 
 	Cat &operator=(const Cat &src);
 
-	void makeSound(void);
-	std::string getType(void);
-protected:
-	std::string type;
+	void makeSound(void) const;
 };
+
+#endif

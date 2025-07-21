@@ -2,19 +2,30 @@ NAME := animal
 
 CXX := c++
 
-CPPFLAGS := -Wextra -Werror -Wall
+CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic
 
-SRC := main.cpp Animal.cpp
+SRCDIR := ./src
+SRC := main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp
 
-OBJ := ${SRC:.cpp=.o}
+OBJDIR := ./obj
+OBJ := ${addprefix ${OBJDIR}/, ${SRC:.cpp=.o}}
+
+HEADDIR := ./inc
+HEADER := Animal.hpp Dog.hpp Cat.hpp WrongAnimal.hpp WrongCat.hpp
 
 all: ${NAME}
 
 ${NAME}: ${OBJ}
 	${CXX} ${CPPFLAGS} ${OBJ} -o ${NAME}
 
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+	$(CXX) $(CPPFLAGS) -I$(HEADDIR) -c $< -o $@
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
 clean:
-	${RM} -f ${OBJ}
+	${RM} -rf ${OBJDIR}
 
 fclean: clean
 	${RM} -f ${NAME}
@@ -25,4 +36,4 @@ r:
 	${MAKE} re
 	${MAKE} clean
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re r
