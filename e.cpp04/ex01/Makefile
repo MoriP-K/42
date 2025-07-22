@@ -6,12 +6,14 @@ CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic
 
 SRCDIR := ./src
 SRC := main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp
+		Brain.cpp
 
 OBJDIR := ./obj
 OBJ := ${addprefix ${OBJDIR}/, ${SRC:.cpp=.o}}
 
 HEADDIR := ./inc
 HEADER := Animal.hpp Dog.hpp Cat.hpp WrongAnimal.hpp WrongCat.hpp
+		Brain.hpp
 
 all: ${NAME}
 
