@@ -13,7 +13,7 @@ WrongCat::WrongCat(const WrongCat& copy)
 
 WrongCat::~WrongCat()
 {
-	std::cout << "WrongCat: Destructor called" << std::endl;
+	std::cout << "WrongCat: Destructor for called" << std::endl;
 }
 
 WrongCat &WrongCat::operator=(const WrongCat &src)

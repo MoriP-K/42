@@ -7,7 +7,7 @@ WrongAnimal::WrongAnimal(): _type("WrongAnimal")
 
 WrongAnimal::WrongAnimal(std::string type): _type(type)
 {
-	std::cout << "WrongAnimal: Constructor called" << std::endl;
+	std::cout << "WrongAnimal: Constructor for called" << std::endl;
 }
 
 WrongAnimal::WrongAnimal(const WrongAnimal& copy)
@@ -18,7 +18,7 @@ WrongAnimal::WrongAnimal(const WrongAnimal& copy)
 
 WrongAnimal::~WrongAnimal()
 {
-	std::cout << "WrongAnimal: Destructor called" << std::endl;
+	std::cout << "WrongAnimal: Destructor for called" << std::endl;
 }
 
 WrongAnimal &WrongAnimal::operator=(const WrongAnimal &src)

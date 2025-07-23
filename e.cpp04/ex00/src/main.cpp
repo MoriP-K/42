@@ -16,12 +16,15 @@ int	main(void)
 	std::cout << std::endl;
 	const WrongAnimal* wrongCat = new WrongCat();
 	std::cout << std::endl;
+	const WrongCat* wrongCat2 = new WrongCat();
+	std::cout << std::endl;
 
 	std::cout << animal->getType() << " " << std::endl;
 	std::cout << dog->getType() << " " << std::endl;
 	std::cout << cat->getType() << " " << std::endl;
 	std::cout << wrongAnimal->getType() << " " << std::endl;
 	std::cout << wrongCat->getType() << " " << std::endl;
+	std::cout << wrongCat2->getType() << " " << std::endl;
 	std::cout << std::endl;
 
 	animal->makeSound();
@@ -29,6 +32,7 @@ int	main(void)
 	cat->makeSound();
 	wrongAnimal->makeSound();
 	wrongCat->makeSound();
+	wrongCat2->makeSound();
 	std::cout << std::endl;
 
 	delete animal;
@@ -40,5 +44,7 @@ int	main(void)
 	delete wrongAnimal;
 	std::cout << std::endl;
 	delete wrongCat;
+	std::cout << std::endl;
+	delete wrongCat2;
 	return (0);
 }
