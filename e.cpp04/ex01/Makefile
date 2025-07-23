@@ -2,18 +2,18 @@ NAME := animal
 
 CXX := c++
 
-CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic
+CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
 SRCDIR := ./src
-SRC := main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp
-		Brain.cpp
+SRC := main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp \
+	Brain.cpp
 
 OBJDIR := ./obj
 OBJ := ${addprefix ${OBJDIR}/, ${SRC:.cpp=.o}}
 
 HEADDIR := ./inc
-HEADER := Animal.hpp Dog.hpp Cat.hpp WrongAnimal.hpp WrongCat.hpp
-		Brain.hpp
+HEADER := Animal.hpp Dog.hpp Cat.hpp WrongAnimal.hpp WrongCat.hpp \
+	Brain.hpp
 
 all: ${NAME}
 

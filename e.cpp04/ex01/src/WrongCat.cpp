@@ -13,11 +13,12 @@ WrongCat::WrongCat(const WrongCat& copy)
 
 WrongCat::~WrongCat()
 {
-	std::cout << "WrongCat: Destructor for " << this->_type <<" called" << std::endl;
+	std::cout << "WrongCat: Destructor for called" << std::endl;
 }
 
 WrongCat &WrongCat::operator=(const WrongCat &src)
 {
+	std::cout << "WrongCat: Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
 		this->_type = src._type;

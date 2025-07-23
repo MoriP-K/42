@@ -1,44 +1,51 @@
-#include "Animal.hpp"
-#include "Dog.hpp"
-#include "Cat.hpp"
-#include "WrongAnimal.hpp"
-#include "WrongCat.hpp"
+#include "../inc/Animal.hpp"
+#include "../inc/Dog.hpp"
+#include "../inc/Cat.hpp"
+#include "../inc/WrongAnimal.hpp"
+#include "../inc/WrongCat.hpp"
+#include "../inc/Brain.hpp"
 
 int	main(void)
 {
-	const Animal* animal = new Animal();
-	std::cout << std::endl;
-	const Animal* dog = new Dog();
-	std::cout << std::endl;
-	const Animal* cat = new Cat();
-	std::cout << std::endl;
-	const WrongAnimal* wrongAnimal = new WrongAnimal();
-	std::cout << std::endl;
-	const WrongAnimal* wrongCat = new WrongCat();
+	const Animal* animal[10];
+	const int num = 4;
+
+	std::cout << "\n=== initialization ===" << std::endl;
+	for (int i = 0; i < num; i++)
+	{
+		if (i % 2 == 0)
+			animal[i] = new Dog();
+		else
+			animal[i] = new Cat();
+		std::cout << std::endl;
+	}
 	std::cout << std::endl;
 
-	std::cout << animal->getType() << " " << std::endl;
-	std::cout << dog->getType() << " " << std::endl;
-	std::cout << cat->getType() << " " << std::endl;
-	std::cout << wrongAnimal->getType() << " " << std::endl;
-	std::cout << wrongCat->getType() << " " << std::endl;
+	std::cout << "=== type & sound ===" << std::endl;
+	for (int i = 0; i < num; i++)
+	{
+		std::cout << "Animal type: " << animal[i]->getType();
+		std::cout << ", ";
+		animal[i]->makeSound();
+		std::cout << std::endl;
+	}
 	std::cout << std::endl;
 
-	animal->makeSound();
-	dog->makeSound();
-	cat->makeSound();
-	wrongAnimal->makeSound();
-	wrongCat->makeSound();
+	std::cout << "=== delete allocated memory ===" << std::endl;
+	for (int i = 0; i < num; i++)
+	{
+		delete animal[i];
+		std::cout << std::endl;
+	}
 	std::cout << std::endl;
 
-	delete animal;
+	std::cout << "=== matcha called ===" << std::endl;
+	Dog matcha;
 	std::cout << std::endl;
-	delete cat;
+	Dog clone = matcha;
 	std::cout << std::endl;
-	delete dog;
 	std::cout << std::endl;
-	delete wrongAnimal;
-	std::cout << std::endl;
-	delete wrongCat;
+
+	std::cout << "=== destructor called ===" << std::endl;
 	return (0);
 }
