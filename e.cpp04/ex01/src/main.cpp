@@ -39,11 +39,46 @@ int	main(void)
 	}
 	std::cout << std::endl;
 
-	std::cout << "=== matcha called ===" << std::endl;
+	std::cout << "=== Dog matcha called ===" << std::endl;
 	Dog matcha;
 	std::cout << std::endl;
-	Dog clone = matcha;
+	Dog cloneD = matcha;
 	std::cout << std::endl;
+	Dog anotherD;
+	std::cout << std::endl;
+	anotherD = matcha;
+	std::cout << std::endl;
+
+	std::cout << "=== Dog deep copy ===" << std::endl;
+	std::cout << "matcha  address : " << &matcha << std::endl;
+	std::cout << "cloneD   address : " << &cloneD << std::endl;
+	std::cout << "anotherD address : " << &anotherD << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "matcha  brain address : " << matcha.getBrain() << std::endl;
+	std::cout << "cloneD   brain address : " << cloneD.getBrain() << std::endl;
+	std::cout << "anotherD brain address : " << anotherD.getBrain() << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "=== Cat mocha called ===" << std::endl;
+	Cat mocha;
+	std::cout << std::endl;
+	Cat cloneC = mocha;
+	std::cout << std::endl;
+	Cat anotherC;
+	std::cout << std::endl;
+	anotherC = mocha;
+	std::cout << std::endl;
+
+	std::cout << "=== Cat deep copy ===" << std::endl;
+	std::cout << "mocha  address : " << &mocha << std::endl;
+	std::cout << "cloneC   address : " << &cloneC << std::endl;
+	std::cout << "anotherC address : " << &anotherC << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "mocha  brain address : " << mocha.getBrain() << std::endl;
+	std::cout << "cloneC   brain address : " << cloneC.getBrain() << std::endl;
+	std::cout << "anotherC brain address : " << anotherC.getBrain() << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "=== destructor called ===" << std::endl;

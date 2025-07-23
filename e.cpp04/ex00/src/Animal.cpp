@@ -7,18 +7,17 @@ Animal::Animal(): _type("Animal")
 
 Animal::Animal(std::string type): _type(type)
 {
-	std::cout << "Animal: Constructor for called" << std::endl;
+	std::cout << "Animal: Constructor called" << std::endl;
 }
 
-Animal::Animal(const Animal& copy)
+Animal::Animal(const Animal& copy): _type(copy._type)
 {
 	std::cout << "Animal: Copy Constructor Called" << std::endl;
-	*this = copy;
 }
 
 Animal::~Animal()
 {
-	std::cout << "Animal: Destructor for called" << std::endl;
+	std::cout << "Animal: Destructor called" << std::endl;
 }
 
 Animal &Animal::operator=(const Animal &src)

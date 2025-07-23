@@ -6,10 +6,10 @@ Dog::Dog(): Animal("Dog")
 	this->brain = new Brain();
 }
 
-Dog::Dog(const Dog& copy)
+Dog::Dog(const Dog& copy): Animal(copy)
 {
 	std::cout << "Dog: Copy Constructor called" << std::endl;
-	*this = copy;
+	this->brain = new Brain(*copy.brain);
 }
 
 Dog::~Dog()
@@ -24,7 +24,6 @@ Dog &Dog::operator=(const Dog &src)
 	if (this != &src)
 	{
 		Animal::operator=(src);
-		this->brain = new Brain();
 		*this->brain = *src.brain;
 	}
 	return (*this);
