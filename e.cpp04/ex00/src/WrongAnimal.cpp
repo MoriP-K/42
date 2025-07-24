@@ -10,10 +10,9 @@ WrongAnimal::WrongAnimal(std::string type): _type(type)
 	std::cout << "WrongAnimal: Constructor called" << std::endl;
 }
 
-WrongAnimal::WrongAnimal(const WrongAnimal& copy)
+WrongAnimal::WrongAnimal(const WrongAnimal& copy): _type(copy._type)
 {
 	std::cout << "WrongAnimal: Copy Constructor Called" << std::endl;
-	*this = copy;
 }
 
 WrongAnimal::~WrongAnimal()

@@ -1,15 +1,15 @@
 #include "../inc/Cat.hpp"
 
-Cat::Cat() : Animal("Cat")
+Cat::Cat() : AAnimal("Cat")
 {
 	std::cout << "Cat: Default Constructor called" << std::endl;
 	this->brain = new Brain();
 }
 
-Cat::Cat(const Cat &copy)
+Cat::Cat(const Cat &copy): AAnimal(copy)
 {
 	std::cout << "Cat: Copy Constructor called" << std::endl;
-	*this = copy;
+	this->brain = new Brain(*copy.brain);
 }
 
 Cat::~Cat()
@@ -23,8 +23,7 @@ Cat &Cat::operator=(const Cat &src)
 	std::cout << "Cat: Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
-		Animal::operator=(src);
-		this->brain = new Brain();
+		AAnimal::operator=(src);
 		*this->brain = *src.brain;
 	}
 	return (*this);
@@ -37,6 +36,5 @@ void Cat::makeSound(void) const
 
 Brain* Cat::getBrain(void) const
 {
-	std::cout << "Cat::getBrain() called, brain address: " << this->brain << std::endl;
 	return (this->brain);
 }

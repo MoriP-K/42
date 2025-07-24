@@ -1,15 +1,15 @@
 #include "../inc/Dog.hpp"
 
-Dog::Dog(): Animal("Dog")
+Dog::Dog(): AAnimal("Dog")
 {
 	std::cout << "Dog: Default Constructor called" << std::endl;
 	this->brain = new Brain();
 }
 
-Dog::Dog(const Dog& copy)
+Dog::Dog(const Dog& copy): AAnimal(copy)
 {
 	std::cout << "Dog: Copy Constructor called" << std::endl;
-	*this = copy;
+	this->brain = new Brain(*copy.brain);
 }
 
 Dog::~Dog()
@@ -23,8 +23,7 @@ Dog &Dog::operator=(const Dog &src)
 	std::cout << "Dog: Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
-		Animal::operator=(src);
-		this->brain = new Brain();
+		AAnimal::operator=(src);
 		*this->brain = *src.brain;
 	}
 	return (*this);
@@ -37,6 +36,5 @@ void Dog::makeSound(void) const
 
 Brain* Dog::getBrain(void) const
 {
-	std::cout << "Dog::getBrain() called, brain address: " << this->brain << std::endl;
 	return (this->brain);
 }

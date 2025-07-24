@@ -36,6 +36,5 @@ void Dog::makeSound(void) const
 
 Brain* Dog::getBrain(void) const
 {
-	std::cout << "Dog::getBrain() called, brain address: " << this->brain << std::endl;
 	return (this->brain);
 }

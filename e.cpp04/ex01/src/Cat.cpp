@@ -24,7 +24,6 @@ Cat &Cat::operator=(const Cat &src)
 	if (this != &src)
 	{
 		Animal::operator=(src);
-		// this->brain = new Brain();
 		*this->brain = *src.brain;
 	}
 	return (*this);
@@ -37,6 +36,5 @@ void Cat::makeSound(void) const
 
 Brain* Cat::getBrain(void) const
 {
-	std::cout << "Cat::getBrain() called, brain address: " << this->brain << std::endl;
 	return (this->brain);
 }
