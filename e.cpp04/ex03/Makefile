@@ -1,17 +1,17 @@
-NAME := animal
+NAME := interface
 
 CXX := c++
 
-CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic
+CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
 SRCDIR := ./src
-SRC := main.cpp 
+SRC := main.cpp AMateria.cpp Character.cpp Cure.cpp Ice.cpp MateriaSource.cpp
 
 OBJDIR := ./obj
 OBJ := ${addprefix ${OBJDIR}/, ${SRC:.cpp=.o}}
 
 HEADDIR := ./inc
-HEADER := 
+HEADER := AMateria.hpp Character.hpp Cure.hpp Ice.hpp MateriaSource.hpp
 
 all: ${NAME}
 
