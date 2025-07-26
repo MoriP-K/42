@@ -43,7 +43,6 @@ int main(void)
 	NL
 	me->equip(tmp);
 	NL
-	// failed
 	tmp = src->createMateria("cure");
 	NL
 	me->equip(tmp);
