@@ -10,7 +10,7 @@ public:
 	static const int slot = 4;
 
 private:
-	AMateria* templates[slot];
+	AMateria* templates[4];
 
 public:
 	MateriaSource();

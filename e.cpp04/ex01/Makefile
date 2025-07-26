@@ -2,7 +2,7 @@ NAME := animal
 
 CXX := c++
 
-CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
+CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic
 
 SRCDIR := ./src
 SRC := main.cpp Animal.cpp Dog.cpp Cat.cpp WrongAnimal.cpp WrongCat.cpp \

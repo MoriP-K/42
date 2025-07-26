@@ -7,8 +7,8 @@
 
 int	main(void)
 {
-	const Animal* animal[10];
 	const int num = 4;
+	const Animal* animal[num];
 
 	std::cout << "\n=== initialization ===" << std::endl;
 	for (int i = 0; i < num; i++)
@@ -24,10 +24,9 @@ int	main(void)
 	std::cout << "=== type & sound ===" << std::endl;
 	for (int i = 0; i < num; i++)
 	{
-		std::cout << "Animal type: " << animal[i]->getType();
+		std::cout << "type: " << animal[i]->getType();
 		std::cout << ", ";
 		animal[i]->makeSound();
-		std::cout << std::endl;
 	}
 	std::cout << std::endl;
 
