@@ -1,16 +1,13 @@
-NAME := Bureaucrat
+NAME := Bereaucrat
 
 CXX := c++
 
 CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
-SRCDIR := ./src
 SRC := main.cpp Bureaucrat.cpp 
 
-OBJDIR := ./obj
-OBJ := ${addprefix ${OBJDIR}/, ${SRC:.cpp=.o}}
+OBJ := ${SRC:.cpp=.o}
 
-HEADDIR := ./inc
 HEADER := Bureaucrat.hpp
 
 all: ${NAME}
@@ -18,14 +15,11 @@ all: ${NAME}
 ${NAME}: ${OBJ}
 	${CXX} ${CPPFLAGS} ${OBJ} -o ${NAME}
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
-	$(CXX) $(CPPFLAGS) -I$(HEADDIR) -c $< -o $@
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+# $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+# 	$(CXX) $(CPPFLAGS) -I$(HEADER) -c $< -o $@
 
 clean:
-	${RM} -rf ${OBJDIR}
+	${RM} -f ${OBJ}
 
 fclean: clean
 	${RM} -f ${NAME}
