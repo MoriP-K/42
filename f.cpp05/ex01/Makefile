@@ -4,11 +4,11 @@ CXX := c++
 
 CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
-SRC := main.cpp Bureaucrat.cpp 
+SRC := main.cpp Bureaucrat.cpp Form.cpp
 
 OBJ := ${SRC:.cpp=.o}
 
-HEADER := Bureaucrat.hpp
+HEADER := Bureaucrat.hpp Form.hpp
 
 all: ${NAME}
 

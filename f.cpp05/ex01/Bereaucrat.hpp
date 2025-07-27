@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <exception>
+#include "Form.hpp"
 
 class Bereaucrat
 {
@@ -39,6 +40,8 @@ public:
 
 	void upGrade(void);
 	void downGrade(void);
+
+	void signForm(Form &form);
 };
 
 std::ostream& operator<<(std::ostream& out, const Bereaucrat& bereaucrat);
