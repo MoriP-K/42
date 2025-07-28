@@ -8,7 +8,7 @@
 class Bereaucrat
 {
 private:
-	std::string _name;
+	const std::string _name;
 	unsigned int _grade;
 
 public:
@@ -35,10 +35,13 @@ public:
 	Bereaucrat &operator=(const Bereaucrat &src);
 
 	std::string const &getName(void) const;
-	unsigned int const &getGrade(void) const;
+	unsigned int getGrade(void) const;
 
 	void upGrade(void);
 	void downGrade(void);
+
+private:
+	void validateGrade(unsigned int grade) const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Bereaucrat& bereaucrat);

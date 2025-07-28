@@ -2,15 +2,15 @@
 
 const char* Bereaucrat::GradeTooHighException::what(void) const throw()
 {
-	return "Grade is too high!";
+	return "Bereaucrat: Grade is too high!";
 }
 
 const char* Bereaucrat::GradeTooLowException::what(void) const throw()
 {
-	return "Grade is too low!";
+	return "Bereaucrat: Grade is too low!";
 }
 
-Bereaucrat::Bereaucrat(): _name("default"), _grade(150)
+Bereaucrat::Bereaucrat(): _name("DefaultBereaucrat"), _grade(150)
 {
 	std::cout << "Bereaucrat: Default Constructor called" << std::endl;
 }
@@ -18,16 +18,7 @@ Bereaucrat::Bereaucrat(): _name("default"), _grade(150)
 Bereaucrat::Bereaucrat(std::string name, unsigned int grade): _name(name)
 {
 	std::cout << "Bereaucrat: Constructor for " << name <<" called" << std::endl;
-	if (grade < HIGHEST_GRADE)
-	{
-		std::cout << "Invalid grade " << grade << " (too high)" << std::endl;
-		throw GradeTooHighException();
-	}
-	if (grade > LOWEST_GRADE)
-	{
-		std::cout << "Invalid grade " << grade << " (too low)" << std::endl;
-		throw GradeTooLowException();
-	}
+	validateGrade(grade);
 	this->_grade = grade;
 }
 
@@ -43,7 +34,7 @@ Bereaucrat::~Bereaucrat()
 
 Bereaucrat &Bereaucrat::operator=(const Bereaucrat &src)
 {
-	std::cout << "Bereaucrat: Copy assignment operator called" << std::endl;
+	std::cout << "Bereaucrat: Copy Assignment operator called" << std::endl;
 	if (this != &src)
 	{
 		this->_name = src._name;
@@ -57,7 +48,7 @@ std::string const &Bereaucrat::getName(void) const
 	return (this->_name);
 }
 
-unsigned int const &Bereaucrat::getGrade(void) const
+unsigned int Bereaucrat::getGrade(void) const
 {
 	return (this->_grade);
 }
@@ -76,6 +67,28 @@ void Bereaucrat::downGrade(void)
 	if (this->_grade >= LOWEST_GRADE)
 		throw GradeTooLowException();
 	this->_grade++;
+}
+
+void Bereaucrat::signForm(Form &form)
+{
+	try
+	{
+		form.beSigned(*this);
+		std::cout << this->_name << " signed " << form.getName() << std::endl;
+	}
+	catch (const std::exception &error)
+	{
+		std::cout << this->_name << " couldn't sign " << form.getName() 
+			<< " because " << error.what() << std::endl;
+	}
+}
+
+void Bereaucrat::validateGrade(unsigned int grade) const
+{
+	if (grade < HIGHEST_GRADE)
+		throw GradeTooHighException();
+	if (grade > LOWEST_GRADE)
+		throw GradeTooLowException();
 }
 
 std::ostream& operator<<(std::ostream& out, const Bereaucrat& bereaucrat)

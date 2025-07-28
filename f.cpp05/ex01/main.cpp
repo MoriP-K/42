@@ -1,4 +1,5 @@
 #include "Bereaucrat.hpp"
+#include "Form.hpp"
 
 #define NL std::cout << std::endl;
 
@@ -9,17 +10,38 @@ void testValid()
 	{
 		Bereaucrat admin("admin", 75);
 		NL
-		std::cout << "Name: " << admin.getName() << std::endl;
+		// std::cout << "Name: " << admin.getName() << std::endl;
+		// NL
+		// std::cout << "Grade: " << admin.getGrade() << std::endl;
+		// NL
+		// std::cout << admin << std::endl;
+		// NL
+		// admin.upGrade();
+		// std::cout << "After upGrade: " << admin << std::endl;
+		// NL
+		// admin.downGrade();
+		// std::cout << "After downGade: " << admin << std::endl;
+		// NL
+		Form form("form", 75, 75);
 		NL
-		std::cout << "Grade: " << admin.getGrade() << std::endl;
+		std::cout << "Name: " << form.getName() << std::endl;
 		NL
-		std::cout << admin << std::endl;
+		// std::cout << "Grade: " << form.getGrade() << std::endl;
+		// NL
+		std::cout << "Signed: " << (form.getSigned() ? "yse" : "no") << std::endl;
 		NL
-		admin.upGrade();
-		std::cout << "After upGrade: " << admin << std::endl;
+		std::cout << "Grade to sign: " << form.getGradeToSign() << std::endl;
 		NL
-		admin.downGrade();
-		std::cout << "After downGade: " << admin << std::endl;
+		std::cout << "Grade to execute: " << form.getGradeToExecute() << std::endl;
+		NL
+		std::cout << form << std::endl;
+		NL
+		// form.upGrade();
+		// std::cout << "After upGrade: " << form << std::endl;
+		// NL
+		// form.downGrade();
+		// std::cout << "After downGade: " << form << std::endl;
+		form.beSigned(admin);
 		NL
 	}
 	catch (const std::exception& error)
@@ -127,8 +149,8 @@ void testOrthodoxCanonicalForm()
 int main(void)
 {
 	testValid();
-	testconstrcutorException();
-	testGradeException();
-	testOrthodoxCanonicalForm();
+	// testconstrcutorException();
+	// testGradeException();
+	// testOrthodoxCanonicalForm();
 	return (0);
 }

@@ -6,13 +6,16 @@
 #include <exception>
 #include "Bereaucrat.hpp"
 
+class Bereaucrat;
+
 class Form
 {
 private:
-	std::string _name;
-	bool isSigned;
-	unsigned int sign;
-	unsigned int execute;
+	const std::string _name;
+	bool _isSigned;
+	const unsigned int _gradeToSign;
+	const unsigned int _gradeToExecute;
+
 public:
 	class GradeTooHighException : public std::exception
 	{
@@ -30,13 +33,21 @@ public:
 	static const unsigned int LOWEST_GRADE = 150;
 
 	Form();
-	Form(std::string name);
+	Form(const std::string &name, unsigned int gradeToSign, unsigned int gradeToExecute);
 	Form(const Form& copy);
 	~Form();
 
 	Form &operator=(const Form &src);
 
-	void beSigned(Bereaucrat &bereaucrat);
+	std::string const &getName(void) const;
+	bool getSigned(void) const;
+	unsigned int getGradeToSign(void) const;
+	unsigned int getGradeToExecute(void) const;
+
+	void beSigned(const Bereaucrat &bereaucrat);
+
+private:
+	void validateGrade(unsigned int grade) const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Form& form);
