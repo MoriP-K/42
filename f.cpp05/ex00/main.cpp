@@ -29,7 +29,7 @@ void testValid()
 	NL
 }
 
-void testconstrcutorException()
+void testConstructorException()
 {
 	std::cout << "\n===== Constructor Exception =====" << std::endl;
 	try
@@ -127,7 +127,7 @@ void testOrthodoxCanonicalForm()
 int main(void)
 {
 	testValid();
-	testconstrcutorException();
+	testConstructorException();
 	testGradeException();
 	testOrthodoxCanonicalForm();
 	return (0);

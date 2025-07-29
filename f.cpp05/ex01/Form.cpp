@@ -18,7 +18,7 @@ Form::Form(): _name("DefaultForm"), _isSigned(false), _gradeToSign(150), _gradeT
 Form::Form(const std::string &name, unsigned int gradeToSign, unsigned int gradeToExecute)
 	: _name(name), _isSigned(false), _gradeToSign(gradeToSign), _gradeToExecute(gradeToExecute)
 {
-	std::cout << "Form: Construcotr for " << name << " called" << std::endl;
+	std::cout << "Form: Constructor for " << name << " called" << std::endl;
 	validateGrade(gradeToSign);
 	validateGrade(gradeToExecute);
 }
@@ -67,6 +67,8 @@ unsigned int Form::getGradeToExecute(void) const
 void Form::beSigned(const Bereaucrat &bereaucrat)
 {
 	std::cout << "Form: " << this->_name << " is checking signature by " << bereaucrat.getName() << std::endl;
+	std::cout << "Bereaucrat grade: " << this->getGrade()
+			<< ", Required grade: " << form.getGradeToSign() << std::endl;
 	if (bereaucrat.getGrade() > this->_gradeToSign)
 		throw GradeTooLowException();
 	if (this->_isSigned == true)
