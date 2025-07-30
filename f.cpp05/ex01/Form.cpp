@@ -66,9 +66,9 @@ unsigned int Form::getGradeToExecute(void) const
 
 void Form::beSigned(const Bereaucrat &bereaucrat)
 {
-	std::cout << "Form: " << this->_name << " is checking signature by " << bereaucrat.getName() << std::endl;
-	std::cout << "Bereaucrat grade: " << this->getGrade()
-			<< ", Required grade: " << form.getGradeToSign() << std::endl;
+	std::cout << "Form: " << this->_name << " is being checked signature by " << bereaucrat.getName() << std::endl;
+	std::cout << "Bereaucrat grade: " << bereaucrat.getGrade()
+			<< ", Required grade: " << this->getGradeToSign() << std::endl;
 	if (bereaucrat.getGrade() > this->_gradeToSign)
 		throw GradeTooLowException();
 	if (this->_isSigned == true)
@@ -90,7 +90,7 @@ void Form::validateGrade(unsigned int grade) const
 
 std::ostream& operator<<(std::ostream& out, const Form& form)
 {
-	out << "Form " << form.getName()
+	out << "Form: " << form.getName()
 		<< " (signed: " << (form.getSigned() ? "yes" : "no")
 		<< ", grade to sign: " << form.getGradeToSign()
 		<< ", grade to execute: " << form.getGradeToExecute() << ")";

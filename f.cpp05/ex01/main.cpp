@@ -17,33 +17,33 @@ void testValid()
 		std::cout << admin << std::endl;
 		NL
 		admin.upGrade();
-		std::cout << "After upGrade: " << admin << std::endl;
+		std::cout << "After upGrade:\n" << admin << std::endl;
 		NL
 		admin.downGrade();
-		std::cout << "After downGade: " << admin << std::endl;
+		std::cout << "After downGrade:\n" << admin << std::endl;
 		NL
 		std::cout << "<----- Form ----->" << std::endl;
-		Bereaucrat def;
-		Bereaucrat ghi("ghi", 100);
-		Form form("form", 75, 75);
+		Bereaucrat lowest;
+		Bereaucrat highest("highest", 1);
+		Form middle("middle", 75, 75);
 		NL
-		std::cout << "Name: " << form.getName() << std::endl;
+		std::cout << "Name: " << middle.getName() << std::endl;
 		NL
-		std::cout << "Signed: " << (form.getSigned() ? "yes" : "no") << std::endl;
+		std::cout << "Signed: " << (middle.getSigned() ? "yes" : "no") << std::endl;
 		NL
-		std::cout << "Grade to sign: " << form.getGradeToSign() << std::endl;
+		std::cout << "Grade to sign: " << middle.getGradeToSign() << std::endl;
 		NL
-		std::cout << "Grade to execute: " << form.getGradeToExecute() << std::endl;
+		std::cout << "Grade to execute: " << middle.getGradeToExecute() << std::endl;
 		NL
-		std::cout << form << std::endl;
+		std::cout << middle << std::endl;
 		NL
-		def.signForm(form);
+		lowest.signForm(middle);
 		NL
-		std::cout << form << std::endl;
+		std::cout << middle << std::endl;
 		NL
-		ghi.signForm(form);
+		highest.signForm(middle);
 		NL
-		std::cout << form << std::endl;
+		std::cout << middle << std::endl;
 		NL
 	}
 	catch (const std::exception& error)
@@ -55,7 +55,7 @@ void testValid()
 
 void testBereaucratConstructorException()
 {
-	std::cout << "\n===== Constructor Exception =====" << std::endl;
+	std::cout << "\n===== Bereaucrat Constructor Exception Test =====" << std::endl;
 	try
 	{
 		Bereaucrat admin("admin", 0);
@@ -84,19 +84,23 @@ void testFormConstructorException()
 	try
 	{
 		Form invalidForm1("Invalid1", 0, 50);
+		NL
 	}
 	catch (const std::exception &error)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 	try
 	{
 		Form invalidForm2("Invalid2", 50, 0);
+		NL
 	}
 	catch (const std::exception &error)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 	try
 	{
 		Form invalidForm3("Invalid3", 200, 50);
@@ -113,11 +117,12 @@ void testFormConstructorException()
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 }
 
 void testGradeException()
 {
-	std::cout << "\n===== Grade Exception =====" << std::endl;
+	std::cout << "\n===== Grade Exception Test =====" << std::endl;
 	try
 	{
 		Bereaucrat admin("admin", 1);
@@ -150,7 +155,7 @@ void testGradeException()
 
 void testFormSigningException()
 {
-	std::cout << "===== \nForm Signing Exception Tesg =====" << std::endl;
+	std::cout << "\n===== Form Signing Exception Test =====" << std::endl;
 	try
 	{
 		Bereaucrat lowGrade("LowGrade", 100);
@@ -162,24 +167,22 @@ void testFormSigningException()
 		NL
 		lowGrade.signForm(restrictedForm);
 		NL
-		std::cout << "After signing attempt:" << std::endl;
-		std::cout << restrictedForm << std::endl;
 	}
 	catch(const std::exception& error)
 	{
 		std::cout << error.what() << std::endl;
 	}
-	
+	NL
 }
 
 void testBereaucratOrthodoxCanonicalForm()
 {
-	std::cout << "\n===== Orthodox Canonical Form Test =====" << std::endl;
+	std::cout << "\n===== Bereaucrat Orthodox Canonical Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat def;
+		Bereaucrat lowest;
 		NL
-		std::cout << def << std::endl;
+		std::cout << lowest << std::endl;
 		NL
 		Bereaucrat original("Original", 40);
 		NL
@@ -215,7 +218,7 @@ void testFormOrthodoxCanonicalForm()
 	try
 	{
 		Form defaultForm;
-		std::cout << "Default form: " << defaultForm << std::endl;
+		std::cout << defaultForm << std::endl;
 		NL
 		Form original("Original", 75, 50);
 		NL
@@ -237,23 +240,22 @@ void testFormOrthodoxCanonicalForm()
 		std::cout << "Copy: " << copy << std::endl;
 		std::cout << "Assigned: " << assigned << std::endl;
 		NL
-
 	}
 	catch(const std::exception& error)
 	{
 		std::cout << error.what() << std::endl;
 	}
-	
+	NL
 }
 
 int main(void)
 {
 	testValid();
-	// testBereaucratConstructorException();
+	testBereaucratConstructorException();
 	testFormConstructorException();
-	// testGradeException();
+	testGradeException();
 	testFormSigningException();
-	// testBereaucratOrthodoxCanonicalForm();
+	testBereaucratOrthodoxCanonicalForm();
 	testFormOrthodoxCanonicalForm();
 	return (0);
 }
