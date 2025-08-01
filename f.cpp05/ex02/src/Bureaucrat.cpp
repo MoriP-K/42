@@ -68,7 +68,7 @@ void Bereaucrat::downGrade(void)
 	this->_grade++;
 }
 
-void Bereaucrat::signForm(Form &form)
+void Bereaucrat::signForm(AForm &form)
 {
 	try
 	{
