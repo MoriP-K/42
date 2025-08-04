@@ -23,7 +23,7 @@ public:
 	AForm();
 	AForm(const std::string &name, unsigned int gradeToSign, unsigned int gradeToExecute);
 	AForm(const AForm& copy);
-	~AForm();
+	virtual ~AForm();
 	AForm &operator=(const AForm &src);
 
 	std::string const &getName(void) const;

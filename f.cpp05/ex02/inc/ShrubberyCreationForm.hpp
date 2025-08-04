@@ -1,7 +1,7 @@
 #ifndef SHRUBBERYCREATIONFORM_HPP
 #define SHRUBBERYCREATIONFORM_HPP
 
-#include "AForm.hpp"
+#include "../inc/AForm.hpp"
 #include <fstream>
 
 class ShrubberyCreationForm: public AForm

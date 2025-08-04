@@ -31,6 +31,7 @@ RobotomyRequestForm &RobotomyRequestForm::operator=(const RobotomyRequestForm &s
 		AForm::operator=(src);
 		this->_target = src._target;
 	}
+	return (*this);
 }
 
 const std::string &RobotomyRequestForm::getTarget(void) const

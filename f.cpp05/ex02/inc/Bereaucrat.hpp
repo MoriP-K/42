@@ -4,9 +4,9 @@
 #include <string>
 #include <iostream>
 #include <exception>
-#include "Form.hpp"
+#include "AForm.hpp"
 
-class Form;
+class AForm;
 
 class Bereaucrat
 {
@@ -43,7 +43,8 @@ public:
 	void upGrade(void);
 	void downGrade(void);
 
-	void signForm(Form &form);
+	void signForm(AForm &form);
+	void executeForm(AForm const &form) const;
 
 private:
 	void validateGrade(unsigned int grade) const;

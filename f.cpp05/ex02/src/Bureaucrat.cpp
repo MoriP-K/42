@@ -82,6 +82,20 @@ void Bereaucrat::signForm(AForm &form)
 	}
 }
 
+void Bereaucrat::executeForm(AForm const &form) const
+{
+	try
+	{
+		form.execute(*this);
+		std::cout << this->_name << " executed " << form.getName() << std::endl;
+	}
+	catch(const std::exception& error)
+	{
+		std::cout << this->_name << " couldn't execute " << form.getName()
+			<< " because " << error.what() << std::endl;
+	}
+}
+
 void Bereaucrat::validateGrade(unsigned int grade) const
 {
 	if (grade < HIGHEST_GRADE)
