@@ -5,7 +5,7 @@
 
 #define NL std::cout << std::endl;
 
-// ADD: << operator impl to all classes
+// ADD: << operator implementation to all classes
 
 void testShrubberyCreationForm(void)
 {
