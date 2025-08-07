@@ -1,4 +1,4 @@
-NAME := Bereaucrat
+NAME := exercise00
 
 CXX := c++
 

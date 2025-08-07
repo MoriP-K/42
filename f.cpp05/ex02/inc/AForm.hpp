@@ -17,8 +17,8 @@ private:
 	const unsigned int _gradeToExecute;
 
 public:
-	// static const unsigned int HIGHEST_GRADE = 1;
-	// static const unsigned int LOWEST_GRADE = 150;
+	static const unsigned int HIGHEST_GRADE = 1;
+	static const unsigned int LOWEST_GRADE = 150;
 
 	AForm();
 	AForm(const std::string &name, unsigned int gradeToSign, unsigned int gradeToExecute);

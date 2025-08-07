@@ -62,3 +62,13 @@ void ShrubberyCreationForm::executeAction(void) const
 	file.close();
 	std::cout << "ShrubberyCreationForm: ASCII trees written to " << filename << std::endl;
 }
+
+
+std::ostream& operator<<(std::ostream& out, const ShrubberyCreationForm& s)
+{
+	out << "ShrubberyCreationForm: " << s.getName()
+		<< " (signed: " << (s.getSigned() ? "yes" : "no")
+		<< ", grade to sign: " << s.getGradeToSign()
+		<< ", grade to execute: " << s.getGradeToExecute() << ")";
+	return (out);
+}

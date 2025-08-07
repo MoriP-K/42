@@ -19,4 +19,6 @@ public:
     virtual void executeAction() const;
 };
 
+std::ostream& operator<<(std::ostream& out, const PresidentialPardonForm& p);
+
 #endif

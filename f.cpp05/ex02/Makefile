@@ -1,11 +1,11 @@
-NAME := Bereaucrat
+NAME := exercise02
 
 CXX := c++
 
 CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
 SRC_DIR := ./src
-SRC := main.cpp Bureaucrat.cpp PresidentialPardonForm.cpp RobotomyRequestForm.cpp ShrubberyCreationForm.cpp
+SRC := main.cpp AForm.cpp Bureaucrat.cpp PresidentialPardonForm.cpp RobotomyRequestForm.cpp ShrubberyCreationForm.cpp
 
 OBJ_DIR := ./obj
 OBJ := ${addprefix ${OBJ_DIR}/, ${SRC:.cpp=.o}}

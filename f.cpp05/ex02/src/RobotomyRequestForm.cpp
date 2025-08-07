@@ -55,3 +55,12 @@ void RobotomyRequestForm::executeAction(void) const
 		std::cout << "Robotomy of " << this->_target << " failed!" << std::endl;
 	}
 }
+
+std::ostream& operator<<(std::ostream& out, const RobotomyRequestForm& r)
+{
+	out << "RobotomyRequestForm: " << r.getName()
+		<< " (signed: " << (r.getSigned() ? "yes" : "no")
+		<< ", grade to sign: " << r.getGradeToSign()
+		<< ", grade to execute: " << r.getGradeToExecute() << ")";
+	return (out);
+}

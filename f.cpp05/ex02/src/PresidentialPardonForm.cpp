@@ -43,3 +43,12 @@ void PresidentialPardonForm::executeAction() const
 {
     std::cout << this->_target << " has been pardoned by Zaphod Beeblebrox." << std::endl;
 }
+
+std::ostream& operator<<(std::ostream& out, const PresidentialPardonForm& p)
+{
+	out << "PresidentialPardonForm: " << p.getName()
+		<< " (signed: " << (p.getSigned() ? "yes" : "no")
+		<< ", grade to sign: " << p.getGradeToSign()
+		<< ", grade to execute: " << p.getGradeToExecute() << ")";
+	return (out);
+}

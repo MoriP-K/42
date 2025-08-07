@@ -13,8 +13,11 @@ void testShrubberyCreationForm(void)
 	try
 	{
 		Bereaucrat gardener("Gardener", 140);
+		NL
 		Bereaucrat executor("Executor", 130);
+		NL
 		ShrubberyCreationForm shrub("home");
+		NL
 
 		std::cout << shrub << std::endl;
 		NL
@@ -26,8 +29,9 @@ void testShrubberyCreationForm(void)
 	}
 	catch(const std::exception& error)
 	{
-		std::cout << "Error: " << error.what() << std::endl;
+		std::cout << "Error: " << error.whatf() << std::endl;
 	}
+	NL
 }
 
 void testRobotomyRequestForm(void)
@@ -36,8 +40,11 @@ void testRobotomyRequestForm(void)
 	try
 	{
 		Bereaucrat doctor("Doctor", 70);
+		NL
 		Bereaucrat surgeon("Surgeon", 40);
+		NL
 		RobotomyRequestForm robotomy("Bender");
+		NL
 
 		std::cout << robotomy << std::endl;
 		NL
@@ -55,7 +62,7 @@ void testRobotomyRequestForm(void)
 	{
 		std::cout << "Error: " << error.what() << '\n';
 	}
-	
+	NL
 }
 
 void testPresidentialPardonForm(void)
@@ -64,8 +71,11 @@ void testPresidentialPardonForm(void)
 	try
 	{
 		Bereaucrat minister("Minister", 20);
+		NL
 		Bereaucrat president("President", 1);
+		NL
 		PresidentialPardonForm pardon("Arthur Dent");
+		NL
 
 		std::cout << pardon << std::endl;
 		NL
@@ -79,6 +89,7 @@ void testPresidentialPardonForm(void)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 }
 
 void testFormExecutionExceptions(void)
@@ -87,14 +98,18 @@ void testFormExecutionExceptions(void)
 	try
 	{
 		Bereaucrat lowGrade("lowGrade", 150);
+		NL
 		ShrubberyCreationForm unsignedForm("test");
+		NL
 
 		std::cout << "\n----- Unsigned form -----" << std::endl;
 		lowGrade.executeForm(unsignedForm);
 		NL
 		std::cout << "----- Insufficient grade -----" << std::endl;
 		Bereaucrat signer("signer", 140);
+		NL
 		signer.signForm(unsignedForm);
+		NL
 		lowGrade.executeForm(unsignedForm);
 		NL
 	}
@@ -102,6 +117,7 @@ void testFormExecutionExceptions(void)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 }
 
 void testPolymorphism(void)
@@ -110,16 +126,20 @@ void testPolymorphism(void)
 	try
 	{
 		Bereaucrat boss("Boss", 1);
+		NL
 		AForm* forms[] = {
 			new ShrubberyCreationForm("garden"),
 			new RobotomyRequestForm("C-3PO"),
 			new PresidentialPardonForm("Ford Perfect")
 		};
+		NL
 		for (int i = 0; i < 3; i++)
 		{
 			std::cout << "--- Processing " << forms[i]->getName() << " ---" << std::endl;
 			boss.signForm(*forms[i]);
+			NL
 			boss.executeForm(*forms[i]);
+			NL
 			std::cout << *forms[i] << std::endl;
 			NL
 		}
@@ -130,6 +150,7 @@ void testPolymorphism(void)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
 	}
+	NL
 }
 
 int main(void)

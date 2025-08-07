@@ -21,4 +21,6 @@ public:
 	virtual void executeAction(void) const;
 };
 
+std::ostream& operator<<(std::ostream& out, const RobotomyRequestForm& r);
+
 #endif
