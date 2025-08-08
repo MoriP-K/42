@@ -29,7 +29,7 @@ void testShrubberyCreationForm(void)
 	}
 	catch(const std::exception& error)
 	{
-		std::cout << "Error: " << error.whatf() << std::endl;
+		std::cout << "Error: " << error.what() << std::endl;
 	}
 	NL
 }
