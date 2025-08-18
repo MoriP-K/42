@@ -28,7 +28,7 @@ ShrubberyCreationForm::~ShrubberyCreationForm()
 
 ShrubberyCreationForm &ShrubberyCreationForm::operator=(const ShrubberyCreationForm &src)
 {
-	std::cout << std::cout << "ShrubberyCreationForm: Copy assignment operator called" << std::endl;
+	std::cout << "ShrubberyCreationForm: Copy assignment operator called" << std::endl;
 	if (this != &src)
 	{
 		AForm::operator=(src);
