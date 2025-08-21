@@ -64,10 +64,10 @@ unsigned int Form::getGradeToExecute(void) const
 	return (this->_gradeToExecute);
 }
 
-void Form::beSigned(const Bereaucrat &bereaucrat)
+void Form::beSigned(const Bureaucrat &bereaucrat)
 {
 	std::cout << "Form: " << this->_name << " is being checked signature by " << bereaucrat.getName() << std::endl;
-	std::cout << "Bereaucrat grade: " << bereaucrat.getGrade()
+	std::cout << "Bureaucrat grade: " << bereaucrat.getGrade()
 			<< ", Required grade: " << this->getGradeToSign() << std::endl;
 	if (bereaucrat.getGrade() > this->_gradeToSign)
 		throw GradeTooLowException();

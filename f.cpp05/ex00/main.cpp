@@ -1,4 +1,4 @@
-#include "Bereaucrat.hpp"
+#include "Bureaucrat.hpp"
 
 #define NL std::cout << std::endl;
 
@@ -7,7 +7,7 @@ void testValid()
 	std::cout << "\n===== Valid Test =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 75);
+		Bureaucrat admin("admin", 75);
 		NL
 		std::cout << "Name: " << admin.getName() << std::endl;
 		NL
@@ -34,7 +34,7 @@ void testConstructorException()
 	std::cout << "\n===== Constructor Exception =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 0);
+		Bureaucrat admin("admin", 0);
 		NL
 	}
 	catch (const std::exception& error)
@@ -44,7 +44,7 @@ void testConstructorException()
 	NL
 	try
 	{
-		Bereaucrat admin("admin", 151);
+		Bureaucrat admin("admin", 151);
 		NL
 	}
 	catch (const std::exception& error)
@@ -59,7 +59,7 @@ void testGradeException()
 	std::cout << "\n===== Grade Exception =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 1);
+		Bureaucrat admin("admin", 1);
 		NL
 		std::cout << admin << std::endl;
 		NL
@@ -73,7 +73,7 @@ void testGradeException()
 	NL
 	try
 	{
-		Bereaucrat admin("admin", 150);
+		Bureaucrat admin("admin", 150);
 		NL
 		std::cout << admin << std::endl;
 		NL
@@ -92,19 +92,19 @@ void testOrthodoxCanonicalForm()
 	std::cout << "\n===== Orthodox Canonical Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat def;
+		Bureaucrat def;
 		NL
 		std::cout << def << std::endl;
 		NL
-		Bereaucrat original("Original", 40);
+		Bureaucrat original("Original", 40);
 		NL
-		Bereaucrat copy(original);
+		Bureaucrat copy(original);
 		NL
 		std::cout << "Original: " << original << std::endl;
 		NL
 		std::cout << "Copy: " << copy << std::endl;
 		NL
-		Bereaucrat assigned("Tmp", 30);
+		Bureaucrat assigned("Tmp", 30);
 		assigned = original;
 		NL
 		std::cout << "Assigned: " << assigned << std::endl;

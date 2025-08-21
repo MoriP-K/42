@@ -69,10 +69,10 @@ unsigned int AForm::getGradeToExecute(void) const
 	return (this->_gradeToExecute);
 }
 
-void AForm::beSigned(const Bereaucrat &bereaucrat)
+void AForm::beSigned(const Bureaucrat &bereaucrat)
 {
 	std::cout << "AForm: " << this->_name << " is being checked signature by " << bereaucrat.getName() << std::endl;
-	std::cout << "Bereaucrat grade: " << bereaucrat.getGrade()
+	std::cout << "Bureaucrat grade: " << bereaucrat.getGrade()
 			<< ", Required grade: " << this->getGradeToSign() << std::endl;
 	if (bereaucrat.getGrade() > this->_gradeToSign)
 		throw GradeTooLowException();
@@ -85,7 +85,7 @@ void AForm::beSigned(const Bereaucrat &bereaucrat)
 	std::cout << "AForm: " << this->_name << " has been signed by " << bereaucrat.getName() << std::endl;
 }
 
-void AForm::execute(Bereaucrat const & executor) const
+void AForm::execute(Bureaucrat const & executor) const
 {
 	if (!this->_isSigned)
 		throw FormNotSignedException();

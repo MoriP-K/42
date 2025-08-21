@@ -25,10 +25,11 @@ ${OBJ_DIR}:
 	mkdir -p ${OBJ_DIR}
 
 clean:
-	${RM} -f ${OBJ}
+	${RM} -r ${OBJ_DIR}
 
 fclean: clean
-	${RM} -f ${NAME}
+	${RM} ${NAME}
+	${RM} *_shrubbery
 
 re: fclean all
 

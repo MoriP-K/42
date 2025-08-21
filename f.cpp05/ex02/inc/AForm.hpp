@@ -4,9 +4,9 @@
 #include <string>
 #include <iostream>
 #include <exception>
-#include "Bereaucrat.hpp"
+#include "Bureaucrat.hpp"
 
-class Bereaucrat;
+class Bureaucrat;
 
 class AForm
 {
@@ -31,8 +31,8 @@ public:
 	unsigned int getGradeToSign(void) const;
 	unsigned int getGradeToExecute(void) const;
 
-	void beSigned(const Bereaucrat &bereaucrat);
-	void execute(Bereaucrat const & executor) const;
+	void beSigned(const Bureaucrat &bereaucrat);
+	void execute(Bureaucrat const & executor) const;
 
 	virtual void executeAction(void) const = 0;
 

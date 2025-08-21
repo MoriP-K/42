@@ -1,40 +1,40 @@
-#include "Bereaucrat.hpp"
+#include "Bureaucrat.hpp"
 
-const char* Bereaucrat::GradeTooHighException::what(void) const throw()
+const char* Bureaucrat::GradeTooHighException::what(void) const throw()
 {
-	return "Bereaucrat: Grade is too high!";
+	return "Bureaucrat: Grade is too high!";
 }
 
-const char* Bereaucrat::GradeTooLowException::what(void) const throw()
+const char* Bureaucrat::GradeTooLowException::what(void) const throw()
 {
-	return "Bereaucrat: Grade is too low!";
+	return "Bureaucrat: Grade is too low!";
 }
 
-Bereaucrat::Bereaucrat(): _name("DefaultBereaucrat"), _grade(150)
+Bureaucrat::Bureaucrat(): _name("DefaultBureaucrat"), _grade(150)
 {
-	std::cout << "Bereaucrat: Default Constructor called" << std::endl;
+	std::cout << "Bureaucrat: Default Constructor called" << std::endl;
 }
 
-Bereaucrat::Bereaucrat(std::string name, unsigned int grade): _name(name)
+Bureaucrat::Bureaucrat(std::string name, unsigned int grade): _name(name)
 {
-	std::cout << "Bereaucrat: Constructor for " << name <<" called" << std::endl;
+	std::cout << "Bureaucrat: Constructor for " << name <<" called" << std::endl;
 	validateGrade(grade);
 	this->_grade = grade;
 }
 
-Bereaucrat::Bereaucrat(const Bereaucrat& copy): _name(copy._name), _grade(copy._grade)
+Bureaucrat::Bureaucrat(const Bureaucrat& copy): _name(copy._name), _grade(copy._grade)
 {
-	std::cout << "Bereaucrat: Copy Constructor called" << std::endl;
+	std::cout << "Bureaucrat: Copy Constructor called" << std::endl;
 }
 
-Bereaucrat::~Bereaucrat()
+Bureaucrat::~Bureaucrat()
 {
-	std::cout << "Bereaucrat: Destructor for " << this->_name << " called" << std::endl;
+	std::cout << "Bureaucrat: Destructor for " << this->_name << " called" << std::endl;
 }
 
-Bereaucrat &Bereaucrat::operator=(const Bereaucrat &src)
+Bureaucrat &Bureaucrat::operator=(const Bureaucrat &src)
 {
-	std::cout << "Bereaucrat: Copy Assignment operator called" << std::endl;
+	std::cout << "Bureaucrat: Copy Assignment operator called" << std::endl;
 	if (this != &src)
 	{
 		this->_grade = src._grade;
@@ -42,17 +42,17 @@ Bereaucrat &Bereaucrat::operator=(const Bereaucrat &src)
 	return (*this);
 }
 
-std::string const &Bereaucrat::getName(void) const
+std::string const &Bureaucrat::getName(void) const
 {
 	return (this->_name);
 }
 
-unsigned int Bereaucrat::getGrade(void) const
+unsigned int Bureaucrat::getGrade(void) const
 {
 	return (this->_grade);
 }
 
-void Bereaucrat::upGrade(void)
+void Bureaucrat::upGrade(void)
 {
 	std::cout << "Trying to upgrade..." << std::endl;
 	if (this->_grade <= HIGHEST_GRADE)
@@ -60,7 +60,7 @@ void Bereaucrat::upGrade(void)
 	this->_grade--;
 }
 
-void Bereaucrat::downGrade(void)
+void Bureaucrat::downGrade(void)
 {
 	std::cout << "Trying to downgrade..." << std::endl;
 	if (this->_grade >= LOWEST_GRADE)
@@ -68,7 +68,7 @@ void Bereaucrat::downGrade(void)
 	this->_grade++;
 }
 
-void Bereaucrat::signForm(Form &form)
+void Bureaucrat::signForm(Form &form)
 {
 	try
 	{
@@ -82,7 +82,7 @@ void Bereaucrat::signForm(Form &form)
 	}
 }
 
-void Bereaucrat::validateGrade(unsigned int grade) const
+void Bureaucrat::validateGrade(unsigned int grade) const
 {
 	if (grade < HIGHEST_GRADE)
 		throw GradeTooHighException();
@@ -90,7 +90,7 @@ void Bereaucrat::validateGrade(unsigned int grade) const
 		throw GradeTooLowException();
 }
 
-std::ostream& operator<<(std::ostream& out, const Bereaucrat& bereaucrat)
+std::ostream& operator<<(std::ostream& out, const Bureaucrat& bereaucrat)
 {
 	out << bereaucrat.getName() << ", bereaucrat grade " << bereaucrat.getGrade();
 	return out;

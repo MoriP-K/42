@@ -1,4 +1,4 @@
-#include "../inc/Bereaucrat.hpp"
+#include "../inc/Bureaucrat.hpp"
 #include "../inc/PresidentialPardonForm.hpp"
 #include "../inc/RobotomyRequestForm.hpp"
 #include "../inc/ShrubberyCreationForm.hpp"
@@ -12,9 +12,9 @@ void testShrubberyCreationForm(void)
 	std::cout << "\n===== Shrubbery Creation Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat gardener("Gardener", 140);
+		Bureaucrat gardener("Gardener", 140);
 		NL
-		Bereaucrat executor("Executor", 130);
+		Bureaucrat executor("Executor", 130);
 		NL
 		ShrubberyCreationForm shrub("home");
 		NL
@@ -39,9 +39,9 @@ void testRobotomyRequestForm(void)
 	std::cout << "\n===== Robotomy Request Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat doctor("Doctor", 70);
+		Bureaucrat doctor("Doctor", 70);
 		NL
-		Bereaucrat surgeon("Surgeon", 40);
+		Bureaucrat surgeon("Surgeon", 40);
 		NL
 		RobotomyRequestForm robotomy("Bender");
 		NL
@@ -70,9 +70,9 @@ void testPresidentialPardonForm(void)
 	std::cout << "\n===== Presidential Pardon Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat minister("Minister", 20);
+		Bureaucrat minister("Minister", 20);
 		NL
-		Bereaucrat president("President", 1);
+		Bureaucrat president("President", 1);
 		NL
 		PresidentialPardonForm pardon("Arthur Dent");
 		NL
@@ -97,7 +97,7 @@ void testFormExecutionExceptions(void)
 	std::cout << "\n===== Form Execution Exception Test ====" << std::endl;
 	try
 	{
-		Bereaucrat lowGrade("lowGrade", 150);
+		Bureaucrat lowGrade("lowGrade", 150);
 		NL
 		ShrubberyCreationForm unsignedForm("test");
 		NL
@@ -106,7 +106,7 @@ void testFormExecutionExceptions(void)
 		lowGrade.executeForm(unsignedForm);
 		NL
 		std::cout << "----- Insufficient grade -----" << std::endl;
-		Bereaucrat signer("signer", 140);
+		Bureaucrat signer("signer", 140);
 		NL
 		signer.signForm(unsignedForm);
 		NL
@@ -125,7 +125,7 @@ void testPolymorphism(void)
 	std::cout << "\n===== Polymorphism Test =====" << std::endl;
 	try
 	{
-		Bereaucrat boss("Boss", 1);
+		Bureaucrat boss("Boss", 1);
 		NL
 		AForm* forms[] = {
 			new ShrubberyCreationForm("garden"),

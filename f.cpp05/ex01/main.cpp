@@ -1,4 +1,4 @@
-#include "Bereaucrat.hpp"
+#include "Bureaucrat.hpp"
 #include "Form.hpp"
 
 #define NL std::cout << std::endl;
@@ -8,7 +8,7 @@ void testValid()
 	std::cout << "\n===== Valid Test =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 75);
+		Bureaucrat admin("admin", 75);
 		NL
 		std::cout << "Name: " << admin.getName() << std::endl;
 		NL
@@ -23,8 +23,8 @@ void testValid()
 		std::cout << "After downGrade:\n" << admin << std::endl;
 		NL
 		std::cout << "<----- Form ----->" << std::endl;
-		Bereaucrat lowest;
-		Bereaucrat highest("highest", 1);
+		Bureaucrat lowest;
+		Bureaucrat highest("highest", 1);
 		Form middle("middle", 75, 75);
 		NL
 		std::cout << "Name: " << middle.getName() << std::endl;
@@ -53,12 +53,12 @@ void testValid()
 	NL
 }
 
-void testBereaucratConstructorException()
+void testBureaucratConstructorException()
 {
-	std::cout << "\n===== Bereaucrat Constructor Exception Test =====" << std::endl;
+	std::cout << "\n===== Bureaucrat Constructor Exception Test =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 0);
+		Bureaucrat admin("admin", 0);
 		NL
 	}
 	catch (const std::exception& error)
@@ -68,7 +68,7 @@ void testBereaucratConstructorException()
 	NL
 	try
 	{
-		Bereaucrat admin("admin", 151);
+		Bureaucrat admin("admin", 151);
 		NL
 	}
 	catch (const std::exception& error)
@@ -125,7 +125,7 @@ void testGradeException()
 	std::cout << "\n===== Grade Exception Test =====" << std::endl;
 	try
 	{
-		Bereaucrat admin("admin", 1);
+		Bureaucrat admin("admin", 1);
 		NL
 		std::cout << admin << std::endl;
 		NL
@@ -139,7 +139,7 @@ void testGradeException()
 	NL
 	try
 	{
-		Bereaucrat admin("admin", 150);
+		Bureaucrat admin("admin", 150);
 		NL
 		std::cout << admin << std::endl;
 		NL
@@ -158,7 +158,7 @@ void testFormSigningException()
 	std::cout << "\n===== Form Signing Exception Test =====" << std::endl;
 	try
 	{
-		Bereaucrat lowGrade("LowGrade", 100);
+		Bureaucrat lowGrade("LowGrade", 100);
 		NL
 		Form restrictedForm("Restricted", 25, 10);
 
@@ -175,24 +175,24 @@ void testFormSigningException()
 	NL
 }
 
-void testBereaucratOrthodoxCanonicalForm()
+void testBureaucratOrthodoxCanonicalForm()
 {
-	std::cout << "\n===== Bereaucrat Orthodox Canonical Form Test =====" << std::endl;
+	std::cout << "\n===== Bureaucrat Orthodox Canonical Form Test =====" << std::endl;
 	try
 	{
-		Bereaucrat lowest;
+		Bureaucrat lowest;
 		NL
 		std::cout << lowest << std::endl;
 		NL
-		Bereaucrat original("Original", 40);
+		Bureaucrat original("Original", 40);
 		NL
-		Bereaucrat copy(original);
+		Bureaucrat copy(original);
 		NL
 		std::cout << "Original: " << original << std::endl;
 		NL
 		std::cout << "Copy: " << copy << std::endl;
 		NL
-		Bereaucrat assigned("Tmp", 30);
+		Bureaucrat assigned("Tmp", 30);
 		assigned = original;
 		NL
 		std::cout << "Assigned: " << assigned << std::endl;
@@ -231,7 +231,7 @@ void testFormOrthodoxCanonicalForm()
 		assigned = original;
 		std::cout << "Assigned: " << assigned << std::endl;
 		NL
-		Bereaucrat signer("Signer", 50);
+		Bureaucrat signer("Signer", 50);
 		NL
 		signer.signForm(original);
 		NL
@@ -251,11 +251,11 @@ void testFormOrthodoxCanonicalForm()
 int main(void)
 {
 	testValid();
-	testBereaucratConstructorException();
+	testBureaucratConstructorException();
 	testFormConstructorException();
 	testGradeException();
 	testFormSigningException();
-	testBereaucratOrthodoxCanonicalForm();
+	testBureaucratOrthodoxCanonicalForm();
 	testFormOrthodoxCanonicalForm();
 	return (0);
 }

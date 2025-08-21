@@ -63,7 +63,6 @@ void ShrubberyCreationForm::executeAction(void) const
 	std::cout << "ShrubberyCreationForm: ASCII trees written to " << filename << std::endl;
 }
 
-
 std::ostream& operator<<(std::ostream& out, const ShrubberyCreationForm& s)
 {
 	out << "ShrubberyCreationForm: " << s.getName()
