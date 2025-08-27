@@ -1,17 +1,17 @@
-NAME := ex02
+NAME := ex03
 
 CXX := c++
 
 CPPFLAGS := -Wextra -Werror -Wall -std=c++98 -pedantic -g
 
 SRC_DIR := ./src
-SRC := main.cpp AForm.cpp Bureaucrat.cpp PresidentialPardonForm.cpp RobotomyRequestForm.cpp ShrubberyCreationForm.cpp
+SRC := main.cpp AForm.cpp Bureaucrat.cpp PresidentialPardonForm.cpp RobotomyRequestForm.cpp ShrubberyCreationForm.cpp Intern.cpp
 
 OBJ_DIR := ./obj
 OBJ := ${addprefix ${OBJ_DIR}/, ${SRC:.cpp=.o}}
 
 HEADER_DIR := ./inc
-HEADER := Bureaucrat.hpp AForm.hpp p PresidentialPardonForm.hpp RobotomyRequestForm.hpp ShrubberyCreationForm.hpp
+HEADER := Bureaucrat.hpp AForm.hpp p PresidentialPardonForm.hpp RobotomyRequestForm.hpp ShrubberyCreationForm.hpp Intern.hpp
 
 all: ${NAME}
 

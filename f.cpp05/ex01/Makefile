@@ -1,4 +1,4 @@
-NAME := exercise01
+NAME := ex01
 
 CXX := c++
 
