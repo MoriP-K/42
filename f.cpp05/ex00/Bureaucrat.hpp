@@ -7,11 +7,11 @@
 
 class Bureaucrat
 {
-  private:
+private:
 	const std::string _name;
 	unsigned int _grade;
 
-  public:
+public:
 	class GradeTooHighException : public std::exception
 	{
 		public:
@@ -40,7 +40,7 @@ class Bureaucrat
 	void upGrade(void);
 	void downGrade(void);
 
-  private:
+private:
 	void validateGrade(unsigned int grade) const;
 };
 
