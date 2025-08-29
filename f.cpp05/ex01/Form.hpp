@@ -10,13 +10,13 @@ class	Bureaucrat;
 
 class Form
 {
-  private:
+private:
 	const std::string _name;
 	bool _isSigned;
 	const unsigned int _gradeToSign;
 	const unsigned int _gradeToExecute;
 
-  public:
+public:
 	class GradeTooHighException : public std::exception
 	{
 		public:
@@ -47,7 +47,7 @@ class Form
 
 	void beSigned(const Bureaucrat &bereaucrat);
 
-  private:
+private:
 	void validateGrade(unsigned int grade) const;
 };
 

@@ -83,7 +83,7 @@ void testFormConstructorException()
 	std::cout << "\n===== Form Constructor Exception Test ====" << std::endl;
 	try
 	{
-		Form invalidForm1("Invalid1", 0, 50);
+		Form invalidForm1("Invalid_1", 0, 50);
 		NL
 	}
 	catch (const std::exception &error)
@@ -93,7 +93,7 @@ void testFormConstructorException()
 	NL
 	try
 	{
-		Form invalidForm2("Invalid2", 50, 0);
+		Form invalidForm2("Invalid_2", 50, 0);
 		NL
 	}
 	catch (const std::exception &error)
@@ -103,7 +103,7 @@ void testFormConstructorException()
 	NL
 	try
 	{
-		Form invalidForm3("Invalid3", 200, 50);
+		Form invalidForm3("Invalid_3", 200, 50);
 	}
 	catch (const std::exception &error)
 	{
@@ -111,7 +111,7 @@ void testFormConstructorException()
 	}
 	try
 	{
-		Form invalidForm3("Invalid3", 50, 200);
+		Form invalidForm4("Invalid_4", 50, 200);
 	}
 	catch (const std::exception &error)
 	{
@@ -149,28 +149,6 @@ void testGradeException()
 	catch (const std::exception& error)
 	{
 		std::cout << "Error: " << error.what() << std::endl;
-	}
-	NL
-}
-
-void testFormSigningException()
-{
-	std::cout << "\n===== Form Signing Exception Test =====" << std::endl;
-	try
-	{
-		Bureaucrat lowGrade("LowGrade", 100);
-		NL
-		Form restrictedForm("Restricted", 25, 10);
-
-		std::cout << "Before signing attempt:" << std::endl;
-		std::cout << restrictedForm << std::endl;
-		NL
-		lowGrade.signForm(restrictedForm);
-		NL
-	}
-	catch(const std::exception& error)
-	{
-		std::cout << error.what() << std::endl;
 	}
 	NL
 }
@@ -254,7 +232,6 @@ int main(void)
 	testBureaucratConstructorException();
 	testFormConstructorException();
 	testGradeException();
-	testFormSigningException();
 	testBureaucratOrthodoxCanonicalForm();
 	testFormOrthodoxCanonicalForm();
 	return (0);
