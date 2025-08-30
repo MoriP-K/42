@@ -5,8 +5,6 @@
 
 #define NL std::cout << std::endl;
 
-// ADD: << operator implementation to all classes
-
 void testShrubberyCreationForm(void)
 {
 	std::cout << "\n===== Shrubbery Creation Form Test =====" << std::endl;
