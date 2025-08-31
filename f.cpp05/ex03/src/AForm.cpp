@@ -2,12 +2,12 @@
 
 const char* AForm::GradeTooHighException::what(void) const throw()
 {
-	return "AForm: Grade is too high!";
+	return "Bureaucrat's grade is too high!";
 }
 
 const char* AForm::GradeTooLowException::what(void) const throw()
 {
-	return "AForm: Grade is too low!";
+	return "Bureaucrat's grade is too low!";
 }
 
 const char* AForm::FormNotSignedException::what(void) const throw()
