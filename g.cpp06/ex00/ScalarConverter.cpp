@@ -30,9 +30,32 @@ void ScalarConverter::convert(std::string &literal)
 	printDouble(literal);
 }
 
+void ScalarConverter::printChar(std::string &literal)
+{
+	if (literal.length() == 1 && 33 <= literal[0] && literal[0] <= 126)
+	{
+		std::cout << "char: " << literal.c_str() << std::endl;
+		return ;
+	}
+	else if (literal[0] == '\'')
+	{
+		if (33 <= literal[1] && literal[1] <= 126)
+		{
+			if (literal[2] == '\'' && literal.length() == 3)
+			{
+				std::cout << "char: " << literal[1] << std::endl;
+			}
+			return ;
+		}
+	}
+	else
+		std::cout << "Non displayble" << std::endl;
+}
+
 void ScalarConverter::printInt(std::string &literal)
 {
-	std::cout << "int: " << literal << std::endl;
+	std::string  = literal.stoi();
+	std::cout << "int: " << num << std::endl;
 }
 
 void ScalarConverter::printFloat(std::string &literal)
@@ -43,20 +66,4 @@ void ScalarConverter::printFloat(std::string &literal)
 void ScalarConverter::printDouble(std::string &literal)
 {
 	std::cout << "double: " << literal << std::endl;
-}
-
-void ScalarConverter::printChar(std::string &literal)
-{
-	if (literal[0] == '\'')
-	{
-		if (33 <= literal[1] && literal[1] <= 126)
-		{
-			if (literal[2] == '\'')
-			{
-				std::cout << "char: " << literal.c_str() << std::endl;
-			}
-			return ;
-		}
-	}
-	std::cout << "Non displayble" << std::endl;
 }
