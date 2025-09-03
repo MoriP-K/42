@@ -32,30 +32,37 @@ void ScalarConverter::convert(std::string &literal)
 
 void ScalarConverter::printChar(std::string &literal)
 {
-	if (literal.length() == 1 && 33 <= literal[0] && literal[0] <= 126)
+	char c = stoi(literal);
+
+	std::cout << "char: ";
+	if (0 <= c && c <= 127)
 	{
-		std::cout << "char: " << literal.c_str() << std::endl;
-		return ;
-	}
-	else if (literal[0] == '\'')
-	{
-		if (33 <= literal[1] && literal[1] <= 126)
+		if (33 <= c && c <= 126)
 		{
-			if (literal[2] == '\'' && literal.length() == 3)
-			{
-				std::cout << "char: " << literal[1] << std::endl;
-			}
+			std::cout << "\'" << c << "\'" << std::endl;
+			return ;
+		}
+		else
+		{
+			std::cout << "Non displayble" << std::endl;
 			return ;
 		}
 	}
 	else
-		std::cout << "Non displayble" << std::endl;
+		std::cout << "impossible" << std::endl;
 }
 
 void ScalarConverter::printInt(std::string &literal)
 {
-	std::string  = literal.stoi();
-	std::cout << "int: " << num << std::endl;
+	long num = stol(literal);
+
+	std::cout << "int: ";
+	if (num < INT32_MIN || INT32_MAX < num)
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	std::cout << num << std::endl;
 }
 
 void ScalarConverter::printFloat(std::string &literal)
