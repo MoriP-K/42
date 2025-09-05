@@ -6,7 +6,7 @@ ScalarConverter::ScalarConverter()
 
 ScalarConverter::ScalarConverter(std::string &copy)
 {
-
+	(void)copy;
 }
 
 ScalarConverter::~ScalarConverter()
@@ -32,45 +32,171 @@ void ScalarConverter::convert(std::string &literal)
 
 void ScalarConverter::printChar(std::string &literal)
 {
-	char c = stoi(literal);
-
 	std::cout << "char: ";
-	if (0 <= c && c <= 127)
-	{
-		if (33 <= c && c <= 126)
-		{
-			std::cout << "\'" << c << "\'" << std::endl;
-			return ;
-		}
-		else
-		{
-			std::cout << "Non displayble" << std::endl;
-			return ;
-		}
-	}
-	else
-		std::cout << "impossible" << std::endl;
-}
 
-void ScalarConverter::printInt(std::string &literal)
-{
-	long num = stol(literal);
-
-	std::cout << "int: ";
-	if (num < INT32_MIN || INT32_MAX < num)
+	if (literal == "nan" || literal == "nanf" ||
+		literal == "inf" || literal == "+inf" || literal == "-inf" ||
+		literal == "inff" || literal == "+inff" || literal == "-inff")
 	{
 		std::cout << "impossible" << std::endl;
 		return ;
 	}
-	std::cout << num << std::endl;
+	if (literal.length() == 1 && !isdigit(literal[0]))
+	{
+		char c = literal[0];
+		if (33 <= c && c <= 126)
+			std::cout << "'" << c << "'" << std::endl;
+		else
+			std::cout << "Non displayble" << std::endl;
+		return ;
+	}
+	char *endptr;
+	double d = strtod(literal.c_str(), &endptr);
+	if (*endptr != '\0' && !(*endptr == 'f' && *(endptr + 1) == '\0'))
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	long num = static_cast<long>(d);
+	if (num < 0 || num > 127)
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	if (32 <= num && num <= 126)
+		std::cout << "'" << static_cast<char>(num) << "'" << std::endl;
+	else
+		std::cout << "Non displayble" << std::endl;
+}
+
+void ScalarConverter::printInt(std::string &literal)
+{
+	std::cout << "int: ";
+	if (literal == "nan" || literal == "nanf" ||
+		literal == "inf" || literal == "+inf" || literal == "-inf" ||
+		literal == "inff" || literal == "+inff" || literal == "-inff")
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	if (literal.length() == 1 && !isdigit(literal[0]))
+	{
+		char c = literal[0];
+		if (32 <= c && c <= 126)
+			std::cout << static_cast<int>(c) << std::endl;
+		else
+			std::cout << "impossible" << std::endl;
+		return ;
+	}
+	char *endptr;
+	double d = strtod(literal.c_str(), &endptr);
+	if (*endptr != '\0' && !(*endptr == 'f' && *(endptr + 1) == '\0'))
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	if (d < INT_MIN || INT_MAX < d)
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	std::cout << static_cast<int>(d) << std::endl;
 }
 
 void ScalarConverter::printFloat(std::string &literal)
 {
-	std::cout << "float: " << literal << std::endl;
+	std::cout << "float: ";
+	std::string f_str = literal;
+	if (literal == "nanf")
+	{
+		std::cout << "nanf" << std::endl;
+		return ;
+	}
+	if (literal == "+inff" || literal == "inff")
+	{
+		std::cout << "+inff" << std::endl;
+		return ;
+	}
+	if (literal == "-inff")
+	{
+		std::cout << "-inff" << std::endl;
+		return ;
+	}
+	if (literal == "nan")
+	{
+		std::cout << "nanf" << std::endl;
+		return ;
+	}
+	if (literal == "+inf" || literal == "inf")
+	{
+		std::cout << "+inff" << std::endl;
+		return ;
+	}
+	if (literal == "-inf")
+	{
+		std::cout << "-inff" << std::endl;
+		return ;
+	}
+	if (literal.length() == 1 && !isdigit(literal[0]))
+	{
+		char c = literal[0];
+		if (32 <= c && c <= 126)
+			std::cout << static_cast<float>(c) << ".0f" << std::endl;
+		else
+			std::cout << "impossible" << std::endl;
+		return ;
+	}
+	char *endptr;
+	double d = strtod(literal.c_str(), &endptr);
+	if (*endptr != '\0' && !(*endptr == 'f' && *(endptr + 1) == '\0'))
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	float f = static_cast<float>(d);
+	if (f == static_cast<int>(f)) // 整数なら.0fをつける
+		std::cout << f << ".0f" << std::endl;
+	else
+		std::cout << f << "f" << std::endl;
 }
 
 void ScalarConverter::printDouble(std::string &literal)
 {
-	std::cout << "double: " << literal << std::endl;
+	std::cout << "double: ";
+	if (literal == "nan" || literal == "nanf")
+	{
+		std::cout << "nan" << std::endl;
+		return ;
+	}
+	if (literal == "+inf" || literal == "inf" ||
+		literal == "+inff" || literal == "inff")
+	{
+		std::cout << "+inf" << std::endl;
+		return ;
+	}
+	if (literal == "-inf" || literal == "-inff")
+	{
+		std::cout << "-inf" << std::endl;
+		return ;
+	}
+	if (literal.length() == 1 && !isdigit(literal[0]))
+	{
+		char c = literal[0];
+		if (32 <= c && c <=126)
+			std::cout << static_cast<double>(c) << ".0" << std::endl;
+		else
+			std::cout << "impossible" << std::endl;
+		return ;
+	}
+	char *endptr;
+	double d = strtod(literal.c_str(), &endptr);
+	if (*endptr != '\0' && !(*endptr == 'f' && *(endptr + 1) == '\0'))
+	{
+		std::cout << "impossible" << std::endl;
+		return ;
+	}
+	if (d == static_cast<int>(d)) // 整数なら.0をつける
+		std::cout << d << ".0f" << std::endl;
+	else
+		std::cout << d << std::endl;
 }

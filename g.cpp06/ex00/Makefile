@@ -1,8 +1,8 @@
 NAME := ex00
 
-CCX := c++
+CXX := c++
 
-CPPFLAG := -Wall -Wextra -Werror -std=c++98 -pedantic -g
+CXXFLAGS := -std=c++98 -pedantic -Wall -Wextra -Werror -g
 
 SRC := main.cpp ScalarConverter.cpp
 
@@ -11,7 +11,10 @@ OBJ := $(SRC:.cpp=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CXX) $(CPPFLAG) $(OBJ) -o $(NAME)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	$(RM) -f $(OBJ)
