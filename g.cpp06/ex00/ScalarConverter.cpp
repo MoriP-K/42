@@ -196,7 +196,7 @@ void ScalarConverter::printDouble(std::string &literal)
 		return ;
 	}
 	if (d == static_cast<int>(d)) // 整数なら.0をつける
-		std::cout << d << ".0f" << std::endl;
+		std::cout << d << ".0" << std::endl;
 	else
 		std::cout << d << std::endl;
 }
