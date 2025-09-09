@@ -4,9 +4,11 @@ CXX := c++
 
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic -g
 
-SRC := main.cpp Serialize.cpp
+SRC := main.cpp Serializer.cpp
 
 OBJ := $(SRC:.cpp=.o)
+
+all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
@@ -15,10 +17,10 @@ $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	$(RM) -f $(OBJ)
+	$(RM) -r $(OBJ)
 
 fclean: clean
-	$(RM) -f $(NAME)
+	$(RM) -r $(NAME)
 
 re: fclean all
 

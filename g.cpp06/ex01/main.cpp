@@ -1,18 +1,20 @@
-#include "Serialize.hpp"
+#include "Serializer.hpp"
 #include "Data.hpp"
 
-int main(void)
+int	main(void)
 {
 	Data *data = new Data;
-
 	data->id = 42;
 	data->name = "kmoriyam";
 
-	uintptr_t raw = Serialize::serialize(data);
-	Data *serialized = Serialize::deserialize(raw);
+	uintptr_t raw = Serializer::serialize(data);
+	Data *serialized = Serializer::deserialize(raw);
 
-	std::cout << serialized->id << std::endl;
-	std::cout << serialized->name << std::endl;
+	std::cout << "Original:     " << data << std::endl;
+	std::cout << "Deserialized: " << serialized << std::endl;
+	std::cout << "Are equal:    " << (data == serialized ? "YES" : "NO") << std::endl;
 
-	delete data;
+	std::cout << "ID:   " << serialized->id << std::endl;
+	std::cout << "NAME: " << serialized->name << std::endl;
+	delete		data;
 }
