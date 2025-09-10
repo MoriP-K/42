@@ -11,17 +11,15 @@ class ScalarConverter
 {
 private:
 	ScalarConverter();
-
-public:
 	~ScalarConverter();
 	ScalarConverter(std::string &copy);
 	ScalarConverter &operator=(ScalarConverter& src);
-
-	static void convert(std::string &literal);
-	static void printChar(std::string &literal);
-	static void printInt(std::string &literal);
-	static void printFloat(std::string &literal);
-	static void printDouble(std::string &literal);
 };
+
+void convert(std::string &literal);
+void printChar(std::string &literal);
+void printInt(std::string &literal);
+void printFloat(std::string &literal);
+void printDouble(std::string &literal);
 
 #endif
