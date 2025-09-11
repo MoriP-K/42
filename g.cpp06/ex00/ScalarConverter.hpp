@@ -14,12 +14,13 @@ private:
 	~ScalarConverter();
 	ScalarConverter(std::string &copy);
 	ScalarConverter &operator=(ScalarConverter& src);
-	static void printChar(const std::string &literal);
-	static void printInt(const std::string &literal);
-	static void printFloat(const std::string &literal);
-	static void printDouble(const std::string &literal);
-public:
+
+	public:
 	static void convert(const std::string &literal);
 };
 
+void printChar(const std::string &literal);
+void printInt(const std::string &literal);
+void printFloat(const std::string &literal);
+void printDouble(const std::string &literal);
 #endif

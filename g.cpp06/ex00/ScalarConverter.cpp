@@ -29,7 +29,7 @@ void ScalarConverter::convert(const std::string &literal)
 	printDouble(literal);
 }
 
-void ScalarConverter::printChar(const std::string &literal)
+void printChar(const std::string &literal)
 {
 	std::cout << "char: ";
 
@@ -68,7 +68,7 @@ void ScalarConverter::printChar(const std::string &literal)
 		std::cout << "Non displayble" << std::endl;
 }
 
-void ScalarConverter::printInt(const std::string &literal)
+void printInt(const std::string &literal)
 {
 	std::cout << "int: ";
 	if (literal == "nan" || literal == "nanf" ||
@@ -102,7 +102,7 @@ void ScalarConverter::printInt(const std::string &literal)
 	std::cout << static_cast<int>(d) << std::endl;
 }
 
-void ScalarConverter::printFloat(const std::string &literal)
+void printFloat(const std::string &literal)
 {
 	std::cout << "float: ";
 	if (literal == "nanf")
@@ -158,7 +158,7 @@ void ScalarConverter::printFloat(const std::string &literal)
 		std::cout << f << "f" << std::endl;
 }
 
-void ScalarConverter::printDouble(const std::string &literal)
+void printDouble(const std::string &literal)
 {
 	std::cout << "double: ";
 	if (literal == "nan" || literal == "nanf")
