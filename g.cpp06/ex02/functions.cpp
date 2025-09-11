@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <exception>
-#include <typeinfo>
 #include "Base.hpp"
 #include "A.hpp"
 #include "B.hpp"
@@ -59,7 +58,7 @@ void identify(Base& p)
 		std::cout << "A" << std::endl;
 		return ;
 	}
-	catch(const std::bad_cast& e)
+	catch(const std::exception& e)
 	{
 	}
 
@@ -70,7 +69,7 @@ void identify(Base& p)
 		std::cout << "B" << std::endl;
 		return ;
 	}
-	catch(const std::bad_cast& e)
+	catch(const std::exception& e)
 	{
 	}
 
@@ -81,7 +80,7 @@ void identify(Base& p)
 		std::cout << "C" << std::endl;
 		return ;
 	}
-	catch(const std::bad_cast& e)
+	catch(const std::exception& e)
 	{
 	}
 
