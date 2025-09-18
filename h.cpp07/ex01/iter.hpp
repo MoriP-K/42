@@ -1,22 +1,13 @@
 #ifndef ITER_HPP
 #define ITER_HPP
 
-class iter
-{
-private:
-	
-public:
-	iter();
-	~iter();
-};
+#include <iostream>
 
-iter::iter()
+template<typename T_array, typename T_function>
+void iter(T_array *array, size_t length, T_function function)
 {
+	for (size_t i = 0; i < length; i++)
+		function(array[i]);
 }
-
-iter::~iter()
-{
-}
-
 
 #endif
