@@ -1,6 +1,6 @@
 NAME := ex01
 
-CPP := c++
+CXX := c++
 
 CPPFLAGS := -Wextra -Wall -Werror -std=c++98 -pedantic
 
@@ -15,8 +15,6 @@ ${NAME}: ${OBJ}
 
 %.o: %.cpp
 	${CPP} ${CPPFLAGS} -c $< -o $@
-	@echo "Target[\$$@]: $@"
-	@echo "Dependency[$$<]: $<"
 
 clean:
 	${RM} -f ${OBJ}
