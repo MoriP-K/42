@@ -2,7 +2,7 @@ NAME := ex01
 
 CXX := c++
 
-CPPFLAGS := -Wextra -Wall -Werror -std=c++98 -pedantic
+CXXFLAGS := -Wextra -Wall -Werror -std=c++98 -pedantic
 
 SRC := main.cpp
 
@@ -11,10 +11,10 @@ OBJ := ${SRC:.cpp=.o}
 all: ${NAME}
 
 ${NAME}: ${OBJ}
-	${CPP} ${CPPFLAGS} ${OBJ} -o ${NAME}
+	${CXX} ${CXXFLAGS} ${OBJ} -o ${NAME}
 
 %.o: %.cpp
-	${CPP} ${CPPFLAGS} -c $< -o $@
+	${CXX} ${CXXFLAGS} -c $< -o $@
 
 clean:
 	${RM} -f ${OBJ}

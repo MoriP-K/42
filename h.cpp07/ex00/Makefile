@@ -1,8 +1,8 @@
 NAME := ex00
 
-CPP := c++
+CXX := c++
 
-CPPFLAGS := -std=c++98 -pedantic -Wextra -Wall -Werror
+CXXFLAGS := -std=c++98 -pedantic -Wextra -Wall -Werror
 
 SRC := main.cpp
 
@@ -11,10 +11,10 @@ OBJ := $(SRC:.cpp=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CPP) $(CPPFLAGS) $(OBJ) -o $(NAME)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	$(RM) -r $(OBJ)
