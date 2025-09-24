@@ -9,7 +9,7 @@
 class Span
 {
 private:
-	unsigned _N;
+	unsigned int _N;
 	std::vector<int> _numbers;
 
 public:
@@ -19,10 +19,10 @@ public:
 	~Span();
 	Span &operator=(const Span &src);
 
+	const std::vector<int> &getNumbers(void) const;
 	void addNumber(int n);
-	int shortestSpan();
-	int longestSpan();
-
+	int shortestSpan(void);
+	int longestSpan(void);
 	class FullContainerException: public std::exception
 	{
 	public:
