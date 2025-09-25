@@ -5,13 +5,13 @@ int main()
 	std::cout << "===== TEST: normal =====" << std::endl;
 	try
 	{
-		Span sp(5);
+		Span sp = Span(5);
 
-		sp.addNumber(4);
-		sp.addNumber(2);
-		sp.addNumber(16);
-		sp.addNumber(75);
-		sp.addNumber(34);
+		sp.addNumber(6);
+		sp.addNumber(3);
+		sp.addNumber(17);
+		sp.addNumber(9);
+		sp.addNumber(11);
 
 		std::vector<int> vec = sp.getNumbers();
 		std::cout << "Numbers: ";
@@ -138,6 +138,24 @@ int main()
     catch(const std::exception& error)
     {
         std::cout << "Error: " << error.what() << std::endl;
+    }
+
+	std::cout << "\n===== Performance Test =====" << std::endl;
+    try
+    {
+        Span large(100000);
+
+        std::vector<int> hugeVec;
+        for (int i = 0; i < 100000; i++)
+            hugeVec.push_back(rand() % 100000);
+
+        std::cout << "Adding 100,000 elements at once..." << std::endl;
+        large.addRange(hugeVec.begin(), hugeVec.end());
+        std::cout << "Success! Total elements: " << large.getNumbers().size() << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
     }
 
 	return 0;

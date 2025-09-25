@@ -23,6 +23,16 @@ public:
 	void addNumber(int n);
 	int shortestSpan(void);
 	int longestSpan(void);
+	template <typename Iterator>
+	void addRange(Iterator begin, Iterator end)
+	{
+		unsigned int distance = std::distance(begin, end);
+		if (this->_numbers.size() + distance > this->_N)
+			throw FullContainerException();
+		for (Iterator it = begin; it != end; ++it)
+			this->_numbers.push_back(*it);
+	}
+
 	class FullContainerException: public std::exception
 	{
 	public:
