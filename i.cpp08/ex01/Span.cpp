@@ -41,26 +41,19 @@ void Span::addNumber(int n)
 
 int Span::shortestSpan(void)
 {
-	int min;
-
 	if (this->_numbers.size() < 2)
 		throw NotEnoughNumberException();
-	for (unsigned int i = 0; i < this->_numbers.size(); i++)
+
+	std::vector<int> sorted = this->_numbers;
+	std::sort(sorted.begin(), sorted.end());
+
+	int min = sorted[1] - sorted[0];
+
+	for (unsigned int i = 2; i < sorted.size(); i++)
 	{
-		for (unsigned int j = 0; j < this->_numbers.size(); j++)
-		{
-			if (i == j)
-				continue;
-			int tmp = 0;
-			if (this->_numbers[i] < this->_numbers[j])
-				tmp = this->_numbers[j] - this->_numbers[i];
-			else
-				tmp = this->_numbers[i] - this->_numbers[j];
-			if (i == 0 && j == 1)
-				min = tmp;
-			if (min > tmp)
-				min = tmp;
-		}
+		int diff = sorted[i] - sorted[i - 1];
+		if (diff < min)
+			min = diff;
 	}
 	return (min);
 }
