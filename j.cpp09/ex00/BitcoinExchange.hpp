@@ -1,61 +1,80 @@
 #ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
+# define BITCOINEXCHANGE_HPP
 
-#include <iostream>
-#include <map>
-#include <exception>
-#include <fstream>
+# include <exception>
+# include <fstream>
+# include <iostream>
+# include <map>
 
 class BitcoinExchange
 {
 private:
-	std::map<std::string, int> _data;
-	int _price;
+	std::map<std::string, double> _dataFromCSV;
+	std::ifstream _inputFile;
 
 public:
-	BitcoinExchange();
-	BitcoinExchange(char *inputFIle);
+	BitcoinExchange(char *input);
 	BitcoinExchange(const BitcoinExchange &copy);
 	BitcoinExchange &operator=(const BitcoinExchange &src);
 	~BitcoinExchange();
 
-	void readFile(char *inputFile);
+	void loadDatabase();
+	void execute(char *input);
 
-	class CouldNotOpenFileException: public std::exception
+	class CouldNotOpenFileException : public std::exception
 	{
-	public:
-		virtual const char* what() const throw()
+		public:
+		virtual const char *what() const throw()
 		{
-			return ("could not open file.");
+			return ("Error: could not open file.");
 		}
 	};
 
-	class NotPositiveNumberException: public std::exception
+	class NotPositiveNumberException : public std::exception
 	{
-	public:
-		virtual const char* what() const throw()
+		public:
+		virtual const char *what() const throw()
 		{
-			return ("not a positive number.");
+			return ("Error: not a positive number.");
 		}
 	};
 
-	class BadInputException: public std::exception
+	class BadInputException : public std::exception
 	{
-	public:
-		virtual const char* what() const throw()
+		private:
+		std::string _errMsg;
+
+		public:
+		BadInputException(const std::string &line) : _errMsg("Error: bad input => "
+			+ line)
 		{
-			return ("bad input => ");
+		}
+
+		virtual const char *what() const throw()
+		{
+			return (this->_errMsg.c_str());
 		}
 	};
 
-	class TooLargeNumberException: public std::exception
+	class TooLargeNumberException : public std::exception
 	{
-	public:
-		virtual const char* what() const throw()
+		public:
+		virtual const char *what() const throw()
 		{
-			return ("too large a number.");
+			return ("Error: too large a number.");
+		}
+	};
+
+	class InvalidFormatException : public std::exception
+	{
+		public:
+		virtual const char *what() const throw()
+		{
+			return ("Error: invalid format.");
 		}
 	};
 };
+
+std::string trim(const std::string &str);
 
 #endif
