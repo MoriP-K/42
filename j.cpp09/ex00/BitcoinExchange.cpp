@@ -61,15 +61,61 @@ void BitcoinExchange::execute(char *input)
 			i++;
 			continue;
 		}
+		// int dash = line.find("-");
 		pipe_pos = line.find("|");
 		if (pipe_pos == std::string::npos)
-			throw BadInputException(line);
+		{
+			this->errorBadInput(line);
+			continue;
+		}
+
 		std::string date_part = trim(line.substr(0, pipe_pos));
+
+		if (!this->isValidDate(date_part))
+			this->errorBadInput(date_part);
 		int value_part = atoi(trim(line.substr(pipe_pos + 1)).c_str());
+		if (value_part < 0)
+		{
+			this->errorNotPositiveNumber();
+			continue;
+		}
+		if (1000 < value_part)
+		{
+			this->errorTooLargeNumber();
+			continue;
+		}
+
 
 		std::cout << "date : " << date_part << std::endl;
 		std::cout << "value: " << value_part << std::endl;
 	}
+}
+
+void BitcoinExchange::errorBadInput(const std::string &line)
+{
+	std::cout << "Error: bad input => " << line << std::endl;
+}
+
+void BitcoinExchange::errorTooLargeNumber(void)
+{
+	std::cout << "Error: too large a number." << std::endl;
+}
+
+void BitcoinExchange::errorNotPositiveNumber(void)
+{
+	std::cout << "Error: not a positive number." << std::endl;
+}
+
+bool BitcoinExchange::isValidDate(const std::string &date)
+{
+	if (date.length() != 10)
+		return (false);
+	if (date[4] != '-' || date[7] != '-')
+		return (false);
+	std::string::const_iterator start = date.begin();
+	std::string::const_iterator end = date.end();
+	while (start != end && isdigit(*start))
+		++start;
 }
 
 std::string trim(const std::string &str)

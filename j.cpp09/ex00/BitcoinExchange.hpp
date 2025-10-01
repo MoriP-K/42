@@ -20,6 +20,10 @@ public:
 
 	void loadDatabase();
 	void execute(char *input);
+	void errorBadInput(const std::string &line);
+	void errorTooLargeNumber(void);
+	void errorNotPositiveNumber(void);
+	bool isValidDate(const std::string &date);
 
 	class CouldNotOpenFileException : public std::exception
 	{
@@ -45,8 +49,7 @@ public:
 		std::string _errMsg;
 
 		public:
-		BadInputException(const std::string &line) : _errMsg("Error: bad input => "
-			+ line)
+		BadInputException(const std::string &line) : _errMsg("Error: bad input => " + line)
 		{
 		}
 
