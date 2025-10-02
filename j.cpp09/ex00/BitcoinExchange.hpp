@@ -24,6 +24,8 @@ public:
 	void errorTooLargeNumber(void);
 	void errorNotPositiveNumber(void);
 	bool isValidDate(const std::string &date);
+	bool isValidValue(const int &value);
+
 
 	class CouldNotOpenFileException : public std::exception
 	{
