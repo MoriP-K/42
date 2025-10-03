@@ -22,6 +22,34 @@ BitcoinExchange::~BitcoinExchange()
 {
 }
 
+void BitcoinExchange::calculateAndDisplay(const std::string &date, double value)
+{
+	try
+	{
+		double rate = this->getPrice(date);
+		double result = value * rate;
+		std::cout << date << " => " << value << " = " << result << std::endl;
+	}
+	catch(const std::exception& error)
+	{
+		std::cerr << error.what() << '\n';
+	}
+	
+}
+
+
+double BitcoinExchange::getPrice(const std::string &date)
+{
+	std::map<std::string, double>::iterator it = this->_dataFromCSV.find(date);
+	if (it != this->_dataFromCSV.end())
+		return (it->second);
+	std::map<std::string, double>::iterator lower = this->_dataFromCSV.lower_bound(date);
+	if (lower == this->_dataFromCSV.begin())
+		throw std::runtime_error("No price data available for this date");
+	--lower;
+	return (lower->second);
+}
+
 void BitcoinExchange::loadDatabase()
 {
 	std::ifstream file("data.csv");
@@ -32,17 +60,18 @@ void BitcoinExchange::loadDatabase()
 	std::string line;
 	size_t comma_pos = 0;
 
-	std::getline(file, line);
-	if (line != "date,exchange_rate")
-		throw CouldNotOpenFileException();
 	while (std::getline(file, line))
 	{
+		if (line == "date,exchange_rate")
+			continue;
 		comma_pos = line.find(",");
 		if (comma_pos != std::string::npos)
 		{
-			std::string date_part = trim(line.substr(0, comma_pos));
-			int value_part = atoi(trim(line.substr(comma_pos + 1)).c_str());
-			this->_dataFromCSV[date_part] = value_part;
+			std::string date = trim(line.substr(0, comma_pos));
+			char **endptr = NULL;
+			double rate = std::strtod(trim(line.substr(comma_pos + 1)).c_str(), endptr);
+			this->_dataFromCSV[date] = rate;
+			// std::cout << "Date: " << date << ", Rate: " << value_part << std::endl;
 		}
 	}
 }
@@ -53,6 +82,9 @@ void BitcoinExchange::execute(char *input)
 	std::string line;
 	size_t pipe_pos;
 	size_t i = 0;
+
+	if (!file)
+		throw CouldNotOpenFileException();
 
 	while (std::getline(file, line))
 	{
@@ -71,12 +103,24 @@ void BitcoinExchange::execute(char *input)
 		std::string date_part = trim(line.substr(0, pipe_pos));
 
 		if (!this->isValidDate(date_part))
+		{
 			this->errorBadInput(date_part);
-		int value_part = atoi(trim(line.substr(pipe_pos + 1)).c_str());
-		if (!this->isValidValue(value_part))
+			continue;
+		}
+		char **endptr = NULL;
+		double value_part = std::strtod(trim(line.substr(pipe_pos + 1)).c_str(), endptr);
+		if (!this->isPositiveValue(value_part))
+		{
 			this->errorNotPositiveNumber();
-		// std::cout << "date : " << date_part << std::endl;
-		// std::cout << "value: " << value_part << std::endl;
+			continue;
+		}
+		else if (!this->isInRange(value_part))
+		{
+			this->errorTooLargeNumber();
+			continue;
+		}
+		else
+			this->calculateAndDisplay(date_part, value_part);
 	}
 }
 
@@ -96,7 +140,6 @@ bool BitcoinExchange::isValidDate(const std::string &date)
 	int year = std::atoi(date.substr(0, 4).c_str());
 	int month = std::atoi(date.substr(5, 2).c_str());
 	int day = std::atoi(date.substr(8, 2).c_str());
-	std::cout << year << "-" << month << "-" << day << std::endl;
 	
 	if (year < 2009 || 2025 < year)
 		return (false);
@@ -112,11 +155,13 @@ bool BitcoinExchange::isValidDate(const std::string &date)
 	return (true);
 }
 
-bool BitcoinExchange::isValidValue(const int &value)
+bool BitcoinExchange::isPositiveValue(const double &value)
 {
-	if (value < 0 || 1000 < value)
-		return (false);
-	return (true);
+	return (value >= 0);
+}
+bool BitcoinExchange::isInRange(const double &value)
+{
+	return (1000 >= value);
 }
 
 void BitcoinExchange::errorBadInput(const std::string &line)

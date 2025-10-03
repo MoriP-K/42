@@ -5,6 +5,8 @@
 # include <fstream>
 # include <iostream>
 # include <map>
+# include <cstdlib>
+
 
 class BitcoinExchange
 {
@@ -24,8 +26,10 @@ public:
 	void errorTooLargeNumber(void);
 	void errorNotPositiveNumber(void);
 	bool isValidDate(const std::string &date);
-	bool isValidValue(const int &value);
-
+	bool isPositiveValue(const double &value);
+	bool isInRange(const double &value);
+	void calculateAndDisplay(const std::string &date, double value);
+	double getPrice(const std::string &date);
 
 	class CouldNotOpenFileException : public std::exception
 	{
@@ -52,6 +56,10 @@ public:
 
 		public:
 		BadInputException(const std::string &line) : _errMsg("Error: bad input => " + line)
+		{
+		}
+
+		virtual ~BadInputException() throw()
 		{
 		}
 

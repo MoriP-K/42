@@ -2,7 +2,7 @@ NAME := btc
 
 CXX := c++
 
-CXXFLAGS := -Wall -Wextra -Werror
+CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 
 SRC := main.cpp BitcoinExchange.cpp
 

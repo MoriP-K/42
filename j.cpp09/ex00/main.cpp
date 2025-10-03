@@ -2,20 +2,21 @@
 
 int main(int ac, char **av)
 {
-	// if (ac != 2 || !av[1])
-	// 	std::cout << "Error: could not open file." << std::endl;
-	// std::cout << av[1] << std::endl;
+	if (ac != 2)
+	{
+		std::cout << "usage: ./btc <file>" << std::endl;;
+		return (1);
+	}
 
 	try
 	{
-		if (ac != 2)
-			throw BitcoinExchange::CouldNotOpenFileException();
-
+		
 		BitcoinExchange bc(av[1]);
 	}
 	catch(const std::exception& error)
 	{
 		std::cout << error.what() << std::endl;
+		return (1);
 	}
 	return (0);
 }
