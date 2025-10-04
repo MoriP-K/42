@@ -1,17 +1,17 @@
-NAME := btc
+NAME := RPN
 
 CXX := c++
 
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 
-SRC := main.cpp BitcoinExchange.cpp
+SRC := main.cpp RPN.cpp
 
 OBJ := ${SRC:.o=.cpp}
 
 all: ${NAME}
 
 ${NAME}: ${OBJ}
-	${CXX} ${CXXFLAGS} $^ -o ${NAME}
+	${CXX} ${CXXFLAGS} $^ -o $@
 
 %.o: %.cpp
 	${CXX} ${CXXFLAGS} $< -c -o $@
