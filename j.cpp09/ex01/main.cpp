@@ -12,6 +12,7 @@ int main(int ac, char **av)
 	try
 	{
 		RPN rpn(av[1]);
+		rpn.calculate();
 	}
 	catch(const std::exception& error)
 	{

@@ -6,7 +6,7 @@ CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 
 SRC := main.cpp BitcoinExchange.cpp
 
-OBJ := ${SRC:.o=.cpp}
+OBJ := ${SRC:.cpp=.o}
 
 all: ${NAME}
 
