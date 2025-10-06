@@ -10,8 +10,9 @@ RPN::RPN(char *args)
 		throw ArgsException();
 }
 
-RPN::RPN(const RPN &copy): _input(copy._input)
+RPN::RPN(const RPN &copy)
 {
+	*this = copy;
 }
 
 RPN &RPN::operator=(const RPN &src)
@@ -19,6 +20,7 @@ RPN &RPN::operator=(const RPN &src)
 	if (this != &src)
 	{
 		this->_input = src._input;
+		this->_token = src._token;
 	}
 	return (*this);
 }
@@ -29,22 +31,26 @@ RPN::~RPN()
 
 void RPN::calculate(void)
 {
-	std::stack<int> st;
-
-	const char *input = this->_input.c_str();
-	for (size_t i = 0; input[i]; i++)
+	for (size_t i = 0; this->_input[i]; i++)
 	{
-		if (isspace(input[i]))
+		if (isspace(this->_input[i]))
 			continue;
-		else if (isdigit(input[i]))
-			this->_token.push(std::atoi(&input[i]));
-		else if (isOperator(input[i]))
-			this->execOperator(input[i]);
+		else if (isdigit(this->_input[i]))
+			this->_token.push(this->_input[i] - '0');
+		else if (isOperator(this->_input[i]))
+			this->execOperator(this->_input[i]);
+		else
+			throw ArgsException();
 	}
+	if (this->_token.size() != 1)
+		throw ArgsException();
+	std::cout << this->_token.top() << std::endl;
 }
 
 void RPN::execOperator(const char op)
 {
+	if (this->_token.size() < 2)
+		throw ArgsException();
 	if (op == '+')
 		this->add();
 	else if (op == '-')
@@ -59,90 +65,73 @@ void RPN::add(void)
 {
 	int t1;
 	int t2;
-	int sum;
 
-	std::cout << "\nadd" << std::endl;
 	t1 = this->_token.top();
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
-	sum = t2 + t1;
-	std::cout << "sum: " << sum << std::endl;
-	this->_token.push(sum);
+	this->_token.push(t2 + t1);
 }
 
 void RPN::subtract(void)
 {
 	int t1;
 	int t2;
-	int sub;
 
-	std::cout << "\nsub" << std::endl;
 	t1 = this->_token.top();
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
-	sub = t2 - t1;
-	std::cout << "sub: " << sub << std::endl;
-	this->_token.push(sub);
+	this->_token.push(t2 - t1);
 }
 
 void RPN::multiply(void)
 {
 	int t1;
 	int t2;
-	int mul;
 
-	std::cout << "\nmul" << std::endl;
 	t1 = this->_token.top();
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
-	mul = t2 * t1;
-	std::cout << "mul: " << mul << std::endl;
-	this->_token.push(mul);
+	this->_token.push(t2 * t1);
 }
 
 void RPN::divide(void)
 {
 	int t1;
 	int t2;
-	int div;
 
-
-	std::cout << "\ndiv" << std::endl;
 	t1 = this->_token.top();
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
 	if (t1 == 0)
 		throw DivideByZeroException();
-	div = t2 / t1;
-	std::cout << "div: " << div << std::endl;
-	this->_token.push(div);
+	this->_token.push(t2 / t1);
 }
 
 bool RPN::isValidArg(char *arg)
 {
-	int num_count = 0;
-	int ope_count = 0;
-
 	for (size_t i = 0; arg[i]; ++i)
 	{
 		if (isdigit(arg[i]))
 		{
-			++num_count;
+			if (arg[i + 1] && !isspace(arg[i + 1]))
+				return (false);
 			continue;
 		}
 		else if (isspace(arg[i]))
 			continue;
 		else if (isOperator(arg[i]))
-			++ope_count;
+		{
+			if (arg[i + 1] && !isspace(arg[i + 1]))
+				return (false);
+			continue;
+		}
 		else
 			return (false);
 	}
-	if (num_count - ope_count != 1)
-		return (false);
 	this->_input = arg;
 	return (true);
 }

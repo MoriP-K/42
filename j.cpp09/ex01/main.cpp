@@ -6,7 +6,6 @@ int main(int ac, char **av)
 	if (ac != 2 || !av[1])
 	{
 		std::cout << "Error" << std::endl;
-	
 		return (0);
 	}
 	try
@@ -19,7 +18,5 @@ int main(int ac, char **av)
 		std::cout << error.what() << std::endl;
 		return (1);
 	}
-	std::cout << "OK" << std::endl;
 	return (0);
-	
 }
