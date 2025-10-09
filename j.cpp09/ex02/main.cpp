@@ -8,7 +8,7 @@ int main(int ac, char const *av[])
 	{
 		PmergeMe pmergeme(av);
 
-		pmergeme.printArr();
+		pmergeme.printArr(pmergeme.getArr(), "Before: ");
 	}
 	catch(const std::exception& error)
 	{
