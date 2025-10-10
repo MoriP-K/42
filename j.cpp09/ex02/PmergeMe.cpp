@@ -38,55 +38,50 @@ bool PmergeMe::isValidArgs(const char **av)
 	return (true);
 }
 
-void PmergeMe::comparePair(std::vector<int> main)
+void PmergeMe::comparePair(std::vector<int> arr)
 {
-	size_t	i;
-
+	std::vector<int> main;
 	std::vector<int> pending;
-	i = 0;
-	if (main.size() == 1)
+	if (arr.size() == 1)
 	{
 		return ;
 	}
-	std::cout << "len: " << main.size() << std::endl;
-
-	for (std::vector<int>::iterator it = main.begin(); it != main.end(); ++it)
+	// std::cout << "len: " << arr.size() << std::endl;
+	static size_t i = 0;
+	std::cout << "\n===== " << ++i << " =====" << std::endl;
+	for (std::vector<int>::iterator it = arr.begin(); it != arr.end(); ++it)
 	{
-		size_t distance = std::distance(it, main.end());
-		std::cout << "dist: " << distance << std::endl;
-		if (distance < 0)
-			return ;
+		size_t distance = std::distance(it, arr.end());
 		if (distance % 2 == 0 || *(it + 1))
 		{
 			if (*it < *(it + 1))
 			{
-				_main.push_back(*(it + 1));
+				main.push_back(*(it + 1));
 				pending.push_back(*it);
 			}
 			else
 			{
-				_main.push_back(*it);
+				main.push_back(*it);
 				pending.push_back(*(it + 1));
 			}
-			// ++it;
-			it += 2;
-		}
-		else
-		{
-			pending.push_back(*it);
 			++it;
 		}
-
+		else
+			pending.push_back(*it);
 	}
-	// if (i == 10)
-	// {
-	// 	std::cout << "i = 10;" << std::endl;
-	// 	return ;
-	// }
-	printArr(_main, "main: ");
 	printArr(pending, "pend: ");
-	// std::cout << "eeeeeee\n" << std::endl;
-	// comparePair(_main);
+	printArr(main, "main: ");
+	comparePair(main);
+
+	std::cout << "\n----- BACK -----" << std::endl;
+	printArr(pending, "pend: ");
+	printArr(main, "main: ");
+
+	for (std::vector<int>::iterator it = pending.begin(); it != pending.end(); ++it)
+	{
+		// func(): search for postion to insert pending into main 
+	}
+
 }
 
 const std::vector<int> PmergeMe::getArr() const
