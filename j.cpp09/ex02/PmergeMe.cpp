@@ -26,9 +26,11 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &src)
 
 bool PmergeMe::isValidArgs(const char **av)
 {
+	int	num;
+
 	for (size_t i = 1; av[i]; ++i)
 	{
-		int num = std::atoi(av[i]);
+		num = std::atoi(av[i]);
 		if (num < 0)
 			return (false);
 		this->_arr.push_back(num);
@@ -36,38 +38,55 @@ bool PmergeMe::isValidArgs(const char **av)
 	return (true);
 }
 
-void PmergeMe::comparePair(std::vector<int> bigger)
+void PmergeMe::comparePair(std::vector<int> main)
 {
+	size_t	i;
+
 	std::vector<int> pending;
-	size_t i = 0;
-	if (bigger.size() == 1)
+	i = 0;
+	if (main.size() == 1)
 	{
 		return ;
 	}
-	for (std::vector<int>::iterator it = _arr.begin(); it != _arr.end(); ++it)
+	std::cout << "len: " << main.size() << std::endl;
+
+	for (std::vector<int>::iterator it = main.begin(); it != main.end(); ++it)
 	{
-		if (_arr[i + 1])
+		size_t distance = std::distance(it, main.end());
+		std::cout << "dist: " << distance << std::endl;
+		if (distance < 0)
+			return ;
+		if (distance % 2 == 0 || *(it + 1))
 		{
-			if (_arr[i] < _arr[i + 1])
+			if (*it < *(it + 1))
 			{
-				_main.push_back(_arr[i + 1]);
-				pending.push_back(_arr[i]);
+				_main.push_back(*(it + 1));
+				pending.push_back(*it);
 			}
 			else
 			{
-				_main.push_back(_arr[i]);
-				pending.push_back(_arr[i + 1]);
+				_main.push_back(*it);
+				pending.push_back(*(it + 1));
 			}
+			// ++it;
+			it += 2;
 		}
 		else
-			pending.push_back(_arr[i]);
-		++it;
-		i += 2;
+		{
+			pending.push_back(*it);
+			++it;
+		}
+
 	}
+	// if (i == 10)
+	// {
+	// 	std::cout << "i = 10;" << std::endl;
+	// 	return ;
+	// }
 	printArr(_main, "main: ");
 	printArr(pending, "pend: ");
-	std::cout << "eeeeeee\n" << std::endl;
-	comparePair(_main);
+	// std::cout << "eeeeeee\n" << std::endl;
+	// comparePair(_main);
 }
 
 const std::vector<int> PmergeMe::getArr() const

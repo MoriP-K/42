@@ -29,7 +29,7 @@ public:
 
 	const std::vector<int> getArr() const;
 	bool isValidArgs(const char **av);
-	void comparePair(std::vector<int> bigger);
+	void comparePair(std::vector<int> main);
 
 	void printArr(std::vector<int> vec, std::string msg);
 
