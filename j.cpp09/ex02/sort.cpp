@@ -50,6 +50,34 @@ int binary_search(int key)
 	return (-1);
 }
 
+#include <vector>
+std::vector<int> _arr = {1, 14, 32, 51, 51, 51, 243, 419, 750, 910};
+
+bool isOK(int index, int key);
+
+int binarySearch(int key)
+{
+	int ng = -1;
+	int ok = (int)_arr.size();
+
+	while (abs(ok - ng) > 1)
+	{
+		int mid = (ok + ng) / 2;
+
+		if (isOK(mid, key))
+			ok = mid;
+		else
+			ng = ok;
+	}
+	return (ok);
+}
+
+bool isOK(int index, int key)
+{
+	if (_arr[index] >= key)
+		return (true);
+	return (false);
+}
 int	main(int ac, char const *av[])
 {
 	if (ac < 2 || !av[1])
@@ -58,6 +86,7 @@ int	main(int ac, char const *av[])
 		;
 
 	// bubbleSort(av);
-	std::cout << binary_search(0) << std::endl;
+	// std::cout << binary_search(0) << std::endl;
+	std::cout << "Index: " << binarySearch(std::atoi(av[1])) << std::endl;
 	return (0);
 }
