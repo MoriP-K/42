@@ -4,7 +4,9 @@ PmergeMe::PmergeMe(const char **av)
 {
 	if (!this->isValidArgs(av))
 		throw ErrorException();
-	this->comparePair(this->_arr);
+	this->dividePendingIntoMain(this->_arr);
+	this->recursiveSort(this->_main);
+	// this->mergePendingToMain();
 }
 
 PmergeMe::PmergeMe(const PmergeMe &copy)
@@ -37,8 +39,44 @@ bool PmergeMe::isValidArgs(const char **av)
 	}
 	return (true);
 }
+static size_t i = 0;
 
-void PmergeMe::comparePair(std::vector<int> arr)
+void PmergeMe::dividePendingIntoMain(std::vector<int> arr)
+{
+	// std::vector<int> main;
+	// std::vector<int> pending;
+
+	std::cout << "\n===== " << ++i << " =====" << std::endl;
+
+	for (std::vector<int>::iterator it = arr.begin(); it != arr.end(); ++it)
+	{
+		size_t distance = std::distance(it, arr.end());
+		std::vector<int>::iterator next_it = it;
+		++next_it;
+		if (distance % 2 == 0 || next_it != arr.end())
+		{
+			if (*it < *(it + 1))
+			{
+				this->_main.push_back(*(it + 1));
+				this->_pending.push_back(*it);
+				this->_pendingToMain[*it] = *(it + 1);
+			}
+			else
+			{
+				this->_main.push_back(*it);
+				this->_pending.push_back(*(it + 1));
+				this->_pendingToMain[*(it + 1)] = *it;
+			}
+			++it;
+		}
+		else
+			this->_pending.push_back(*it);
+	}
+	printArr(this->_main, "main: ");
+	printArr(this->_pending, "pend: ");
+}
+
+void PmergeMe::recursiveSort(std::vector<int> arr)
 {
 	std::vector<int> main;
 	std::vector<int> pending;
@@ -49,25 +87,27 @@ void PmergeMe::comparePair(std::vector<int> arr)
 		return ;
 	}
 
-	static size_t i = 0;
+	// static size_t i = 0;
 	std::cout << "\n===== " << ++i << " =====" << std::endl;
 
 	for (std::vector<int>::iterator it = arr.begin(); it != arr.end(); ++it)
 	{
 		size_t distance = std::distance(it, arr.end());
-		if (distance % 2 == 0 || *(it + 1))
+		std::vector<int>::iterator next_it = it;
+		++next_it;
+		if (distance % 2 == 0 || next_it != arr.end())
 		{
 			if (*it < *(it + 1))
 			{
 				main.push_back(*(it + 1));
 				pending.push_back(*it);
-				_pair[*it] = *(it + 1);
+				_pendingToMain[*it] = *(it + 1);
 			}
 			else
 			{
 				main.push_back(*it);
 				pending.push_back(*(it + 1));
-				_pair[*(it + 1)] = *it;
+				_pendingToMain[*(it + 1)] = *it;
 			}
 			++it;
 		}
@@ -76,7 +116,7 @@ void PmergeMe::comparePair(std::vector<int> arr)
 	}
 	printArr(pending, "pend: ");
 	printArr(main, "main: ");
-	comparePair(main);
+	recursiveSort(main);
 
 	std::cout << "\n----- BACK " << i-- << " -----" << std::endl;
 	printArr(pending, "pend: ");
@@ -88,6 +128,45 @@ void PmergeMe::comparePair(std::vector<int> arr)
 		if (pos != -1)
 			_sorted.insert(_sorted.begin() + pos, *it);
 	}
+}
+
+void PmergeMe::mergePendingToMain()
+{
+	size_t len = this->_pending.size();
+	if (len < 1)
+		return ;
+	std::vector<int> jacob = this->generateJacobsthal(len);
+
+	for (std::vector<int>::iterator it = _pending.begin(); it != _pending.end(); ++it)
+	{
+		int pos = binarySearch(*it);
+		if (pos != -1)
+			_sorted.insert(_sorted.begin() + pos, *it);
+	}
+}
+
+std::vector<int> PmergeMe::generateJacobsthal(int size)
+{
+	std::vector<int> vec;
+
+	int i = 0;
+	while (1)
+	{
+		if (i == 0)
+			vec.push_back(0);
+		else if (i == 1)
+			vec.push_back(1);
+		else
+		{
+			if (vec[i - 2] * 2 + vec[i - 1] > size)
+				break;
+			else
+				vec.push_back(vec[i - 2] * 2 + vec[i - 1]);
+		}
+		i++;
+	}
+	vec.erase(vec.begin(), vec.begin() + 2);
+	return (vec);
 }
 
 int PmergeMe::binarySearch(int key)
@@ -122,22 +201,6 @@ const std::vector<int> PmergeMe::getArr() const
 const std::vector<int> PmergeMe::getSorted() const
 {
 	return (this->_sorted);
-}
-
-std::vector<int> PmergeMe::generateJacobsthal(size_t size)
-{
-	std::vector<int> vec;
-
-	for (size_t i = 0; i < size; ++i)
-	{
-		if (i == 0)
-			vec.push_back(0);
-		else if (i == 1)
-			vec.push_back(1);
-		else
-			vec.push_back(vec[i - 2] * 2 + vec[i - 1]);
-	}
-	return (vec);
 }
 
 void PmergeMe::printArr(std::vector<int> vec, std::string msg)

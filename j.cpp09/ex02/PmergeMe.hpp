@@ -1,19 +1,21 @@
 #ifndef PMERGEME_HPP
-#define PMERGEME_HPP
+# define PMERGEME_HPP
 
-#include <vector>
-#include <map>
-#include <iostream>
+# include <cstdlib>
+# include <iostream>
+# include <iterator>
+# include <map>
+# include <vector>
 #include <iterator>
-#include <cstdlib>
 
 class PmergeMe
 {
 private:
 	std::vector<int> _arr;
 	std::vector<int> _main;
+	std::vector<int> _pending;
 	std::vector<int> _sorted;
-	std::map<int, int> _pair;
+	std::map<int, int> _pendingToMain;
 
 public:
 	PmergeMe(const char **av);
@@ -21,10 +23,10 @@ public:
 	~PmergeMe();
 	PmergeMe &operator=(const PmergeMe &src);
 
-	class ErrorException: public std::exception
+	class ErrorException : public std::exception
 	{
 	public:
-		virtual const char* what() const throw()
+		virtual const char *what() const throw()
 		{
 			return ("Error");
 		}
@@ -33,16 +35,17 @@ public:
 	const std::vector<int> getArr() const;
 	const std::vector<int> getSorted() const;
 	bool isValidArgs(const char **av);
-	void comparePair(std::vector<int> arr);
+	void dividePendingIntoMain(std::vector<int> arr);
+	void recursiveSort(std::vector<int> arr);
 	int binarySearch(int key);
+	void mergePendingToMain(void);
 	bool isOK(int index, int ket);
-	std::vector<int> generateJacobsthal(size_t size);
+	std::vector<int> generateJacobsthal(int size);
+
 
 	void printArr(std::vector<int> vec, std::string msg);
-
 };
 
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
-
 
 #endif
