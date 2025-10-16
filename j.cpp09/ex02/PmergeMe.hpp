@@ -11,11 +11,12 @@
 class PmergeMe
 {
 private:
-	std::vector<int> _arr;
-	std::vector<int> _main;
-	std::vector<int> _pending;
-	std::vector<int> _sorted;
-	std::map<int, int> _pendingToMain;
+	std::vector<int> _arr; // input
+	std::vector<int> _main; // winner
+	std::vector<int> _pending; // loser
+	std::vector<int> _sorted; // sorted winner(_main)
+	std::vector<int> _order; // inserting order for loser(_pending)
+	std::map<int, int> _pendingToMain; // pair with winner and loser  
 
 public:
 	PmergeMe(const char **av);
@@ -41,8 +42,10 @@ public:
 	void mergePendingToMain(void);
 	bool isOK(int index, int ket);
 	std::vector<int> generateJacobsthal(int size);
+	void createInsertionOrder();
 
-
+	// DEBUG
+	size_t arrSize(void);
 	void printArr(std::vector<int> vec, std::string msg);
 };
 

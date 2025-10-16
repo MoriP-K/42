@@ -6,7 +6,7 @@ PmergeMe::PmergeMe(const char **av)
 		throw ErrorException();
 	this->dividePendingIntoMain(this->_arr);
 	this->recursiveSort(this->_main);
-	// this->mergePendingToMain();
+	this->mergePendingToMain();
 }
 
 PmergeMe::PmergeMe(const PmergeMe &copy)
@@ -163,6 +163,7 @@ std::vector<int> PmergeMe::generateJacobsthal(int size)
 			else
 				vec.push_back(vec[i - 2] * 2 + vec[i - 1]);
 		}
+		std::cout << "jacob[" << i << "]: " << vec[i] << std::endl;
 		i++;
 	}
 	vec.erase(vec.begin(), vec.begin() + 2);
@@ -203,6 +204,18 @@ const std::vector<int> PmergeMe::getSorted() const
 	return (this->_sorted);
 }
 
+std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec)
+{
+	for (size_t i = 0; i < vec.size(); ++i)
+		out << vec[i] << ", ";
+	return (out);
+}
+
+size_t PmergeMe::arrSize(void)
+{
+	return (this->_arr.size());
+}
+
 void PmergeMe::printArr(std::vector<int> vec, std::string msg)
 {
 	std::cout << msg;
@@ -213,11 +226,4 @@ void PmergeMe::printArr(std::vector<int> vec, std::string msg)
 		else
 			std::cout << *it << ", ";
 	}
-}
-
-std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec)
-{
-	for (size_t i = 0; i < vec.size(); ++i)
-		out << vec[i] << ", ";
-	return (out);
 }
