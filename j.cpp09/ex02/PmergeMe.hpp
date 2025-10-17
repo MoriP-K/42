@@ -42,7 +42,7 @@ public:
 	void mergePendingToMain(void);
 	bool isOK(int index, int ket);
 	std::vector<int> generateJacobsthal(int size);
-	void createInsertionOrder();
+	void createInsertionOrder(std::vector<int> jacob);
 
 	// DEBUG
 	size_t arrSize(void);

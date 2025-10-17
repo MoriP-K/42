@@ -136,7 +136,7 @@ void PmergeMe::mergePendingToMain()
 	if (len < 1)
 		return ;
 	std::vector<int> jacob = this->generateJacobsthal(len);
-
+    this->createInsertionOrder(jacob);
 	for (std::vector<int>::iterator it = _pending.begin(); it != _pending.end(); ++it)
 	{
 		int pos = binarySearch(*it);
@@ -163,11 +163,41 @@ std::vector<int> PmergeMe::generateJacobsthal(int size)
 			else
 				vec.push_back(vec[i - 2] * 2 + vec[i - 1]);
 		}
-		std::cout << "jacob[" << i << "]: " << vec[i] << std::endl;
 		i++;
 	}
 	vec.erase(vec.begin(), vec.begin() + 2);
+	printArr(vec, "\njacob: ");
+	std::cout << std::endl;
 	return (vec);
+}
+
+void PmergeMe::createInsertionOrder(std::vector<int> jacob)
+{
+	int k = 0;
+
+	this->_order.push_back(0);
+	size_t pending_len = this->_pending.size();
+	size_t jacob_size = jacob.size();
+    for (size_t i = jacob.size(); 0 < i; --i)
+    {
+		int n = i - 1;
+        int bigger = jacob[n];
+        int smaller = jacob[n - 1] + 1;
+
+		std::cout << "bigger : " << bigger << std::endl;
+		std::cout << "smaller: " << smaller << std::endl;
+		std::cout << std::endl;
+        while (smaller <= bigger)
+        {
+            this->_order.push_back(bigger);
+			std::cout << "order[" << k++ << "]: " << bigger << std::endl;
+            bigger--;
+        }
+		std::cout << std::endl;
+    }
+	while (pending_len >= jacob_size++
+		this->_order.push_back(jacob_size + 1);
+    this->printArr(this->_order, "order: ");
 }
 
 int PmergeMe::binarySearch(int key)
