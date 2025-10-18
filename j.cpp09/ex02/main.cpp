@@ -9,7 +9,7 @@ int main(int ac, char const *av[])
 		PmergeMe pmergeme(av);
 
 		std::cout << std::endl;
-		std::cout << "size: " << pmergeme.arrSize() << std::endl;
+		// std::cout << "size: " << pmergeme.arrSize() << std::endl;
 		pmergeme.printArr(pmergeme.getArr(), "Before: ");
 		pmergeme.printArr(pmergeme.getSorted(), "After : ");
 		// std::vector<int> vec = pmergeme.generateJacobsthal(10);

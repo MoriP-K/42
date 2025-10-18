@@ -14,6 +14,7 @@ private:
 	std::vector<int> _arr; // input
 	std::vector<int> _main; // winner
 	std::vector<int> _pending; // loser
+	int _straggler; // extra element
 	std::vector<int> _sorted; // sorted winner(_main)
 	std::vector<int> _order; // inserting order for loser(_pending)
 	std::map<int, int> _pendingToMain; // pair with winner and loser  
@@ -32,10 +33,10 @@ public:
 	void recursiveSort(std::vector<int> arr);
 	int binarySearch(int key);
 	void mergePendingToMain(void);
-	bool isOK(int index, int ket);
+	bool isOK(int index, int key);
 	std::vector<int> generateJacobsthal(int size);
 	void createInsertionOrder(std::vector<int> jacob);
-	void findPendingPair();
+	int findPendingPair(int pending);
 
 	// exception
 	class ErrorException : public std::exception
@@ -52,6 +53,7 @@ public:
 	void printArr(std::vector<int> vec, std::string msg);
 };
 
+// operator
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
 
 #endif
