@@ -139,6 +139,7 @@ void PmergeMe::mergePendingToMain()
     this->createInsertionOrder(jacob);
 	for (std::vector<int>::iterator it = _pending.begin(); it != _pending.end(); ++it)
 	{
+		this->findPendingPair();
 		int pos = binarySearch(*it);
 		if (pos != -1)
 			_sorted.insert(_sorted.begin() + pos, *it);
@@ -176,16 +177,18 @@ void PmergeMe::createInsertionOrder(std::vector<int> jacob)
 	int k = 0;
 
 	this->_order.push_back(0);
-	size_t pending_len = this->_pending.size();
-	size_t jacob_size = jacob.size();
+	size_t pendingLen = this->_pending.size();
+	// std::cout << "\npending len: " << pendingLen << std::endl;
+	size_t jacobSize = jacob.size();
+	size_t jacobMax = jacob[jacobSize - 1];
     for (size_t i = jacob.size(); 0 < i; --i)
     {
 		int n = i - 1;
         int bigger = jacob[n];
         int smaller = jacob[n - 1] + 1;
 
-		std::cout << "bigger : " << bigger << std::endl;
-		std::cout << "smaller: " << smaller << std::endl;
+		// std::cout << "bigger : " << bigger << std::endl;
+		// std::cout << "smaller: " << smaller << std::endl;
 		std::cout << std::endl;
         while (smaller <= bigger)
         {
@@ -195,9 +198,19 @@ void PmergeMe::createInsertionOrder(std::vector<int> jacob)
         }
 		std::cout << std::endl;
     }
-	while (pending_len >= jacob_size++
-		this->_order.push_back(jacob_size + 1);
+	std::cout << "jacob max: " << jacobMax << std::endl;
+	std::cout << "pending len: " << pendingLen << std::endl;
+	while (pendingLen > jacobMax++)
+	{
+		this->_order.push_back(jacobMax);
+		// std::cout << "jacob size: " << _order << std::endl;	
+	}
     this->printArr(this->_order, "order: ");
+}
+
+void PmergeMe::findPendingPair()
+{
+
 }
 
 int PmergeMe::binarySearch(int key)

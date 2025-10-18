@@ -24,15 +24,7 @@ public:
 	~PmergeMe();
 	PmergeMe &operator=(const PmergeMe &src);
 
-	class ErrorException : public std::exception
-	{
-	public:
-		virtual const char *what() const throw()
-		{
-			return ("Error");
-		}
-	};
-
+	// funcs
 	const std::vector<int> getArr() const;
 	const std::vector<int> getSorted() const;
 	bool isValidArgs(const char **av);
@@ -43,6 +35,17 @@ public:
 	bool isOK(int index, int ket);
 	std::vector<int> generateJacobsthal(int size);
 	void createInsertionOrder(std::vector<int> jacob);
+	void findPendingPair();
+
+	// exception
+	class ErrorException : public std::exception
+	{
+	public:
+		virtual const char *what() const throw()
+		{
+			return ("Error");
+		}
+	};
 
 	// DEBUG
 	size_t arrSize(void);
