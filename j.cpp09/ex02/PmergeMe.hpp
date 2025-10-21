@@ -8,6 +8,9 @@
 #include <vector>
 #include <iterator>
 #include <deque>
+#include <ctime>
+#include <iomanip>
+#include <sys/time.h>
 
 class PmergeMe
 {
@@ -31,13 +34,14 @@ public:
 	const std::vector<int> getArr() const;
 	const std::vector<int> getSorted() const;
 	bool isValidArgs(const char **av);
+	void mergeInsertionSort(void);
 	void dividePendingIntoMain(std::vector<int> arr);
 	void recursiveSort(std::vector<int> arr);
 	int binarySearch(int key);
 	void mergePendingToMain(void);
 	bool isOK(int index, int key);
 	std::vector<int> generateJacobsthal(int size);
-	void createInsertionOrder(std::vector<int> jacob);
+	std::vector<int> createInsertionOrder(std::vector<int> jacob, size_t pendingLength);
 	int findPendingPair(int pending);
 	int searchPositionFromSorted(int mainValue);
 	int limitedBinarySearch(size_t len, int key);
