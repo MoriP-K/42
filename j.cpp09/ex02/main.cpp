@@ -21,10 +21,12 @@ int main(int ac, char const *av[])
 		pmergeme.printArr(pmergeme.getArr(), "Before: ");
 
 		double startVec = getTime();
-		pmergeme.mergeInsertionSort();
+		pmergeme.MIS(pmergeme.getArr());
+		// pmergeme.mergeInsertionSort();
 		double endVec = getTime();
 		double timeVec = endVec - startVec;
 
+		pmergeme.printCount();
 		pmergeme.printArr(pmergeme.getSorted(), "After : ");
 
 		std::cout << std::fixed << std::setprecision(5);

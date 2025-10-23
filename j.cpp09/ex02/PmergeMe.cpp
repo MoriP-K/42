@@ -1,21 +1,17 @@
 #include "PmergeMe.hpp"
 
-int count = 0;
+void PmergeMe::printCount()
+{
+	std::cout << "count: " << this->_count << std::endl;
+}
 
 PmergeMe::PmergeMe(const char **av)
 {
 	if (!this->isValidArgs(av))
 		throw ErrorException();
-	this->_straggler = -1;
+	this->_count = 0;
 }
 
-void PmergeMe::mergeInsertionSort(void)
-{
-	this->dividePendingIntoMain(this->_arr);
-	this->recursiveSort(this->_main);
-	this->mergePendingToMain();
-	// std::cout << "count: " << count << std::endl;
-}
 PmergeMe::PmergeMe(const PmergeMe &copy)
 {
 	*this = copy;
@@ -47,55 +43,18 @@ bool PmergeMe::isValidArgs(const char **av)
 	return (true);
 }
 
-void PmergeMe::dividePendingIntoMain(std::vector<int> arr)
-{
-	if (arr.size() < 2)
-	{
-		this->_main.push_back(arr[0]);
-		return;
-	}
-	for (std::vector<int>::iterator it = arr.begin(); it != arr.end(); ++it)
-	{
-		size_t distance = std::distance(it, arr.end());
-		std::vector<int>::iterator next_it = it;
-		++next_it;
-		if (distance % 2 == 0 || next_it != arr.end())
-		{
-			if (*it < *(it + 1))
-			{
-				this->_main.push_back(*(it + 1));
-				this->_pending.push_back(*it);
-				this->_pendingToMain[*it] = *(it + 1);
-			}
-			else
-			{
-				this->_main.push_back(*it);
-				this->_pending.push_back(*(it + 1));
-				this->_pendingToMain[*(it + 1)] = *it;
-			}
-			count++;
-			++it;
-		}
-		else
-			this->_straggler = *it;
-	}
-	printArr(_main, "\nwinner: ");
-	printArr(_pending, "loser : ");
-	std::cout << std::endl;
-	// printArr(_sortedVec, "sorted : ");
-}
-
-void PmergeMe::recursiveSort(std::vector<int> arr)
+void PmergeMe::MIS(std::vector<int> arr)
 {
 	std::vector<int> main;
 	std::vector<int> pending;
+	std::map<int, int> pendingToMain;
+	int straggler = -1;
 
 	if (arr.size() < 2)
 	{
-		_sortedVec.push_back(arr[0]);
+		this->_sortedVec.push_back(arr[0]);
 		return ;
 	}
-
 	for (std::vector<int>::iterator it = arr.begin(); it != arr.end(); ++it)
 	{
 		size_t distance = std::distance(it, arr.end());
@@ -107,74 +66,72 @@ void PmergeMe::recursiveSort(std::vector<int> arr)
 			{
 				main.push_back(*(it + 1));
 				pending.push_back(*it);
+				pendingToMain[*it] = *(it + 1);
 			}
 			else
 			{
 				main.push_back(*it);
 				pending.push_back(*(it + 1));
+				pendingToMain[*(it + 1)] = *it;
 			}
-			count++;
+			++this->_count;
 			++it;
 		}
 		else
-			pending.push_back(*it);
+			straggler = *it;
 	}
-	printArr(main, "\nmain: ");
-	printArr(pending, "pending: ");
-	std::cout << std::endl;
-	recursiveSort(main);
 
-	if (pending.empty())
-		return;
+	this->MIS(main);
+
 	size_t pendingLen = pending.size();
-	std::cout << "pending len: " << pendingLen << std::endl;
-	std::vector<int> jacob = generateJacobsthal(pendingLen);
-	std::cout << "jacob: " << jacob << std::endl;
-	std::vector<int> order = this->createInsertionOrder(jacob, pendingLen);
-	std::cout << "recursive order: " << order << std::endl;
-
+	if (pendingLen < 1 || arr.size() < 2)
+		return ;
+	std::vector<int> jacob = this->generateJacobsthal(pendingLen);
+    std::vector<int> order = this->createInsertionOrder(jacob, pendingLen);
+	std::map<int, int> insertedPos;
 	for (std::vector<int>::iterator it = order.begin(); it != order.end(); ++it)
 	{
 		if (*it == 0)
-			this->_sortedVec.insert(this->_sortedVec.begin(), pending[*it]);
-		else
 		{
-			int pos = binarySearch(pending[*it]);
-			if (pos != -1)
-			_sortedVec.insert(_sortedVec.begin() + pos, pending[*it]);
-		}
-	}
-}
-
-void PmergeMe::mergePendingToMain()
-{
-	size_t pendingLen = this->_pending.size();
-	if (pendingLen < 1 || _arr.size() < 2)
-		return ;
-	std::vector<int> jacob = this->generateJacobsthal(pendingLen);
-    this->_order = this->createInsertionOrder(jacob, pendingLen);
-	for (std::vector<int>::iterator it = this->_order.begin(); it != this->_order.end(); ++it)
-	{
-		if (*it == 0)
-		{
-			_sortedVec.insert(_sortedVec.begin(), this->_pending[*it]);
+			int mainPair = this->findPendingPair(pending[0], pendingToMain);
+			int sortedPos = this->searchPositionFromSorted(mainPair);
+			if (sortedPos < 0)
+				throw ErrorException();
+			this->_sortedVec.insert(this->_sortedVec.begin() + sortedPos, pending[0]);
+			insertedPos[0] = sortedPos;
 			continue;
 		}
-		int mainPair = this->findPendingPair(this->_pending[*it]);
+		int mainPair = this->findPendingPair(pending[*it], pendingToMain);
 		int sortedPos = this->searchPositionFromSorted(mainPair);
 		if (sortedPos < 0)
-		{
-			std::cout << "DDD" << std::endl;
 			throw ErrorException();
-		}
-		int insertPos = this->limitedBinarySearch((size_t)sortedPos, this->_pending[*it]);
+		// int lowerBound = 0;
+		// for (std::map<int, int> ::iterator posIt = insertedPos.begin(); posIt != insertedPos.end(); ++posIt)
+		// {
+		// 	if ()
+		// }
+		int insertPos = this->limitedBinarySearch((size_t)sortedPos, pending[*it]);
 		if (insertPos != -1)
-			_sortedVec.insert(_sortedVec.begin() + insertPos, this->_pending[*it]);
+		{
+			this->_sortedVec.insert(this->_sortedVec.begin() + insertPos, pending[*it]);
+			std::cout << "sorted: " << _sortedVec << std::endl;
+		}
 	}
-	if (this->_straggler != -1)
+	if (straggler != -1)
 	{
-		int pos = this->binarySearch(this->_straggler);
-		this->_sortedVec.insert(_sortedVec.begin() + pos, this->_straggler);
+		if (straggler < this->_sortedVec.front())
+		{
+			this->_sortedVec.insert(this->_sortedVec.begin(), straggler);
+		}
+		else if (this->_sortedVec.back() < straggler)
+		{
+			this->_sortedVec.push_back(straggler);
+		}	
+		else
+		{
+			int pos = this->binarySearch(straggler);
+			this->_sortedVec.insert(this->_sortedVec.begin() + pos, straggler);
+		}
 	}
 }
 
@@ -191,7 +148,7 @@ std::vector<int> PmergeMe::generateJacobsthal(int size)
 			vec.push_back(1);
 		else
 		{
-			if (vec[i - 2] * 2 + vec[i - 1] > size)
+			if (vec[i - 2] * 2 + vec[i - 1] >= size)
 				break;
 			else
 				vec.push_back(vec[i - 2] * 2 + vec[i - 1]);
@@ -210,7 +167,6 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
 	if (jacob.empty())
 		return order;
 
-	// size_t pendingLen = this->_pending.size();
 	size_t jacobSize = jacob.size();
 	size_t jacobMax = jacob[jacobSize - 1];
     for (size_t i = jacobSize; 0 < i; --i)
@@ -227,25 +183,20 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
     }
 	// while (--pendingLength > jacobMax)
 	// {
-	// 	this->_order.push_back(pendingLength);
+	// 	order.push_back(pendingLength);
 	// }
 	while (pendingLength > jacobMax + 1)
 	{
 		++jacobMax;
 		order.push_back(jacobMax);
 	}
-    // this->printArr(this->_order, "order: ");
-	// printArr(_pending, "pending: ");
-	// printArr(_sortedVec, "sorted : ");
-	// if (this->_straggler)
-	// 	std::cout << "straggler: " << this->_straggler << std::endl;
 	return (order);
 }
 
-int PmergeMe::findPendingPair(int pending_value)
+int PmergeMe::findPendingPair(int pending_value, std::map<int, int> pendingToMain)
 {
-	std::map<int, int>::iterator it =_pendingToMain.find(pending_value);
-	if (it != _pendingToMain.end())
+	std::map<int, int>::iterator it = pendingToMain.find(pending_value);
+	if (it != pendingToMain.end())
 		return (it->second);
 	throw ErrorException();
 }
@@ -296,7 +247,7 @@ int PmergeMe::binarySearch(int key)
 
 bool PmergeMe::isOK(int index, int key)
 {
-	count++;
+	++this->_count;
 	if (_sortedVec[index] >= key)
 		return (true);
 	return (false);
