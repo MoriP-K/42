@@ -1,8 +1,0 @@
-
-
-loser1 	2	 6	  7    0	1
-elems  5 2  6 8  7 9  0 3  4 1
-loser2	   5	     3		4
-win1	5    8	  9    3
-win2	  8  	    9
-win3			9

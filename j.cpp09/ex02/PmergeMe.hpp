@@ -15,9 +15,9 @@
 class PmergeMe
 {
 private:
-	std::vector<int> _arr; // input
-	std::vector<int> _sortedVec; // sorted winner(_main)
-	std::deque<int> _sortedDeq; // sorted winner(_main)
+	std::vector<size_t> _arr; // input
+	std::vector<size_t> _sortedVec; // sorted winner(_main)
+	std::deque<size_t> _sortedDeq; // sorted winner(_main)
 	size_t _count; // delete
 
 
@@ -28,19 +28,22 @@ public:
 	PmergeMe &operator=(const PmergeMe &src);
 
 	// funcs
-	const std::vector<int> getArr() const;
-	const std::vector<int> getSorted() const;
+	const std::vector<size_t> getArr() const;
+	const std::vector<size_t> getSorted() const;
 
 	bool isValidArgs(const char **av);
 	int binarySearch(int key);
 	// void mergePendingToMain(void);
-	bool isOK(int index, int key);
+	bool isOK(int index, size_t key);
 	std::vector<int> generateJacobsthal(int size);
 	std::vector<int> createInsertionOrder(std::vector<int> jacob, size_t pendingLength);
-	int searchPositionFromSorted(int mainValue);
-	int limitedBinarySearch(size_t len, int key);
+	int searchPositionFromSorted(size_t mainValue);
+	int limitedBinarySearch(size_t len, size_t key);
 
-	void MIS(std::vector<int> arr);
+	void MIS(std::vector<size_t> arr);
+
+	void MergeInsertionSort(std::vector<size_t> chain, int depth);
+	// void MergeInsertionSort(std::vector<size_t> arr);
 
 	// exception
 	class ErrorException : public std::exception
@@ -54,7 +57,7 @@ public:
 
 	// DEBUG
 	size_t arrSize(void);
-	void printArr(std::vector<int> vec, std::string msg);
+	void printArr(std::vector<size_t> vec, std::string msg);
 	void printCount(void);
 };
 

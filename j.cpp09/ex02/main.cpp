@@ -18,11 +18,15 @@ int main(int ac, char const *av[])
 	{
 		PmergeMe pmergeme(av);
 
-		pmergeme.printArr(pmergeme.getArr(), "Before: ");
+		// pmergeme.printArr(pmergeme.getArr(), "Before: ");
 
 		double startVec = getTime();
 		pmergeme.MIS(pmergeme.getArr());
-		// pmergeme.mergeInsertionSort();
+		// std::vector<size_t> initialChain;
+		// for (size_t i = 0; i < pmergeme.arrSize(); ++i)
+		// 	initialChain.push_back(i);
+		// pmergeme.MergeInsertionSort(initialChain, 0);
+		// pmergeme.MergeInsertionSort(pmergeme.getArr());
 		double endVec = getTime();
 		double timeVec = endVec - startVec;
 
