@@ -18,6 +18,7 @@ private:
 	std::vector<size_t> _arr; // input
 	std::vector<size_t> _sortedVec; // sorted winner(_main)
 	std::deque<size_t> _sortedDeq; // sorted winner(_main)
+	std::vector<size_t> _positions;
 	size_t _count; // delete
 
 

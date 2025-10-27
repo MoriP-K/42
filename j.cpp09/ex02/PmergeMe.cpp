@@ -107,11 +107,12 @@ void PmergeMe::MIS(std::vector<size_t> arr)
 		return ;
 	std::vector<int> jacob = this->generateJacobsthal(pendingLen);
     std::vector<int> order = this->createInsertionOrder(jacob, pendingLen);
+	std::cout << "order: " << order << std::endl;
 	for (size_t i = 0; i < order.size(); ++i)
 	{
-		std::cout << "order: " << i << std::endl;
-		std::cout << "value: " << pending[i] << std::endl;
 		size_t idx = order[i];
+		std::cout << "order: " << i << std::endl;
+		std::cout << "value: " << arr[pending[idx]] << std::endl;
 		size_t pendIdx = pending[idx];
 		size_t mainIdx = main[idx];
 		int sortedPos = positions[mainIdx];
@@ -192,6 +193,7 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
 		return order;
 
 	size_t length = pendingLength;
+	std::cout << "jacob: " << jacob << std::endl;
 	size_t jacobSize = jacob.size();
 	size_t jacobMax = jacob[jacobSize - 1];
     for (size_t i = jacobSize; 0 < i; --i)
@@ -206,15 +208,15 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
             bigger--;
         }
     }
-	while (--length > jacobMax)
-	{
-		order.push_back(length);
-	}
-	// while (length > jacobMax + 1)
+	// while (--length > jacobMax)
 	// {
-	// 	++jacobMax;
-	// 	order.push_back(jacobMax);
+	// 	order.push_back(length);
 	// }
+	while (length > jacobMax + 1)
+	{
+		++jacobMax;
+		order.push_back(jacobMax);
+	}
 	return (order);
 }
 
