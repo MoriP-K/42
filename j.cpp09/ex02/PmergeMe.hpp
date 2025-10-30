@@ -16,9 +16,8 @@ class PmergeMe
 {
 private:
 	std::vector<size_t> _arr; // input
-	std::vector<size_t> _sortedVec; // sorted winner(_main)
-	std::deque<size_t> _sortedDeq; // sorted winner(_main)
-	std::vector<size_t> _positions;
+	std::vector<size_t> _sorted_vec; // sorted winner(_main)
+	std::deque<size_t> _sorted_deq; // sorted winner(_main)
 	size_t _count; // delete
 
 
@@ -34,11 +33,9 @@ public:
 
 	bool isValidArgs(const char **av);
 	int binarySearch(int key);
-	// void mergePendingToMain(void);
 	bool isOK(int index, size_t key);
 	std::vector<int> generateJacobsthal(int size);
 	std::vector<int> createInsertionOrder(std::vector<int> jacob, size_t pendingLength);
-	int searchPositionFromSorted(size_t mainValue);
 	int limitedBinarySearch(size_t len, size_t key);
 
 	void MIS(std::vector<size_t> arr);
@@ -64,5 +61,6 @@ public:
 
 // operator
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
+std::ostream &operator<<(std::ostream &out, const std::vector<size_t> &vec);
 
 #endif
