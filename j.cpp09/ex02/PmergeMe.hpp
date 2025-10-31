@@ -20,7 +20,6 @@ private:
 	std::deque<size_t> _sorted_deq; // sorted winner(_main)
 	size_t _count; // delete
 
-
 public:
 	PmergeMe(const char **av);
 	PmergeMe(const PmergeMe &copy);
@@ -35,13 +34,13 @@ public:
 	int binarySearch(int key);
 	bool isOK(int index, size_t key);
 	std::vector<int> generateJacobsthal(int size);
-	std::vector<int> createInsertionOrder(std::vector<int> jacob, size_t pendingLength);
+	std::vector<int> createInsertionOrder(std::vector<int> jacob, size_t pending_len);
 	int limitedBinarySearch(size_t len, size_t key);
 
 	void MIS(std::vector<size_t> arr);
 
-	void MergeInsertionSort(std::vector<size_t> chain, int depth);
-	// void MergeInsertionSort(std::vector<size_t> arr);
+	// void MergeInsertionSort(std::vector<size_t> chain, int depth);
+	void testMIS(std::vector<size_t> arr);
 
 	// exception
 	class ErrorException : public std::exception

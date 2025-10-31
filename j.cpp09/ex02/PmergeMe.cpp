@@ -45,10 +45,10 @@ bool PmergeMe::isValidArgs(const char **av)
 
 void PmergeMe::MIS(std::vector<size_t> arr)
 {
-	std::vector<size_t> main;
-	std::vector<size_t> pending;
+	std::vector<size_t> main_index;
+	std::vector<size_t> pend_index;
 	std::vector<int> positions(arr.size());
-	int straggler_idx = -1;
+	// int straggler_idx = -1;
 
 	for (size_t i = 0; i < arr.size(); ++i)
 		positions[i] = -1;
@@ -57,19 +57,20 @@ void PmergeMe::MIS(std::vector<size_t> arr)
 		this->_sorted_vec.push_back(arr[0]);
 		return ;
 	}
+	int k = 0;
 	for (size_t i = 0; i < arr.size(); )
 	{
 		if (i + 1 < arr.size())
 		{
 			if (arr[i] < arr[i + 1])
 			{
-				main.push_back(i + 1);
-				pending.push_back(i);
+				main_index.push_back(i + 1);
+				pend_index.push_back(i);
 			}
 			else
 			{
-				main.push_back(i);
-				pending.push_back(i + 1);
+				main_index.push_back(i);
+				pend_index.push_back(i + 1);
 			}
 			++this->_count;
 			// std::cout << _count << std::endl;
@@ -77,66 +78,49 @@ void PmergeMe::MIS(std::vector<size_t> arr)
 		}
 		else
 		{
-			straggler_idx = i;
+			// straggler_idx = i;
+			pend_index.push_back(i);
 			break ;
 		}
 	}
+	std::cout << "===== k = " << k++ << " =====" << std::endl;
+	std::cout << "main idx: " << main_index << std::endl;
+	std::cout << "main val: ";
+	for (size_t i = 0; i < main_index.size(); ++i)
+		std::cout << _arr[main_index[i]] << std::endl;
+	std::cout << "pend idx: " << pend_index << std::endl;
+	for (size_t i = 0; i < pend_index.size(); ++i)
+		std::cout << _arr[pend_index[i]] << std::endl;
+	std::cout << std::endl;
 
 	std::vector<size_t> mainValues;
-	for (size_t i = 0; i < main.size(); ++i)
-		mainValues.push_back(arr[main[i]]);
+	for (size_t i = 0; i < main_index.size(); ++i)
+		mainValues.push_back(arr[main_index[i]]);
 
-	size_t sortedSizeBefore = this->_sorted_vec.size();
+	// size_t sortedSizeBefore = this->_sorted_vec.size();
 	this->MIS(mainValues);
 
-	printArr(main, "main: ");
-	printArr(pending, "pend: ");
+	printArr(main_index, "main_index: ");
+	printArr(pend_index, "pend_index: ");
 	printArr(_sorted_vec, "sort: ");
+	std::cout << std::endl;
 
-	for (size_t i = 0; i < main.size(); ++i)
-		positions[main[i]] = sortedSizeBefore + i;
-	size_t pendingLen = pending.size();
-	if (pendingLen < 1)
+	// for (size_t i = 0; i < main_index.size(); ++i)
+	// 	positions[main_index[i]] = sortedSizeBefore + i;
+	size_t pending_len = pend_index.size();
+	if (pending_len < 1)
 		return ;
-	std::vector<int> jacob = this->generateJacobsthal(pendingLen);
-    std::vector<int> order = this->createInsertionOrder(jacob, pendingLen);
+	std::vector<int> jacob = this->generateJacobsthal(pending_len);
+    std::vector<int> order = this->createInsertionOrder(jacob, pending_len);
 	std::cout << "order: " << order << std::endl;
 	for (size_t i = 0; i < order.size(); ++i)
 	{
 		size_t idx = order[i];
-		std::cout << "pend: " << pending << std::endl;
-		std::cout << "pend index: " << pending[idx] << std::endl;
-		std::cout << "value: " << arr[pending[idx]] << std::endl;
-		size_t pendIdx = pending[idx];
-		size_t mainIdx = main[idx];
-		int sortedPos = positions[mainIdx];
-		if (idx == 0)
-		{
-			this->_sorted_vec.insert(this->_sorted_vec.begin() + sortedPos, arr[pendIdx]);
-			for (size_t j = 0; j < main.size(); ++j)
-			{
-				if (positions[main[j]] >= sortedPos)
-					positions[main[j]]++;
-			}
-			printArr(_sorted_vec, "push front sorted: ");
-			continue;
-		}
-		int insertPos = this->limitedBinarySearch((size_t)sortedPos, arr[pendIdx]);
-		if (insertPos != -1)
-		{
-			this->_sorted_vec.insert(this->_sorted_vec.begin() + insertPos, arr[pendIdx]);
-			for (size_t j = 0; j < main.size(); ++j)
-			{
-				if (positions[main[j]] >= insertPos)
-					positions[main[j]]++;
-			}
-			printArr(_sorted_vec, "sorted: ");
-		}
-	}
-	if (straggler_idx != -1)
-	{
-		int pos = this->binarySearch(arr[straggler_idx]);
-		this->_sorted_vec.insert(this->_sorted_vec.begin() + pos, arr[straggler_idx]);
+		std::cout << "pend index: " << pend_index[idx] << std::endl;
+		std::cout << "value: " << arr[pend_index[idx]] << std::endl;
+		// size_t pendIdx = pend_index[idx];
+		// size_t mainIdx = main_index[idx];
+		// int sortedPos = positions[mainIdx];
 	}
 }
 
@@ -164,7 +148,7 @@ std::vector<int> PmergeMe::generateJacobsthal(int size)
 	return (vec);
 }
 
-std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t pendingLength)
+std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t pending_len)
 {
 	std::vector<int> order;
 
@@ -172,11 +156,10 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
 	if (jacob.empty())
 		return order;
 
-	size_t length = pendingLength;
-	std::cout << "jacob: " << jacob << std::endl;
-	size_t jacobSize = jacob.size();
-	size_t jacobMax = jacob[jacobSize - 1];
-    for (size_t i = jacobSize; 0 < i; --i)
+	size_t length = pending_len;
+	size_t jacob_size = jacob.size();
+	size_t jacob_max = jacob[jacob_size - 1];
+    for (size_t i = jacob_size; 0 < i; --i)
     {
 		int n = i - 1;
         int bigger = jacob[n];
@@ -188,14 +171,14 @@ std::vector<int> PmergeMe::createInsertionOrder(std::vector<int> jacob, size_t p
             bigger--;
         }
     }
-	while (--length > jacobMax)
+	while (--length > jacob_max)
 	{
 		order.push_back(length);
 	}
-	// while (length > jacobMax + 1)
+	// while (length > jacob_max + 1)
 	// {
-	// 	++jacobMax;
-	// 	order.push_back(jacobMax);
+	// 	++jacob_max;
+	// 	order.push_back(jacob_max);
 	// }
 	return (order);
 }
