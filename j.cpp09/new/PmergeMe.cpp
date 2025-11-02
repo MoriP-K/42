@@ -4,11 +4,7 @@ PmergeMe::PmergeMe(const char **av)
 {
 	if (!this->isValidArgs(av))
 		throw ErrorException();
-	this->initData();
-	std::cout << "======== input ========" << std::endl;
-	std::cout << this->_info << std::endl; // dd
 	this->_count = 0;
-	this->startSorting(this->_info);
 }
 
 PmergeMe::PmergeMe(const PmergeMe &copy)
@@ -47,19 +43,20 @@ bool PmergeMe::isValidArgs(const char **av)
 	return (true);
 }
 
-void PmergeMe::initData(void)
+std::vector<data> PmergeMe::initData()
 {
-	data info;
+	std::vector<data> info;
 	for (size_t i = 0; i < this->_input_arr.size(); ++i)
 	{
-		info.original_idx = i;
-		info.value = this->_input_arr[i];
-		this->_info.push_back(info);
+		data tmp;
+		tmp.original_idx = i;
+		tmp.value = this->_input_arr[i];
+		info.push_back(tmp);
 	}
+	return (info);
 }
-void printNow(std::vector<data> winner, std::vector<data> loser);
 
-void PmergeMe::startSorting(std::vector<data> info)
+void PmergeMe::startSorting(const std::vector<data>& info)
 {
 	std::vector<data> winner;
 	std::vector<data> loser;
@@ -70,49 +67,167 @@ void PmergeMe::startSorting(std::vector<data> info)
 		return ;
 	}
 
-	for (size_t i = 0; i < info.size();)
-	{
-		if (i + 1 < info.size())
-		{
-			if (info[i].value > info[i + 1].value)
-			{
-				info[i].defeated_idx.push_back(i + 1);
-				winner.push_back(info[i]);
-				loser.push_back(info[i + 1]);
-			}
-			else
-			{
-				info[i + 1].defeated_idx.push_back(i);
-				winner.push_back(info[i + 1]);
-				loser.push_back(info[i]);
-			}
-		}
-		else
-		{
-			loser.push_back(info[i]);
-		}
-		i += 2;
-	}
+	comparePair(info, &winner, &loser);
 
 	static size_t i = 0;
 	i++;
-	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
-	std::cout << "         BEFORE" << std::endl;
-	printNow(winner,loser);
+	// std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	// std::cout << "         BEFORE" << std::endl;
+	// std::cout << "\n-------- list ---------" << std::endl;
+	// printInfo(info, WHITE, false);
+	// printNow(winner,loser);
+
 
 	this->startSorting(winner);
 
-	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
-	std::cout << "          AFTER" << std::endl;
-	printNow(winner,loser);
+	// std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	// std::cout << "          AFTER" << std::endl;
+	// std::cout << "\n-------- list ---------" << std::endl;
+	// printInfo(info, WHITE, false);
+	// printNow(winner,loser);
 	i--;
 
 	std::vector<size_t> jacob = makeJacobsthalOrder(loser.size());
 	std::vector<size_t> order = generateInsertOrder(jacob, loser.size());
-	
 
-	std::cout << "jacob: " << jacob << std::endl;
-	std::cout << "order: " << order << std::endl;
+	// std::cout << "jacob: " << jacob << std::endl;
+	// std::cout << "order: " << order << std::endl;
+
+	size_t loser_len = loser.size();
+	// std::cout << "loser len == " << loser_len << std::endl;
+	if (loser_len == 1)
+	{
+		this->_sorted_vec.insert(this->_sorted_vec.begin(), loser[0]);
+		return ;
+	}
+
+	std::cout << "     SORTED BEFORE" << std::endl;
+	// printInfo(this->_sorted_vec, YELLOW, false);
+
+	for (size_t i = 0; i < order.size(); ++i)
+	{
+		size_t idx = order[i];
+
+		std::cout << "   <<<<<< info >>>>>>" << std::endl;
+		// printInfo(info, WHITE, false);
+		if (idx == 0)
+		{
+			std::cout << "sorted vec[" << i <<"] :" << _sorted_vec[0].value << std::endl;
+			size_t latest_loser_pair_idx = this->_sorted_vec[0].defeated_idx.back();
+			std::cout << "defeat list: " << _sorted_vec[0].defeated_idx << std::endl;
+			std::cout << "latest_loser_pair_idx: " << latest_loser_pair_idx << std::endl;
+			std::cout << "insert value: " << info[latest_loser_pair_idx].value << std::endl;
+			this->_sorted_vec[0].defeated_idx.pop_back();
+			for (size_t i = 0; i < winner.size(); ++i)
+			{
+				if (winner[i].original_idx == this->_sorted_vec[0].original_idx)
+					winner[i].defeated_idx.pop_back();
+			}
+			this->_sorted_vec.insert(this->_sorted_vec.begin(), info[latest_loser_pair_idx]);
+			continue;
+		}
+
+		if (i < this->_sorted_vec.size())
+			std::cout << "sorted[" << i << "]: " << _sorted_vec[i] << std::endl;
+
+		if (idx > winner.size() - 1)
+		{
+			// skip searching for loser pair
+			std::cout << "insert value: " << loser[idx].value << std::endl;
+			size_t insert_pos = binarySearch(loser[idx].value);
+			std::cout << "insert pos: " << insert_pos << std::endl;
+			this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
+			// printNow(winner, loser);
+		}
+		else
+		{
+			if (i < winner.size())
+			{
+				size_t latest_loser_pair_idx = winner[i].defeated_idx.back();
+				size_t search_limit = searchLimitLength(winner, idx);
+				std::cout << "::latest_loser_pair_idx: " << latest_loser_pair_idx << std::endl;
+
+				std::cout << search_limit << std::endl;
+
+				size_t insert_pos = limitedBinarySearch(search_limit, loser[idx].value);
+				std::cout << "::insert pos: " << insert_pos << std::endl;
+				this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
+				// printNow(winner, loser);
+
+			}
+			// if (1)
+			// {
+			// 	// search for loser pair from winner
+			// 	if (i < this->_sorted_vec.size() && !this->_sorted_vec[i].defeated_idx.empty())
+			// 	{
+			// 		// std::cout << "sorted vec[" << i <<"] :" << _sorted_vec[i].value << std::endl;
+			// 		// size_t latest_loser_pair = this->_sorted_vec[i].defeated_idx.back();
+			// 		this->_sorted_vec[i].defeated_idx.pop_back();
+			// 		// std::cout << "latest_loser_pair: " << latest_loser_pair << std::endl;
+			// 	}
+			// }
+		}
+	}
+	std::cout << "     SORTED AFTER" << std::endl;
+	printInfo(this->_sorted_vec, YELLOW, false);
+
+}
+
+size_t PmergeMe::searchLimitLength(std::vector<data> winner, size_t index)
+{
+	size_t len = 0;
+	for (size_t j = 0; j < _sorted_vec.size(); ++j)
+	{
+		if (winner[index].original_idx == _sorted_vec[j].original_idx)
+			break;
+		++len; 
+	}
+	return (len);
+}
+
+size_t PmergeMe::limitedBinarySearch(size_t search_limit, size_t search_value)
+{
+	int ng = -1;
+	int ok = search_limit;
+
+	while (abs(ok - ng) > 1)
+	{
+		int mid = (ok + ng) / 2;
+
+		if (isOK(mid, search_value))
+			ok = mid;
+		else
+			ng = mid;
+	}
+	return (ok);
+}
+
+void PmergeMe::comparePair(std::vector<data> info, std::vector<data> *winner, std::vector<data> *loser)
+{
+	for (size_t i = 0; i < info.size();)
+	{
+		if (i + 1 < info.size())
+		{
+			++this->_count;
+			if (info[i].value > info[i + 1].value)
+			{
+				info[i].defeated_idx.push_back(i + 1);
+				winner->push_back(info[i]);
+				loser->push_back(info[i + 1]);
+			}
+			else
+			{
+				info[i + 1].defeated_idx.push_back(i);
+				winner->push_back(info[i + 1]);
+				loser->push_back(info[i]);
+			}
+		}
+		else
+		{
+			loser->push_back(info[i]);
+		}
+		i += 2;
+	}
 }
 
 std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
@@ -192,7 +307,7 @@ bool PmergeMe::isOK(int index, size_t key)
 {
 	++this->_count;
 	std::cout << _count << std::endl;
-	if (_sorted_vec[index].original_idx >= key)
+	if (_sorted_vec[index].value >= key)
 		return (true);
 	return (false);
 }
@@ -221,34 +336,9 @@ std::ostream &operator<<(std::ostream &out, const std::vector<size_t> &vec)
 	return (out);
 }
 
-std::ostream &operator<<(std::ostream &out, const std::vector<data> &vec)
+std::ostream &operator<<(std::ostream &out, const data &vec)
 {
-	size_t width = 5;
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		std::ostringstream oss;
-		oss << vec[i].value;
-		size_t tmp = oss.str().length();
-		if (tmp > width)
-			width = tmp;
-	}
-	out << std::right << std::setw(6) << "| index" << "| "
-		<< std::setw(6) << "orig i" << "| "
-		<< std::setw(width) <<  "value" << "|" << std::endl;
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		out << "| " << std::setw(5) << i << "| "
-			<< std::right << std::setw(6) << vec[i].original_idx << "| "
-			<< std::setw(width) << vec[i].value << "|" << std::endl;
-	}
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		if (!vec[i].defeated_idx.empty())
-		{
-			std::cout << "value = " << vec[i].value << "           (orig idx[" << vec[i].original_idx << "])" << "\n  => defeat idx = ";
-			std::cout << vec[i].defeated_idx << std::endl;
-		}
-	}
+	out << WHITE << "value: " << vec.value << ", orig idx: " << vec.original_idx << RESET;
 	return (out);
 }
 
@@ -261,12 +351,47 @@ void invalidArgument(void)
 // DEBUG //
 ///////////
 
-void printNow(std::vector<data> winner, std::vector<data> loser)
+void PmergeMe::printInfo(std::vector<data> info, const std::string& color, bool list_flag)
+{
+	size_t width = 5;
+	for (size_t i = 0; i < info.size(); ++i)
+	{
+		std::ostringstream oss;
+		oss << info[i].value;
+		size_t tmp = oss.str().length();
+		if (tmp > width)
+			width = tmp;
+	}
+	std::cout <<  color;
+	std::cout << std::right << std::setw(6) << "| index" << "| "
+		<< std::setw(6) << "orig i" << "| "
+		<< std::setw(width) <<  "value" << "|" << std::endl;
+	for (size_t i = 0; i < info.size(); ++i)
+	{
+		std::cout << "| " << std::setw(5) << i << "| "
+			<< std::right << std::setw(6) << info[i].original_idx << "| "
+			<< std::setw(width) << info[i].value << "|" << std::endl;
+	}
+	if (list_flag)
+	{
+		for (size_t i = 0; i < info.size(); ++i)
+		{
+			if (!info[i].defeated_idx.empty())
+			{
+				std::cout << "value = " << info[i].value << "           (orig idx[" << info[i].original_idx << "])" << "\n  => defeat idx = ";
+				std::cout << info[i].defeated_idx << std::endl;
+			}
+		}
+	}
+	std::cout << RESET;
+}
+
+void PmergeMe::printNow(std::vector<data> winner, std::vector<data> loser)
 {
 	std::cout << "======== Winner ========" << std::endl;
-	std::cout << winner << std::endl;
+	printInfo(winner, RED, true);
 	std::cout << "======== Loser ========" << std::endl;
-	std::cout << loser << std::endl;
+	printInfo(loser, BLUE, true);
 }
 
 size_t PmergeMe::arrSize(void)

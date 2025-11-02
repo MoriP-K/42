@@ -11,6 +11,13 @@ int main(int ac, char const *av[])
 	{
 		PmergeMe mis(av);
 
+		std::vector<data> info;
+		info = mis.initData();
+		std::cout << "======== input ========" << std::endl;
+		mis.printInfo(info, WHITE, false);
+		mis.startSorting(info);
+		mis.printCount();
+
 	}
 	catch(const std::exception& error)
 	{
