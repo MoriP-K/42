@@ -33,6 +33,7 @@ private:
 	std::vector<data> _sorted_vec; // sorted winner(_main)
 	std::deque<data> _sorted_deq; // sorted winner(_main)
 	std::vector<data> _info;
+	size_t _depth;
 
 	size_t _count; // delete
 
@@ -45,10 +46,13 @@ public:
 	bool isValidArgs(const char **av);
 	std::vector<data> initData(void);
 
-	void startSorting(const std::vector<data>& info);
+	void startSorting(const std::vector<data>& info, size_t depth);
 	void comparePair(std::vector<data> info, std::vector<data> *winner, std::vector<data> *loser);
 	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
+	bool isAlreadyInserted(size_t loser_orig_index);
+	int getIndexFromDefeatedIdx(size_t depth, size_t loop_idx);
+	int getInfoIndex(std::vector<data> info, std::vector<data> loser, size_t idx);
 	size_t searchLimitLength(std::vector<data> winner, size_t index);
 	int binarySearch(int key);
 	bool isOK(int index, size_t key);
@@ -56,6 +60,7 @@ public:
 
 	const std::vector<size_t> getArr() const;
 	const std::vector<data> getSorted() const;
+	size_t getDepth() const;
 
 	// exception
 	class ErrorException : public std::exception

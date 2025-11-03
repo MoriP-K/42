@@ -14,9 +14,11 @@ int main(int ac, char const *av[])
 		std::vector<data> info;
 		info = mis.initData();
 		std::cout << "======== input ========" << std::endl;
+		std::cout << std::endl;
 		mis.printInfo(info, WHITE, false);
-		mis.startSorting(info);
+		mis.startSorting(info, mis.getDepth());
 		mis.printCount();
+		std::cout << mis.getArr() << " ";
 
 	}
 	catch(const std::exception& error)
