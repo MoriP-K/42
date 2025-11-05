@@ -94,9 +94,6 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 
 	std::cout << "order: " << order << std::endl;
 
-	// size_t loser_len = loser.size();
-	// std::cout << "loser len == " << loser_len << std::endl;
-
 	std::cout << "     SORTED BEFORE" << std::endl;
 	printInfo(this->_sorted_vec, YELLOW, false);
 
@@ -109,6 +106,8 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 		if (i == 0)
 		{
 			size_t latest_loser_pair_idx = this->_sorted_vec[0].defeated_idx.back();
+			std::cout << "A??sorted_vec[0].defeated_idx.back(): " <<latest_loser_pair_idx << std::endl;
+
 			this->_sorted_vec[0].defeated_idx.pop_back();
 			for (size_t j = 0; j < winner.size(); ++j)
 			{
@@ -117,7 +116,7 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 			}
 			this->_sorted_vec.insert(this->_sorted_vec.begin(), info[latest_loser_pair_idx]);
 			// std::cout << "j: " << j << std::endl;
-			std::cout << " = insert sorted-vec[0]-pair =" << std::endl;
+			// std::cout << " = insert sorted-vec[0]-pair =" << std::endl;
 			printInfo(this->_sorted_vec, YELLOW, false);
 		}
 		
@@ -127,11 +126,11 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 			continue ;
 
 		// to insert loser[idx]
-		std::cout << "i = " << i << std::endl;
-		if (i < this->_sorted_vec.size())
-			std::cout << "sorted[" << i << "]: " << _sorted_vec[i] << std::endl;
-		if (i < loser.size())
-			std::cout << "loser[" << i << "]: " << loser[i] << std::endl;
+		// std::cout << "i = " << i << std::endl;
+		// if (i < this->_sorted_vec.size())
+		// 	std::cout << "sorted[" << i << "]: " << _sorted_vec[i] << std::endl;
+		// if (i < loser.size())
+		// 	std::cout << "loser[" << i << "]: " << loser[i] << std::endl;
 		std::cout << "order[" << i <<"] = " << idx << ", loser[" << idx <<"] = " << loser[idx] << std::endl;
 		if (idx >= winner.size())
 		{
@@ -145,6 +144,7 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 		}
 		else
 		{
+			printNow(winner, loser);
 			std::cout << "there" << std::endl;
 			if (i < winner.size())
 			{
@@ -154,8 +154,8 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 
 				std::cout << search_limit << std::endl;
 
-				// for (size_t j = 0; j < search_limit; ++j)
-					// std::cout << "for search limit: " << _sorted_vec[j] << std::endl;
+				for (size_t j = 0; j < search_limit; ++j)
+					std::cout << "for search limit: " << _sorted_vec[j] << std::endl;
 				size_t insert_pos = limitedBinarySearch(search_limit, loser[idx].value);
 				std::cout << "::insert pos: " << insert_pos << std::endl;
 				this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
@@ -163,13 +163,8 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 			}
 			else
 			{
-				int info_idx = getInfoIndex(info, loser, idx);
-				if (info_idx == -1)
-				{
-					std::cout << "UUU" << std::endl;
-					return ;
-				}
-				int search_limit = getIndexFromDefeatedIdx(depth, info_idx);
+				printInfo(this->_sorted_vec, YELLOW, false);
+				int search_limit = getIndexFromDefeatedIdx(winner[idx].original_idx);
 				if (search_limit == -1)
 				{
 					std::cout << "PPP" << std::endl;
@@ -197,29 +192,20 @@ int PmergeMe::getInfoIndex(std::vector<data> info, std::vector<data> loser, size
 	return (-1);
 }
 
-// ======== Loser ========
-// | index| orig i| value|
-// // |     0|      0|     3|
-// // |     1|      2|     1|
-// // |     2|      5|     2|
-// // |     3|      7|    10|
-// // |     4|      8|     7|
-// // |     5|     11|     6|
-// |     6|     13|     4|
-// // |     7|     15|    11|
-// // |     8|     16|    13|
-// // |     9|     19|     5|
-// // |    10|     20|     8|
-
-int PmergeMe::getIndexFromDefeatedIdx(size_t depth, size_t loop_idx)
+int PmergeMe::getIndexFromDefeatedIdx(size_t win_orig_idx)
 {
+	// for (size_t i = 0; i < this->_sorted_vec.size(); ++i)
+	// {
+	// 	for (size_t j = 0; j < _sorted_vec[i].defeated_idx.size(); ++j)
+	// 	{
+	// 		std::cout << "<<sorted_vec[" << i << "].defeated_idx[" << j << "]: " << _sorted_vec[i].defeated_idx[j] << std::endl;
+	// 	}
+	// }
+	// winner[idx] = loser[idx]はペア。 winnerのdefeated_idxからペアのidxを取得し
 	for (size_t j = 0; j < this->_sorted_vec.size(); ++j)
 	{
-		if (depth == this->_sorted_vec[j].defeated_idx.size())
-		{
-			if (loop_idx == this->_sorted_vec[j].defeated_idx[depth - 1])
-				return (j);
-		}
+		if (win_orig_idx == this->_sorted_vec[j].original_idx)
+			return (j);
 	}
 	return (-1);
 }

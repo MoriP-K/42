@@ -51,7 +51,7 @@ public:
 	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
 	bool isAlreadyInserted(size_t loser_orig_index);
-	int getIndexFromDefeatedIdx(size_t depth, size_t loop_idx);
+	int getIndexFromDefeatedIdx(size_t win_orig_idx);
 	int getInfoIndex(std::vector<data> info, std::vector<data> loser, size_t idx);
 	size_t searchLimitLength(std::vector<data> winner, size_t index);
 	int binarySearch(int key);
