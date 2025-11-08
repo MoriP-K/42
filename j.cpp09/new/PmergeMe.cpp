@@ -109,7 +109,7 @@ void PmergeMe::startSorting(const std::vector<data>& info)
 		if (i == 0)
 		{
 			std::cout << "idx == 0" << std::endl;
-			int pair_idx = getIndexFromWinner(this->_sorted_vec[idx].original_idx, winner);
+			int pair_idx = getIndexFromWinner(this->_sorted_vec[i].original_idx, winner);
 			if (pair_idx == -1)
 			{
 				std::cout << "AAA" << std::endl;
@@ -133,20 +133,20 @@ void PmergeMe::startSorting(const std::vector<data>& info)
 		if (idx >= winner.size())
 		{
 			// skip searching for loser pair
-			size_t search_limit = this->_sorted_vec.size();
-			if (!winner.empty())
-			{
-				int last_winner_pos = getIndexFromDefeatedIdx(winner[winner.size() - 1].original_idx);
-				if (last_winner_pos != -1)
-					search_limit = last_winner_pos;
-			}
-			size_t insert_pos;
-			if (search_limit == this->_sorted_vec.size())
-				insert_pos = binarySearch(loser[idx].value);
-			else
-				insert_pos = limitedBinarySearch(search_limit, loser[idx].value);
+			// size_t search_limit = this->_sorted_vec.size();
+			// if (!winner.empty())
+			// {
+			// 	int last_winner_pos = getIndexFromDefeatedIdx(winner[winner.size() - 1].original_idx);
+			// 	if (last_winner_pos != -1)
+			// 		search_limit = last_winner_pos;
+			// }
+			// size_t insert_pos;
+			// if (search_limit == this->_sorted_vec.size())
+				size_t insert_pos = binarySearch(loser[idx].value);
+			// else
+			// 	insert_pos = limitedBinarySearch(search_limit, loser[idx].value);
 			// std::cout << "insert pos: " << insert_pos << std::endl;
-			std::cout << "insert value(loser[" << idx << "]): " << loser[idx] << std::endl;
+			std::cout << "::insert value(loser[" << idx << "]): " << loser[idx] << std::endl;
 			this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
 			printInfo(this->_sorted_vec, YELLOW, false);
 			// printNow(winner, loser);
@@ -273,10 +273,10 @@ std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
 	size_t num = 0;
 	size_t i = 2;
 
-	arr.push_back(0);
+	arr.push_back(2); // 0
 	if (loser_len < 2)
 		return (arr);
-	arr.push_back(1);
+	arr.push_back(2); // 0
 	while (1)
 	{
 		num = arr[i - 1] + arr[i - 2] * 2;
@@ -300,13 +300,39 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 	size_t jacob_len = jacob.size();
 	size_t jacob_max = jacob[jacob_len - 1];
 
-	for (size_t i = 1; i < jacob_len; ++i)
+	// for (size_t i = 0; i < jacob_len; ++i)
+	// {
+	// 	for (size_t j = jacob[i]; 0 < j; --j)
+	// 	{
+	// 		order.push_back(j);
+	// 	}
+	// 	// for (size_t j = jacob[i] + 1; 0 < j && order.size() <= loser_len; --j)
+	// 	// {
+	// 	// 	order.push_back(j);
+	// 	// }
+	// }
+
+	// aaa
+	size_t value = 1;
+	for (size_t i = 1; order.size() < loser_len; ++i)
 	{
-		for (size_t j = jacob[i]; j >= jacob[i - 1] + 1; --j)
+		std::vector<size_t> num;
+		num.clear();
+		for (size_t j = jacob[i - 1]; 0 < j; --j)
 		{
-			order.push_back(j);
+			std::cout << "push num: " << value << std::endl;
+			num.push_back(value);
+			++value;
 		}
+		while (0 < num.size())
+		{
+			std::cout << "push order: " << num.back() << std::endl;
+			order.push_back(num.back());
+			num.pop_back();
+		}
+		std::cout << "order size: " << order.size() << ", loser len: " << loser_len << std::endl;
 	}
+	// aaa
 
 	size_t loser_idx = loser_len - 1;
 	while (loser_idx > jacob_max)
