@@ -16,7 +16,7 @@ int main(int ac, char const *av[])
 		std::cout << "======== input ========" << std::endl;
 		std::cout << std::endl;
 		mis.printInfo(info, WHITE, false);
-		mis.startSorting(info, mis.getDepth());
+		mis.startSorting(info);
 		mis.printCount();
 		std::cout << mis.getArr() << " ";
 

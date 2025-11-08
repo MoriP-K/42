@@ -5,7 +5,7 @@ PmergeMe::PmergeMe(const char **av)
 	if (!this->isValidArgs(av))
 		throw ErrorException();
 	this->_count = 0;
-	this->_depth = 0;
+	this->_total = 0;
 }
 
 PmergeMe::PmergeMe(const PmergeMe &copy)
@@ -57,7 +57,7 @@ std::vector<data> PmergeMe::initData()
 	return (info);
 }
 
-void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
+void PmergeMe::startSorting(const std::vector<data>& info)
 {
 	std::vector<data> winner;
 	std::vector<data> loser;
@@ -76,22 +76,25 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 	std::cout << "         BEFORE" << std::endl;
 	std::cout << "\n-------- list ---------" << std::endl;
 	printInfo(info, WHITE, false);
-	printNow(winner,loser);
+	// printNow(winner,loser);
 
+	std::cout << "\nafter compare count: " << _count << std::endl;
+	_total += _count;
+	_count = 0;
 
-	this->startSorting(winner, ++depth);
+	this->startSorting(winner);
 
 	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
 	std::cout << "          AFTER" << std::endl;
 	std::cout << "\n-------- list ---------" << std::endl;
 	printInfo(info, WHITE, false);
-	printNow(winner,loser);
+	// printNow(winner,loser);
 	i--;
 
 	std::vector<size_t> jacob = makeJacobsthalOrder(loser.size());
 	std::cout << "jacob: " << jacob << std::endl;
-	std::vector<size_t> order = generateInsertOrder(jacob, loser.size());
 
+	std::vector<size_t> order = generateInsertOrder(jacob, loser.size());
 	std::cout << "order: " << order << std::endl;
 
 	std::cout << "     SORTED BEFORE" << std::endl;
@@ -102,20 +105,21 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 		size_t idx = order[i];
 
 		std::cout << "\n   <<<<<< info[" << i <<"] >>>>>>" << std::endl;
-		printInfo(info, WHITE, false);
-		std::cout << "insert value(loser[" << i << "]): " << loser[idx] << std::endl;
-		if (idx == 0)
+		// printInfo(info, WHITE, false);
+		if (i == 0)
 		{
+			std::cout << "idx == 0" << std::endl;
 			int pair_idx = getIndexFromWinner(this->_sorted_vec[idx].original_idx, winner);
 			if (pair_idx == -1)
 			{
 				std::cout << "AAA" << std::endl;
 				return ;
 			}
+			std::cout << "insert value(loser[" << pair_idx << "]): " << loser[pair_idx] << std::endl;
 			this->_sorted_vec.insert(this->_sorted_vec.begin(), loser[pair_idx]);
 			printInfo(this->_sorted_vec, YELLOW, false);
 		}
-		
+
 		size_t loser_original_idx = loser[idx].original_idx;
 
 		if (isAlreadyInserted(loser_original_idx))
@@ -125,21 +129,32 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 		}
 
 		// to insert loser[idx]
-		std::cout << "order[" << i <<"] = " << idx << ", loser[" << idx <<"] = " << loser[idx] << std::endl;
+		// std::cout << "order[" << i <<"] = " << idx << ", loser[" << idx <<"] = " << loser[idx] << std::endl;
 		if (idx >= winner.size())
 		{
 			// skip searching for loser pair
-			std::cout << "order[i] >= winner.size()" << std::endl;
-			std::cout << "insert value: " << loser[idx].value << std::endl;
-			size_t insert_pos = binarySearch(loser[idx].value);
-			std::cout << "insert pos: " << insert_pos << std::endl;
+			size_t search_limit = this->_sorted_vec.size();
+			if (!winner.empty())
+			{
+				int last_winner_pos = getIndexFromDefeatedIdx(winner[winner.size() - 1].original_idx);
+				if (last_winner_pos != -1)
+					search_limit = last_winner_pos;
+			}
+			size_t insert_pos;
+			if (search_limit == this->_sorted_vec.size())
+				insert_pos = binarySearch(loser[idx].value);
+			else
+				insert_pos = limitedBinarySearch(search_limit, loser[idx].value);
+			// std::cout << "insert pos: " << insert_pos << std::endl;
+			std::cout << "insert value(loser[" << idx << "]): " << loser[idx] << std::endl;
 			this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
-			printNow(winner, loser);
+			printInfo(this->_sorted_vec, YELLOW, false);
+			// printNow(winner, loser);
 		}
 		else
 		{
-			printNow(winner, loser);
-			std::cout << "order[i] < winner.size()" << std::endl;
+			// printNow(winner, loser);
+			// std::cout << "order[i] < winner.size()" << std::endl;
 			int search_limit = getIndexFromDefeatedIdx(winner[idx].original_idx);
 			if (search_limit == -1)
 			{
@@ -148,14 +163,18 @@ void PmergeMe::startSorting(const std::vector<data>& info, size_t depth)
 			}
 
 			size_t insert_pos = limitedBinarySearch(search_limit, loser[idx].value); // --search_limit??
-			std::cout << "::insert pos: " << insert_pos << std::endl;
+			// std::cout << "::insert pos: " << insert_pos << std::endl;
+			std::cout << "insert value(loser[" << idx << "]): " << loser[idx] << std::endl;
 			this->_sorted_vec.insert(this->_sorted_vec.begin() + insert_pos, loser[idx]);
 			printInfo(this->_sorted_vec, YELLOW, false);
 		}
+		std::cout << "count[" << i << "]: " << _count << std::endl;
+		_total += _count;
+		_count = 0;
 	}
 	std::cout << "     SORTED AFTER" << std::endl;
 	printInfo(this->_sorted_vec, YELLOW, false);
-
+	std::cout << "TOTAL: " << _total << std::endl;
 }
 
 int PmergeMe::getInfoIndex(std::vector<data> info, std::vector<data> loser, size_t idx)
@@ -219,26 +238,6 @@ size_t PmergeMe::searchLimitLength(std::vector<data> winner, size_t index)
 	return (len);
 }
 
-size_t PmergeMe::limitedBinarySearch(size_t search_limit, size_t search_value)
-{
-	if (search_limit == 0)
-		return (0);
-
-	int ng = -1;
-	int ok = search_limit;
-
-	while (abs(ok - ng) > 1)
-	{
-		int mid = (ok + ng) / 2;
-
-		if (isOK(mid, search_value))
-			ok = mid;
-		else
-			ng = mid;
-	}
-	return (ok);
-}
-
 void PmergeMe::comparePair(std::vector<data> info, std::vector<data> *winner, std::vector<data> *loser)
 {
 	for (size_t i = 0; i < info.size();)
@@ -246,6 +245,7 @@ void PmergeMe::comparePair(std::vector<data> info, std::vector<data> *winner, st
 		if (i + 1 < info.size())
 		{
 			++this->_count;
+			std::cout << "count: " << _count << std::endl;
 			if (info[i].value > info[i + 1].value)
 			{
 				info[i].defeated_idx.push_back(i + 1);
@@ -297,30 +297,44 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 	if (jacob.size() < 2)
 		return (order);
 
-	size_t jacob_idx = jacob.size() - 1;
-	size_t jacob_max = jacob[jacob_idx];
+	size_t jacob_len = jacob.size();
+	size_t jacob_max = jacob[jacob_len - 1];
 
-	while (0 < jacob_idx)
+	for (size_t i = 1; i < jacob_len; ++i)
 	{
-		size_t bigger = jacob[jacob_idx];
-		size_t smaller = jacob[jacob_idx - 1] + 1;
-
-		while (bigger >= smaller)
+		for (size_t j = jacob[i]; j >= jacob[i - 1] + 1; --j)
 		{
-			order.push_back(bigger);
-			--bigger;
+			order.push_back(j);
 		}
-		--jacob_idx;
 	}
 
-	size_t bigger_idx = loser_len - 1;
-
-	while (jacob_max < bigger_idx)
+	size_t loser_idx = loser_len - 1;
+	while (loser_idx > jacob_max)
 	{
-		order.push_back(bigger_idx);
-		--bigger_idx;
+		order.push_back(loser_idx);
+		--loser_idx;
 	}
 	return (order);
+}
+
+size_t PmergeMe::limitedBinarySearch(size_t search_limit, size_t search_value)
+{
+	if (search_limit == 0)
+		return (0);
+
+	int ng = -1;
+	int ok = search_limit + 1;
+
+	while (abs(ok - ng) > 1)
+	{
+		int mid = (ok + ng) / 2;
+
+		if (isOK(mid, search_value))
+			ok = mid;
+		else
+			ng = mid;
+	}
+	return (ok);
 }
 
 int PmergeMe::binarySearch(int key)
@@ -343,7 +357,8 @@ int PmergeMe::binarySearch(int key)
 bool PmergeMe::isOK(int index, size_t key)
 {
 	++this->_count;
-	std::cout << _count << std::endl;
+	std::cout << "count: " << _count << std::endl;
+	std::cout << "compare: " << _sorted_vec[index].value << " ? " << key << std::endl;
 	if (_sorted_vec[index].value >= key)
 		return (true);
 	return (false);
@@ -357,11 +372,6 @@ const std::vector<size_t> PmergeMe::getArr() const
 const std::vector<data> PmergeMe::getSorted() const
 {
 	return (this->_sorted_vec);
-}
-
-size_t PmergeMe::getDepth() const
-{
-	return (this->_depth);
 }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec)
