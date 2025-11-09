@@ -23,7 +23,7 @@ struct data
 {
 	size_t original_idx;
 	size_t value;
-	std::vector<size_t> defeated_idx;
+	std::vector<size_t> defeated_orig_idx;
 };
 
 class PmergeMe
@@ -51,9 +51,11 @@ public:
 	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
 	bool isAlreadyInserted(size_t loser_orig_index);
-	int getIndexFromDefeatedIdx(size_t orig_idx);
-	int getIndexFromWinner(size_t orig_idx, std::vector<data> winner);
-	int getIndexFromLoser(size_t orig_idx, std::vector<data> loser);
+	int getIndexFromSorted(size_t orig_idx); //
+	int getIndexFromWinner(size_t orig_idx, std::vector<data> winner); //
+	int getIndexFromLoser(size_t orig_idx, std::vector<data> loser); //
+	int getIndexFromVector(size_t src_idx, std::vector<data> dist);
+	int findIndexFromDefeated(size_t loser_orig_idx, std::vector<data> winner);
 	int getInfoIndex(std::vector<data> info, std::vector<data> loser, size_t idx);
 	size_t searchLimitLength(std::vector<data> winner, size_t index);
 	int binarySearch(int key);
