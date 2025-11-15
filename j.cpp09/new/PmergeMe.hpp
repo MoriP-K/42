@@ -31,6 +31,7 @@ class PmergeMe
 private:
 	std::vector<size_t> _input_arr; // input
 	std::vector<data> _sorted_vec; // sorted winner(_main)
+	std::map<size_t, std::vector<data> > _loser_map;
 	std::deque<data> _sorted_deq; // sorted winner(_main)
 	std::vector<data> _info;
 
