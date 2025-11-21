@@ -1,4 +1,4 @@
-#include "PmergeMe.hpp"
+#include "./PmergeMe.hpp"
 
 int main(int ac, char const *av[])
 {
@@ -14,7 +14,7 @@ int main(int ac, char const *av[])
 		mis.initArr();
 		std::cout << "======== input ========" << std::endl;
 		std::cout << std::endl;
-		mis.printInfo(mis.getPairOrigIdx(), WHITE);
+		// mis.printInfo(mis.getPairOrigIdx(), WHITE);
 		mis.startSorting();
 		// mis.printCount();
 		std::cout << mis.getArr() << " ";
