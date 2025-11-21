@@ -51,7 +51,6 @@ public:
 	void comparePair(std::vector<size_t> *straggler);
 	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
-	size_t searchLimitLength(std::vector<data> winner, size_t index);
 	int binarySearch(int key);
 	bool isOK(int index, size_t key);
 	size_t limitedBinarySearch(size_t search_limit, size_t search_value);

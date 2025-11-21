@@ -63,9 +63,14 @@ void PmergeMe::startSorting(void)
 	if (this->_pair_orig_idx.size() == 1)
 	{
 		size_t len = this->_pair_orig_idx[0].size();
+		for (size_t i = 0; i < this->_pair_orig_idx[0].size(); ++i)
+			std::cout << this->_pair_orig_idx[0][i] << std::endl;
+		std::cout << "len: " << len << std::endl;
 		std::vector<size_t> tmp;
 		for (size_t i = len / 2; i < len; ++i)
-			tmp.push_back(this->_pair_orig_idx[0][len]);
+			tmp.push_back(this->_pair_orig_idx[0][i]);
+		this->_pair_orig_idx[0].erase(_pair_orig_idx[0].begin() + len / 2, _pair_orig_idx[0].end());
+		this->_pair_orig_idx.insert(_pair_orig_idx.begin(), tmp);
 		return ;
 	}
 
@@ -73,15 +78,14 @@ void PmergeMe::startSorting(void)
 	std::cout << "pair_orig_idx size: " << this->_pair_orig_idx.size() << std::endl;
 
 	if (!straggler_idx.empty())
-		std::cout << "straggler: " << straggler_idx << std::endl;
+		std::cout << "straggler idx: " << straggler_idx << std::endl;
 
 	static size_t i = 0;
-	// size_t current_level = i;
 	i++;
 
-	// std::cout << "\n////////// [" << i << "] //////////" << std::endl;
-	// std::cout << "         BEFORE" << std::endl;
-	// std::cout << "\n-------- list ---------" << std::endl;
+	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	std::cout << "         BEFORE" << std::endl;
+	std::cout << "\n-------- list ---------" << std::endl;
 	printInfo(this->_pair_orig_idx, WHITE);
 
 	// std::cout << "\nafter compare count: " << _count << std::endl;
@@ -91,10 +95,10 @@ void PmergeMe::startSorting(void)
 
 	this->startSorting();
 
-	// std::cout << "\n////////// [" << i << "] //////////" << std::endl;
-	// std::cout << "          AFTER" << std::endl;
-	// std::cout << "\n-------- list ---------" << std::endl;
-	// printInfo(idx_arr, WHITE, false);
+	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	std::cout << "          AFTER" << std::endl;
+	std::cout << "\n-------- list ---------" << std::endl;
+	printInfo(this->_pair_orig_idx, WHITE);
 	i--;
 
 	// std::vector<size_t> jacob = makeJacobsthalOrder(this->_pair_orig_idx.size());
@@ -105,18 +109,6 @@ void PmergeMe::startSorting(void)
 
 	// std::cout << "     SORTED BEFORE" << std::endl;
 	// printInfo(NULL, YELLOW, false);
-}
-
-size_t PmergeMe::searchLimitLength(std::vector<data> winner, size_t index)
-{
-	size_t len = 0;
-	for (size_t j = 0; j < _sorted_vec.size(); ++j)
-	{
-		if (winner[index].original_idx == _sorted_vec[j].original_idx)
-			break;
-		++len; 
-	}
-	return (len);
 }
 
 void PmergeMe::comparePair(std::vector<size_t> *straggler)
@@ -132,13 +124,17 @@ void PmergeMe::comparePair(std::vector<size_t> *straggler)
 			std::cout << "count: " << _count << std::endl;
 			if (this->_input_arr[this->_pair_orig_idx[i][0]] > this->_input_arr[this->_pair_orig_idx[i + 1][0]])
 			{
-				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(), this->_pair_orig_idx[i].end());
-				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(), this->_pair_orig_idx[i + 1].end());
+				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
+					this->_pair_orig_idx[i].end());
+				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
+					this->_pair_orig_idx[i + 1].end());
 			}
 			else
 			{
-				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(), this->_pair_orig_idx[i + 1].end());
-				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(), this->_pair_orig_idx[i].end());
+				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
+					this->_pair_orig_idx[i + 1].end());
+				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
+					this->_pair_orig_idx[i].end());
 			}
 			arr.push_back(tmp);
 		}
