@@ -13,11 +13,13 @@ int main(int ac, char const *av[])
 
 		mis.initArr();
 		std::cout << "======== input ========" << std::endl;
-		std::cout << std::endl;
+		for (size_t i = 1; av[i]; ++i)
+			std::cout << av[i] << " ";
+		std::cout << "\n=======================\n" << std::endl;
 		// mis.printInfo(mis.getPairOrigIdx(), WHITE);
 		mis.startSorting();
 		// mis.printCount();
-		std::cout << mis.getArr() << " ";
+		mis.printSortedArr();
 
 	}
 	catch(const std::exception& error)

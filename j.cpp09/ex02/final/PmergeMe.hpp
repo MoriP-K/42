@@ -21,9 +21,12 @@ const std::string WHITE = "\033[37m";
 
 struct data
 {
-	size_t original_idx;
 	size_t value;
+	size_t original_idx;
 	std::vector<size_t> defeated_orig_idx;
+
+	data() : value(0), original_idx(0) {}
+	data(size_t v, size_t idx) : value(v), original_idx(idx) {}
 };
 
 class PmergeMe
@@ -59,8 +62,7 @@ public:
 	const std::vector<data> getSorted() const;
 	const std::vector<std::vector<data> > getPairOrigIdx() const;
 	int getIndexFromVector(size_t src_idx, std::vector<data> dist);
-
-
+	void printSortedArr(void);
 
 	// exception
 	class ErrorException : public std::exception
