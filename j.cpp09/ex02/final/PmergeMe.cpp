@@ -66,27 +66,27 @@ void PmergeMe::startSorting(void)
 
 	if (this->_pair_orig_idx.size() == 1)
 	{
-		// size_t len = this->_pair_orig_idx[0].size();
-		// std::vector<size_t> tmp;
-		// for (size_t i = len / 2; i < len; ++i)
-		// 	tmp.push_back(this->_pair_orig_idx[0][i]);
-		// this->_pair_orig_idx[0].erase(_pair_orig_idx[0].begin() + len / 2, _pair_orig_idx[0].end());
-		// this->_pair_orig_idx.insert(_pair_orig_idx.begin(), tmp);
 		std::cout << "return" << std::endl;
 		return ;
 	}
-
-	comparePair(&straggler_idx);
-	// std::cout << "after compare arr size: " << this->_pair_orig_idx.size() << std::endl;
-
-	if (!straggler_idx.empty())
-		std::cout << "\nstraggler: " << "[" << straggler_idx[0].original_idx << "]" << this->_input_arr[straggler_idx[0].original_idx].value << std::endl;
 
 	static size_t i = 0;
 	i++;
 
 	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
 	std::cout << "         BEFORE" << std::endl;
+
+	straggler_idx = comparePair();
+	// std::cout << "after compare arr size: " << this->_pair_orig_idx.size() << std::endl;
+
+	if (!straggler_idx.empty())
+	{
+		std::cout << "\nstraggler [orig_idx]orig_value: \n" ;
+		for (size_t i = 0; i < straggler_idx.size(); ++i)
+			std::cout << "[" << straggler_idx[i].original_idx << "]" << this->_input_arr[straggler_idx[i].original_idx].value << ", ";
+		std::cout << std::endl;
+	}
+
 
 	// std::cout << "\nafter compare count: " << _count << std::endl;
 	// _total += _count;
@@ -112,6 +112,7 @@ void PmergeMe::startSorting(void)
 		for (size_t j = center_idx; j < this->_pair_orig_idx[i].size(); ++j)
 		{
 			d_tmp.original_idx = this->_pair_orig_idx[i][j].original_idx;
+			d_tmp.defeated_orig_idx = this->_pair_orig_idx[i][j].defeated_orig_idx;
 			vec.push_back(d_tmp);
 		}
 		tmp.push_back(vec);
@@ -119,7 +120,8 @@ void PmergeMe::startSorting(void)
 	}
 	if (!straggler_idx.empty())
 	{
-		std::cout << "straggler: [" << straggler_idx[0].original_idx << "]" << this->_input_arr[straggler_idx[0].original_idx].value << std::endl;
+		for (size_t i = 0; i < straggler_idx.size(); ++i)
+			std::cout << "straggler: [" << straggler_idx[i].original_idx << "]" << this->_input_arr[straggler_idx[i].original_idx].value << std::endl;
 		tmp.push_back(straggler_idx);
 	}
 
@@ -132,40 +134,68 @@ void PmergeMe::startSorting(void)
 	std::cout << "tmp size: " << tmp.size() << std::endl;
 	for (size_t i = 0; i < tmp.size(); ++i)
 	{
-		std::cout << "tmp[" << i << "][0] " << tmp[i][0].original_idx << std::endl;
+		std::cout << "tmp[" << i << "][0] " << this->_input_arr[tmp[i][0].original_idx].value << std::endl;
 	}
 
 	for (size_t i = 0; i < order.size(); ++i)
 	{
 		size_t idx = order[i];
+		int insert_pos = 0;
 		if (idx == 0)
 		{
 			this->_pair_orig_idx.insert(this->_pair_orig_idx.begin(), tmp[idx]);
 			tmp[i].erase(tmp[idx].begin(), tmp[idx].end());
+			printArrAfterSorting();
 			continue;
 		}
-		int search_limit = getIndexFromVector(tmp[idx][0].original_idx, this->_pair_orig_idx[i]);
-		if (search_limit == -1)
+		if (idx < order.size() - 1)
 		{
-			std::cout << "MMM" << std::endl;
-			return ;
+			std::cout << "with pair" << std::endl;
+			std::cout << "orig idx: " << tmp[idx][0].original_idx << ", value: " << _input_arr[tmp[idx][0].original_idx].value << std::endl;
+			for (size_t j = 0; j < _pair_orig_idx[i].size(); ++j)
+				std::cout << this->_pair_orig_idx[i][j].original_idx << std::endl;
+			int search_limit = getIndexFromVector(tmp[idx][0].original_idx, this->_pair_orig_idx);
+			if (search_limit == -1)
+			{
+				std::cout << "MMM" << std::endl;
+				return ;
+			}
+			insert_pos = limitedBinarySearch(search_limit, this->_input_arr[tmp[idx][0].original_idx].value);
+			if (insert_pos == -1)
+				return ;
+			std::cout << "insert pos: " << insert_pos << std::endl;
 		}
-		int insert_pos = limitedBinarySearch(search_limit, this->_input_arr[tmp[idx][0].original_idx].value);
-		if (insert_pos == -1)
-			return ;
+		else
+		{
+			std::cout << "no pair" << std::endl;
+			insert_pos = binarySearch(this->_input_arr[tmp[idx][0].original_idx].value);
+			if (insert_pos == -1)
+				return ;
+			std::cout << "::insert pos: " << insert_pos << std::endl;
+		}
+		this->_pair_orig_idx.insert(this->_pair_orig_idx.begin() + insert_pos, tmp[idx]);
+		printArrAfterSorting();
+	}
+
+	for (size_t i = 0; i < this->_pair_orig_idx.size(); ++i)
+	{
+		std::cout << "[" << i << "]: ";
+		for (size_t j = 0; j < this->_pair_orig_idx[i].size(); ++j)
+		{
+			std::cout << this->_input_arr[this->_pair_orig_idx[i][j].original_idx].value << " ";
+		}
+		std::cout << std::endl;
 	}
 
 	// std::cout << "     SORTED BEFORE" << std::endl;
 	// printInfo(NULL, YELLOW, false);
 }
 
-void PmergeMe::comparePair(std::vector<data> *straggler)
+std::vector<data> PmergeMe::comparePair(void)
 {
 	std::vector<std::vector<data> > arr;
+	std::vector<data> straggler;
 
-	for (size_t i = 0; i < this->_pair_orig_idx.size(); ++i)
-		std::cout << this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value << " ";
-	std::cout << std::endl;
 	for (size_t i = 0; i < this->_pair_orig_idx.size();)
 	{
 		if (i + 1 < this->_pair_orig_idx.size())
@@ -176,13 +206,12 @@ void PmergeMe::comparePair(std::vector<data> *straggler)
 				<< this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value
 				<< " vs " << this->_input_arr[this->_pair_orig_idx[i + 1][0].original_idx].value
 				<< std::endl;
+			data d_tmp;
 			if (this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value > this->_input_arr[this->_pair_orig_idx[i + 1][0].original_idx].value)
 			{
-				data d_tmp;
 				d_tmp.value = this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value;
 				d_tmp.original_idx = this->_pair_orig_idx[i][0].original_idx;
 				d_tmp.defeated_orig_idx.push_back(this->_pair_orig_idx[i + 1][0].original_idx);
-				tmp.push_back(d_tmp);
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
 					this->_pair_orig_idx[i].end());
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
@@ -190,11 +219,9 @@ void PmergeMe::comparePair(std::vector<data> *straggler)
 			}
 			else
 			{
-				data d_tmp;
 				d_tmp.value = this->_input_arr[this->_pair_orig_idx[i + 1][0].original_idx].value;
 				d_tmp.original_idx = this->_pair_orig_idx[i + 1][0].original_idx;
 				d_tmp.defeated_orig_idx.push_back(this->_pair_orig_idx[i][0].original_idx);
-				tmp.push_back(d_tmp);
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
 					this->_pair_orig_idx[i + 1].end());
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
@@ -205,21 +232,28 @@ void PmergeMe::comparePair(std::vector<data> *straggler)
 		else
 		{
 			// TODO: okasii
-			data d_tmp;
-			for (size_t j = 0; j < this->_pair_orig_idx[j].size(); ++j)
+			for (size_t j = 0; j < this->_pair_orig_idx[i].size(); ++j)
 			{
-				d_tmp.value = this->_input_arr[j].value;
-				d_tmp.original_idx = j;
-				straggler->push_back(d_tmp);
+				data d_tmp;
+				// std::cout << "j = " << j << std::endl;
+				// std::cout << "orig idx: " <<  this->_pair_orig_idx[i][j].original_idx;
+				// std::cout << ", value: " << this->_input_arr[this->_pair_orig_idx[i][j].original_idx].value << std::endl;;
+				d_tmp.original_idx = this->_pair_orig_idx[i][j].original_idx;
+				d_tmp.value = this->_input_arr[this->_pair_orig_idx[i][j].original_idx].value;
+				// straggler.push_back(this->_pair_orig_idx[i][j]);
+				straggler.push_back(d_tmp);
 			}
 		}
 		i += 2;
 	}
+
 	this->_pair_orig_idx.clear();
+
 	for (size_t i = 0; i < arr.size(); ++i)
 	{
 		this->_pair_orig_idx.push_back(arr[i]);
 	}
+	return (straggler);
 }
 
 std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
@@ -316,7 +350,7 @@ size_t PmergeMe::limitedBinarySearch(size_t search_limit, size_t search_value)
 	if (search_limit == 0)
 		return (0);
 
-	int ng = 0;
+	int ng = -1;
 	int ok = search_limit;
 
 	while (abs(ok - ng) > 1)
@@ -333,7 +367,7 @@ size_t PmergeMe::limitedBinarySearch(size_t search_limit, size_t search_value)
 
 int PmergeMe::binarySearch(int key)
 {
-	int ng = 0;
+	int ng = -1;
 	int ok = (int)this->_pair_orig_idx.size();
 
 	while (abs(ok - ng) > 1)
@@ -352,10 +386,19 @@ bool PmergeMe::isOK(int index, size_t key)
 {
 	++this->_count;
 	std::cout << "count: " << _count << std::endl;
-	std::cout << this->_pair_orig_idx[index][0].value << " vs " << key << std::endl;
-	if (this->_pair_orig_idx[index][0].value >= key)
+	std::cout << this->_input_arr[this->_pair_orig_idx[index][0].original_idx].value << " vs " << key << std::endl;
+	if (this->_input_arr[this->_pair_orig_idx[index][0].original_idx].value >= key)
 		return (true);
 	return (false);
+}
+
+void PmergeMe::printArrAfterSorting(void)
+{
+	for (size_t i = 0; i < this->_pair_orig_idx.size(); ++i)
+	{
+		std::cout << this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value << " ";
+	}
+	std::cout << std::endl;
 }
 
 void PmergeMe::printSortedArr(void)
@@ -382,13 +425,22 @@ const std::vector<std::vector<data> > PmergeMe::getPairOrigIdx() const
 	return (this->_pair_orig_idx);
 }
 
-int PmergeMe::getIndexFromVector(size_t src_idx, std::vector<data> dist)
+int PmergeMe::getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<data> > dist)
 {
+	// TODO: searching loser pair from winner's defeated
 	for (size_t i = 0; i < dist.size(); ++i)
 	{
-		std::cout << "src idx = " << src_idx << ", dist[" << i << "] = " << dist[i].original_idx << std::endl;
-		if (src_idx == dist[i].original_idx)
-			return (i);
+		for (size_t j = 0; j < dist[i].size(); ++j)
+		{
+			for (size_t k = 0; k < dist[i][j].defeated_orig_idx.size(); ++k)
+			{
+				std::cout << "src idx = " << src_orig_idx
+					<< ", dist[" << i << "][" << j << "] = " << dist[i][j].original_idx
+					<< "defeated_orig[" << k << "] = " << dist[i][j].defeated_orig_idx[k] << std::endl;
+				if (src_orig_idx == dist[i][j].defeated_orig_idx[k])
+					return (i);
+			}
+		}
 	}
 	return (-1);
 }

@@ -51,7 +51,7 @@ public:
 	void initArr(void);
 
 	void startSorting(void);
-	void comparePair(std::vector<data> *straggler);
+	std::vector<data> comparePair(void);
 	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
 	int binarySearch(int key);
@@ -61,7 +61,7 @@ public:
 	const std::vector<data> getArr() const;
 	const std::vector<data> getSorted() const;
 	const std::vector<std::vector<data> > getPairOrigIdx() const;
-	int getIndexFromVector(size_t src_idx, std::vector<data> dist);
+	int getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<data> > dist);
 	void printSortedArr(void);
 
 	// exception
@@ -80,6 +80,7 @@ public:
 	void printCount(void);
 	void printNow(std::vector<data> winner, std::vector<data> loser);
 	void printInfo(std::vector<std::vector<size_t> > arr, const std::string& color);
+	void printArrAfterSorting(void);
 };
 
 void invalidArgument(void);
