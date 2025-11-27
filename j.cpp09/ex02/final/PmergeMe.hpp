@@ -62,7 +62,6 @@ public:
 	const std::vector<data> getSorted() const;
 	const std::vector<std::vector<data> > getPairOrigIdx() const;
 	int getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<data> > dist);
-	void printSortedArr(void);
 
 	// exception
 	class ErrorException : public std::exception
@@ -80,6 +79,7 @@ public:
 	void printCount(void);
 	void printNow(std::vector<data> winner, std::vector<data> loser);
 	void printInfo(std::vector<std::vector<size_t> > arr, const std::string& color);
+	void printArrBeforeSorting(void);
 	void printArrAfterSorting(void);
 };
 

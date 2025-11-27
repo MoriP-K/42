@@ -177,15 +177,15 @@ void PmergeMe::startSorting(void)
 		printArrAfterSorting();
 	}
 
-	for (size_t i = 0; i < this->_pair_orig_idx.size(); ++i)
-	{
-		std::cout << "[" << i << "]: ";
-		for (size_t j = 0; j < this->_pair_orig_idx[i].size(); ++j)
-		{
-			std::cout << this->_input_arr[this->_pair_orig_idx[i][j].original_idx].value << " ";
-		}
-		std::cout << std::endl;
-	}
+	// for (size_t i = 0; i < this->_pair_orig_idx.size(); ++i)
+	// {
+	// 	// std::cout << "[" << i << "]: ";
+	// 	for (size_t j = 0; j < this->_pair_orig_idx[i].size(); ++j)
+	// 	{
+	// 		std::cout << this->_input_arr[this->_pair_orig_idx[i][j].original_idx].value << " ";
+	// 	}
+	// }
+	// std::cout << std::endl;
 
 	// std::cout << "     SORTED BEFORE" << std::endl;
 	// printInfo(NULL, YELLOW, false);
@@ -209,9 +209,11 @@ std::vector<data> PmergeMe::comparePair(void)
 			data d_tmp;
 			if (this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value > this->_input_arr[this->_pair_orig_idx[i + 1][0].original_idx].value)
 			{
+				this->_pair_orig_idx[i][0].defeated_orig_idx.push_back(this->_pair_orig_idx[i + 1][0].original_idx);
 				d_tmp.value = this->_input_arr[this->_pair_orig_idx[i][0].original_idx].value;
 				d_tmp.original_idx = this->_pair_orig_idx[i][0].original_idx;
-				d_tmp.defeated_orig_idx.push_back(this->_pair_orig_idx[i + 1][0].original_idx);
+				d_tmp.defeated_orig_idx = this->_pair_orig_idx[i][0].defeated_orig_idx;
+				// d_tmp.defeated_orig_idx.push_back(this->_pair_orig_idx[i + 1][0].original_idx);
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
 					this->_pair_orig_idx[i].end());
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
@@ -219,9 +221,10 @@ std::vector<data> PmergeMe::comparePair(void)
 			}
 			else
 			{
+				this->_pair_orig_idx[i + 1][0].defeated_orig_idx.push_back(this->_pair_orig_idx[i][0].original_idx);
 				d_tmp.value = this->_input_arr[this->_pair_orig_idx[i + 1][0].original_idx].value;
 				d_tmp.original_idx = this->_pair_orig_idx[i + 1][0].original_idx;
-				d_tmp.defeated_orig_idx.push_back(this->_pair_orig_idx[i][0].original_idx);
+				d_tmp.defeated_orig_idx = this->_pair_orig_idx[i + 1][0].defeated_orig_idx;
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i + 1].begin(),
 					this->_pair_orig_idx[i + 1].end());
 				tmp.insert(tmp.end(), this->_pair_orig_idx[i].begin(),
@@ -401,7 +404,7 @@ void PmergeMe::printArrAfterSorting(void)
 	std::cout << std::endl;
 }
 
-void PmergeMe::printSortedArr(void)
+void PmergeMe::printArrBeforeSorting(void)
 {
 	for (size_t i = 0; i < this->_input_arr.size(); ++i)
 	{

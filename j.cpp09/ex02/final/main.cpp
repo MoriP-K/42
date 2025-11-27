@@ -19,8 +19,12 @@ int main(int ac, char const *av[])
 		std::cout << "() is value, [] is index.\n" << std::endl;
 		// mis.printInfo(mis.getPairOrigIdx(), WHITE);
 		mis.startSorting();
-		// mis.printCount();
-		mis.printSortedArr();
+		std::cout << "\n======= RESULT =======" << std::endl;
+		mis.printCount();
+		std::cout << "------- BEFORE -------" << std::endl;
+		mis.printArrBeforeSorting();
+		std::cout << "------- AFTER -------" << std::endl;
+		mis.printArrAfterSorting();
 
 	}
 	catch(const std::exception& error)
