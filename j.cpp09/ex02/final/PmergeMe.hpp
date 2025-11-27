@@ -34,7 +34,7 @@ class PmergeMe
 private:
 	std::vector<data> _input_arr; // input
 	std::vector<data> _sorted_vec; // sorted winner(_main)
-	std::vector<std::vector<data > > _pair_orig_idx;
+	std::vector<std::vector<data > > _data_vec;
 	std::deque<data> _sorted_deq; // sorted winner(_main)
 	std::vector<data> _info;
 
