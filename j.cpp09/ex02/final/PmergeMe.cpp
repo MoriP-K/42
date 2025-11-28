@@ -332,8 +332,12 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 	}
 	// aaa
 
-	for (size_t i = value; i < tmp_len; ++i)
+	for (size_t i = tmp_len - 1; i >= value; --i)
+	{
 		order.push_back(i);
+		if (i == 0)
+			break;
+	}
 	// size_t loser_idx = tmp_len - 1;
 	// while (loser_idx > jacob_max)
 	// {
