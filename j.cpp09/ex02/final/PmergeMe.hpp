@@ -52,8 +52,8 @@ public:
 
 	void startSorting(void);
 	std::vector<data> comparePair(void);
-	std::vector<size_t> makeJacobsthalOrder(size_t loser_len);
-	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t loser_len);
+	std::vector<size_t> makeJacobsthalOrder(size_t tmp_len);
+	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t tmp_len);
 	int binarySearch(int key);
 	bool isOK(int index, size_t key);
 	size_t limitedBinarySearch(size_t search_limit, size_t search_value);
@@ -81,6 +81,9 @@ public:
 	void printInfo(std::vector<std::vector<size_t> > arr, const std::string& color);
 	void printArrBeforeSorting(void);
 	void printArrAfterSorting(void);
+	void printArrWIP(void);
+	void printArrDebug(void);
+
 };
 
 void invalidArgument(void);

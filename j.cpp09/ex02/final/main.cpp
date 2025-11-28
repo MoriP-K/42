@@ -21,8 +21,8 @@ int main(int ac, char const *av[])
 		mis.startSorting();
 		std::cout << "\n======= RESULT =======" << std::endl;
 		mis.printCount();
-		std::cout << "------- BEFORE -------" << std::endl;
-		mis.printArrBeforeSorting();
+		// std::cout << "------- BEFORE -------" << std::endl;
+		// mis.printArrBeforeSorting();
 		std::cout << "------- AFTER -------" << std::endl;
 		mis.printArrAfterSorting();
 

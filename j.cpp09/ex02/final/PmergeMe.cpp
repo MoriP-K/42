@@ -69,14 +69,15 @@ void PmergeMe::startSorting(void)
 		return ;
 	}
 
-	static size_t i = 0;
-	i++;
+	static size_t depth = 0;
+	depth++;
 
-	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	std::cout << "\n////////// [" << depth << "] //////////" << std::endl;
 	std::cout << "         BEFORE" << std::endl;
 
 	straggler_idx = comparePair();
-	// std::cout << "after compare arr size: " << this->_data_vec.size() << std::endl;
+
+	printArrWIP();
 
 	if (!straggler_idx.empty())
 	{
@@ -86,20 +87,21 @@ void PmergeMe::startSorting(void)
 		std::cout << std::endl;
 	}
 
-
-	// std::cout << "\nafter compare count: " << _count << std::endl;
-	// _total += _count;
-	// std::cout << "BEFORE TOTAL: " << _total << std::endl;
-	// _count = 0;
-
 	this->startSorting();
 
-	std::cout << "\n////////// [" << i << "] //////////" << std::endl;
+	std::cout << "\n////////// [" << depth << "] //////////" << std::endl;
 	std::cout << "          AFTER" << std::endl;
 	for (size_t i = 0; i < this->_data_vec.size(); ++i)
-		std::cout << "[" << i << "]" << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
+	{
+		std::cout << "(" << i << ")\n";
+		for (size_t j = 0; j < _data_vec[i].size(); ++j)
+		{
+			std::cout << "(" << j << ")" << this->_input_arr[this->_data_vec[i][j].original_idx].value << "[" << this->_data_vec[i][j].original_idx << "]" << " ";
+		}
+		std::cout << std::endl;
+	}
 	std::cout << std::endl;
-	i--;
+	depth--;
 
 	std::vector<std::vector<data> > tmp;
 	size_t pair_count = 0;
@@ -108,11 +110,13 @@ void PmergeMe::startSorting(void)
 		std::cout << "arr size: " << this->_data_vec[i].size() << std::endl;
 		size_t center_idx = this->_data_vec[i].size() / 2;
 		std::vector<data> vec;
-		data d_tmp;
 		for (size_t j = center_idx; j < this->_data_vec[i].size(); ++j)
 		{
+			data d_tmp;
+			std::cout << "half of back: " << _input_arr[this->_data_vec[i][j].original_idx].value<< "[" << this->_data_vec[i][j].original_idx << "]" << std::endl;
 			d_tmp.original_idx = this->_data_vec[i][j].original_idx;
 			d_tmp.defeated_orig_idx = this->_data_vec[i][j].defeated_orig_idx;
+			d_tmp.value = this->_data_vec[i][j].value;
 			vec.push_back(d_tmp);
 		}
 		tmp.push_back(vec);
@@ -124,19 +128,19 @@ void PmergeMe::startSorting(void)
 		for (size_t i = 0; i < straggler_idx.size(); ++i)
 		{
 			std::cout << "straggler: [" << straggler_idx[i].original_idx << "]" << this->_input_arr[straggler_idx[i].original_idx].value << std::endl;
-			std::vector<data> single_straggler;
-			single_straggler.push_back(straggler_idx[i]);
-			tmp.push_back(single_straggler);
 		}
+		tmp.push_back(straggler_idx);
 	}
 
+	std::cout << "tmp size: " << tmp.size() << std::endl;
 	std::vector<size_t> jacob = makeJacobsthalOrder(tmp.size());
 	std::cout << "jacob: " << jacob << std::endl;
 
 	std::vector<size_t> order = generateInsertOrder(jacob, tmp.size());
 	std::cout << "order: " << order << std::endl;
 
-	std::cout << "tmp size: " << tmp.size() << std::endl;
+	std::cout << std::endl;
+
 	for (size_t i = 0; i < tmp.size(); ++i)
 	{
 		std::cout << "tmp[" << i << "][0] " << this->_input_arr[tmp[i][0].original_idx].value << std::endl;
@@ -173,7 +177,7 @@ void PmergeMe::startSorting(void)
 		else
 		{
 			std::cout << "no pair" << std::endl;
-			insert_pos = binarySearch(this->_input_arr[tmp[idx][0].original_idx].value); // 177行目
+			insert_pos = binarySearch(this->_input_arr[tmp[idx][0].original_idx].value);
 			if (insert_pos == -1)
 				return ;
 			std::cout << "::insert pos: " << insert_pos << std::endl;
@@ -182,19 +186,6 @@ void PmergeMe::startSorting(void)
 		tmp[idx].clear();
 		printArrAfterSorting();
 	}
-
-	// for (size_t i = 0; i < this->_data_vec.size(); ++i)
-	// {
-	// 	// std::cout << "[" << i << "]: ";
-	// 	for (size_t j = 0; j < this->_data_vec[i].size(); ++j)
-	// 	{
-	// 		std::cout << this->_input_arr[this->_data_vec[i][j].original_idx].value << " ";
-	// 	}
-	// }
-	// std::cout << std::endl;
-
-	// std::cout << "     SORTED BEFORE" << std::endl;
-	// printInfo(NULL, YELLOW, false);
 }
 
 std::vector<data> PmergeMe::comparePair(void)
@@ -263,14 +254,14 @@ std::vector<data> PmergeMe::comparePair(void)
 	return (straggler);
 }
 
-std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
+std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t tmp_len)
 {
 	std::vector<size_t> arr;
 	size_t num = 0;
 	size_t i = 2;
 
 	arr.push_back(2); // 0
-	if (loser_len < 2)
+	if (tmp_len < 2)
 	{
 		std::cout << "EEE" << std::endl;
 		return (arr);
@@ -279,7 +270,7 @@ std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
 	while (1)
 	{
 		num = arr[i - 1] + arr[i - 2] * 2;
-		if (num < loser_len)
+		if (num < tmp_len)
 			arr.push_back(num);
 		else
 			break;
@@ -288,19 +279,18 @@ std::vector<size_t> PmergeMe::makeJacobsthalOrder(size_t loser_len)
 	return (arr);
 }
 
-std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, size_t loser_len)
+std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, size_t tmp_len)
 {
 	std::vector<size_t> order;
 
-	if (loser_len < 2)
+	order.push_back(0);
+	if (tmp_len < 2)
 	{
-		order.push_back(0);
 		return (order);
 	}
 
-	if (loser_len == 2)
+	if (tmp_len == 2)
 	{
-		order.push_back(0);
 		order.push_back(1);
 		return (order);
 	}
@@ -314,7 +304,7 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 	// 	{
 	// 		order.push_back(j);
 	// 	}
-	// 	// for (size_t j = jacob[i] + 1; 0 < j && order.size() <= loser_len; --j)
+	// 	// for (size_t j = jacob[i] + 1; 0 < j && order.size() <= tmp_len; --j)
 	// 	// {
 	// 	// 	order.push_back(j);
 	// 	// }
@@ -322,8 +312,7 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 
 	// aaa
 	size_t value = 1;
-	order.push_back(0);
-	for (size_t i = 1; order.size() < loser_len; ++i)
+	for (size_t i = 1; order.size() + jacob[i - 1] <= tmp_len; ++i)
 	{
 		std::vector<size_t> num;
 		num.clear();
@@ -339,13 +328,13 @@ std::vector<size_t> PmergeMe::generateInsertOrder(std::vector<size_t> jacob, siz
 			order.push_back(num.back());
 			num.pop_back();
 		}
-		// std::cout << "order size: " << order.size() << ", loser len: " << loser_len << std::endl;
+		// std::cout << "order size: " << order.size() << ", loser len: " << tmp_len << std::endl;
 	}
 	// aaa
 
-	for (size_t i = value; i < loser_len; ++i)
+	for (size_t i = value; i < tmp_len; ++i)
 		order.push_back(i);
-	// size_t loser_idx = loser_len - 1;
+	// size_t loser_idx = tmp_len - 1;
 	// while (loser_idx > jacob_max)
 	// {
 	// 	order.push_back(loser_idx);
@@ -410,6 +399,33 @@ void PmergeMe::printArrAfterSorting(void)
 	std::cout << std::endl;
 }
 
+void PmergeMe::printArrDebug(void)
+{
+	std::cout << "--- DEBUG ---" << std::endl;
+	for (size_t i = 0; i < this->_data_vec.size(); ++i)
+	{
+		std::cout << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
+	}
+	std::cout << std::endl;
+}
+
+void PmergeMe::printArrWIP(void)
+{
+	std::cout << "--- WIP ---" << std::endl;
+	for (size_t i = 0; i < this->_data_vec.size(); ++i)
+	{
+		std::cout << "[" << i << "]\n";
+		for (size_t j = 0; j < this->_data_vec[i].size(); ++j)
+		{
+			std::cout << "[" << j << "]";
+			std::cout << this->_input_arr[this->_data_vec[i][j].original_idx].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+
 void PmergeMe::printArrBeforeSorting(void)
 {
 	for (size_t i = 0; i < this->_input_arr.size(); ++i)
@@ -442,9 +458,9 @@ int PmergeMe::getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<da
 		{
 			for (size_t k = 0; k < dist[i][j].defeated_orig_idx.size(); ++k)
 			{
-				std::cout << "src idx = " << src_orig_idx
-					<< ", dist[" << i << "][" << j << "] = " << dist[i][j].original_idx
-					<< "defeated_orig[" << k << "] = " << dist[i][j].defeated_orig_idx[k] << std::endl;
+				// std::cout << "src idx = " << src_orig_idx
+				// 	<< ", dist[" << i << "][" << j << "] = " << dist[i][j].original_idx
+				// 	<< "defeated_orig[" << k << "] = " << dist[i][j].defeated_orig_idx[k] << std::endl;
 				if (src_orig_idx == dist[i][j].defeated_orig_idx[k])
 					return (i);
 			}
