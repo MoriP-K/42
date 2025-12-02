@@ -9,7 +9,7 @@ int main(int ac, char const *av[])
 	}
 	try
 	{
-		PmergeMe mis(av);
+		PmergeMe<std::vector<data> > mis(av);
 
 		mis.initArr();
 		std::cout << "======== input ========" << std::endl;

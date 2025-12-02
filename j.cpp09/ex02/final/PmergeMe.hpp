@@ -7,6 +7,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <deque>
 #include <iterator>
 #include <deque>
 #include <ctime>
@@ -29,14 +30,15 @@ struct data
 	data(size_t v, size_t idx) : value(v), original_idx(idx) {}
 };
 
+template <typename Container>
 class PmergeMe
 {
 private:
-	std::vector<data> _input_arr; // input
-	std::vector<data> _sorted_vec; // sorted winner(_main)
-	std::vector<std::vector<data > > _data_vec;
-	std::deque<data> _sorted_deq; // sorted winner(_main)
-	std::vector<data> _info;
+	Container _input_arr; // input
+	// std::vector<data> _sorted_vec; // sorted winner(_main)
+	std::vector<Container> _data_vec;
+	// std::deque<data> _sorted_deq; // sorted winner(_main)
+	// std::vector<data> _info;
 
 	size_t _count; // delete
 	size_t _total; // delete
@@ -58,9 +60,9 @@ public:
 	bool isOK(int index, size_t key);
 	size_t limitedBinarySearch(size_t search_limit, size_t search_value);
 
-	const std::vector<data> getArr() const;
-	const std::vector<data> getSorted() const;
-	const std::vector<std::vector<data> > getPairOrigIdx() const;
+	const Container getArr() const;
+	const Container getSorted() const;
+	const std::vector<Container > getPairOrigIdx() const;
 	int getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<data> > dist);
 
 	// exception
@@ -75,10 +77,10 @@ public:
 
 	// DEBUG
 	size_t arrSize(void);
-	void printArr(std::vector<size_t> vec, std::string msg);
+	void printArr(Container vec, std::string msg);
 	void printCount(void);
 	void printNow(std::vector<data> winner, std::vector<data> loser);
-	void printInfo(std::vector<std::vector<size_t> > arr, const std::string& color);
+	void printInfo(std::vector<Container > arr, const std::string& color);
 	void printArrBeforeSorting(void);
 	void printArrAfterSorting(void);
 	void printArrWIP(void);
@@ -87,10 +89,13 @@ public:
 };
 
 void invalidArgument(void);
+
 // operator
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
 std::ostream &operator<<(std::ostream &out, const std::vector<size_t> &vec);
 std::ostream &operator<<(std::ostream &out, const std::vector<data> &vec);
 std::ostream &operator<<(std::ostream &out, const data &vec);
+
+#include "PmergeMe.tpp"
 
 #endif
