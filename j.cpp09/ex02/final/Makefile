@@ -4,7 +4,7 @@ CXX := c++
 
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic -g -fsanitize=undefined
 
-SRC := main.cpp PmergeMe.cpp
+SRC := main.cpp
 
 OBJ := ${SRC:.cpp=.o}
 

@@ -53,7 +53,7 @@ public:
 	void initArr(void);
 
 	void startSorting(void);
-	std::vector<data> comparePair(void);
+	Container comparePair(void);
 	std::vector<size_t> makeJacobsthalOrder(size_t tmp_len);
 	std::vector<size_t> generateInsertOrder(std::vector<size_t> jacob, size_t tmp_len);
 	int binarySearch(int key);
@@ -63,7 +63,7 @@ public:
 	const Container getArr() const;
 	const Container getSorted() const;
 	const std::vector<Container > getPairOrigIdx() const;
-	int getIndexFromVector(size_t src_orig_idx, std::vector<std::vector<data> > dist);
+	int getIndexFromVector(size_t src_orig_idx, std::vector<Container> dist);
 
 	// exception
 	class ErrorException : public std::exception
@@ -77,15 +77,9 @@ public:
 
 	// DEBUG
 	size_t arrSize(void);
-	void printArr(Container vec, std::string msg);
-	void printCount(void);
-	void printNow(std::vector<data> winner, std::vector<data> loser);
-	void printInfo(std::vector<Container > arr, const std::string& color);
 	void printArrBeforeSorting(void);
 	void printArrAfterSorting(void);
 	void printArrWIP(void);
-	void printArrDebug(void);
-
 };
 
 void invalidArgument(void);
