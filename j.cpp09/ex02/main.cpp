@@ -2,46 +2,68 @@
 
 double getTime(void)
 {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000000.0 + tv.tv_usec);
+	struct timeval time;
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000000.0 + time.tv_usec);
 }
 
 int main(int ac, char const *av[])
 {
 	if (ac < 2)
 	{
-		std::cout << "Error" << std::endl;
+		invalidArgument();
 		return (1);
 	}
 	try
 	{
-		PmergeMe pmergeme(av);
+		// vector
+		PmergeMe<std::vector<data> > pmVector(av);
+		pmVector.initArr();
+		std::cout << "Before: ";
+		pmVector.printArrBeforeSorting();
+	
+		double start_vec = getTime();
+		pmVector.startSorting();
+		double end_vec = getTime();
+		double time_vec = end_vec - start_vec;
 
-		// pmergeme.printArr(pmergeme.getArr(), "Before: ");
+		// deque
+		PmergeMe<std::deque<data> > pmDeque(av);
+		pmDeque.initArr();
+	
+		double start_deq = getTime();
+		pmDeque.startSorting();
+		double end_deq = getTime();
+		double time_deq = end_deq - start_deq;
 
-		double startVec = getTime();
-		pmergeme.MIS(pmergeme.getArr());
-		// std::vector<size_t> initialChain;
-		// for (size_t i = 0; i < pmergeme.arrSize(); ++i)
-		// 	initialChain.push_back(i);
-		// pmergeme.MergeInsertionSort(initialChain, 0);
-		// pmergeme.MergeInsertionSort(pmergeme.getArr());
-		double endVec = getTime();
-		double timeVec = endVec - startVec;
+		// result
+		std::cout << "After : ";
+		pmVector.printArrAfterSorting();
 
-		pmergeme.printCount();
-		pmergeme.printArr(pmergeme.getSorted(), "After : ");
+		std::cout << std::fixed << std::setprecision(0);
 
-		std::cout << std::fixed << std::setprecision(5);
-		std::cout << "Time to process a range of " << pmergeme.arrSize()
-				<< " elements with std::vector : " << timeVec << " us" << std::endl;
-		std::cout << "Time to process a range of " << pmergeme.arrSize()
-				<< " elements with std::deque : " << "timeDeq" << " us" << std::endl;
+		std::cout << "Time to process a range of " << pmVector.arrSize()
+				  << " elements with std::vector : "
+				  << time_vec << " us" << std::endl;
+		
+		std::cout << "Time to process a range of " << pmDeque.arrSize()
+				  << " elements with std::deque  : "
+				  << time_deq << " us" << std::endl;
+
+		// std::cout << "======== input ========" << std::endl;
+		// for (size_t i = 1; av[i]; ++i)
+		// 	std::cout << av[i] << " ";
+		// std::cout << "\n=======================" << std::endl;
+		// std::cout << "() is value, [] is index.\n" << std::endl;
+		// pmVector.startSorting();
+		// std::cout << "\n======= RESULT =======" << std::endl;
+		// pmVector.printCount();
+		// std::cout << "------- AFTER -------" << std::endl;
+		// pmVector.printArrAfterSorting();
 	}
 	catch(const std::exception& error)
 	{
-		std::cout << error.what() << std::endl;
+		std::cerr << error.what() << std::endl;
 	}
 	return 0;
 }

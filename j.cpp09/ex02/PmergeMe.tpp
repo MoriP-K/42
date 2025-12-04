@@ -9,13 +9,12 @@ PmergeMe<Container>::PmergeMe(const char **av)
 	if (!this->isValidArgs(av))
 		throw ErrorException();
 	this->_count = 0;
-	this->_total = 0;
 }
 
 template <typename Container>
 PmergeMe<Container>::PmergeMe(const PmergeMe &copy)
+	: _input_arr(copy._input_arr), _data_vec(copy._data_vec), _count(copy._count)
 {
-	*this = copy;
 }
 
 template <typename Container>
@@ -28,7 +27,9 @@ PmergeMe<Container> &PmergeMe<Container>::operator=(const PmergeMe &src)
 {
 	if (this != &src)
 	{
-		this->_sorted_vec = src._sorted_vec;
+		this->_input_arr = src._input_arr;
+		this->_data_vec = src._data_vec;
+		this->_count = src._count;
 	}
 	return (*this);
 }
@@ -117,7 +118,6 @@ void PmergeMe<Container>::startSorting(void)
 		{
 			this->_data_vec.insert(this->_data_vec.begin(), tmp[idx]);
 			tmp[idx].clear();
-			// printArrAfterSorting();
 			continue;
 		}
 		if (idx < pair_count)
@@ -137,7 +137,6 @@ void PmergeMe<Container>::startSorting(void)
 		}
 		this->_data_vec.insert(this->_data_vec.begin() + insert_pos, tmp[idx]);
 		tmp[idx].clear();
-		// printArrAfterSorting();
 	}
 }
 
@@ -197,9 +196,8 @@ Container PmergeMe<Container>::comparePair(void)
 	this->_data_vec.clear();
 
 	for (size_t i = 0; i < arr.size(); ++i)
-	{
 		this->_data_vec.push_back(arr[i]);
-	}
+
 	return (straggler);
 }
 
@@ -213,6 +211,7 @@ std::vector<size_t> PmergeMe<Container>::makeJacobsthalOrder(size_t tmp_len)
 	arr.push_back(2);
 	if (tmp_len < 2)
 		return (arr);
+
 	arr.push_back(2);
 	while (1)
 	{
@@ -233,9 +232,7 @@ std::vector<size_t>  PmergeMe<Container>::generateInsertOrder(std::vector<size_t
 
 	order.push_back(0);
 	if (tmp_len < 2)
-	{
 		return (order);
-	}
 
 	if (tmp_len == 2)
 	{
@@ -309,97 +306,6 @@ int PmergeMe<Container>::binarySearch(int key)
 }
 
 template <typename Container>
-bool PmergeMe<Container>::isOK(int index, size_t key)
-{
-	++this->_count;
-	// std::cout << "count: " << _count << std::endl;
-	// std::cout << this->_input_arr[this->_data_vec[index][0].original_idx].value << " vs " << key << std::endl;
-	if (this->_input_arr[this->_data_vec[index][0].original_idx].value >= key)
-		return (true);
-	return (false);
-}
-
-
-template <typename Container>
-void PmergeMe<Container>::printArrBeforeSorting(void)
-{
-	// if (this->_input_arr.size() < 6)
-	{
-		for (size_t i = 0; i < this->_input_arr.size(); ++i)
-		{
-			std::cout << this->_input_arr[i].value << " ";
-		}
-		std::cout << std::endl;
-	}
-	// else
-	// {
-	// 	for (size_t i = 0; i < 5; ++i)
-	// 	{
-	// 		std::cout << this->_input_arr[i].value << " ";
-	// 	}
-	// 	std::cout << "[...]";
-	// 	std::cout << std::endl;
-	// }
-}
-
-template <typename Container>
-void PmergeMe<Container>::printArrAfterSorting(void)
-{
-	// if (this->_data_vec.size() < 6)
-	{
-		for (size_t i = 0; i < this->_data_vec.size(); ++i)
-		{
-			std::cout << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
-		}
-		std::cout << std::endl;
-	}
-	// else
-	// {
-	// 	for (size_t i = 0; i < 5; ++i)
-	// 	{
-	// 		std::cout << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
-	// 	}
-	// 	std::cout << "[...]";
-	// 	std::cout << std::endl;
-	// }
-}
-
-template <typename Container>
-void PmergeMe<Container>::printArrWIP(void)
-{
-	std::cout << "--- WIP ---" << std::endl;
-	for (size_t i = 0; i < this->_data_vec.size(); ++i)
-	{
-		std::cout << "[" << i << "]\n";
-		for (size_t j = 0; j < this->_data_vec[i].size(); ++j)
-		{
-			std::cout << "[" << j << "]";
-			std::cout << this->_input_arr[this->_data_vec[i][j].original_idx].value << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-}
-
-template <typename Container>
-const Container PmergeMe<Container>::getArr() const
-{
-	return (this->_input_arr);
-}
-
-template <typename Container>
-const Container PmergeMe<Container>::getSorted() const
-{
-	return (this->_sorted_vec);
-}
-
-template <typename Container>
-const std::vector<Container> PmergeMe<Container>::getPairOrigIdx() const
-{
-	return (this->_data_vec);
-}
-
-template <typename Container>
 int PmergeMe<Container>::getIndexFromVector(size_t src_orig_idx, std::vector<Container> dist)
 {
 	for (size_t i = 0; i < dist.size(); ++i)
@@ -414,6 +320,35 @@ int PmergeMe<Container>::getIndexFromVector(size_t src_orig_idx, std::vector<Con
 		}
 	}
 	return (-1);
+}
+
+template <typename Container>
+bool PmergeMe<Container>::isOK(int index, size_t key)
+{
+	// ++this->_count;
+	// std::cout << "count: " << _count << std::endl;
+	// std::cout << this->_input_arr[this->_data_vec[index][0].original_idx].value << " vs " << key << std::endl;
+	if (this->_input_arr[this->_data_vec[index][0].original_idx].value >= key)
+		return (true);
+	return (false);
+}
+
+template <typename Container>
+const Container& PmergeMe<Container>::getArr() const
+{
+	return (this->_input_arr);
+}
+
+template <typename Container>
+const std::vector<Container>& PmergeMe<Container>::getPairOrigIdx() const
+{
+	return (this->_data_vec);
+}
+
+template <typename Container>
+size_t PmergeMe<Container>::arrSize(void) const
+{
+	return (this->_input_arr.size());
 }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec)
@@ -443,15 +378,70 @@ std::ostream &operator<<(std::ostream &out, const data &vec)
 	return (out);
 }
 
-void invalidArgument(void)
+template <typename Container>
+void PmergeMe<Container>::printArrBeforeSorting(void)
 {
-	std::cout << "Usage: ./PmergeMe <num> ..." << std::endl;
+	if (this->_input_arr.size() < 6)
+	{
+		for (size_t i = 0; i < this->_input_arr.size(); ++i)
+		{
+			std::cout << this->_input_arr[i].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	else
+	{
+		for (size_t i = 0; i < 5; ++i)
+		{
+			std::cout << this->_input_arr[i].value << " ";
+		}
+		std::cout << "[...]";
+		std::cout << std::endl;
+	}
 }
 
 template <typename Container>
-size_t PmergeMe<Container>::arrSize(void)
+void PmergeMe<Container>::printArrAfterSorting(void)
 {
-	return (this->_input_arr.size());
+	if (this->_data_vec.size() < 6)
+	{
+		for (size_t i = 0; i < this->_data_vec.size(); ++i)
+		{
+			std::cout << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	else
+	{
+		for (size_t i = 0; i < 5; ++i)
+		{
+			std::cout << this->_input_arr[this->_data_vec[i][0].original_idx].value << " ";
+		}
+		std::cout << "[...]";
+		std::cout << std::endl;
+	}
+}
+
+template <typename Container>
+void PmergeMe<Container>::printArrWIP(void)
+{
+	std::cout << "--- WIP ---" << std::endl;
+	for (size_t i = 0; i < this->_data_vec.size(); ++i)
+	{
+		std::cout << "[" << i << "]\n";
+		for (size_t j = 0; j < this->_data_vec[i].size(); ++j)
+		{
+			std::cout << "[" << j << "]";
+			std::cout << this->_input_arr[this->_data_vec[i][j].original_idx].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+void invalidArgument(void)
+{
+	std::cout << "Usage: ./PmergeMe <num> ..." << std::endl;
 }
 
 #endif
