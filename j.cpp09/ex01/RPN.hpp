@@ -41,7 +41,7 @@ public:
 	public:
 		virtual const char *what() const throw()
 		{
-			return ("Error: divide by 0");
+			return ("Error");
 		}
 	};
 };

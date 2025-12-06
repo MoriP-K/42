@@ -3,10 +3,10 @@
 int main(int ac, char **av)
 {
 
-	if (ac != 2 || !av[1])
+	if (ac != 2)
 	{
-		std::cout << "Error" << std::endl;
-		return (0);
+		std::cerr << "Error" << std::endl;
+		return (1);
 	}
 	try
 	{
@@ -15,7 +15,7 @@ int main(int ac, char **av)
 	}
 	catch(const std::exception& error)
 	{
-		std::cout << error.what() << std::endl;
+		std::cerr << error.what() << std::endl;
 		return (1);
 	}
 	return (0);

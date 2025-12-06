@@ -6,7 +6,7 @@ BitcoinExchange::BitcoinExchange(char *input)
 	this->execute(input);
 }
 
-BitcoinExchange::BitcoinExchange(const BitcoinExchange &copy): _dataFromCSV(copy._dataFromCSV)
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &copy): _data_from_CSV(copy._data_from_CSV)
 {
 }
 
@@ -14,6 +14,7 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &src)
 {
 	if (this != &src)
 	{
+		this->_data_from_CSV = src._data_from_CSV;
 	}
 	return (*this);
 }
@@ -32,7 +33,7 @@ void BitcoinExchange::calculateAndDisplay(const std::string &date, double value)
 	}
 	catch(const std::exception& error)
 	{
-		std::cerr << error.what() << '\n';
+		std::cerr << error.what() << std::endl;
 	}
 	
 }
@@ -40,11 +41,11 @@ void BitcoinExchange::calculateAndDisplay(const std::string &date, double value)
 
 double BitcoinExchange::getPrice(const std::string &date)
 {
-	std::map<std::string, double>::iterator it = this->_dataFromCSV.find(date);
-	if (it != this->_dataFromCSV.end())
+	std::map<std::string, double>::iterator it = this->_data_from_CSV.find(date);
+	if (it != this->_data_from_CSV.end())
 		return (it->second);
-	std::map<std::string, double>::iterator lower = this->_dataFromCSV.lower_bound(date);
-	if (lower == this->_dataFromCSV.begin())
+	std::map<std::string, double>::iterator lower = this->_data_from_CSV.lower_bound(date);
+	if (lower == this->_data_from_CSV.begin())
 		throw std::runtime_error("No price data available for this date");
 	--lower;
 	return (lower->second);
@@ -70,7 +71,7 @@ void BitcoinExchange::loadDatabase()
 			std::string date = trim(line.substr(0, comma_pos));
 			char **endptr = NULL;
 			double rate = std::strtod(trim(line.substr(comma_pos + 1)).c_str(), endptr);
-			this->_dataFromCSV[date] = rate;
+			this->_data_from_CSV[date] = rate;
 			// std::cout << "Date: " << date << ", Rate: " << value_part << std::endl;
 		}
 	}
@@ -147,10 +148,10 @@ bool BitcoinExchange::isValidDate(const std::string &date)
 		return (false);
 	if (day < 1 || 31 < day)
 		return (false);
-	int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
-		daysInMonth[1] = 29;
-	if (day > daysInMonth[month - 1])
+		days_in_month[1] = 29;
+	if (day > days_in_month[month - 1])
 		return (false);
 	return (true);
 }
