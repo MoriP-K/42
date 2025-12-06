@@ -41,6 +41,8 @@ bool PmergeMe<Container>::isValidArgs(const char **av)
 
 	for (size_t i = 1; av[i]; ++i)
 	{
+		if (av[i][0] == '\0')
+			return (false);
 		data tmp;
 		for (size_t j = 0; av[i][j]; ++j)
 		{

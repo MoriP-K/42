@@ -9,7 +9,7 @@ double getTime(void)
 
 int main(int ac, char const *av[])
 {
-	if (ac < 2)
+	if (ac < 2 || !av[1])
 	{
 		invalidArgument();
 		return (1);
