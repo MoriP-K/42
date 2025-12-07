@@ -70,6 +70,10 @@ void RPN::add(void)
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
+	if (t1 > 0 && t2 > 0 && t2 > std::numeric_limits<int>::max() - t1)
+		throw OverflowException();
+	if (t1 < 0 && t2 < 0 && t2 < std::numeric_limits<int>::min() - t1)
+		throw OverflowException();
 	this->_token.push(t2 + t1);
 }
 
@@ -82,6 +86,18 @@ void RPN::subtract(void)
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
+	if (t1 < 0 && t2 > 0)
+	{
+		if (t1 == std::numeric_limits<int>::min())
+			throw OverflowException();
+		if (t2 > std::numeric_limits<int>::max() - (-t1))
+			throw OverflowException();
+	}
+	if (t1 > 0 && t2 < 0)
+	{
+		if (t2 < std::numeric_limits<int>::min() + t1)
+			throw OverflowException();
+	}
 	this->_token.push(t2 - t1);
 }
 
@@ -94,6 +110,17 @@ void RPN::multiply(void)
 	this->_token.pop();
 	t2 = this->_token.top();
 	this->_token.pop();
+	if (t1 != 0 && t2 != 0)
+	{
+		if (t1 > 0 && t2 > 0 && t2 > std::numeric_limits<int>::max() / t1)
+			throw OverflowException();
+		if (t1 < 0 && t2 < 0 && t2 < std::numeric_limits<int>::max() / t1)
+			throw OverflowException();
+		if (t1 > 0 && t2 < 0 && t2 < std::numeric_limits<int>::min() / t1)
+			throw OverflowException();
+		if (t1 < 0 && t2 > 0 && t2 > std::numeric_limits<int>::min() / t1)
+			throw OverflowException();
+	}
 	this->_token.push(t2 * t1);
 }
 
@@ -108,6 +135,8 @@ void RPN::divide(void)
 	this->_token.pop();
 	if (t1 == 0)
 		throw DivideByZeroException();
+	if (t2 == std::numeric_limits<int>::min() && t1 == -1)
+		throw OverflowException();
 	this->_token.push(t2 / t1);
 }
 

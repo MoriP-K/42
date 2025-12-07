@@ -5,6 +5,7 @@
 #include <stack>
 #include <vector>
 #include <cstdlib>
+#include <limits>
 
 class RPN
 {
@@ -37,6 +38,15 @@ public:
 	};
 
 	class DivideByZeroException: public std::exception
+	{
+	public:
+		virtual const char *what() const throw()
+		{
+			return ("Error");
+		}
+	};
+
+	class OverflowException: public std::exception
 	{
 	public:
 		virtual const char *what() const throw()
