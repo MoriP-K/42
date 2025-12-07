@@ -4,18 +4,16 @@ CXX := c++
 
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic
 
-SRC := main.cpp
+SRC := main.cpp PmergeMeVector.cpp PmergeMeDeque.cpp
 
 OBJ := ${SRC:.cpp=.o}
-
-HEADER := PmergeMe.hpp PmergeMe.tpp
 
 all: ${NAME}
 
 ${NAME}: ${OBJ}
 	${CXX} ${CXXFLAGS} $^ -o $@
 
-%.o: %.cpp ${HEADER}
+%.o: %.cpp
 	${CXX} ${CXXFLAGS} $< -c -o $@
 
 clean:

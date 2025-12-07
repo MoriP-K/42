@@ -1,4 +1,10 @@
-#include "PmergeMe.hpp"
+#include "PmergeMeVector.hpp"
+#include "PmergeMeDeque.hpp"
+
+void invalidArgument(void)
+{
+	std::cerr << "Error" << std::endl;
+}
 
 double getTime(void)
 {
@@ -17,7 +23,7 @@ int main(int ac, char const *av[])
 	try
 	{
 		// vector
-		PmergeMe<std::vector<data> > pmVector(av);
+		PmergeMeVector pmVector(av);
 		pmVector.initArr();
 		std::cout << "Before: ";
 		pmVector.printArrBeforeSorting();
@@ -28,7 +34,7 @@ int main(int ac, char const *av[])
 		double time_vec = end_vec - start_vec;
 
 		// deque
-		PmergeMe<std::deque<data> > pmDeque(av);
+		PmergeMeDeque pmDeque(av);
 		pmDeque.initArr();
 	
 		double start_deq = getTime();
@@ -50,16 +56,15 @@ int main(int ac, char const *av[])
 				  << " elements with std::deque  : "
 				  << time_deq << " us" << std::endl;
 
-		// std::cout << "======== input ========" << std::endl;
-		// for (size_t i = 1; av[i]; ++i)
-		// 	std::cout << av[i] << " ";
-		// std::cout << "\n=======================" << std::endl;
-		// std::cout << "() is value, [] is index.\n" << std::endl;
-		// pmVector.startSorting();
+		// 
 		// std::cout << "\n======= RESULT =======" << std::endl;
-		// pmVector.printCount();
-		// std::cout << "------- AFTER -------" << std::endl;
+		// std::cout << "vector: " << pmVector.getCount() << std::endl;
+		// std::cout << "deque : " << pmDeque.getCount() << std::endl;
+		// std::cout << "\n======= AFTER =======" << std::endl;
+		// std::cout << "vector: "; 
 		// pmVector.printArrAfterSorting();
+		// std::cout << "deque : ";
+		// pmDeque.printArrAfterSorting();
 	}
 	catch(const std::exception& error)
 	{
