@@ -118,8 +118,11 @@ void RPN::multiply(void)
 			throw OverflowException();
 		if (t1 > 0 && t2 < 0 && t2 < std::numeric_limits<int>::min() / t1)
 			throw OverflowException();
-		if (t1 < 0 && t2 > 0 && t2 > std::numeric_limits<int>::min() / t1)
-			throw OverflowException();
+		if (t1 < 0 && t2 > 0 && t1 != -1)
+		{
+			if (t2 > std::numeric_limits<int>::min() / t1)
+				throw OverflowException();
+		}
 	}
 	this->_token.push(t2 * t1);
 }
