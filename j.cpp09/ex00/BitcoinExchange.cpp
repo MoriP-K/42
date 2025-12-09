@@ -69,8 +69,8 @@ void BitcoinExchange::loadDatabase()
 		if (comma_pos != std::string::npos)
 		{
 			std::string date = trim(line.substr(0, comma_pos));
-			char **endptr = NULL;
-			double rate = std::strtod(trim(line.substr(comma_pos + 1)).c_str(), endptr);
+			char *endptr = NULL;
+			double rate = std::strtod(trim(line.substr(comma_pos + 1)).c_str(), &endptr);
 			this->_data_from_CSV[date] = rate;
 			// std::cout << "Date: " << date << ", Rate: " << value_part << std::endl;
 		}
@@ -108,20 +108,30 @@ void BitcoinExchange::execute(char *input)
 			this->errorBadInput(date_part);
 			continue;
 		}
-		char **endptr = NULL;
-		double value_part = std::strtod(trim(line.substr(pipe_pos + 1)).c_str(), endptr);
+		std::string value_str = line.substr(pipe_pos + 1);
+		if (value_str.find("-") != std::string::npos)
+		{
+			this->errorNotPositiveNumber();
+			continue;
+		}
+		char *endptr = NULL;
+		double value_part = std::strtod(trim(value_str).c_str(), &endptr);
+		if (endptr == value_str.c_str() || (*endptr != '\0' && !isspace(*endptr)))
+		{
+			this->errorNotPositiveNumber();
+			continue;
+		}
 		if (!this->isPositiveValue(value_part))
 		{
 			this->errorNotPositiveNumber();
 			continue;
 		}
-		else if (!this->isInRange(value_part))
+		if (!this->isInRange(value_part))
 		{
 			this->errorTooLargeNumber();
 			continue;
 		}
-		else
-			this->calculateAndDisplay(date_part, value_part);
+		this->calculateAndDisplay(date_part, value_part);
 	}
 }
 
