@@ -56,14 +56,14 @@ int main(int ac, char const *av[])
 				  << time_deq << " us" << std::endl;
 
 		// 
-		std::cout << "\n======= RESULT =======" << std::endl;
-		std::cout << "vector: " << pmergeme.getCountVec() << std::endl;
-		std::cout << "deque : " << pmergeme.getCountDeq() << std::endl;
-		std::cout << "\n======= AFTER =======" << std::endl;
-		std::cout << "vector: "; 
-		pmergeme.printArrAfterSortingVec();
-		std::cout << "deque : ";
-		pmergeme.printArrAfterSortingDeq();
+		// std::cout << "\n======= RESULT =======" << std::endl;
+		// std::cout << "vector: " << pmergeme.getCountVec() << std::endl;
+		// std::cout << "deque : " << pmergeme.getCountDeq() << std::endl;
+		// std::cout << "\n======= AFTER =======" << std::endl;
+		// std::cout << "vector: "; 
+		// pmergeme.printArrAfterSortingVec();
+		// std::cout << "deque : ";
+		// pmergeme.printArrAfterSortingDeq();
 	}
 	catch(const std::exception& error)
 	{

@@ -349,7 +349,7 @@ void PmergeMe::printArrBeforeSortingVec(void)
 
 void PmergeMe::printArrAfterSortingVec(void)
 {
-	// if (this->_data_vec.size() < 6)
+	if (this->_data_vec.size() < 6)
 	{
 		for (size_t i = 0; i < this->_data_vec.size(); ++i)
 		{
@@ -357,15 +357,15 @@ void PmergeMe::printArrAfterSortingVec(void)
 		}
 		std::cout << std::endl;
 	}
-	// else
-	// {
-	// 	for (size_t i = 0; i < 5; ++i)
-	// 	{
-	// 		std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
-	// 	}
-	// 	std::cout << "[...]";
-	// 	std::cout << std::endl;
-	// }
+	else
+	{
+		for (size_t i = 0; i < 5; ++i)
+		{
+			std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
+		}
+		std::cout << "[...]";
+		std::cout << std::endl;
+	}
 }
 
 void PmergeMe::printArrWIPVec(void)
@@ -717,7 +717,7 @@ void PmergeMe::printArrBeforeSortingDeq(void)
 
 void PmergeMe::printArrAfterSortingDeq(void)
 {
-	// if (this->_data_deq.size() < 6)
+	if (this->_data_deq.size() < 6)
 	{
 		for (size_t i = 0; i < this->_data_deq.size(); ++i)
 		{
@@ -725,15 +725,15 @@ void PmergeMe::printArrAfterSortingDeq(void)
 		}
 		std::cout << std::endl;
 	}
-	// else
-	// {
-	// 	for (size_t i = 0; i < 5; ++i)
-	// 	{
-	// 		std::cout << this->_input_arr_deq[this->_data_deq[i][0].original_idx].value << " ";
-	// 	}
-	// 	std::cout << "[...]";
-	// 	std::cout << std::endl;
-	// }
+	else
+	{
+		for (size_t i = 0; i < 5; ++i)
+		{
+			std::cout << this->_input_arr_deq[this->_data_deq[i][0].original_idx].value << " ";
+		}
+		std::cout << "[...]";
+		std::cout << std::endl;
+	}
 }
 
 void PmergeMe::printArrWIPDeq(void)
