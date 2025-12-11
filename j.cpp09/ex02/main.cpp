@@ -1,5 +1,4 @@
-#include "PmergeMeVector.hpp"
-#include "PmergeMeDeque.hpp"
+#include "PmergeMe.hpp"
 
 void invalidArgument(void)
 {
@@ -23,48 +22,48 @@ int main(int ac, char const *av[])
 	try
 	{
 		// vector
-		PmergeMeVector pmVector(av);
-		pmVector.initArr();
+		PmergeMe pmergeme(av);
+		pmergeme.initArrVec();
 		std::cout << "Before: ";
-		pmVector.printArrBeforeSorting();
+		pmergeme.printArrBeforeSortingVec();
 	
 		double start_vec = getTime();
-		pmVector.startSorting();
+		pmergeme.startSortingVec();
 		double end_vec = getTime();
 		double time_vec = end_vec - start_vec;
 
 		// deque
-		PmergeMeDeque pmDeque(av);
-		pmDeque.initArr();
+		// PmergeMe pmergeme(av);
+		pmergeme.initArrDeq();
 	
 		double start_deq = getTime();
-		pmDeque.startSorting();
+		pmergeme.startSortingDeq();
 		double end_deq = getTime();
 		double time_deq = end_deq - start_deq;
 
 		// result
 		std::cout << "After : ";
-		pmVector.printArrAfterSorting();
+		pmergeme.printArrAfterSortingDeq();
 
 		std::cout << std::fixed << std::setprecision(0);
 
-		std::cout << "Time to process a range of " << pmVector.arrSize()
+		std::cout << "Time to process a range of " << pmergeme.arrSizeVec()
 				  << " elements with std::vector : "
 				  << time_vec << " us" << std::endl;
 		
-		std::cout << "Time to process a range of " << pmDeque.arrSize()
+		std::cout << "Time to process a range of " << pmergeme.arrSizeDeq()
 				  << " elements with std::deque  : "
 				  << time_deq << " us" << std::endl;
 
 		// 
-		// std::cout << "\n======= RESULT =======" << std::endl;
-		// std::cout << "vector: " << pmVector.getCount() << std::endl;
-		// std::cout << "deque : " << pmDeque.getCount() << std::endl;
-		// std::cout << "\n======= AFTER =======" << std::endl;
-		// std::cout << "vector: "; 
-		// pmVector.printArrAfterSorting();
-		// std::cout << "deque : ";
-		// pmDeque.printArrAfterSorting();
+		std::cout << "\n======= RESULT =======" << std::endl;
+		std::cout << "vector: " << pmergeme.getCountVec() << std::endl;
+		std::cout << "deque : " << pmergeme.getCountDeq() << std::endl;
+		std::cout << "\n======= AFTER =======" << std::endl;
+		std::cout << "vector: "; 
+		pmergeme.printArrAfterSortingVec();
+		std::cout << "deque : ";
+		pmergeme.printArrAfterSortingDeq();
 	}
 	catch(const std::exception& error)
 	{
