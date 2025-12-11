@@ -33,7 +33,6 @@ int main(int ac, char const *av[])
 		double time_vec = end_vec - start_vec;
 
 		// deque
-		// PmergeMe pmergeme(av);
 		pmergeme.initArrDeq();
 	
 		double start_deq = getTime();

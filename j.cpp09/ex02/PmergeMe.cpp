@@ -2,7 +2,7 @@
 
 PmergeMe::PmergeMe(const char **av) : _count_vec(0), _count_deq(0)
 {
-	if (!this->isValidArgsVec(av))
+	if (!this->isValidArgs(av))
 		throw ErrorException();
 	for (size_t i = 0; i < this->_input_arr_vec.size(); ++i)
 	{
@@ -17,7 +17,7 @@ PmergeMe::~PmergeMe()
 }
 
 //  ===================================  vector  =================================== //
-bool PmergeMe::isValidArgsVec(const char **av)
+bool PmergeMe::isValidArgs(const char **av)
 {
 	long num = 0;
 
@@ -347,27 +347,6 @@ void PmergeMe::printArrBeforeSortingVec(void)
 	}
 }
 
-void PmergeMe::printArrAfterSortingVec(void)
-{
-	if (this->_data_vec.size() < 6)
-	{
-		for (size_t i = 0; i < this->_data_vec.size(); ++i)
-		{
-			std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
-		}
-		std::cout << std::endl;
-	}
-	else
-	{
-		for (size_t i = 0; i < 5; ++i)
-		{
-			std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
-		}
-		std::cout << "[...]";
-		std::cout << std::endl;
-	}
-}
-
 void PmergeMe::printArrWIPVec(void)
 {
 	std::cout << "--- WIP ---" << std::endl;
@@ -385,29 +364,6 @@ void PmergeMe::printArrWIPVec(void)
 }
 
 //  ===================================  deque  =================================== //
-bool PmergeMe::isValidArgsDeq(const char **av)
-{
-	long num = 0;
-
-	for (size_t i = 1; av[i]; ++i)
-	{
-		if (av[i][0] == '\0')
-			return (false);
-		data tmp;
-		for (size_t j = 0; av[i][j]; ++j)
-		{
-			if (!isdigit(av[i][j]))
-				return (false);
-		}
-		num = std::atol(av[i]);
-		if (num < 0 || __INT_MAX__ < num)
-			return (false);
-		tmp.value = num;
-		this->_input_arr_deq.push_back(tmp);
-	}
-	return (true);
-}
-
 void PmergeMe::initArrDeq(void)
 {
 	for (size_t i = 0; i < this->_input_arr_deq.size(); ++i)
@@ -715,6 +671,44 @@ void PmergeMe::printArrBeforeSortingDeq(void)
 	}
 }
 
+void PmergeMe::printArrWIPDeq(void)
+{
+	std::cout << "--- WIP ---" << std::endl;
+	for (size_t i = 0; i < this->_data_deq.size(); ++i)
+	{
+		std::cout << "[" << i << "]\n";
+		for (size_t j = 0; j < this->_data_deq[i].size(); ++j)
+		{
+			std::cout << "[" << j << "]";
+			std::cout << this->_input_arr_deq[this->_data_deq[i][j].original_idx].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+
+void PmergeMe::printArrAfterSortingVec(void)
+{
+	if (this->_data_vec.size() < 6)
+	{
+		for (size_t i = 0; i < this->_data_vec.size(); ++i)
+		{
+			std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
+		}
+		std::cout << std::endl;
+	}
+	else
+	{
+		for (size_t i = 0; i < 5; ++i)
+		{
+			std::cout << this->_input_arr_vec[this->_data_vec[i][0].original_idx].value << " ";
+		}
+		std::cout << "[...]";
+		std::cout << std::endl;
+	}
+}
+
 void PmergeMe::printArrAfterSortingDeq(void)
 {
 	if (this->_data_deq.size() < 6)
@@ -734,22 +728,6 @@ void PmergeMe::printArrAfterSortingDeq(void)
 		std::cout << "[...]";
 		std::cout << std::endl;
 	}
-}
-
-void PmergeMe::printArrWIPDeq(void)
-{
-	std::cout << "--- WIP ---" << std::endl;
-	for (size_t i = 0; i < this->_data_deq.size(); ++i)
-	{
-		std::cout << "[" << i << "]\n";
-		for (size_t j = 0; j < this->_data_deq[i].size(); ++j)
-		{
-			std::cout << "[" << j << "]";
-			std::cout << this->_input_arr_deq[this->_data_deq[i][j].original_idx].value << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &out, const data &d)

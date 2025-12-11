@@ -41,8 +41,9 @@ public:
 	PmergeMe(const char **av);
 	~PmergeMe();
 
+	bool isValidArgs(const char **av);
+
 	// vector
-	bool isValidArgsVec(const char **av);
 	void initArrVec(void);
 	void startSortingVec(void);
 	std::vector<data> comparePairVec(void);
