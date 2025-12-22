@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    volumes:
+      - /home/kmoriyam/data/mysql:/var/lib/mysql
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: unless-stopped
+    expose:
+      - "3306"
+
+networks:
+  inception-network:
+    driver: bridge
