@@ -9,5 +9,8 @@ envsubst '${DOMAIN_NAME}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.co
 echo "Generating SSL certificate..."
 /generate_ssl.sh
 
+echo "Testing NGINX configuration..."
+nginx -t
+
 echo "Starting NGINX..."
 exec nginx -g 'daemon off;'

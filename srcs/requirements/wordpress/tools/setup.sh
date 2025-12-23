@@ -11,17 +11,23 @@ chown -R www-data:www-data /var/log/php-fpm
 if [ ! -f /var/www/html/wp-config.php ]; then
     echo "WordPress not found, installing..."
     
-    # WordPressをダウンロード
-    wp core download --allow-root --path=/var/www/html
+    # WordPressをダウンロード（既にファイルがある場合はスキップ）
+    if [ ! -f /var/www/html/wp-load.php ]; then
+        wp core download --allow-root --path=/var/www/html
+    fi
     
     echo "Waiting for MariaDB to be ready..."
-    # MariaDBが起動するまで待機
-    until wp db check --allow-root --path=/var/www/html \
-        --dbhost=mariadb \
-        --dbname=${DB_NAME} \
-        --dbuser=${DB_USER} \
-        --dbpass=${DB_PASS} 2>/dev/null; do
-        echo "MariaDB is not ready yet, waiting..."
+    # MariaDBが起動するまで待機（最大60秒）
+    COUNTER=0
+    MAX_TRIES=20
+
+    until mysql -h mariadb -u ${DB_USER} -p${DB_PASS} -e "SELECT 1" &>/dev/null; do
+        COUNTER=$((COUNTER+1))
+        if [ $COUNTER -ge $MAX_TRIES ]; then
+            echo "ERROR: MariaDB connection timeout after ${MAX_TRIES} attempts"
+            exit 1
+        fi
+        echo "MariaDB is not ready yet, waiting... (attempt $COUNTER/$MAX_TRIES)"
         sleep 3
     done
     
@@ -33,7 +39,10 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --dbname=${DB_NAME} \
         --dbuser=${DB_USER} \
         --dbpass=${DB_PASS} \
-        --dbhost=mariadb:3306
+        --dbhost=mariadb:3306 \
+        --skip-check
+    
+    echo "wp-config.php created successfully"
     
     # WordPressをインストール
     wp core install --allow-root \
@@ -44,6 +53,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --admin_password=${WP_ADMIN_PASS} \
         --admin_email=${WP_ADMIN_EMAIL}
     
+    echo "WordPress core installed successfully"
+
     # 一般ユーザーを作成
     wp user create --allow-root \
         --path=/var/www/html \
@@ -51,6 +62,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         ${WP_USER_EMAIL} \
         --user_pass=${WP_USER_PASS} \
         --role=author
+    
+    echo "WordPress user created successfully"
     
     # 権限を設定
     chown -R www-data:www-data /var/www/html
