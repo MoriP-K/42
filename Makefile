@@ -1,4 +1,4 @@
-.PHONY: all build up down clean fclean re logs
+.PHONY: all build up down clean fclean re log cls vls ils
 
 all: build up
 
@@ -24,5 +24,14 @@ fclean: clean
 
 re: fclean all
 
-logs:
-	@cd srcs && docker compose logs
+cls:
+	@cd srcs && docker container ls -a
+
+vls:
+	@cd srcs && docker volume ls
+
+ils:
+	@cd srcs && docker image ls
+
+log:
+	@cd srcs && docker compose logs ls
