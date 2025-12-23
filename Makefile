@@ -25,4 +25,4 @@ fclean: clean
 re: fclean all
 
 logs:
-	@cd srcs && docker comopse logs
+	@cd srcs && docker compose logs
