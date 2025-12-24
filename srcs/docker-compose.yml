@@ -5,7 +5,7 @@ services:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     volumes:
-      - /home/kmoriyam/data/mysql:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception-network
     env_file:
@@ -20,7 +20,7 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     volumes:
-      - /home/kmoriyam/data/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception-network
     env_file:
@@ -37,7 +37,7 @@ services:
       context: ./requirements/nginx
       dockerfile: Dockerfile
     volumes:
-      - /home/kmoriyam/data/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception-network
     env_file:
@@ -51,3 +51,17 @@ services:
 networks:
   inception-network:
     driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/kmoriyam/data/mysql'
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/kmoriyam/data/wordpress'

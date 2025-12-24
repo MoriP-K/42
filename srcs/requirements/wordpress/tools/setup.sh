@@ -47,7 +47,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     # WordPressをインストール
     wp core install --allow-root \
         --path=/var/www/html \
-        --url=${DOMAIN_NAME} \
+        --url="https://${DOMAIN_NAME}" \
         --title="${WP_TITLE}" \
         --admin_user=${WP_ADMIN_USER} \
         --admin_password=${WP_ADMIN_PASS} \
@@ -66,8 +66,10 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     echo "WordPress user created successfully"
     
     # 権限を設定
+    echo "Setting file permissions..."
     chown -R www-data:www-data /var/www/html
-    chmod -R 755 /var/www/html
+    find /var/www/html -type d -exec chmod 755 {} \;
+    find /var/www/html -type f -exec chmod 644 {} \;
     
     echo "WordPress installation completed!"
 else
@@ -76,4 +78,4 @@ fi
 
 echo "Starting php-fpm..."
 # php-fpmをフォアグラウンドで起動
-exec php-fpm7.4 -F
+exec php-fpm7.4 -F -R

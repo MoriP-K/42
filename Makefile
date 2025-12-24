@@ -1,26 +1,32 @@
-.PHONY: all build up down clean fclean re log cls vls ils
+.PHONY: all build up down clean fclean re log cls vls nls ils
 
-all: build up
+# ホスト側のディレクトリパス
+DATA_PATH = /home/kmoriyam/data
+
+all: prepare build up
+
+prepare:
+	@sudo mkdir -p $(DATA_PATH)/mysql
+	@sudo mkdir -p $(DATA_PATH)/wordpress
+	@sudo chmod 777 $(DATA_PATH)/mysql
+	@sudo chmod 777 $(DATA_PATH)/wordpress
 
 build:
-	@mkdir -p /home/kmoriyam/data/mysql
-	@mkdir -p /home/kmoriyam/data/wordpress
-	@cd srcs && docker-compose build
+	@cd srcs && docker compose build
 
 up:
-	@cd srcs && docker-compose up -d
+	@cd srcs && docker compose up -d
 
 down:
-	@cd srcs && docker-compose down
+	@cd srcs && docker compose down
 
 clean: down
 	@docker system prune -af
 
 fclean: clean
-	@cd srcs && docker-compose down -v
-	@sudo rm -rf /home/kmoriyam/data/mysql/*
-	@sudo rm -rf /home/kmoriyam/data/wordpress/*
-	@docker volume prune -f
+	@cd srcs && docker compose down -v
+	@sudo rm -rf $(DATA_PATH)
+	@docker system prune -a --force
 
 re: fclean all
 
@@ -33,5 +39,8 @@ vls:
 ils:
 	@cd srcs && docker image ls
 
+nls:
+	@cd srcs && docker network ls
+
 log:
-	@cd srcs && docker compose logs ls
+	@cd srcs && docker compose logs
