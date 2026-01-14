@@ -6,9 +6,6 @@ on:
   push:
     branches:
       - '**' # すべてのブランチへのpush
-  pull_request:
-    branches:
-      - '**' # すべてのブランチへのPR
 
 jobs: # 実行するジョブ
   frontend: # frontendジョブ
