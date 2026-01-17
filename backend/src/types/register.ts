@@ -25,3 +25,11 @@ export interface RegisterErrorResponse {
 	field: "email" | "username" | "password";
 	message: string;
 }
+
+/**
+ * POST /api/register ルートの型定義
+ */
+export type RegisterRoute = {
+	Body: RegisterRequest;
+	Reply: RegisterSuccessResponse | RegisterErrorResponse;
+};

@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import {
 	RegisterRequest,
 	RegisterSuccessResponse,
-	RegisterErrorResponse
+	RegisterErrorResponse,
+	RegisterRoute
 } from '../types/register';
 
 /**
@@ -10,8 +11,8 @@ import {
  * ユーザー登録エンドポイント
  */
 export const registerUser = async (
-	request: FastifyRequest<{ Body: RegisterRequest }>,
-	reply: FastifyReply<{ Reply: RegisterSuccessResponse | RegisterErrorResponse }>
+	request: FastifyRequest<RegisterRoute>,
+	reply: FastifyReply<RegisterRoute>
 ) => {
 	// ダミーレスポンス: 成功時 (201)
 	// 実際の実装では、ここでバリデーションとDB操作を行う
