@@ -14,10 +14,6 @@ fastify.register(cors, {
 // ルートの登録
 fastify.register(userRoutes, { prefix: '/api' });
 
-fastify.get('/', async (request, reply) => {
-    return { hello: 'world!!!!' }
-});
-
 const start = async () => {
     try {
         await fastify.listen({port: 3000, host: '0.0.0.0' })
