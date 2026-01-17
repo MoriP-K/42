@@ -1,15 +1,18 @@
 import Fastify from 'fastify';
-import { registerRoutes } from './routes/register';
+import cors from '@fastify/cors';
+import { userRoutes } from './routes/userRoutes';
 
 const fastify = Fastify({
 	logger: true
 });
 
-fastify.get('/', async (request, reply) => {
-	return { hello: 'world' }
+// CORS設定 (Reactアプリからのリクエストを許可)
+fastify.register(cors, {
+	origin: true // 開発環境なので全て許可 (本番では制限を推奨)
 });
 
-fastify.register(registerRoutes);
+// ルートの登録
+fastify.register(userRoutes, { prefix: '/api' });
 
 const start = async () => {
 	try {
