@@ -1,7 +1,6 @@
 import { PrismaClient } from '../generated/prisma/client';
 
 /**
- * LaravelのDB接続やModelの起点にあたるシングルトンインスタンス
  * どこからでも import { prisma } from '../lib/prisma' で利用可能にします
  */
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
