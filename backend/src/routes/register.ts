@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import { registerSchema } from '../schemas/register';
 import {
 	RegisterRequest,
 	RegisterSuccessResponse,
@@ -13,9 +14,11 @@ export async function registerRoutes(fastify: FastifyInstance) {
 	fastify.post<{
 		Body: RegisterRequest;
 		Reply: RegisterSuccessResponse | RegisterErrorResponse;
-	}>('/api/register', async (request, reply) => {
+	}>('/api/register', { schema: registerSchema }, async (request, reply) => {
+
+		console.log("username: ", request.body);
 		// ダミーレスポンス: 成功時 (201)
-		// 実際の実装では、ここでバリデーションとDB操作を行う
+		// TODO: 実際の実装では、ここでバリデーションとDB操作を行う
 		const successResponse: RegisterSuccessResponse = {
 			userId: 1
 		};
