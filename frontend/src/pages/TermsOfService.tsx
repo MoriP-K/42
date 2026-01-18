@@ -18,7 +18,7 @@ function TermsOfService() {
           </div>
         </div>
       </div>
-      <a href="javascript:history.back();">戻る</a>
+	  <p>戻る</p>
     </div>
   )
 }

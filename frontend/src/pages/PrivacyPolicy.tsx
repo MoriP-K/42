@@ -1,6 +1,6 @@
 import Footer from "../components/Footer"
 
-function  PrivacyPolicy() {
+function PrivacyPolicy() {
 	return (
     <div>
         <Footer></Footer>
