@@ -15,6 +15,10 @@ fastify.get('/', async (request, reply) => {
 	return { hello: 'world!!!!' }
 });
 
+fastify.get('/', async (request, reply) => {
+	return { hello: 'world' }
+});
+
 // ルートの登録
 fastify.register(userRoutes, { prefix: '/api' });
 
