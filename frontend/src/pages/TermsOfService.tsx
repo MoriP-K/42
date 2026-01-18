@@ -12,11 +12,9 @@ function TermsOfService() {
       <div className="hero min-h-[80vh]">
         <div className="hero-content text-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold">！利用規約！</h1>
-            {/* <React.StrictMode> */}
+            <h1 className="text-5xl font-bold">利用規約</h1>
 				<TermsOfServiceContent>
 				</TermsOfServiceContent>
-			{/* </React.StrictMode> */}
           </div>
         </div>
       </div>
