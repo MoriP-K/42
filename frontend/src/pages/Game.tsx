@@ -3,7 +3,6 @@ import Canvas from "../components/Canvas"
 import ScoreBoard from "../components/ScoreBoard"
 import ChatMessages from "../components/ChatMessages"
 import ChatInput from "../components/ChatInput"
-import Footer from "../components/Footer"
 
 const Game = () => {
 	return (
@@ -43,7 +42,6 @@ const Game = () => {
 				</div>
 			</div>
 
-			<Footer></Footer>
 		</div>
 	)
 }
