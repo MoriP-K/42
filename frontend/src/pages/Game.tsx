@@ -139,10 +139,10 @@ export default Game
 // 						<div className="card bg-base-100 shadow-xl">
 // 							<div className="card-body">
 // 								<h2 className="card-title">お題: ???</h2>
-			
-// 								<canvas 
+
+// 								<canvas
 // 									ref={canvasRef}
-// 									width={800} 
+// 									width={800}
 // 									height={600}
 // 									className="border-2 border-base-300 rounded-lg cursor-crosshair"
 // 									onMouseDown={startDrawing}
@@ -150,33 +150,33 @@ export default Game
 // 									onMouseUp={stopDrawing}
 // 									onMouseLeave={stopDrawing}
 // 								/>
-			
+
 // 								{/* カラーパレット */}
 // 								<div className="flex gap-2 mt-4">
-// 									<button 
-// 									className="btn btn-circle btn-error" 
+// 									<button
+// 									className="btn btn-circle btn-error"
 // 									onClick={() => setColor('#ef4444')}
 // 									/>
-// 									<button 
-// 									className="btn btn-circle btn-primary" 
+// 									<button
+// 									className="btn btn-circle btn-primary"
 // 									onClick={() => setColor('#3b82f6')}
 // 									/>
-// 									<button 
-// 									className="btn btn-circle btn-success" 
+// 									<button
+// 									className="btn btn-circle btn-success"
 // 									onClick={() => setColor('#22c55e')}
 // 									/>
-// 									<button 
-// 									className="btn btn-circle btn-warning" 
+// 									<button
+// 									className="btn btn-circle btn-warning"
 // 									onClick={() => setColor('#eab308')}
 // 									/>
-// 									<button 
-// 									className="btn btn-circle" 
+// 									<button
+// 									className="btn btn-circle"
 // 									style={{ backgroundColor: '#000' }}
 // 									onClick={() => setColor('#000000')}
 // 									/>
 
 // 									<div className="divider divider-horizontal" />
-// 										<button 
+// 										<button
 // 										className="btn btn-error btn-outline"
 // 										onClick={clearCanvas}
 // 										>
@@ -192,7 +192,7 @@ export default Game
 // 						<div className="card bg-base-100 shadow-xl">
 // 							<div className="card-body">
 // 							<h2 className="card-title">プレイヤー</h2>
-							
+
 // 							<div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
 // 								<div className="avatar placeholder">
 // 								<div className="bg-primary text-primary-content rounded-full w-12">
@@ -223,7 +223,7 @@ export default Game
 // 						<div className="card bg-base-100 shadow-xl">
 // 							<div className="card-body">
 // 							<h2 className="card-title">チャット</h2>
-							
+
 // 							<div className="space-y-2 h-64 overflow-y-auto">
 // 								<div className="chat chat-start">
 // 								<div className="chat-bubble">犬？</div>
@@ -232,10 +232,10 @@ export default Game
 // 								<div className="chat-bubble chat-primary">猫！</div>
 // 								</div>
 // 							</div>
-							
+
 // 							<div className="join w-full">
-// 								<input 
-// 								className="input input-bordered join-item flex-1" 
+// 								<input
+// 								className="input input-bordered join-item flex-1"
 // 								placeholder="答えを入力..."
 // 								/>
 // 								<button className="btn btn-primary join-item">送信</button>

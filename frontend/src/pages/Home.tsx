@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Footer from "../components/Footer"
 import { useEffect, useState } from 'react'
 import { userApi } from '../api/userApi'
 
@@ -20,7 +21,7 @@ function Home() {
           <a className="btn btn-ghost text-xl">🎨 おえかきの森</a>
         </div>
       </div>
-      
+
       <div className="hero min-h-[80vh]">
         <div className="hero-content text-center">
           <div className="max-w-md">
@@ -33,6 +34,7 @@ function Home() {
           </div>
         </div>
       </div>
+	  <Footer></Footer>
     </div>
   )
 }

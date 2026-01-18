@@ -2,6 +2,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
 import Game from './pages/Game'
+import TermsOfService from './pages/TermsOfService'
+import Login from './pages/Login'
+import AccountRegister from './pages/AccountRegister'
+import PaaswordResetSendMail from './pages/PaaswordResetSendMail'
+import PaaswordReset from './pages/PasswordReset'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import RedirectLogin from './pages/RedirectLogin'
 
 function App() {
 	return (
@@ -9,6 +16,13 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/game" element={<Game />} />
+				<Route path="/terms" element={<TermsOfService />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<AccountRegister />} />
+				<Route path="/passwordReset/sendMail" element={<PaaswordResetSendMail />} />
+				<Route path="/passwordReset" element={<PaaswordReset />} />
+				<Route path="/login/redirect" element={<RedirectLogin />} />
+				<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
 			</Routes>
 		</BrowserRouter>
 	)
