@@ -12,10 +12,6 @@ fastify.register(cors, {
 });
 
 fastify.get('/', async (request, reply) => {
-	return { hello: 'world!!!!' }
-});
-
-fastify.get('/', async (request, reply) => {
 	return { hello: 'world' }
 });
 
