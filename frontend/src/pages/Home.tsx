@@ -27,7 +27,7 @@ function Home() {
             <h1 className="text-5xl font-bold">おえかきの森へようこそ！</h1>
             <p className="py-6">友達と一緒にお絵かきで遊ぼう</p>
 			<p className="mb-4">APIからのメッセージ: <span className="text-primary font-semibold">{message}</span></p>
-            <Link to="/game" className="btn btn-primary btn-lg">
+            <Link to="/waiting-game" className="btn btn-primary btn-lg">
               ゲームを始める
             </Link>
           </div>
