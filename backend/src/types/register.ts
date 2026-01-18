@@ -6,7 +6,7 @@
  * POST /api/register リクエスト型
  */
 export interface RegisterRequest {
-	username: string;
+	name: string;
 	email: string;
 	password: string;
 }
@@ -22,7 +22,7 @@ export interface RegisterSuccessResponse {
  * POST /api/register エラーレスポンス型 (400)
  */
 export interface RegisterErrorResponse {
-	field: "email" | "username" | "password";
+	field: "email" | "name" | "password";
 	message: string;
 }
 
