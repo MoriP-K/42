@@ -7,13 +7,16 @@ services:
       - ./frontend:/app 
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:300
+      - VITE_API_URL=http://localhost:3000
 
   backend:
     build: ./backend
     ports:
       - "3000:3000"
       - "5555:5555"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     environment:
       - DATABASE_URL=postgresql://oekaki:password@db:5432/oekaki_db
     depends_on:

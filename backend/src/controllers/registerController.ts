@@ -1,0 +1,32 @@
+import { FastifyRequest, FastifyReply } from 'fastify';
+import {
+	RegisterRequest,
+	RegisterSuccessResponse,
+	RegisterErrorResponse,
+	RegisterRoute
+} from '../types/register';
+
+/**
+ * POST /api/register
+ * ユーザー登録エンドポイント
+ */
+export const registerUser = async (
+	request: FastifyRequest<RegisterRoute>,
+	reply: FastifyReply<RegisterRoute>
+) => {
+	// ダミーレスポンス: 成功時 (201)
+	// 実際の実装では、ここでバリデーションとDB操作を行う
+	const successResponse: RegisterSuccessResponse = {
+		userId: 1
+	};
+	reply.code(201).send(successResponse);
+
+	// ダミーレスポンス: エラー時 (400) の例
+	// コメントアウトしていますが、エラー時は以下のように返します：
+	// 例)
+	// const errorResponse: RegisterErrorResponse = {
+	// 	field: 'email',
+	// 	message: 'このメールアドレスは既に登録されています'
+	// };
+	// reply.code(400).send(errorResponse);
+};
