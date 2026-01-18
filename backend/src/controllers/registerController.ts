@@ -24,7 +24,7 @@ const ValidateEmail = (email: string): ValidateResult => {
 };
 
 const ValidateName = (name: string): ValidateResult => {
-	const nameRegex = /^[a-z0-9_]$/;
+	const nameRegex = /^[a-z0-9_]+$/;
 
 	if (!nameRegex.test(name)) {
 		return ({
