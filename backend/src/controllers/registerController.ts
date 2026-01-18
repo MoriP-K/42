@@ -8,7 +8,7 @@ import {
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
-const ValidateEmail = (email: string): ValidateResult => {
+const validateEmail = (email: string): ValidateResult => {
 	const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 	if (!emailRegex.test(email)) {
@@ -23,7 +23,7 @@ const ValidateEmail = (email: string): ValidateResult => {
 	return ({ success: true });
 };
 
-const ValidateName = (name: string): ValidateResult => {
+const validateName = (name: string): ValidateResult => {
 	const nameRegex = /^[a-z0-9_]+$/;
 
 	if (!nameRegex.test(name)) {
@@ -38,7 +38,7 @@ const ValidateName = (name: string): ValidateResult => {
 	return ({ success: true });
 };
 
-const ValidatePassword = (password: string): ValidateResult => {
+const validatePassword = (password: string): ValidateResult => {
 	if (password.length < 8) {
 		return ({
 			success: false,
@@ -49,9 +49,9 @@ const ValidatePassword = (password: string): ValidateResult => {
 		});
 	}
 
-	const hasUpperCase = /[0-9]/.test(password);
+	const hasUpperCase = /[A-Z]/.test(password);
 	const hasLowerCase = /[a-z]/.test(password);
-	const hasNumber = /[A-Z]/.test(password);
+	const hasNumber = /[0-9]/.test(password);
 	if (!hasUpperCase || !hasLowerCase || !hasNumber) {
 		return ({
 			success: false,
@@ -64,18 +64,18 @@ const ValidatePassword = (password: string): ValidateResult => {
 	return ({ success: true });
 };
 
-const ValidateRegisterRequest = (body: RegisterRequest): ValidateResult => {
-	const emailResut = ValidateEmail(body.email);
-	if (!emailResut.success)
-		return (emailResut);
+const validateRegisterRequest = (body: RegisterRequest): ValidateResult => {
+	const emailResult = validateEmail(body.email);
+	if (!emailResult.success)
+		return (emailResult);
 
-	const nameResut = ValidateName(body.name);
-	if (!nameResut.success)
-		return (nameResut);
+	const nameResult = validateName(body.name);
+	if (!nameResult.success)
+		return (nameResult);
 
-	const passwordResut = ValidatePassword(body.password);
-	if (!passwordResut.success)
-		return (passwordResut);
+	const passwordResult = validatePassword(body.password);
+	if (!passwordResult.success)
+		return (passwordResult);
 
 	return ({ success: true });
 };
@@ -89,7 +89,7 @@ export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,
 	reply: FastifyReply<RegisterRoute>
 ) => {
-	const valitationResult = ValidateRegisterRequest(request.body);
+	const valitationResult = validateRegisterRequest(request.body);
 	if (!valitationResult.success) {
 		return (reply.code(400).send(valitationResult.error));
 	}
