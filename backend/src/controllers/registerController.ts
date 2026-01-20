@@ -5,6 +5,7 @@ import {
 	RegisterErrorResponse,
 	RegisterRoute
 } from '../types/register';
+import { prisma } from '../lib/prisma';
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -80,6 +81,40 @@ const validateRegisterRequest = (body: RegisterRequest): ValidateResult => {
 	return ({ success: true });
 };
 
+const checkEmailDuplicate = async (email: string): Promise<ValidateResult> => {
+	const existingUser = await prisma.user.findUnique({
+		where: { email: email }
+	});
+
+	if (existingUser) {
+		return {
+			success: false,
+			error: {
+				field: "email",
+				message: "このメールアドレスは既に登録されています"
+			}
+		};
+	}
+	return { success: true };
+};
+
+const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
+	const existingName = await prisma.user.findUnique({
+		where: { name: name }
+	});
+
+	if (existingName) {
+		return ({
+			success: false,
+			error: {
+				field: "name",
+				message: "このユーザー名は既に使用されています"
+			}
+		});
+	}
+	return ({ success: true });
+};
+
 
 /**
  * POST /api/register
@@ -89,14 +124,36 @@ export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,
 	reply: FastifyReply<RegisterRoute>
 ) => {
+
 	const valitationResult = validateRegisterRequest(request.body);
 	if (!valitationResult.success) {
 		return (reply.code(400).send(valitationResult.error));
 	}
 
+	// emailの重複チェック
+	const emailDupResult = await checkEmailDuplicate(request.body.email);
+	if (!emailDupResult.success) {
+		return reply.code(400).send(emailDupResult.error);
+	}
+
+	//nameの重複チェック
+	const nameDupResult = await checkNameDuplicate(request.body.name);
+	if (!nameDupResult.success) {
+		return (reply.code(400).send(nameDupResult.error));
+	}
+
+	//TODO:userDBにINSERT
+
+
 	// ダミーレスポンス: 成功時 (201)
 	const successResponse: RegisterSuccessResponse = {
 		userId: 1
 	};
+
+	//TODO:ここからログイン処理
+	// 1. セッションIDを生成
+	// 2. セッションIDとuserIDを紐づけて保存
+	// 3. クッキーに設定し、レスポンスを返す
+
 	return (reply.code(201).send(successResponse));
 };
