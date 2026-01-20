@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Link } from 'react-router-dom'
 
 interface User {
 	id: number;
@@ -13,24 +14,20 @@ interface Room {
 }
 
 const WaitingGame = () => {
-	const [users, setUsers] = useState<User[]>([]);
-	const [room, setRoom] = useState<Room>();
-	const [gameMode, setGameMode] = useState('default');
-
-	useEffect(() => {
-		setUsers([
-			{ id: 1, name: 'P1', role: 'player' },
-			{ id: 2, name: 'P2', role: 'player' },
-			{ id: 3, name: 'P3', role: 'player' },
-			{ id: 4, name: 'P4', role: 'spectator' },
-		]);
-
-		setRoom({
+	const [users] = useState<User[]>([
+		{ id: 1, name: 'P1', role: 'player' },
+		{ id: 2, name: 'P2', role: 'player' },
+		{ id: 3, name: 'P3', role: 'player' },
+		{ id: 4, name: 'P4', role: 'spectator' },
+	]);
+	const [room] = useState<Room>(
+		{
 			id: 1,
 			name: 'Room1',
 			inviteUrl: 'http://localhost:3000/room/1',
-		})
-	}, []);
+		}
+	);
+	const [gameMode, setGameMode] = useState('default');
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(room?.inviteUrl || '');
@@ -122,9 +119,9 @@ const WaitingGame = () => {
 
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<button className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-						ゲームスタート
-					</button>
+					<Link to="/prepare" className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+						準備完了！
+					</Link>
 				</div>
 			</div>
 		</>

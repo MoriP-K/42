@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
 import WaitingGame from './pages/WaitingGame'
+import Prepare from './pages/Prepare'
 import TermsOfService from './pages/TermsOfService'
 import Login from './pages/Login'
 import AccountRegister from './pages/AccountRegister'
@@ -16,6 +17,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/waiting-game" element={<WaitingGame />} />
+				<Route path="/prepare" element={<Prepare />} />
 				<Route path="/terms" element={<TermsOfService />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<AccountRegister />} />
