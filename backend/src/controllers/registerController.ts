@@ -100,3 +100,10 @@ export const registerUser = async (
 	};
 	return (reply.code(201).send(successResponse));
 };
+
+// curl -X GET http://localhost:3000/api/profile \
+//   -H "Content-Type: application/json" \
+//   -d '{
+//     "userId": 1,
+// 	"name": "aaa"
+//   }'

@@ -7,6 +7,7 @@
  */
 export interface ProfileRequest {
 	userId: number;
+	name: string;
 }
 
 /**
