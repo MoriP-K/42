@@ -1,10 +1,23 @@
 import Footer from "../components/Footer"
+import PrivacyPolicyContent from "../components/PrivacyPolicyContent"
+import BackButton from "../components/BackButton"
+
 
 function PrivacyPolicy() {
 	return (
-    <div>
-        <Footer></Footer>
-    </div>
+		<div>
+			<div className="hero min-h-[80vh]">
+			<div className="hero-content text-center">
+			<div className="max-w-md">
+				<h1 className="text-5xl font-bold">プライバシーポリシー</h1>
+					<PrivacyPolicyContent>
+					</PrivacyPolicyContent>
+			</div>
+			</div>
+		</div>
+			<BackButton>戻る</BackButton>
+			<Footer></Footer>
+		</div>
 	)
 }
 
