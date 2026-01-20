@@ -141,13 +141,18 @@ export const registerUser = async (
 	if (!nameDupResult.success) {
 		return (reply.code(400).send(nameDupResult.error));
 	}
+	// userDBにINSERT
+	const createdUser = await prisma.user.create({
+		data: {
+			name: request.body.name,
+			email: request.body.email,
+			password: request.body.password
+		}
+	});
 
-	//TODO:userDBにINSERT
-
-
-	// ダミーレスポンス: 成功時 (201)
+	// 成功時 (201)
 	const successResponse: RegisterSuccessResponse = {
-		userId: 1
+		userId: createdUser.id
 	};
 
 	//TODO:ここからログイン処理
