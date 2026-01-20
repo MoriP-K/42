@@ -19,10 +19,10 @@ function App() {
 				<Route path="/terms" element={<TermsOfService />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<AccountRegister />} />
-				<Route path="/password-reset/send-mail" element={<PaaswordResetSendMail />} />
-				<Route path="/password-reset" element={<PaaswordReset />} />
+				<Route path="/passwordReset/sendMail" element={<PaaswordResetSendMail />} />
+				<Route path="/passwordReset" element={<PaaswordReset />} />
 				<Route path="/login/redirect" element={<RedirectLogin />} />
-				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+				<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
 			</Routes>
 		</BrowserRouter>
 	)
