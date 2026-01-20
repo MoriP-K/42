@@ -141,6 +141,7 @@ export const registerUser = async (
 	if (!nameDupResult.success) {
 		return (reply.code(400).send(nameDupResult.error));
 	}
+
 	// userDBにINSERT
 	const createdUser = await prisma.user.create({
 		data: {
