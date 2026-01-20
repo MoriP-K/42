@@ -15,7 +15,7 @@ function PrivacyPolicy() {
 			</div>
 			</div>
 		</div>
-			<BackButton>戻る</BackButton>
+			<BackButton></BackButton>
 			<Footer></Footer>
 		</div>
 	)
