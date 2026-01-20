@@ -14,6 +14,11 @@ export const userApi = {
         return apiClient('/users');
     },
 
+	// GET /api/users
+    getProfile: async () => {
+        return apiClient('/profile');
+    },
+
     // POST /api/users (例)
     // createUser: async (data: any) => {
     //     return apiClient('/users', {

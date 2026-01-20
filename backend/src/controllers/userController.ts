@@ -6,7 +6,7 @@ import { prisma } from '../lib/prisma';
  */
 export const getHello = async (request: FastifyRequest, reply: FastifyReply) => {
 
-    return { 
+    return {
         message: 'Hello from Controller!',
         timestamp: new Date().toISOString()
     };
@@ -15,4 +15,30 @@ export const getHello = async (request: FastifyRequest, reply: FastifyReply) => 
 export const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
 	const users = await prisma.user.findMany();
     return users;
+};
+
+
+import {
+	ProfileRequest,
+	ProfileSuccessResponse,
+	ProfileRoute
+} from '../types/profile';
+
+/**
+ * GET /profile
+ */
+export const getProfile = async (request: ProfileRequest, reply: ProfileSuccessResponse) => {
+
+	// データをテーブルから持ってくる
+	const users = await prisma.user.findUnique({where: {id: request.userId}});
+	console.log(users);
+
+	// ダミーデータ
+	const successResponse: ProfileSuccessResponse = {
+		name: "test",
+		total_score: 1,
+		first_place_count: 2,
+		play_count: 3
+	};
+	return (successResponse);
 };
