@@ -1,10 +1,34 @@
-import Timer from "../components/Timer"
-import Canvas from "../components/Canvas"
-import ScoreBoard from "../components/ScoreBoard"
-import ChatMessages from "../components/ChatMessages"
-import ChatInput from "../components/ChatInput"
+import { useState, useEffect } from 'react';
+import Timer from "../components/Timer";
+import Canvas from "../components/Canvas";
+import ScoreBoard from "../components/ScoreBoard";
+import ChatMessages from "../components/ChatMessages";
+import ChatInput from "../components/ChatInput";
 
 const Game = () => {
+	// タイマー処理
+	const	totalTime = 60; // 制限時間用の変数
+	const	[timeLeft, setTimeLeft] = useState<number>(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
+
+	// タイマー処理: timeLeftが更新される度にUseEffectの中の処理を実行する
+	useEffect(() => {
+		if (timeLeft <= 0) // UseEffectの停止条件: timeLeftが0以下になったら
+			return ;
+
+		const timer = setInterval(() => { // 1000msごとにsetInterval()の中の処理を実行する
+			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
+		}, 1000);
+
+		return () => clearInterval(timer); // UseEffectが停止したら: clearInterval()でtimerを解放
+	}, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
+
+	// あとでWebSocketに置き換える
+	// UseEffect(() => {
+	//     socket.on('gameState', (state) => {
+	//         setTimeLeft(state.timeLeft);
+	//     });
+	//} []);
+
 	return (
 		<div className="min-h-screen bg-base-200">
 
@@ -22,7 +46,7 @@ const Game = () => {
 
 					{/* キャンバスエリア */}
 					<div className="lg:col-span-3 spcae-y-4">
-						<Timer />
+						<Timer timeLeft={timeLeft} />
 						<Canvas />
 					</div>
 
@@ -43,10 +67,10 @@ const Game = () => {
 			</div>
 
 		</div>
-	)
+	);
 }
 
-export default Game
+export default Game;
 
 // import { useRef, useState, useEffect } from 'react'
 
