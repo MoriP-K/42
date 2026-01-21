@@ -6,9 +6,16 @@ import ChatMessages from "../components/ChatMessages";
 import ChatInput from "../components/ChatInput";
 
 const Game = () => {
+	// プレイヤーデータ
+	const [players, setPlayers] = useState([
+	{ id: 1, name: 'Ken', score: 5, isDrawing: true },
+	{ id: 2, name: 'Alice', score: 3, isDrawing: false },
+	{ id: 3, name: 'Bob', score: 6, isDrawing: false },
+	]);
+
 	// タイマー処理
 	const	totalTime = 60; // 制限時間用の変数
-	const	[timeLeft, setTimeLeft] = useState<number>(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
+	const	[timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
 	// タイマー処理: timeLeftが更新される度にUseEffectの中の処理を実行する
 	useEffect(() => {
@@ -41,17 +48,18 @@ const Game = () => {
 
 			</div>
 
-			<div className="container mx-auto p-4">
-				<div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+			<div className="w-full max-w-[1280px] mx-auto px-16 pt-8">
+				<div className="grid grid-cols-[763px_373px] gap-4">
 
-					{/* キャンバスエリア */}
-					<div className="lg:col-span-3 spcae-y-4">
+					{/* 左カラム: 残り時間, キャンバス */}
+					<div className="spcae-y-4">
 						<Timer timeLeft={timeLeft} />
 						<Canvas />
 					</div>
 
+					{/* 右カラム: スコアボード, チャットボード */}
 					<div className="space-y-4">
-						<ScoreBoard />
+						<ScoreBoard players={players} />
 
 						<div className="card bg-base-100 shadow-xl">
 							<div className="card-body">
@@ -60,7 +68,6 @@ const Game = () => {
 								<ChatInput />
 							</div>
 						</div>
-
 					</div>
 
 				</div>
