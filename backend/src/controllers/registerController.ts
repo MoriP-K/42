@@ -125,9 +125,9 @@ export const registerUser = async (
 	reply: FastifyReply<RegisterRoute>
 ) => {
 
-	const valitationResult = validateRegisterRequest(request.body);
-	if (!valitationResult.success) {
-		return (reply.code(400).send(valitationResult.error));
+	const validationResult = validateRegisterRequest(request.body);
+	if (!validationResult.success) {
+		return (reply.code(400).send(validationResult.error));
 	}
 
 	// emailの重複チェック
