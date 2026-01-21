@@ -130,38 +130,46 @@ export const registerUser = async (
 		return (reply.code(400).send(validationResult.error));
 	}
 
-	// emailの重複チェック
-	const emailDupResult = await checkEmailDuplicate(request.body.email);
-	if (!emailDupResult.success) {
-		return reply.code(400).send(emailDupResult.error);
-	}
-
-	//nameの重複チェック
-	const nameDupResult = await checkNameDuplicate(request.body.name);
-	if (!nameDupResult.success) {
-		return (reply.code(400).send(nameDupResult.error));
-	}
-
-	// userDBにINSERT
-	const passwordHash = await bcrypt.hash(request.body.password, 10);
-	const createdUser = await prisma.user.create({
-		data: {
-			name: request.body.name,
-			email: request.body.email,
-			password: passwordHash
+	try {
+		// emailの重複チェック
+		const emailDupResult = await checkEmailDuplicate(request.body.email);
+		if (!emailDupResult.success) {
+			return reply.code(400).send(emailDupResult.error);
 		}
-	});
 
-	// ダミーレスポンス成功時 (201)
-	const successResponse: RegisterSuccessResponse = {
-		userId: createdUser.id
-	};
+		//nameの重複チェック
+		const nameDupResult = await checkNameDuplicate(request.body.name);
+		if (!nameDupResult.success) {
+			return (reply.code(400).send(nameDupResult.error));
+		}
 
-	//TODO:ここからログイン処理
-	// 1. セッションIDを生成
-	// 2. セッションIDとuserIDを紐づけて保存
-	// 3. クッキーに設定し、レスポンスを返す
+		// userDBにINSERT
+		const passwordHash = await bcrypt.hash(request.body.password, 10);
+		const createdUser = await prisma.user.create({
+			data: {
+				name: request.body.name,
+				email: request.body.email,
+				password: passwordHash
+			}
+		});
 
-	//TODO: クッキーにセッションIDをセットしてレスポンスを返す
-	return (reply.code(201).send(successResponse));
+		// ダミーレスポンス成功時 (201)
+		const successResponse: RegisterSuccessResponse = {
+			userId: createdUser.id
+		};
+
+		//TODO:ここからログイン処理
+		// 1. セッションIDを生成
+		// 2. セッションIDとuserIDを紐づけて保存
+		// 3. クッキーに設定し、レスポンスを返す
+
+		//TODO: クッキーにセッションIDをセットしてレスポンスを返す
+		return (reply.code(201).send(successResponse));
+
+	} catch (err) {
+		request.log?.error?.(err);
+		return (reply.code(500).send({
+			message: '予期しないエラーが発生しました。時間をおいて再度お試しください'
+		}));
+	}
 };
