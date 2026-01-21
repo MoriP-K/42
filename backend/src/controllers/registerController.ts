@@ -152,7 +152,7 @@ export const registerUser = async (
 		}
 	});
 
-	// 成功時 (201)
+	// ダミーレスポンス成功時 (201)
 	const successResponse: RegisterSuccessResponse = {
 		userId: createdUser.id
 	};
@@ -162,5 +162,6 @@ export const registerUser = async (
 	// 2. セッションIDとuserIDを紐づけて保存
 	// 3. クッキーに設定し、レスポンスを返す
 
+	//TODO: クッキーにセッションIDをセットしてレスポンスを返す
 	return (reply.code(201).send(successResponse));
 };
