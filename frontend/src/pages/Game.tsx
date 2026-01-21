@@ -48,11 +48,11 @@ const Game = () => {
 
 			</div>
 
-			<div className="w-full max-w-[1280px] mx-auto px-16 pt-8">
-				<div className="grid grid-cols-[763px_373px] gap-4">
+			<div className="w-full max-w-[1280px] mx-auto px-8 py-8">
+				<div className="grid grid-cols-1 xl:grid-cols-[763px_373px] gap-4">
 
 					{/* 左カラム: 残り時間, キャンバス */}
-					<div className="spcae-y-4">
+					<div className="space-y-4">
 						<Timer timeLeft={timeLeft} />
 						<Canvas />
 					</div>

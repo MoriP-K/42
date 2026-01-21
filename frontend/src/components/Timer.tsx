@@ -9,7 +9,7 @@ const Timer = ({ timeLeft }: TimerProps) => {
 	// 表示
 	return (
 		<div className="card bg-base-100 shadow-xl">
-			<div className="card-body p-4">
+			<div className="card-body p-0">
 				<h2 className="card-title font-mono text-2xl font-semibold">残り時間</h2>
 
 					<div className="flex items-center gap-1 mb-2">

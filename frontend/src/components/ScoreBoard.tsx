@@ -14,7 +14,7 @@ const ScoreBoard = ({ players }: ScoreBoardProps) => {
 
 	return (
 		<div className="card bg-base-100 shadow-xl">
-			<div className="card-body">
+			<div className="card-body p-0">
 				<h2 className="card-title font-mono text-2xl font-semibold">スコア</h2>
 				
 				<div className="space-y-2">
