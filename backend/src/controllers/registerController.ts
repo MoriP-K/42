@@ -6,6 +6,7 @@ import {
 	RegisterRoute
 } from '../types/register';
 import { prisma } from '../lib/prisma';
+import bcrypt from 'bcrypt';
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -115,7 +116,6 @@ const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
 	return ({ success: true });
 };
 
-
 /**
  * POST /api/register
  * ユーザー登録エンドポイント
@@ -143,11 +143,12 @@ export const registerUser = async (
 	}
 
 	// userDBにINSERT
+	const passwordHash = await bcrypt.hash(request.body.password, 10);
 	const createdUser = await prisma.user.create({
 		data: {
 			name: request.body.name,
 			email: request.body.email,
-			password: request.body.password
+			password: passwordHash
 		}
 	});
 
