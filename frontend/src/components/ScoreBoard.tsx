@@ -21,13 +21,15 @@ const ScoreBoard = ({ players }: ScoreBoardProps) => {
 					{sortedPlayers.map(player => (
 						<div
 							key={player.id}
-							className="flex items-baseline justify-between p-3 bg-base-200 rounded-lg"
+							className="flex items-baseline justify-between px-3 py-4 bg-base-200 rounded-lg"
 						>
 							<div className="flex items-baseline gap-2">
-								{player.isDrawing && (
-									<span className="text-xl">🖌</span>
-								)}
-								<span className="font-mono text-xl font-semibold">{player.name}</span>
+								<div className="indicator">
+									{player.isDrawing && (
+										<span className="indicator-item badge badge-ghost badge-xs">🖌</span>
+									)}
+									<span className="font-mono text-xl font-semibold px-3">{player.name}</span>
+								</div>
 							</div>
 							<span className="font-mono text-xl font-bold">{player.score}点</span>
 						</div>
