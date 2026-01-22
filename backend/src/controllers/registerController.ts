@@ -5,6 +5,8 @@ import {
 	RegisterErrorResponse,
 	RegisterRoute
 } from '../types/register';
+import { prisma } from '../lib/prisma';
+import bcrypt from 'bcrypt';
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -80,6 +82,39 @@ const validateRegisterRequest = (body: RegisterRequest): ValidateResult => {
 	return ({ success: true });
 };
 
+const checkEmailDuplicate = async (email: string): Promise<ValidateResult> => {
+	const existingUser = await prisma.user.findUnique({
+		where: { email: email }
+	});
+
+	if (existingUser) {
+		return {
+			success: false,
+			error: {
+				field: "email",
+				message: "このメールアドレスは既に登録されています"
+			}
+		};
+	}
+	return { success: true };
+};
+
+const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
+	const existingName = await prisma.user.findUnique({
+		where: { name: name }
+	});
+
+	if (existingName) {
+		return ({
+			success: false,
+			error: {
+				field: "name",
+				message: "このユーザー名は既に使用されています"
+			}
+		});
+	}
+	return ({ success: true });
+};
 
 /**
  * POST /api/register
@@ -89,14 +124,52 @@ export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,
 	reply: FastifyReply<RegisterRoute>
 ) => {
-	const valitationResult = validateRegisterRequest(request.body);
-	if (!valitationResult.success) {
-		return (reply.code(400).send(valitationResult.error));
+
+	const validationResult = validateRegisterRequest(request.body);
+	if (!validationResult.success) {
+		return (reply.code(400).send(validationResult.error));
 	}
 
-	// ダミーレスポンス: 成功時 (201)
-	const successResponse: RegisterSuccessResponse = {
-		userId: 1
-	};
-	return (reply.code(201).send(successResponse));
+	try {
+		// emailの重複チェック
+		const emailDupResult = await checkEmailDuplicate(request.body.email);
+		if (!emailDupResult.success) {
+			return reply.code(400).send(emailDupResult.error);
+		}
+
+		//nameの重複チェック
+		const nameDupResult = await checkNameDuplicate(request.body.name);
+		if (!nameDupResult.success) {
+			return (reply.code(400).send(nameDupResult.error));
+		}
+
+		// userDBにINSERT
+		const passwordHash = await bcrypt.hash(request.body.password, 10);
+		const createdUser = await prisma.user.create({
+			data: {
+				name: request.body.name,
+				email: request.body.email,
+				password: passwordHash
+			}
+		});
+
+		// ダミーレスポンス成功時 (201)
+		const successResponse: RegisterSuccessResponse = {
+			userId: createdUser.id
+		};
+
+		//TODO:ここからログイン処理
+		// 1. セッションIDを生成
+		// 2. セッションIDとuserIDを紐づけて保存
+		// 3. クッキーに設定し、レスポンスを返す
+
+		//TODO: クッキーにセッションIDをセットしてレスポンスを返す
+		return (reply.code(201).send(successResponse));
+
+	} catch (err) {
+		request.log?.error?.(err);
+		return (reply.code(500).send({
+			message: '予期しないエラーが発生しました。時間をおいて再度お試しください'
+		}));
+	}
 };
