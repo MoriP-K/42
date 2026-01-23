@@ -30,8 +30,8 @@ import {
 export const getProfile = async (request: ProfileRequest, reply: ProfileSuccessResponse) => {
 
 	// データをテーブルから持ってくる
-	// const user = await prisma.user.findUnique({where: {id: request.userId, name: request.name}});
-	const user = await prisma.user.findUnique({where: {id: 1}},);
+	const user = await prisma.user.findUnique({where: {id: request.userId}},);
+	// const user = await prisma.user.findUnique({where: {id: 1}},);
 	console.dir(user, {depth: null});
 
 	// ダミーデータ
