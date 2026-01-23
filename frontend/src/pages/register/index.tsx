@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Footer from '../components/Footer'
-import { userApi } from '../api/userApi'
-import { ApiError } from '../api/apiClient'
+import Footer from '../../components/Footer'
+import { userApi } from '../../api/userApi'
+import { ApiError } from '../../api/apiClient'
 
 function AccountRegister() {
 	const [name, setName] = useState('')
