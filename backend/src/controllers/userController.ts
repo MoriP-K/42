@@ -27,19 +27,14 @@ import {
 /**
  * GET /profile
  */
-export const getProfile = async (request: ProfileRequest, reply: ProfileSuccessResponse) => {
+export const getProfile = async (request: FastifyRequest<ProfileRoute>, 
+								reply: FastifyReply<ProfileRoute>) => {
 
-	// データをテーブルから持ってくる
-	const user = await prisma.user.findUnique({where: {id: request.userId}},);
-	// const user = await prisma.user.findUnique({where: {id: 1}},);
-	console.dir(user, {depth: null});
-
-	// ダミーデータ
-	const successResponse: ProfileSuccessResponse = {
-		name: "test",
-		total_score: 1,
-		first_place_count: 2,
-		play_count: 3
-	};
-	return (successResponse);
+	const user = await prisma.user.findUnique({where: {id: Number(request.query.userId)}},);
+	// console.dir(user, {depth: null});
+	return (user);
 };
+
+// userIDを指定してデータを取得
+// curl -X GET "http://localhost:3000/api/profile?userId=1" \
+//   -H "Content-Type: application/json"

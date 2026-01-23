@@ -7,11 +7,10 @@
  */
 export interface ProfileRequest {
 	userId: number;
-	name: string;
 }
 
 /**
- * GET /api/register 成功レスポンス型 (201)
+ * GET /api/profile
  */
 export interface ProfileSuccessResponse {
 	name: String;
@@ -22,7 +21,7 @@ export interface ProfileSuccessResponse {
 }
 
 /**
- * GET /api/register ルートの型定義
+ * GET /api/profile
  */
 export type ProfileRoute = {
 	Body: ProfileRequest;
