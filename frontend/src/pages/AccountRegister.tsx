@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
+import { userApi } from '../api/userApi'
+import { ApiError } from '../api/apiClient'
 
 function AccountRegister() {
 	const [name, setName] = useState('')
@@ -53,15 +55,54 @@ function AccountRegister() {
 
 						<form
 							className="space-y-3"
-							onSubmit={(e) => {
+							onSubmit={async (e) => {
 								e.preventDefault()
 								setServerError(null)
+								setFieldErrors({})
 
 								if (!validateRequired())
 									return
 
-								// NOTE: ここでAPI送信する場合は、失敗時(500)は以下のように表示できます
-								// setServerError('予期しないエラーが発生しました。時間をおいて再度お試しください')
+								try {
+									await userApi.register({ name, email, password })
+									// NOTE: 成功時の遷移/表示は要件外なのでここでは何もしない
+								} catch (err) {
+									if (err instanceof ApiError) {
+										if (err.status === 400) {
+											const data = err.data as unknown
+											if (typeof data === 'object' && data !== null) {
+												const maybe = data as { field?: unknown; message?: unknown }
+												const field = (typeof maybe.field === 'string') ? maybe.field : null
+												const message = (typeof maybe.message === 'string') ? maybe.message : err.message
+
+												if (field === 'name' || field === 'email' || field === 'password') {
+													setFieldErrors((prev) => ({ ...prev, [field]: message }))
+													return
+												}
+												setServerError(message)
+												return
+											}
+											setServerError(err.message)
+											return
+										}
+
+										if (err.status === 500) {
+											const data = err.data as unknown
+											if (typeof data === 'object' && data !== null && 'message' in data) {
+												setServerError(String((data as { message?: unknown }).message ?? err.message))
+												return
+											}
+											setServerError(err.message)
+											return
+										}
+
+										setServerError(err.message)
+										return
+									}
+
+									const message = (err instanceof Error) ? err.message : '予期しないエラーが発生しました'
+									setServerError(message)
+								}
 							}}
 						>
 							<div className="form-control">
