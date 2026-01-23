@@ -6,7 +6,7 @@ interface Player {
 };
 
 interface ScoreBoardProps {
-	players: Player[]
+	players: Player[],
 };
 
 const ScoreBoard = ({ players }: ScoreBoardProps) => {
@@ -15,23 +15,23 @@ const ScoreBoard = ({ players }: ScoreBoardProps) => {
 	return (
 		<div className="card bg-base-100 shadow-xl">
 			<div className="card-body p-0">
-				<h2 className="card-title font-mono text-2xl font-semibold">スコア</h2>
+				<h2 className="card-title font-mono text-base font-semibold mb-1">スコア</h2>
 				
 				<div className="space-y-2">
 					{sortedPlayers.map(player => (
 						<div
 							key={player.id}
-							className="flex items-baseline justify-between px-3 py-4 bg-base-200 rounded-lg"
+							className="flex items-baseline justify-between px-3 py-3 bg-base-200 rounded-lg"
 						>
 							<div className="flex items-baseline gap-2">
 								<div className="indicator">
 									{player.isDrawing && (
 										<span className="indicator-item badge badge-ghost badge-xs">🖌</span>
 									)}
-									<span className="font-mono text-xl font-semibold px-3">{player.name}</span>
+									<span className="font-mono text-base font-semibold pr-2">{player.name}</span>
 								</div>
 							</div>
-							<span className="font-mono text-xl font-bold">{player.score}点</span>
+							<span className="font-mono text-base font-bold">{player.score}点</span>
 						</div>
 					))}
 				</div>

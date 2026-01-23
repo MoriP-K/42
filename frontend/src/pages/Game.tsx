@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import Timer from "../components/Timer";
 import Canvas from "../components/Canvas";
 import ScoreBoard from "../components/ScoreBoard";
@@ -8,10 +9,26 @@ import ChatInput from "../components/ChatInput";
 const Game = () => {
 	// プレイヤーデータ
 	const [players, setPlayers] = useState([
-	{ id: 1, name: 'Ken', score: 5, isDrawing: true },
-	{ id: 2, name: 'Alice', score: 3, isDrawing: false },
-	{ id: 3, name: 'Bob', score: 6, isDrawing: false },
+	{ id: 1, name: 'Ken', score: 0, isDrawing: true },
+	{ id: 2, name: 'Alice', score: 0, isDrawing: false },
+	{ id: 3, name: 'Bob', score: 0, isDrawing: false },
 	]);
+
+	// メッセージデータ
+	const [messages, setMessages] = useState([
+		{ id: Date.now(), sender: 'Alice', text: 'バナナ', timestamp: new Date()},
+		{ id: Date.now(), sender: 'Bob', text: 'みかん', timestamp: new Date()},
+	]);
+
+	const handleSendMessage = (text: string) => {
+		const newMessage = {
+			id: Date.now(),
+			sender: 'Ken',
+			text: text,
+			timestamp: new Date(),
+		};
+		setMessages([...messages, newMessage]);
+	};
 
 	// タイマー処理
 	const	totalTime = 60; // 制限時間用の変数
@@ -41,11 +58,9 @@ const Game = () => {
 
 			{/* ヘッダー */}
 			<div className="navbar bg-base-100 shadow-lg">
-
 				<div className="flex-1">
 					<span className="text-xl font-bold">🎨 お絵かきの森</span>
 				</div>
-
 			</div>
 
 			<div className="w-full max-w-[1280px] mx-auto px-8 py-8">
@@ -57,15 +72,15 @@ const Game = () => {
 						<Canvas />
 					</div>
 
-					{/* 右カラム: スコアボード, チャットボード */}
+					{/* 右カラム: スコアボード, コメント*/}
 					<div className="space-y-4">
 						<ScoreBoard players={players} />
 
 						<div className="card bg-base-100 shadow-xl">
-							<div className="card-body">
-								<h2 className="card-title">チャット</h2>
-								<ChatMessages />
-								<ChatInput />
+							<div className="card-body p-0">
+								<h2 className="card-title font-mono text-base font-semibold mb-1">コメント</h2>
+								<ChatMessages messages={messages} />
+								<ChatInput onSendMessage={handleSendMessage}/>
 							</div>
 						</div>
 					</div>
