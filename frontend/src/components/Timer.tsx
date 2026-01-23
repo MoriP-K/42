@@ -3,7 +3,7 @@ interface TimerProps {
 };
 
 const Timer = ({ timeLeft }: TimerProps) => {
-	const	totalTime = 60;
+	const	totalTime = 15;
 	let		percentage = (timeLeft / totalTime) * 100;
 
 	// 表示
@@ -15,18 +15,18 @@ const Timer = ({ timeLeft }: TimerProps) => {
 					<div className="flex items-center gap-1">
 						<span className="countdown font-mono text-2xl font-semibold">
 							<span
-								style={{ "--value": timeLeft } as React.CSSProperties}
+								style={{ "--value": timeLeft, "--digits": 2 } as React.CSSProperties}
 							></span>
 						</span>
-						<span className="font-mono text-2xl font-semibold">秒</span>
-					</div>
-					<div className="w-full bg-base-300 rounded-full h-3 overflow-hidden">
-						<div
-							className={`h-full transition-all duration-1000 ease-linear ${
-								timeLeft <= 10 ? "bg-warning" : "bg-primary"
-							}`}
-							style={{width: `${percentage}%`}}
-						></div>
+						<span className="font-mono text-2xl font-semibold mr-2">秒</span>
+						<div className="w-full bg-base-300 rounded-full h-3 overflow-hidden">
+							<div
+								className={`h-full transition-all duration-1000 ease-linear ${
+									timeLeft <= 10 ? "bg-warning" : "bg-primary"
+								}`}
+								style={{width: `${percentage}%`}}
+							></div>
+						</div>
 					</div>
 
 			</div>
