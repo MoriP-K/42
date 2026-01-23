@@ -3,7 +3,7 @@ interface TimerProps {
 };
 
 const Timer = ({ timeLeft }: TimerProps) => {
-	const	totalTime = 15;
+	const	totalTime = 60;
 	let		percentage = (timeLeft / totalTime) * 100;
 
 	// 表示

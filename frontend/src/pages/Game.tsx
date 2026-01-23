@@ -31,7 +31,7 @@ const Game = () => {
 	};
 
 	// タイマー処理
-	const	totalTime = 15; // 制限時間用の変数
+	const	totalTime = 60; // 制限時間用の変数
 	const	[timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
 	// タイマー処理: timeLeftが更新される度にUseEffectの中の処理を実行する
