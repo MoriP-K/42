@@ -66,6 +66,14 @@ const Canvas = () => {
 
 	const stopDrawing = () => {
 		setIsDrawing(false);
+		
+		const canvas = canvasRef.current;
+		if (canvas) {
+			const ctx = canvas.getContext("2d");
+			if (ctx) {
+				ctx.closePath();
+			}
+		}
 	};
 
 	const clearCanvas = () => {
@@ -84,43 +92,53 @@ const Canvas = () => {
 	return (
 		<div className="card bg-base-100 shadow-xl">
 			<div className="card-body p-0">
-				<div className="flex items-center justify-between mb-2">
+				<div className="flex items-center justify-between mb-1">
 					<h2 className="card-title font-mono text-base font-semibold mb-1">お題: ???</h2>
 					<button
-							className="btn btn-sm btn-primary ml-auto"
-							>
+						className="btn btn-sm btn-primary ml-auto"
+					>
 						スキップ
 					</button>
 				</div>
 
 				<canvas
 					ref={canvasRef}
-					width={1258}
-					height={668}
+					width={1280}
+					height={720}
 					onMouseDown={startDrawing}
 					onMouseMove={draw}
 					onMouseUp={stopDrawing}
 					onMouseLeave={stopDrawing}
 					className="border border-base-300 rounded-lg bg-white cursor-crosshair w-full"
+					aria-label="描画キャンバス"
 				/>
 
-				<div className="flex items-center gap-2 mb-2">
-					{["#000000", "#ef4444", "#3b82f6", "#22c55e", "#eab308", "#a855f7"].map(c => (
+				<div className="flex items-center gap-2">
+					{[
+						{hex: "#000000", label: "黒"},
+						{hex: "#ef4444", label: "赤"},
+						{hex: "#3b82f6", label: "青"},
+						{hex: "#22c55e", label: "緑"},
+						{hex: "#eab308", label: "黃"},
+						{hex: "#a855f7", label: "紫"},
+					].map(({ hex }) => (
 						<button
-							key={c}
+							key={hex}
 							onClick={() => {
-								setColor(c);
+								setColor(hex);
 								setIsEraser(false);
 							}}
-							className={`btn btn-sm btn-circle
-								${ color === c ? "btn-active" : "btn-ghost"}
+							className={`btn btn-sm btn-circle border-2 border-transparent
+								${ color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
 							`}
-							style={{backgroundColor: c}}
+							style={{backgroundColor: hex}}
 						/>
 					))}
 					<button
 						onClick={() => setIsEraser(!isEraser)}
-						className={`btn btn-outline btn-accent btn-sm ${isEraser ? "btn-active" : "btn-ghost"}`}
+						className={`btn btn-sm
+							${isEraser ? "btn-outline btn-accent btn-active" : "btn-ghost"}
+						`}
 					>
 						消しゴム
 					</button>
