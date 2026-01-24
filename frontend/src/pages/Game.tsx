@@ -68,7 +68,7 @@ const Game = () => {
 
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
-						<Timer timeLeft={timeLeft} />
+						<Timer totalTime={totalTime} timeLeft={timeLeft} />
 						<Canvas />
 					</div>
 
