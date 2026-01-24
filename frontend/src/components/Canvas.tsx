@@ -119,7 +119,7 @@ const Canvas = () => {
 						{hex: "#ef4444", label: "赤"},
 						{hex: "#3b82f6", label: "青"},
 						{hex: "#22c55e", label: "緑"},
-						{hex: "#eab308", label: "黃"},
+						{hex: "#eab308", label: "黄"},
 						{hex: "#a855f7", label: "紫"},
 					].map(({ hex }) => (
 						<button
