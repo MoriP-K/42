@@ -119,9 +119,9 @@ const Canvas = () => {
 						{hex: "#ef4444", label: "赤"},
 						{hex: "#3b82f6", label: "青"},
 						{hex: "#22c55e", label: "緑"},
-						{hex: "#eab308", label: "黃"},
+						{hex: "#eab308", label: "黄"},
 						{hex: "#a855f7", label: "紫"},
-					].map(({ hex }) => (
+					].map(({ hex, label }) => (
 						<button
 							key={hex}
 							onClick={() => {
@@ -132,6 +132,7 @@ const Canvas = () => {
 								${ color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
 							`}
 							style={{backgroundColor: hex}}
+							aria-label={label}
 						/>
 					))}
 					<button
