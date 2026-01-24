@@ -8,10 +8,10 @@ import ChatInput from "../components/ChatInput";
 
 const Game = () => {
 	// プレイヤーデータ
-	const [players, setPlayers] = useState([
-	{ id: 1, name: 'Ken', score: 0, isDrawing: true },
-	{ id: 2, name: 'Alice', score: 0, isDrawing: false },
-	{ id: 3, name: 'Bob', score: 0, isDrawing: false },
+	const [players] = useState([
+		{ id: 1, name: 'Ken', score: 0, isDrawing: true },
+		{ id: 2, name: 'Alice', score: 0, isDrawing: false },
+		{ id: 3, name: 'Bob', score: 0, isDrawing: false },
 	]);
 
 	// メッセージデータ

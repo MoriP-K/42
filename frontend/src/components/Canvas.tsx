@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 const Canvas = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
+	const [isEraser, setIsEraser] = useState(false);
 	const [color, setColor] = useState("#000000");
 
 	useEffect(() => {
@@ -56,8 +57,8 @@ const Canvas = () => {
 		if (!ctx)
 			return ;
 
-		ctx.strokeStyle = color;
-		ctx.lineWidth = 3;
+		ctx.strokeStyle = isEraser ? "white" : color;
+		ctx.lineWidth = isEraser ? 15 : 3;
 		ctx.lineCap = "round";
 		ctx.lineTo(x, y);
 		ctx.stroke();
@@ -83,12 +84,19 @@ const Canvas = () => {
 	return (
 		<div className="card bg-base-100 shadow-xl">
 			<div className="card-body p-0">
-				<h2 className="card-title font-mono text-base font-semibold mb-1">お題: ???</h2>
+				<div className="flex items-center justify-between mb-2">
+					<h2 className="card-title font-mono text-base font-semibold mb-1">お題: ???</h2>
+					<button
+							className="btn btn-sm btn-primary ml-auto"
+							>
+						スキップ
+					</button>
+				</div>
 
 				<canvas
 					ref={canvasRef}
-					width={699}
-					height={384}
+					width={1258}
+					height={668}
 					onMouseDown={startDrawing}
 					onMouseMove={draw}
 					onMouseUp={stopDrawing}
@@ -96,17 +104,26 @@ const Canvas = () => {
 					className="border border-base-300 rounded-lg bg-white cursor-crosshair w-full"
 				/>
 
-				<div className="flex gap-2 mb-2">
+				<div className="flex items-center gap-2 mb-2">
 					{["#000000", "#ef4444", "#3b82f6", "#22c55e", "#eab308", "#a855f7"].map(c => (
 						<button
 							key={c}
-							onClick={() => setColor(c)}
-							className={`btn-sm btn-circle border-2 ${
-								color === c ? "border-base-content" : "border-base-300"
-							}`}
+							onClick={() => {
+								setColor(c);
+								setIsEraser(false);
+							}}
+							className={`btn btn-sm btn-circle
+								${ color === c ? "btn-active" : "btn-ghost"}
+							`}
 							style={{backgroundColor: c}}
 						/>
 					))}
+					<button
+						onClick={() => setIsEraser(!isEraser)}
+						className={`btn btn-outline btn-accent btn-sm ${isEraser ? "btn-active" : "btn-ghost"}`}
+					>
+						消しゴム
+					</button>
 					<button
 						onClick={clearCanvas}
 						className="btn btn-sm btn-primary ml-auto"
