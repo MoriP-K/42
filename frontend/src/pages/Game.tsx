@@ -34,20 +34,20 @@ const Game = () => {
 	const	totalTime = 60; // 制限時間用の変数
 	const	[timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
-	// タイマー処理: timeLeftが更新される度にUseEffectの中の処理を実行する
+	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
 	useEffect(() => {
-		if (timeLeft <= 0) // UseEffectの停止条件: timeLeftが0以下になったら
+		if (timeLeft <= 0) // useEffectの停止条件: timeLeftが0以下になったら
 			return ;
 
 		const timer = setInterval(() => { // 1000msごとにsetInterval()の中の処理を実行する
 			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
 		}, 1000);
 
-		return () => clearInterval(timer); // UseEffectが停止したら: clearInterval()でtimerを解放
+		return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
 	}, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
 
 	// あとでWebSocketに置き換える
-	// UseEffect(() => {
+	// useEffect(() => {
 	//     socket.on('gameState', (state) => {
 	//         setTimeLeft(state.timeLeft);
 	//     });
@@ -64,7 +64,7 @@ const Game = () => {
 			</div>
 
 			<div className="w-full max-w-[1280px] mx-auto px-8 py-8">
-				<div className="grid grid-cols-1 xl:grid-cols-[763px_373px] gap-4">
+				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
 
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
