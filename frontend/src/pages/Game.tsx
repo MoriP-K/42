@@ -16,13 +16,13 @@ const Game = () => {
 
 	// メッセージデータ
 	const [messages, setMessages] = useState([
-		{ id: 1, sender: 'Alice', text: 'バナナ', timestamp: new Date()},
-		{ id: 2, sender: 'Bob', text: 'みかん', timestamp: new Date()},
+		{ id: crypto.randomUUID(), sender: 'Alice', text: 'バナナ', timestamp: new Date()},
+		{ id: crypto.randomUUID(), sender: 'Bob', text: 'みかん', timestamp: new Date()},
 	]);
 
 	const handleSendMessage = (text: string) => {
 		const newMessage = {
-			id: Date.now(),
+			id: crypto.randomUUID(),
 			sender: 'Ken',
 			text: text,
 			timestamp: new Date(),
@@ -31,8 +31,8 @@ const Game = () => {
 	};
 
 	// タイマー処理
-	const	totalTime = 60; // 制限時間用の変数
-	const	[timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
+	const totalTime = 60; // 制限時間用の変数
+	const [timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
 	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
 	useEffect(() => {

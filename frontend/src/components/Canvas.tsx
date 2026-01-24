@@ -65,8 +65,6 @@ const Canvas = () => {
 	};
 
 	const stopDrawing = () => {
-		setIsDrawing(false);
-		
 		const canvas = canvasRef.current;
 		if (canvas) {
 			const ctx = canvas.getContext("2d");
@@ -74,6 +72,8 @@ const Canvas = () => {
 				ctx.closePath();
 			}
 		}
+
+		setIsDrawing(false);
 	};
 
 	const clearCanvas = () => {

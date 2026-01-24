@@ -1,5 +1,5 @@
 interface Message {
-	id: number,
+	id: string,
 	sender: string,
 	text: string,
 	timestamp: Date,
