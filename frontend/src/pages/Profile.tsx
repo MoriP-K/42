@@ -34,11 +34,15 @@ function  Profile() {
     return (
     <div>
         <h1 className="text-5xl font-bold">プロフィール</h1>
-            <p>名前: {profileData.name}</p>
+            <p>ユーザ名 {profileData.name}</p>
                 <p className="font-bold">実績</p>
                     <p>トータルスコア: {profileData.total_score}</p>
                     <p>1位回数: {profileData.first_place_count}</p>
                     <p>プレイ回数: {profileData.play_count}</p>
+
+        <div>
+            <p className="font-bold">バッジ</p>
+        </div>
         <Footer></Footer>
     </div>
 	)
