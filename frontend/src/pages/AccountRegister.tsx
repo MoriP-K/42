@@ -4,13 +4,10 @@ import Footer from '../components/Footer'
 import { userApi } from '../api/userApi'
 import { ApiError } from '../api/apiClient'
 
-
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
 	| { type: 'server'; message: string }
 	| { type: 'unknown'; message: string }
-
-
 
 const AccountRegister = () => {
 	const [name, setName] = useState('')
@@ -18,11 +15,11 @@ const AccountRegister = () => {
 	const [password, setPassword] = useState('')
 	const [passwordConfirm, setPasswordConfirm] = useState('')
 
-	const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'password', string>>>({})
+	const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>>>({})
 	const [serverError, setServerError] = useState<string | null>(null)
 
 	const validateRequired = () => {
-		const nextErrors: Partial<Record<'name' | 'email' | 'password', string>> = {}
+		const nextErrors: Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>> = {}
 
 		if (!email.trim())
 			nextErrors.email = 'メールアドレスを入力してください'
@@ -30,40 +27,49 @@ const AccountRegister = () => {
 			nextErrors.name = 'ユーザー名を入力してください'
 		if (!password)
 			nextErrors.password = 'パスワードを入力してください'
+		if (!passwordConfirm)
+			nextErrors.passwordConfirm = 'パスワード確認を入力してください'
+		if (password !== passwordConfirm)
+			nextErrors.passwordConfirm = 'パスワードが一致しません'
 
 		setFieldErrors(nextErrors)
 		return (Object.keys(nextErrors).length === 0)
 	}
 
 	function normalizeErrResponse(err: unknown): RegisterError {
-		if (err instanceof ApiError) {
-			if (err.status === 400) {
-				const data = err.data as unknown
-				if (typeof data === 'object' && data !== null) {
-					const maybe = data as { field?: unknown; message?: unknown }
-					const field = (typeof maybe.field === 'string') ? maybe.field : null
-					const message = (typeof maybe.message === 'string') ? maybe.message : err.message
-
-					if (field === 'name' || field === 'email' || field === 'password') {
-						setFieldErrors((prev) => ({ ...prev, [field]: message }))
-						return
-					}
-					setServerError(message)
-					return
-				}
-			} else if (err.status === 500) {
-				const data = err.data as unknown
-				if (typeof data === 'object' && data !== null && 'message' in data) {
-					setServerError(String((data as { message?: unknown }).message ?? err.message))
-					return
-				}
-			}
-
-			return ({
+		if (!(err instanceof ApiError)) {
+			return {
 				type: 'unknown',
-				message: err.message,
+				message: err instanceof Error ? err.message : '予期しないエラーが発生しました',
+			}
+		}
+
+		const body = typeof err.data === 'object' && err.data !== null ? (err.data as { field?: unknown; message?: unknown }) : null
+		const field = typeof body?.field === 'string' ? body.field : null
+		const message = typeof body?.message === 'string' ? body.message : null
+
+		if (err.status === 400 && field !== null && message !== null) {
+			if (field === 'name' || field === 'email' || field === 'password') {
+
+				return ({
+					type: 'field',
+					field: field,
+					message: message,
+				})
+			}
+		}
+
+		if (err.status === 500 && message !== null) {
+			return ({
+				type: 'server',
+				message: message,
 			})
 		}
+
+		return ({
+			type: 'unknown',
+			message: '予期しないエラーが発生しました',
+		})
 	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -78,22 +84,13 @@ const AccountRegister = () => {
 			await userApi.register({ name, email, password })
 			// NOTE: 成功時の遷移/表示は要件外なのでここでは何もしない
 		} catch (err) {
-			if (err instanceof ApiError) {
-				const result = resolveRegisterError(err)
+			const result = normalizeErrResponse(err)
 
-				switch (result.type) {
-					case 'field':
-						setFieldErrors((prev) => ({ ...prev, [result.field]: result.message }))
-						break
-					case 'server':
-					case 'unknown':
-						setServerError(result.message)
-				}
-				return
+			if (result.type === 'field') {
+				setFieldErrors((prev) => ({ ...prev, [result.field]: result.message }))
+			} else {
+				setServerError(result.message)
 			}
-
-			const message = (err instanceof Error) ? err.message : '予期しないエラーが発生しました'
-			setServerError(message)
 		}
 	}
 
@@ -123,10 +120,7 @@ const AccountRegister = () => {
 							</div>
 						)}
 
-						<form
-							className="space-y-3"
-							onSubmit={handleSubmit}
-						>
+						<form className="space-y-3" onSubmit={handleSubmit}>
 							<div className="form-control">
 								<span className="text-base font-medium">ユーザー名</span>
 								<p className="text-sm text-base-content/60">
@@ -190,6 +184,9 @@ const AccountRegister = () => {
 									value={passwordConfirm}
 									onChange={(e) => setPasswordConfirm(e.target.value)}
 								/>
+								{fieldErrors.passwordConfirm && (
+									<p className="text-sm text-error">{fieldErrors.passwordConfirm}</p>
+								)}
 							</div>
 
 							<div className="space-y-2">
