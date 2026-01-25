@@ -33,5 +33,12 @@ export const getProfile = async (request: FastifyRequest<ProfileRoute>,
 	const user: ProfileSuccessResponse = await prisma.user.findUnique({where: {id: Number(request.query.userId)}},);
 	if (!user)
 		return reply.code(404).send({ message: 'User not found' });
-	return (user);
+	
+	const data: ProfileSuccessResponse = {
+		name: user.name,
+		total_score: user.total_score,
+		first_place_count: user.first_place_count,
+		play_count: user.play_count,
+	};
+	return (data);
 };
