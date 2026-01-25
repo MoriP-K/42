@@ -24,6 +24,6 @@ export interface ProfileSuccessResponse {
  * GET /api/profile
  */
 export type ProfileRoute = {
-	Body: ProfileRequest;
+	Query: ProfileRequest;
 	Reply: ProfileSuccessResponse;
 };

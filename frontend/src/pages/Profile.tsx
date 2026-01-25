@@ -1,5 +1,5 @@
 import Footer from "../components/Footer"
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiClient } from '../api/apiClient';
 
 function  Profile() {
