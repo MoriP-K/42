@@ -1,8 +1,10 @@
 const BASE_URL = 'http://localhost:3000/api';
 
 /**
- * 共通のAPIクライアント
- * fetchをラップして共通の処理（エラーハンドリング等）を行う
+ * API 通信失敗時に使用するエラークラス。
+ * Error クラスを継承している。
+ * @property status HTTP ステータスコード
+ * @property data   サーバーが返したエラーレスポンスの body
  */
 export class ApiError extends Error {
 	status: number
@@ -16,6 +18,10 @@ export class ApiError extends Error {
 	}
 }
 
+/**
+ * 共通のAPIクライアント
+ * fetchをラップして共通の処理（エラーハンドリング等）を行う
+ */
 export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
 	const url = `${BASE_URL}${endpoint}`;
 

@@ -27,9 +27,9 @@ const AccountRegister = () => {
 			nextErrors.email = 'メールアドレスを入力してください'
 		if (!name.trim())
 			nextErrors.name = 'ユーザー名を入力してください'
-		if (!password)
+		if (!password.trim())
 			nextErrors.password = 'パスワードを入力してください'
-		if (!passwordConfirm)
+		if (!passwordConfirm.trim())
 			nextErrors.passwordConfirm = 'パスワード確認を入力してください'
 		if (password !== passwordConfirm)
 			nextErrors.passwordConfirm = 'パスワードが一致しません'
@@ -53,25 +53,25 @@ const AccountRegister = () => {
 		if (err.status === 400 && field !== null && message !== null) {
 			if (field === 'name' || field === 'email' || field === 'password') {
 
-				return ({
+				return {
 					type: 'field',
 					field: field,
 					message: message,
-				})
+				}
 			}
 		}
 
 		if (err.status === 500 && message !== null) {
-			return ({
+			return {
 				type: 'server',
 				message: message,
-			})
+			}
 		}
 
-		return ({
+		return {
 			type: 'unknown',
 			message: '予期しないエラーが発生しました',
-		})
+		}
 	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -112,6 +112,7 @@ const AccountRegister = () => {
 				top={
 					<>
 						<button type="button" className="btn btn-outline w-full">
+							{/* TODO: Googleアカウントで登録処理*/}
 							<span className="inline-flex items-center gap-2">
 								<span className="i" aria-hidden="true">G</span>
 								Googleアカウントで登録

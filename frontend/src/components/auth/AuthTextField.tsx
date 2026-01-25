@@ -20,7 +20,7 @@ export function AuthTextField({ label, description, error, inputProps }: Props) 
 
 			<input
 				{...inputProps}
-				className={`input input-bordered w-full`}
+				className="input input-bordered w-full"
 			/>
 
 			{error && <p className="text-sm text-error">{error}</p>}
