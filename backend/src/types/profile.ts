@@ -31,6 +31,6 @@ export interface ProfileErrorResponse {
  * GET /api/profile
  */
 export type ProfileRoute = {
-	Query: ProfileRequest;
+	Querystring: ProfileRequest;
 	Reply: ProfileSuccessResponse | ProfileErrorResponse;
 };
