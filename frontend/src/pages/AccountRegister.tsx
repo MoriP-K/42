@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { userApi } from '../api/userApi'
 import { ApiError } from '../api/apiClient'
+import { AuthFormShell } from '../components/auth/AuthFormShell'
+import { AuthTextField } from '../components/auth/AuthTextField'
 
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
@@ -95,115 +97,89 @@ const AccountRegister = () => {
 	}
 
 	return (
-		<div className="hero min-h-screen">
-			<div className="w-full max-w-md">
-
-				<div className="text-center mb-4">
-					<div className="text-2xl font-bold">アカウント新規作成</div>
-				</div>
-
-				<div className="card bg-base-200">
-					<div className="card-body gap-5">
-
+		<>
+			<div className="text-center mb-4">
+				<span className="text-2xl font-bold">アカウント新規作成</span>
+			</div>
+			<AuthFormShell
+				serverError={serverError}
+				onSubmit={handleSubmit}
+				top={
+					<>
 						<button type="button" className="btn btn-outline w-full">
 							<span className="inline-flex items-center gap-2">
 								<span className="i" aria-hidden="true">G</span>
 								Googleアカウントで登録
 							</span>
 						</button>
-
 						<div className="divider my-0 text-sm text-base-content/60">または</div>
-
-						{serverError && (
-							<div className="alert alert-error">
-								<span>{serverError}</span>
-							</div>
-						)}
-
-						<form className="space-y-3" onSubmit={handleSubmit}>
-							<div className="form-control">
-								<span className="text-base font-medium">ユーザー名</span>
-								<p className="text-sm text-base-content/60">
-									半角英字、数字、_を使用できます。
-								</p>
-								<input
-									type="text"
-									name="name"
-									className="input input-bordered w-full"
-									placeholder="例: user_name"
-									autoComplete="username"
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-								/>
-								{fieldErrors.name && (
-									<p className="text-sm text-error">{fieldErrors.name}</p>
-								)}
-							</div>
-
-							<div className="form-control">
-								<span className="text-base font-medium">メールアドレス</span>
-								<input
-									type="text"
-									name="email"
-									className="input input-bordered w-full"
-									placeholder="example@example.com"
-									autoComplete="email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-								/>
-								{fieldErrors.email && (
-									<p className="text-sm text-error">{fieldErrors.email}</p>
-								)}
-							</div>
-
-							<div className="form-control">
-								<span className="text-base font-medium">パスワード</span>
-								<p className="text-sm text-base-content/60">
-									大文字・小文字・数字を組み合わせて8文字以上で入力してください。
-								</p>
-								<input
-									type="password"
-									name="password"
-									className="input input-bordered w-full"
-									autoComplete="new-password"
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-								/>
-								{fieldErrors.password && (
-									<p className="text-sm text-error">{fieldErrors.password}</p>
-								)}
-							</div>
-
-							<div className="form-control">
-								<span className="text-base font-medium">パスワード確認</span>
-								<input
-									type="password"
-									name="passwordConfirm"
-									className="input input-bordered w-full"
-									autoComplete="new-password"
-									value={passwordConfirm}
-									onChange={(e) => setPasswordConfirm(e.target.value)}
-								/>
-								{fieldErrors.passwordConfirm && (
-									<p className="text-sm text-error">{fieldErrors.passwordConfirm}</p>
-								)}
-							</div>
-
-							<div className="space-y-2">
-								<button type="submit" className="btn btn-primary w-full">
-									アカウント作成
-								</button>
-								<Link to="/" className="btn btn-ghost w-full">
-									戻る
-								</Link>
-							</div>
-						</form>
-
+					</>
+				}
+				actions={
+					<div className="space-y-2">
+						<button type="submit" className="btn btn-primary w-full">
+							アカウント作成
+						</button>
+						<Link to="/" className="btn btn-ghost w-full">
+							戻る
+						</Link>
 					</div>
-				</div>
-				<Footer />
-			</div>
-		</div >
+				}
+			>
+				<AuthTextField
+					label="ユーザー名"
+					description="半角英字、数字、_を使用できます。"
+					error={fieldErrors.name}
+					inputProps={{
+						type: 'text',
+						name: 'name',
+						placeholder: '例: user_name',
+						autoComplete: 'username',
+						value: name,
+						onChange: (e) => setName(e.target.value),
+					}}
+				/>
+
+				<AuthTextField
+					label="メールアドレス"
+					error={fieldErrors.email}
+					inputProps={{
+						type: 'text',
+						name: 'email',
+						placeholder: 'example@example.com',
+						autoComplete: 'email',
+						value: email,
+						onChange: (e) => setEmail(e.target.value),
+					}}
+				/>
+
+				<AuthTextField
+					label="パスワード"
+					description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
+					error={fieldErrors.password}
+					inputProps={{
+						type: 'password',
+						name: 'password',
+						autoComplete: 'new-password',
+						value: password,
+						onChange: (e) => setPassword(e.target.value),
+					}}
+				/>
+
+				<AuthTextField
+					label="パスワード確認"
+					error={fieldErrors.passwordConfirm}
+					inputProps={{
+						type: 'password',
+						name: 'passwordConfirm',
+						autoComplete: 'new-password',
+						value: passwordConfirm,
+						onChange: (e) => setPasswordConfirm(e.target.value),
+					}}
+				/>
+			</AuthFormShell>
+			<Footer />
+		</>
 	)
 }
 
