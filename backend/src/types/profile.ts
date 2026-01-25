@@ -21,9 +21,16 @@ export interface ProfileSuccessResponse {
 }
 
 /**
+ * GET /api/profile エラーレスポンス型 (404)
+ */
+export interface ProfileErrorResponse {
+	message: string;
+}
+
+/**
  * GET /api/profile
  */
 export type ProfileRoute = {
 	Query: ProfileRequest;
-	Reply: ProfileSuccessResponse;
+	Reply: ProfileSuccessResponse | ProfileErrorResponse;
 };

@@ -30,6 +30,8 @@ import {
 export const getProfile = async (request: FastifyRequest<ProfileRoute>, 
 								reply: FastifyReply<ProfileRoute>) => {
 
-	const user = await prisma.user.findUnique({where: {id: Number(request.query.userId)}},);
+	const user: ProfileSuccessResponse = await prisma.user.findUnique({where: {id: Number(request.query.userId)}},);
+	if (!user)
+		return reply.code(404).send({ message: 'User not found' });
 	return (user);
 };
