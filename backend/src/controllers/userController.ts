@@ -31,10 +31,5 @@ export const getProfile = async (request: FastifyRequest<ProfileRoute>,
 								reply: FastifyReply<ProfileRoute>) => {
 
 	const user = await prisma.user.findUnique({where: {id: Number(request.query.userId)}},);
-	// console.dir(user, {depth: null});
 	return (user);
 };
-
-// userIDを指定してデータを取得
-// curl -X GET "http://localhost:3000/api/profile?userId=1" \
-//   -H "Content-Type: application/json"
