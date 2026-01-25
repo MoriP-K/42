@@ -1,5 +1,5 @@
-import Footer from "../components/Footer"
-import PrivacyPolicyContent from "../components/PrivacyPolicyContent"
+import Footer from "../components/footer/Footer"
+import PrivacyPolicyContent from "../components/footer/PrivacyPolicyContent"
 import BackButton from "../components/BackButton"
 
 
