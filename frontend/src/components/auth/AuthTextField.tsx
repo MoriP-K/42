@@ -10,14 +10,19 @@ type Props = {
 export function AuthTextField({ label, description, error, inputProps }: Props) {
 	return (
 		<div className="form-control">
-			<span className="text-base font-medium">{label}</span>
+			<span className="text-base font-medium">
+				{label}
+			</span>
+
 			{description && (
 				<p className="text-sm text-base-content/60">{description}</p>
 			)}
+
 			<input
 				{...inputProps}
-				className={`input input-bordered w-full ${inputProps.className ?? ''}`}
+				className={`input input-bordered w-full`}
 			/>
+
 			{error && <p className="text-sm text-error">{error}</p>}
 		</div>
 	)

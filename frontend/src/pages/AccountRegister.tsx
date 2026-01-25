@@ -38,7 +38,7 @@ const AccountRegister = () => {
 		return (Object.keys(nextErrors).length === 0)
 	}
 
-	function normalizeErrResponse(err: unknown): RegisterError {
+	const normalizeErrResponse = (err: unknown): RegisterError => {
 		if (!(err instanceof ApiError)) {
 			return {
 				type: 'unknown',
@@ -79,13 +79,15 @@ const AccountRegister = () => {
 		setServerError(null)
 		setFieldErrors({})
 
+		// 未入力チェック・パスワード一致確認
 		if (!validateRequired())
 			return
 
 		try {
 			await userApi.register({ name, email, password })
-			// NOTE: 成功時の遷移/表示は要件外なのでここでは何もしない
+			// TODO: 成功時のページ遷移処理をする
 		} catch (err) {
+			// レスポンスの正規化
 			const result = normalizeErrResponse(err)
 
 			if (result.type === 'field') {
@@ -98,9 +100,12 @@ const AccountRegister = () => {
 
 	return (
 		<>
+			{/* ヘッダー */}
 			<div className="text-center mb-4">
 				<span className="text-2xl font-bold">アカウント新規作成</span>
 			</div>
+
+			{/* 記入フォーム */}
 			<AuthFormShell
 				serverError={serverError}
 				onSubmit={handleSubmit}
@@ -178,7 +183,10 @@ const AccountRegister = () => {
 					}}
 				/>
 			</AuthFormShell>
+
+			{/* フッター */}
 			<Footer />
+
 		</>
 	)
 }
