@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Footer from '../../components/Footer'
-import { userApi } from '../../api/userApi'
-import { ApiError } from '../../api/apiClient'
+import Footer from '../components/Footer'
+import { userApi } from '../api/userApi'
+import { ApiError } from '../api/apiClient'
 
-function AccountRegister() {
+
+type RegisterError =
+	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
+	| { type: 'server'; message: string }
+	| { type: 'unknown'; message: string }
+
+
+
+const AccountRegister = () => {
 	const [name, setName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -25,6 +33,68 @@ function AccountRegister() {
 
 		setFieldErrors(nextErrors)
 		return (Object.keys(nextErrors).length === 0)
+	}
+
+	function normalizeErrResponse(err: unknown): RegisterError {
+		if (err instanceof ApiError) {
+			if (err.status === 400) {
+				const data = err.data as unknown
+				if (typeof data === 'object' && data !== null) {
+					const maybe = data as { field?: unknown; message?: unknown }
+					const field = (typeof maybe.field === 'string') ? maybe.field : null
+					const message = (typeof maybe.message === 'string') ? maybe.message : err.message
+
+					if (field === 'name' || field === 'email' || field === 'password') {
+						setFieldErrors((prev) => ({ ...prev, [field]: message }))
+						return
+					}
+					setServerError(message)
+					return
+				}
+			} else if (err.status === 500) {
+				const data = err.data as unknown
+				if (typeof data === 'object' && data !== null && 'message' in data) {
+					setServerError(String((data as { message?: unknown }).message ?? err.message))
+					return
+				}
+			}
+
+			return ({
+				type: 'unknown',
+				message: err.message,
+			})
+		}
+	}
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		setServerError(null)
+		setFieldErrors({})
+
+		if (!validateRequired())
+			return
+
+		try {
+			await userApi.register({ name, email, password })
+			// NOTE: 成功時の遷移/表示は要件外なのでここでは何もしない
+		} catch (err) {
+			if (err instanceof ApiError) {
+				const result = resolveRegisterError(err)
+
+				switch (result.type) {
+					case 'field':
+						setFieldErrors((prev) => ({ ...prev, [result.field]: result.message }))
+						break
+					case 'server':
+					case 'unknown':
+						setServerError(result.message)
+				}
+				return
+			}
+
+			const message = (err instanceof Error) ? err.message : '予期しないエラーが発生しました'
+			setServerError(message)
+		}
 	}
 
 	return (
@@ -55,55 +125,7 @@ function AccountRegister() {
 
 						<form
 							className="space-y-3"
-							onSubmit={async (e) => {
-								e.preventDefault()
-								setServerError(null)
-								setFieldErrors({})
-
-								if (!validateRequired())
-									return
-
-								try {
-									await userApi.register({ name, email, password })
-									// NOTE: 成功時の遷移/表示は要件外なのでここでは何もしない
-								} catch (err) {
-									if (err instanceof ApiError) {
-										if (err.status === 400) {
-											const data = err.data as unknown
-											if (typeof data === 'object' && data !== null) {
-												const maybe = data as { field?: unknown; message?: unknown }
-												const field = (typeof maybe.field === 'string') ? maybe.field : null
-												const message = (typeof maybe.message === 'string') ? maybe.message : err.message
-
-												if (field === 'name' || field === 'email' || field === 'password') {
-													setFieldErrors((prev) => ({ ...prev, [field]: message }))
-													return
-												}
-												setServerError(message)
-												return
-											}
-											setServerError(err.message)
-											return
-										}
-
-										if (err.status === 500) {
-											const data = err.data as unknown
-											if (typeof data === 'object' && data !== null && 'message' in data) {
-												setServerError(String((data as { message?: unknown }).message ?? err.message))
-												return
-											}
-											setServerError(err.message)
-											return
-										}
-
-										setServerError(err.message)
-										return
-									}
-
-									const message = (err instanceof Error) ? err.message : '予期しないエラーが発生しました'
-									setServerError(message)
-								}
-							}}
+							onSubmit={handleSubmit}
 						>
 							<div className="form-control">
 								<span className="text-base font-medium">ユーザー名</span>
