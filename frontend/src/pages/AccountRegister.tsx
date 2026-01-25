@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { userApi } from '../api/userApi'
 import { ApiError } from '../api/apiClient'
 import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
+import BackButton from '../components/BackButton'
 
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
@@ -126,17 +126,17 @@ const AccountRegister = () => {
 						<button type="submit" className="btn btn-primary w-full">
 							アカウント作成
 						</button>
-						<Link to="/" className="btn btn-ghost w-full">
-							戻る
-						</Link>
+						<BackButton></BackButton>
 					</div>
 				}
 			>
 				<AuthTextField
 					label="ユーザー名"
+					htmlFor="name"
 					description="半角英字、数字、_を使用できます。"
 					error={fieldErrors.name}
 					inputProps={{
+						id: 'name',
 						type: 'text',
 						name: 'name',
 						placeholder: '例: user_name',
@@ -148,8 +148,10 @@ const AccountRegister = () => {
 
 				<AuthTextField
 					label="メールアドレス"
+					htmlFor="email"
 					error={fieldErrors.email}
 					inputProps={{
+						id: 'email',
 						type: 'text',
 						name: 'email',
 						placeholder: 'example@example.com',
@@ -161,9 +163,11 @@ const AccountRegister = () => {
 
 				<AuthTextField
 					label="パスワード"
+					htmlFor="password"
 					description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
 					error={fieldErrors.password}
 					inputProps={{
+						id: 'password',
 						type: 'password',
 						name: 'password',
 						autoComplete: 'new-password',
@@ -174,8 +178,10 @@ const AccountRegister = () => {
 
 				<AuthTextField
 					label="パスワード確認"
+					htmlFor="passwordConfirm"
 					error={fieldErrors.passwordConfirm}
 					inputProps={{
+						id: 'passwordConfirm',
 						type: 'password',
 						name: 'passwordConfirm',
 						autoComplete: 'new-password',

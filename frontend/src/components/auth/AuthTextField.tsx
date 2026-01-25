@@ -2,17 +2,18 @@ import type { InputHTMLAttributes } from 'react'
 
 type Props = {
 	label: string
+	htmlFor: string
 	description?: string
 	error?: string
 	inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function AuthTextField({ label, description, error, inputProps }: Props) {
+export function AuthTextField({ label, htmlFor, description, error, inputProps }: Props) {
 	return (
 		<div className="form-control">
-			<span className="text-base font-medium">
+			<label htmlFor={htmlFor} className="text-base font-medium">
 				{label}
-			</span>
+			</label>
 
 			{description && (
 				<p className="text-sm text-base-content/60">{description}</p>
