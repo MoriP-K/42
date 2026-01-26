@@ -16,7 +16,7 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/waiting-game" element={<WaitingGame />} />
+				<Route path="/waiting-game/:id" element={<WaitingGame />} />
 				<Route path="/prepare" element={<Prepare />} />
 				<Route path="/terms" element={<TermsOfService />} />
 				<Route path="/login" element={<Login />} />

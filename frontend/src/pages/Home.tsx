@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 function Home() {
 	const navigate = useNavigate();
 	const [message, setMessage] = useState('Loading...')
+	const [user] = useState({id: 1})
 
 	useEffect(() => {
 		userApi.getHello()
@@ -16,10 +17,12 @@ function Home() {
 
 	const handleCreateRoom = async () => {
 		try {
-			const room = await roomApi.createRoom();
-			navigate(`/waiting-game/${room.id}`);
+			const room = await roomApi.createRoom(user.id);
+			if (!room)
+				throw new Error('Room cannot be created');
+			navigate(`/waiting-game/${room.id}`, { state: { hostId: user.id } });
 		} catch (error) {
-			console.error('Error creating room:', error);
+			console.error('Error:', error);
 		}
 	}
 

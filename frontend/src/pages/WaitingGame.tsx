@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 interface User {
 	id: number;
@@ -7,14 +8,9 @@ interface User {
 	role: 'player' | 'spectator';
 }
 
-interface Room {
-	id: number;
-	name: string;
-	inviteUrl: string;
-}
-
 const WaitingGame = () => {
-	const [me] = useState<User>({ id: 999, name: 'MORI', role: 'player' }); // ログイン後自分のデータを取得する
+	const location = useLocation();
+	const [me] = useState<User>({ id: 1, name: 'MORI', role: 'player' }); // ログイン後自分のデータを取得する
 
 	const [users, setUsers] = useState<User[]>([
 		{ id: me.id, name: me.name, role: me.role },
@@ -23,12 +19,17 @@ const WaitingGame = () => {
 		{ id: 4, name: 'NUSU', role: 'player' },
 	]);
 
-	const [room] = useState<Room>({
-		id: 1,
-		name: 'Room1',
-		inviteUrl: 'http://localhost:3000/room/1',
-	});
 	const [gameMode, setGameMode] = useState('default');
+	const [showToast, setShowToast] = useState(false);
+	const [isHost, setIsHost] = useState(false);
+	const hostId = location.state?.hostId;
+
+	useEffect(() => {
+		console.log('hostId', hostId);
+		console.log('me.id', me.id);
+		if (hostId && hostId === me.id)
+			setIsHost(true);
+	}, [hostId]);
 
 	const toggleRole = (id: number) => {
 		setUsers(prevUser =>
@@ -38,36 +39,30 @@ const WaitingGame = () => {
 					: user
 			)
 		);
-		console.log('id:', id);
-		console.log('users:', users);
 	};
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText(room?.inviteUrl || '');
-		return (
-			<div role="alert" className="alert alert-success">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					className="h-6 w-6 shrink-0 stroke-current"
-					fill="none"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth="2"
-						d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-					/>
-				</svg>
-				<span>Your purchase has been confirmed!</span>
-			</div>
-		);
+		navigator.clipboard.writeText(window.location.href || '');
+		setShowToast(true);
+		setTimeout(() => setShowToast(false), 1500);
 	};
 
 	return (
 		<>
 			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
+				{/* トースト通知 */}
+				{showToast && (
+					<div className="toast toast-top toast-center">
+						<div className="alert alert-success shadow-lg border-none bg-emerald-500 text-white">
+							<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+							<span className="font-bold">招待URLをコピーしました！</span>
+						</div>
+					</div>
+				)}
 				<div>Waiting Game</div>
+
 				{/* 参加者一覧セクション */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300">
 					<div className="card-body p-6">
@@ -86,21 +81,12 @@ const WaitingGame = () => {
 								>
 									<span className="font-bold">{user.name}</span>
 									<div className="flex gap-4 w-32 justify-end">
-										{/* チェックボックス風の表示（daisyUIのjoinを使用） */}
-										{/* <div className="join border"> */}
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
 											onChange={() => toggleRole(user.id)}
-											disabled={user.id != me.id}
+											disabled={!isHost && user.id !== me.id}
 										/>
-										{/* <button className={`join-item px-4 py-1 ${user.role === 'player' ? 'bg-gray-400' : 'bg-base-100'}`}>
-												{user.role === 'player' && '✓'}
-											</button>
-											<button className={`join-item px-4 py-1 ${user.role === 'spectator' ? 'bg-gray-400' : 'bg-base-100'}`}>
-												{user.role === 'spectator' && '✓'}
-											</button> */}
-										{/* </div> */}
 									</div>
 								</div>
 							))}
@@ -140,21 +126,19 @@ const WaitingGame = () => {
 					<div className="bg-base-200 p-1 rounded-xl flex gap-1 shadow-inner">
 						<button
 							onClick={() => setGameMode('default')}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === 'default'
-									? 'bg-white text-indigo-700 font-bold shadow-md scale-[1.02]'
-									: 'text-gray-500 hover:bg-base-300'
-							}`}
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'default'
+								? 'bg-white text-indigo-700 font-bold shadow-md scale-[1.02]'
+								: 'text-gray-500 hover:bg-base-300'
+								}`}
 						>
 							デフォルト
 						</button>
 						<button
 							onClick={() => setGameMode('one-stroke')}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === 'one-stroke'
-									? 'bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]'
-									: 'text-gray-500 hover:bg-base-300'
-							}`}
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'one-stroke'
+								? 'bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]'
+								: 'text-gray-500 hover:bg-base-300'
+								}`}
 						>
 							一筆書き
 						</button>
