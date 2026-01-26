@@ -3,7 +3,6 @@ import cors from '@fastify/cors';
 import { userRoutes } from './routes/userRoutes';
 import { roomRoutes } from './routes/roomRoutes';
 
-
 const fastify = Fastify({
     logger: true
 });
