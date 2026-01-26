@@ -27,9 +27,16 @@ export interface RegisterErrorResponse {
 }
 
 /**
+ * POST /api/register サーバーエラーレスポンス型 (500)
+ */
+export interface RegisterServerErrorResponse {
+	message: string;
+}
+
+/**
  * POST /api/register ルートの型定義
  */
 export type RegisterRoute = {
 	Body: RegisterRequest;
-	Reply: RegisterSuccessResponse | RegisterErrorResponse;
+	Reply: RegisterSuccessResponse | RegisterErrorResponse | RegisterServerErrorResponse;
 };
