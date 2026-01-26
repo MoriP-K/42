@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 
-import Timer from "../components/Timer";
-import Canvas from "../components/Canvas";
-import ScoreBoard from "../components/ScoreBoard";
-import ChatMessages from "../components/ChatMessages";
-import ChatInput from "../components/ChatInput";
+import Timer from "../components/game/Timer";
+import Canvas from "../components/game/Canvas";
+import ScoreBoard from "../components/game/ScoreBoard";
+import ChatMessages from "../components/game/ChatMessages";
+import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
 	// プレイヤーデータ
