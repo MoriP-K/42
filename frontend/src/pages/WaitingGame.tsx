@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -21,15 +21,7 @@ const WaitingGame = () => {
 
 	const [gameMode, setGameMode] = useState('default');
 	const [showToast, setShowToast] = useState(false);
-	const [isHost, setIsHost] = useState(false);
-	const hostId = location.state?.hostId;
-
-	useEffect(() => {
-		console.log('hostId', hostId);
-		console.log('me.id', me.id);
-		if (hostId && hostId === me.id)
-			setIsHost(true);
-	}, [hostId]);
+	const isHost = location.state?.hostId === me.id;
 
 	const toggleRole = (id: number) => {
 		setUsers(prevUser =>
