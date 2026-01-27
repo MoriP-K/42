@@ -1,17 +1,11 @@
 import { useState, useEffect } from 'react';
+import { getWebSocketUrl } from '../api/apiClient';
 
 import Timer from "../components/game/Timer";
 import Canvas from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
-import ChatMessages from "../components/game/ChatMessages";
+import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
-
-interface Message {
-	id: string,
-	sender: string,
-	text: string,
-	timestamp: Date,
-};
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -20,7 +14,7 @@ const Game = () => {
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	useEffect(() => {
-		const ws = new WebSocket('ws://localhost:3000/ws');
+		const ws = new WebSocket(getWebSocketUrl());
 
 		ws.onopen = () => {
 			console.log('✅ WebSocket connected');

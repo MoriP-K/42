@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 /**
  * API 通信失敗時に使用するエラークラス。
@@ -40,4 +40,15 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
 	}
 
 	return response.json();
+};
+
+/**
+ * WebSocket URLを生成
+ */
+export const getWebSocketUrl = () => {
+	const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+	// http → ws, https → wss に変換
+	const wsBase = base.replace(/^http/, 'ws');
+
+	return (`${wsBase}/ws`);
 };
