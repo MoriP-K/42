@@ -14,6 +14,7 @@ fastify.register(cors, {
     origin: true // 開発環境なので全て許可 (本番では制限を推奨)
 });
 
+// WebSocket機能を有効化する
 fastify.register(websocket);
 
 fastify.get('/', async (request, reply) => {
@@ -24,6 +25,7 @@ fastify.get('/', async (request, reply) => {
 fastify.register(userRoutes, { prefix: '/api' });
 fastify.register(roomRoutes, { prefix: '/api' });
 
+// WebSocketのルートを定義
 fastify.register(async (fastify) => {
 	fastify.get('/ws', { websocket: true }, (socket, request) => {
 		handleChatConnection(socket);
