@@ -41,14 +41,3 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
 
 	return response.json();
 };
-
-/**
- * WebSocket URLを生成
- */
-export const getWebSocketUrl = () => {
-	const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-	// http → ws, https → wss に変換
-	const wsBase = base.replace(/^http/, 'ws');
-
-	return (`${wsBase}/ws`);
-};

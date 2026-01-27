@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getWebSocketUrl } from '../api/apiClient';
+import { createWebSocket } from '../api/wsClient';
 
 import Timer from "../components/game/Timer";
 import Canvas from "../components/game/Canvas";
@@ -14,7 +14,7 @@ const Game = () => {
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	useEffect(() => {
-		const ws = new WebSocket(getWebSocketUrl());
+		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			console.log('✅ WebSocket connected');
