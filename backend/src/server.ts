@@ -1,7 +1,9 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import websocket from '@fastify/websocket';
 import { userRoutes } from './routes/userRoutes';
 import { roomRoutes } from './routes/roomRoutes';
+import { handleChatConnection } from './ws/chatHandler';
 
 const fastify = Fastify({
     logger: true
@@ -12,6 +14,8 @@ fastify.register(cors, {
     origin: true // 開発環境なので全て許可 (本番では制限を推奨)
 });
 
+fastify.register(websocket);
+
 fastify.get('/', async (request, reply) => {
 	return { hello: 'world' }
 });
@@ -19,6 +23,12 @@ fastify.get('/', async (request, reply) => {
 // ルートの登録
 fastify.register(userRoutes, { prefix: '/api' });
 fastify.register(roomRoutes, { prefix: '/api' });
+
+fastify.register(async (fastify) => {
+	fastify.get('/ws', { websocket: true }, (socket, request) => {
+		handleChatConnection(socket);
+	});
+});
 
 const start = async () => {
     try {
