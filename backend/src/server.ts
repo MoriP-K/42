@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { userRoutes } from './routes/userRoutes';
+import { roomRoutes } from './routes/roomRoutes';
 
 const fastify = Fastify({
     logger: true
@@ -17,6 +18,7 @@ fastify.get('/', async (request, reply) => {
 
 // ルートの登録
 fastify.register(userRoutes, { prefix: '/api' });
+fastify.register(roomRoutes, { prefix: '/api' });
 
 const start = async () => {
     try {
