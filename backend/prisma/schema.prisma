@@ -26,11 +26,26 @@ model User {
   updated_at        DateTime  @updatedAt
 
   // relation
+  sessions          Session[]
   badges            UserBadge[]
   hosted_rooms      Room[]      @relation("HostRelation")
   drawings          Round[]     @relation("DrawerRelation")
   won_rounds        Round[]     @relation("WinnerRelation")
   room_memberships  RoomMember[]
+}
+
+model Session {
+  id         String    @id
+  user_id    Int
+  created_at DateTime  @default(now())
+  expires_at DateTime
+  revoked_at DateTime?
+
+  // relation
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([expires_at])
+  @@index([user_id])
 }
 
 model Badge {
