@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import cookie from '@fastify/cookie';
 import websocket from '@fastify/websocket';
 import { userRoutes } from './routes/userRoutes';
 import { authRoutes } from './routes/authRoutes';
@@ -18,6 +19,9 @@ fastify.register(cors, {
 
 // WebSocket機能を有効化する
 fastify.register(websocket);
+
+// Cookie機能を有効化する
+fastify.register(cookie);
 
 fastify.get('/', async (request, reply) => {
 	return { hello: 'world' }
