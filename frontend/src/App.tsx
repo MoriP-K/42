@@ -3,6 +3,7 @@ import './App.css'
 import Home from './pages/Home'
 import WaitingGame from './pages/WaitingGame'
 import Prepare from './pages/Prepare'
+import Game from './pages/Game'
 import TermsOfService from './pages/TermsOfService'
 import AccountRegister from './pages/AccountRegister'
 import PaaswordResetSendMail from './pages/PaaswordResetSendMail'
@@ -17,6 +18,7 @@ function App() {
 				<Route path="/" element={<Home />} />
 				<Route path="/waiting-game/:id" element={<WaitingGame />} />
 				<Route path="/prepare" element={<Prepare />} />
+				<Route path="/game" element={<Game />}/>
 				<Route path="/terms" element={<TermsOfService />} />
 				<Route path="/register" element={<AccountRegister />} />
 				<Route path="/password-reset/send-mail" element={<PaaswordResetSendMail />} />
