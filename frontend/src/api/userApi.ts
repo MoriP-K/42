@@ -22,6 +22,13 @@ export const userApi = {
 		});
 	},
 
+	// GET /api/me
+	getMe: async (): Promise<{ id: number; name: string }> => {
+		return apiClient('/me', {
+			credentials: 'include'
+		});
+	},
+
 	// POST /api/users (例)
 	// createUser: async (data: any) => {
 	//     return apiClient('/users', {
