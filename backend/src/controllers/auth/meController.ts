@@ -42,14 +42,6 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 		return reply.code(401).send({ message: 'Unauthorized' });
 	}
 
-	reply.setCookie(cookieName, session.id, {
-		path: '/',
-		httpOnly: true,
-		sameSite: 'lax',
-		expires: session.expires_at,
-		secure: process.env.NODE_ENV === 'production',
-	});
-
 	return reply.code(200).send({
 		id: session.user.id,
 		name: session.user.name,
