@@ -26,8 +26,6 @@ function Home() {
 		}
 	}
 
-	console.log(message);
-
 	return (
 		<div className="min-h-screen bg-base-200">
 			<div className="navbar bg-base-100 shadow-lg">
@@ -42,7 +40,7 @@ function Home() {
 						<h1 className="text-5xl font-bold">おえかきの森へようこそ！</h1>
 						<p className="py-6">友達と一緒にお絵かきで遊ぼう</p>
 						<p className="mb-4">APIからのメッセージ: <span className="text-primary font-semibold">{message}</span></p>
-						<button onClick={() => handleCreateRoom()} className="btn btn-primary btn-lg">
+						<button onClick={handleCreateRoom} className="btn btn-primary btn-lg">
 							ルームを作成する
 						</button>
 					</div>

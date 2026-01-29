@@ -24,19 +24,19 @@ const Prepare = () => {
 	const [role] = useState<Role>("回答者");
 	const [countdown, setCountdown] = useState(3);
 
-	useEffect(() => {
-		if (countdown < 0) {
-			const redirectTimer = setTimeout(() => {
-				navigate("/game");
-			}, 1500);
-			return () => clearTimeout(redirectTimer);
-		}
+	// useEffect(() => {
+	// 	if (countdown < 0) {
+	// 		const redirectTimer = setTimeout(() => {
+	// 			navigate("/game");
+	// 		}, 1500);
+	// 		return () => clearTimeout(redirectTimer);
+	// 	}
 
-		const timer = setInterval(() => {
-			setCountdown(prev => prev - 1);
-		}, 1000);
-		return () => clearInterval(timer);
-	}, [countdown, navigate]);
+	// 	const timer = setInterval(() => {
+	// 		setCountdown(prev => prev - 1);
+	// 	}, 1000);
+	// 	return () => clearInterval(timer);
+	// }, [countdown, navigate]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
