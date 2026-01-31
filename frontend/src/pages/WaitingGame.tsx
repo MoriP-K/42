@@ -22,8 +22,11 @@ const WaitingGame = () => {
 	const [gameMode, setGameMode] = useState('default');
 	const [showToast, setShowToast] = useState(false);
 	const isHost = location.state?.hostId === me.id;
+	const roomId = location.state?.roomId;
 
 	const toggleRole = (id: number) => {
+		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
+		
 		setUsers(prevUser =>
 			prevUser.map(user =>
 				user.id === id
@@ -32,6 +35,11 @@ const WaitingGame = () => {
 			)
 		);
 	};
+
+	// ゲームモード変更 API叩く hostのみ変更可能
+	const updateGameMode = (mode: string) => {
+		
+	}
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(window.location.href || '');
@@ -140,7 +148,7 @@ const WaitingGame = () => {
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
 					<Link
-						to="/prepare"
+						to={`/prepare/${roomId}`}
 						className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
 					>
 						準備完了！

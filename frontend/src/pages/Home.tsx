@@ -20,7 +20,7 @@ function Home() {
 			const room = await roomApi.createRoom(user.id);
 			if (!room)
 				throw new Error('Room cannot be created');
-			navigate(`/waiting-game/${room.id}`, { state: { hostId: user.id } });
+			navigate(`/waiting-game/${room.id}`, { state: { hostId: user.id, roomId: room.id } });
 		} catch (error) {
 			console.error('Error:', error);
 		}

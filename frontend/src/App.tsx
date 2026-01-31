@@ -16,7 +16,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/waiting-game/:id" element={<WaitingGame />} />
-				<Route path="/prepare" element={<Prepare />} />
+				<Route path="/prepare/:id" element={<Prepare />} />
 				<Route path="/terms" element={<TermsOfService />} />
 				<Route path="/register" element={<AccountRegister />} />
 				<Route path="/password-reset/send-mail" element={<PaaswordResetSendMail />} />
