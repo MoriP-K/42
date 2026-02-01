@@ -19,6 +19,11 @@ export const userApi = {
 		return apiClient('/users');
 	},
 
+	// GET /api/users
+    getProfile: async () => {
+        return apiClient('/profile');
+    },
+
 	// POST /api/register
 	register: async (data: { name: string; email: string; password: string }) => {
 		return apiClient('/register', {
@@ -26,12 +31,4 @@ export const userApi = {
 			body: JSON.stringify(data),
 		});
 	},
-
-	// POST /api/users (例)
-	// createUser: async (data: any) => {
-	//     return apiClient('/users', {
-	//         method: 'POST',
-	//         body: JSON.stringify(data),
-	//     });
-	// },
 };

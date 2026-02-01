@@ -11,6 +11,7 @@ import PaaswordReset from './pages/PasswordReset'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import RedirectLogin from './pages/RedirectLogin'
 import Login from './pages/Login'
+import Profile from './pages/Profile'
 import { RequireAuth } from './features/auth/RequireAuth'
 
 function App() {
@@ -39,9 +40,10 @@ function App() {
 					<Route path="password-reset/send-mail" element={<PaaswordResetSendMail />} />
 					<Route path="password-reset" element={<PaaswordReset />} />
 					<Route path="privacy-policy" element={<PrivacyPolicy />} />
+					<Route path="profile" element={<Profile />} />
 				</Route>
-			</Routes>
-		</BrowserRouter>
+			</Routes >
+		</BrowserRouter >
 	)
 }
 
