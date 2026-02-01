@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import Footer from '../components/Footer'
+import Footer from "../components/footer/Footer"
 import { useAuth } from '../features/auth/useAuth'
 
 function Login() {

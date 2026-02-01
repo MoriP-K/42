@@ -1,5 +1,5 @@
+import Footer from "../components/footer/Footer"
 import React, { useState } from 'react'
-import Footer from '../components/Footer'
 import { userApi } from '../api/userApi'
 import { ApiError } from '../api/apiClient'
 import { AuthFormShell } from '../components/auth/AuthFormShell'
