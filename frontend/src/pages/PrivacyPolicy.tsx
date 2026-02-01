@@ -13,7 +13,7 @@ function PrivacyPolicy() {
 					<PrivacyPolicyContent>
 					</PrivacyPolicyContent>
 			</div>
-			</div>
+		</div>
 		</div>
 			<BackButton></BackButton>
 			<Footer></Footer>
