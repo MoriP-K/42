@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}, [])
 
 	useEffect(() => {
-		// 起動時に一度だけ /api/me で状態を温める（UIはブロックしない）
+		// 起動時に一度だけ /api/me でログイン状態を取得する
 		const t = setTimeout(() => {
 			void refreshAuth()
 		}, 0)
