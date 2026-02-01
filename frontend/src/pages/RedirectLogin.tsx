@@ -5,6 +5,7 @@ import { useAuth } from '../features/auth/useAuth'
 function RedirectLogin() {
 	const { isAuthenticated } = useAuth()
 
+	// すでに認証済みだったら、ホーム画面に自動遷移する
 	if (isAuthenticated) {
 		return <Navigate to="/" replace />
 	}
