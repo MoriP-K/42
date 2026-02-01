@@ -20,9 +20,9 @@ export const userApi = {
 	},
 
 	// GET /api/users
-    getProfile: async () => {
-        return apiClient('/profile');
-    },
+	getProfile: async () => {
+		return apiClient('/profile');
+	},
 
 	// POST /api/register
 	register: async (data: { name: string; email: string; password: string }) => {

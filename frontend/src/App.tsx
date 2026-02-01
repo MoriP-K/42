@@ -18,11 +18,16 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{/* ログイン画面は未ログインでも表示可能 */}
+				{/* ↓未ログインでも表示可能なページ */}
 				<Route path="/login" element={<Login />} />
 				<Route path="/login/redirect" element={<RedirectLogin />} />
+				<Route path="/register" element={<AccountRegister />} />
+				<Route path="/password-reset/send-mail" element={<PaaswordResetSendMail />} />
+				<Route path="/password-reset" element={<PaaswordReset />} />
+				<Route path="/terms" element={<TermsOfService />} />
+				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-				{/* それ以外はすべてログイン必須 */}
+				{/* ↓未ログイン状態でアクセスした場合、ログイン画面にリダイレクトされるページ */}
 				<Route
 					path="/"
 					element={
@@ -35,11 +40,6 @@ function App() {
 					<Route path="waiting-game/:id" element={<WaitingGame />} />
 					<Route path="prepare" element={<Prepare />} />
 					<Route path="game" element={<Game />} />
-					<Route path="terms" element={<TermsOfService />} />
-					<Route path="register" element={<AccountRegister />} />
-					<Route path="password-reset/send-mail" element={<PaaswordResetSendMail />} />
-					<Route path="password-reset" element={<PaaswordReset />} />
-					<Route path="privacy-policy" element={<PrivacyPolicy />} />
 					<Route path="profile" element={<Profile />} />
 				</Route>
 			</Routes >

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { ApiError } from '../../api/apiClient'
 import { userApi } from '../../api/userApi'
 import { AuthContext, type AuthContextValue } from './authContext'
 
@@ -11,12 +10,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			await userApi.me()
 			setIsAuthenticated(true)
 			return true
-		} catch (err) {
-			// 401 を含む失敗は未ログイン扱いに倒す（ログ出力はしない）
-			if (err instanceof ApiError && err.status === 401) {
-				setIsAuthenticated(false)
-				return false
-			}
+		} catch {
+			// 401 を含む失敗は未ログイン扱い
 			setIsAuthenticated(false)
 			return false
 		}
