@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
 import Footer from "../components/footer/Footer";
-import badges from "../images/badges/food_kakuni_manju.png";
+import test1 from "../images/badges/food_kakuni_manju.png";
+import test2 from "../images/badges/food_ika_ikidukuri_naruko.png";
+import test3 from "../images/badges/food_kanazawa_curry.png";
+import test4 from "../images/badges/food_nasu_yakinasu.png";
 
 const Profile = () => {
 	// 1ユーザのデータがそのまま帰ってくる
@@ -11,6 +14,7 @@ const Profile = () => {
 	useEffect(() => {
 		const fetchProfile = async () => {
 			try {
+				// バックエンドで取得するようにする
 				const currentUserId = 1;
 				const data = await apiClient(
 					`/profile?userId=${currentUserId}`
@@ -25,6 +29,25 @@ const Profile = () => {
 
 		fetchProfile();
 	}, []);
+
+	// バッジは直近で取得したもの３つを表示する
+	// 画像のマッピング（Record型を使用）
+	const imageMap: Record<string, string> = {
+		first: test1,
+		second: test2,
+		third: test3,
+		fource: test4,
+	};
+
+	const MyComponent = ({ rank }: { rank: string }) => {
+		return (
+			<img
+				src={imageMap[rank]} // 型の「Rank」ではなく、小文字の変数「rank」を使う
+				alt={`${rank} test`}
+				width={100}
+			/>
+		);
+	};
 
 	if (isLoading) {
 		return <div className="p-10">読み込み中...</div>;
@@ -44,7 +67,10 @@ const Profile = () => {
 
 			<div>
 				<p className="font-bold">バッジ</p>
-				<img src={badges} alt={`${badges} test`} width={100} />
+				<p>バッジ: {profileData.badges}</p>
+				<MyComponent rank="first" />
+				<MyComponent rank="second" />
+				<MyComponent rank="third" />
 			</div>
 			<Footer></Footer>
 		</div>
