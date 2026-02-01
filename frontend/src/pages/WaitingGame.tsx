@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { roomApi } from '../api/roomApi'
 
 interface User {
 	id: number;
@@ -11,6 +11,7 @@ interface User {
 const WaitingGame = () => {
 	const location = useLocation();
 	const [me] = useState<User>({ id: 1, name: 'MORI', role: 'player' }); // ログイン後自分のデータを取得する
+	const navigate = useNavigate();
 
 	const [users, setUsers] = useState<User[]>([
 		{ id: me.id, name: me.name, role: me.role },
@@ -37,8 +38,15 @@ const WaitingGame = () => {
 	};
 
 	// ゲームモード変更 API叩く hostのみ変更可能
-	const updateGameMode = (mode: string) => {
-		
+	const updateGameMode = async (mode: string) => {
+		try {
+			const res = await roomApi.updateGameMode(roomId, mode);
+			if (res.status === 200) {
+				setGameMode(mode);
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	const copyToClipboard = () => {
@@ -125,7 +133,8 @@ const WaitingGame = () => {
 					</h3>
 					<div className="bg-base-200 p-1 rounded-xl flex gap-1 shadow-inner">
 						<button
-							onClick={() => setGameMode('default')}
+							onClick={() => updateGameMode('default')}
+							disabled={!isHost}
 							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'default'
 								? 'bg-white text-indigo-700 font-bold shadow-md scale-[1.02]'
 								: 'text-gray-500 hover:bg-base-300'
@@ -134,7 +143,8 @@ const WaitingGame = () => {
 							デフォルト
 						</button>
 						<button
-							onClick={() => setGameMode('one-stroke')}
+							onClick={() => updateGameMode('one-stroke')}
+							disabled={!isHost}
 							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'one-stroke'
 								? 'bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]'
 								: 'text-gray-500 hover:bg-base-300'
@@ -147,12 +157,13 @@ const WaitingGame = () => {
 
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<Link
-						to={`/prepare/${roomId}`}
+					<button
+						onClick={() => navigate(`/prepare/${roomId}`)}
+						disabled={!isHost}
 						className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
 					>
 						準備完了！
-					</Link>
+					</button>
 				</div>
 			</div>
 		</>

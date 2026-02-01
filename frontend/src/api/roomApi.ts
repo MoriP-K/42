@@ -7,5 +7,12 @@ export const roomApi = {
 			method: 'POST',
 			body: JSON.stringify({ hostId }),
 		});
+	},
+
+	updateGameMode: async (roomId: number, mode: string) => {
+		return apiClient(`/rooms/${roomId}/game-mode`, {
+			method: 'PATCH',
+			body: JSON.stringify({ mode }),
+		});
 	}
 }

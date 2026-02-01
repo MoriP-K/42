@@ -52,3 +52,13 @@ export const updateRoomMember = async (
 	})
 	return reply.code(200).send(room);
 }
+
+/*
+* PATCH /api/rooms/${roomId}/game-mode ゲームモード変更
+*/
+export const upateGameMode = async (
+	request: FastifyRequest<UpdateGameModeRoute>,
+	reply: FastifyReply
+) => {
+	
+}
