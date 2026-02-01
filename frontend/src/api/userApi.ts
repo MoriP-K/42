@@ -9,6 +9,11 @@ export const userApi = {
 		return apiClient('/hello');
 	},
 
+	// GET /api/me
+	me: async (): Promise<{ id: number; name: string }> => {
+		return apiClient('/me', { credentials: 'include' });
+	},
+
 	// GET /api/users
 	getUsers: async () => {
 		return apiClient('/users');

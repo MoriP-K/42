@@ -1,10 +1,18 @@
-import Footer from "../components/Footer"
+import { Navigate } from 'react-router-dom'
+import Footer from '../components/Footer'
+import { useAuth } from '../features/auth/useAuth'
 
-function  RedirectLogin() {
+function RedirectLogin() {
+	const { isAuthenticated } = useAuth()
+
+	if (isAuthenticated) {
+		return <Navigate to="/" replace />
+	}
+
 	return (
-    <div>
-        <Footer></Footer>
-    </div>
+		<div>
+			<Footer />
+		</div>
 	)
 }
 
