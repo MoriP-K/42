@@ -1,5 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma';
+import {
+	ProfileRequest,
+	ProfileSuccessResponse,
+	ProfileRoute
+} from '../types/profile';
 
 /**
  * LaravelのUserControllerに相当
@@ -17,24 +22,17 @@ export const getUsers = async (request: FastifyRequest, reply: FastifyReply) => 
     return users;
 };
 
-
-import {
-	ProfileRequest,
-	ProfileSuccessResponse,
-	ProfileRoute
-} from '../types/profile';
-
 /**
  * GET /profile
  */
-export const getProfile = async (request: FastifyRequest<ProfileRoute>, 
+export const getProfile = async (request: FastifyRequest<ProfileRoute>,
 								reply: FastifyReply<ProfileRoute>) => {
 
 	const userId = Number(request.query.userId);
 	const user = await prisma.user.findUnique({where: {id: Number((request.query as { userId: number }).userId)}},);
 	if (!user)
 		return reply.code(404).send({ message: 'User not found' });
-	
+
 	const data: ProfileSuccessResponse = {
 		name: user.name,
 		total_score: user.total_score ?? 0,
