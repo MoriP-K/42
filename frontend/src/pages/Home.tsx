@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import Footer from "../components/footer/Footer"
 import { useEffect, useState } from 'react'
 import { userApi } from '../api/userApi'
