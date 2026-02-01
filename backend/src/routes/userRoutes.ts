@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import { getHello, getUsers,getProfile } from '../controllers/userController';
-import { registerUser } from '../controllers/registerController';
 
 export async function userRoutes(fastify: FastifyInstance) {
 	// 個別のルート定義
