@@ -10,6 +10,7 @@ import PaaswordResetSendMail from './pages/PaaswordResetSendMail'
 import PaaswordReset from './pages/PasswordReset'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import RedirectLogin from './pages/RedirectLogin'
+import Profile from './pages/Profile'
 
 function App() {
 	return (
@@ -25,6 +26,7 @@ function App() {
 				<Route path="/password-reset" element={<PaaswordReset />} />
 				<Route path="/login/redirect" element={<RedirectLogin />} />
 				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+				<Route path="/profile" element={<Profile />} />
 			</Routes>
 		</BrowserRouter>
 	)
