@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import Footer from '../../components/Footer'
+import Footer from '../../components/footer/Footer'
 import { useAuth } from './useAuth'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
