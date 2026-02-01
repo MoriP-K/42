@@ -8,8 +8,6 @@ export async function userRoutes(fastify: FastifyInstance) {
 	fastify.get('/users', getUsers);
 	fastify.get('/profile', getProfile);
 
-	fastify.post('/register', registerUser);
-
 	// 他のHTTPメソッドも同様に定義可能
 	// fastify.post('/users', createUser);
 }

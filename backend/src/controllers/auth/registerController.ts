@@ -4,8 +4,8 @@ import {
 	RegisterSuccessResponse,
 	RegisterErrorResponse,
 	RegisterRoute
-} from '../types/register';
-import { prisma } from '../lib/prisma';
+} from '../../types/register';
+import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
