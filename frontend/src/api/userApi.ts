@@ -9,11 +9,6 @@ export const userApi = {
 		return apiClient('/hello');
 	},
 
-	// GET /api/me
-	me: async (): Promise<{ id: number; name: string }> => {
-		return apiClient('/me', { credentials: 'include' });
-	},
-
 	// GET /api/users
 	getUsers: async () => {
 		return apiClient('/users');
@@ -22,13 +17,5 @@ export const userApi = {
 	// GET /api/users
 	getProfile: async () => {
 		return apiClient('/profile');
-	},
-
-	// POST /api/register
-	register: async (data: { name: string; email: string; password: string }) => {
-		return apiClient('/register', {
-			method: 'POST',
-			body: JSON.stringify(data),
-		});
 	},
 };

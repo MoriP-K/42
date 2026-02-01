@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { userApi } from '../../api/userApi'
+import { authApi } from '../../api/authApi'
 import { AuthContext, type AuthContextValue } from './authContext'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -7,7 +7,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const refreshAuth = useCallback(async () => {
 		try {
-			await userApi.me()
+			await authApi.me()
 			setIsAuthenticated(true)
 			return true
 		} catch {
