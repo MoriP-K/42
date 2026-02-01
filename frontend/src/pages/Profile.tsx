@@ -1,6 +1,6 @@
-import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
+import Footer from "../components/footer/Footer";
 
 const Profile = () => {
 	// 1ユーザのデータがそのまま帰ってくる
