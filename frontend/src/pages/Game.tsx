@@ -1,12 +1,59 @@
 import { useState, useEffect } from 'react';
+import { createWebSocket } from '../api/wsClient';
 
 import Timer from "../components/game/Timer";
 import Canvas from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
-import ChatMessages from "../components/game/ChatMessages";
+import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
+	const [socket, setSocket] = useState<WebSocket | null>(null);
+
+	// メッセージデータ
+	const [messages, setMessages] = useState<Message[]>([]);
+
+	useEffect(() => {
+		const ws = createWebSocket();
+
+		ws.onopen = () => {
+			console.log('✅ WebSocket connected');
+		};
+
+		ws.onmessage = (event) => {
+			try {
+				const data = JSON.parse(event.data);
+				console.log('✉️ Received: ', data);
+
+				if (data.type == 'chat') {
+					const newMessage: Message = {
+						id: data.id,
+						sender: data.sender,
+						text: data.text,
+						timestamp: new Date(data.timestamp),
+					}
+					setMessages(prev => [...prev, newMessage]);
+				}
+			} catch (error) {
+				console.error('❌ Failed to parse message:', error)
+			}
+		};
+
+		ws.onerror = (error) => {
+			console.error('❌ WebSocket error: ', error);
+		};
+
+		ws.onclose = () => {
+			console.log('🔌 WebSocket disconnected');
+		}
+
+		setSocket(ws);
+
+		return () => {
+			ws.close();
+		};
+	}, []);
+
 	// プレイヤーデータ
 	const [players] = useState([
 		{ id: 1, name: 'Ken', score: 0, isDrawing: true },
@@ -14,20 +61,21 @@ const Game = () => {
 		{ id: 3, name: 'Bob', score: 0, isDrawing: false },
 	]);
 
-	// メッセージデータ
-	const [messages, setMessages] = useState([
-		{ id: crypto.randomUUID(), sender: 'Alice', text: 'バナナ', timestamp: new Date()},
-		{ id: crypto.randomUUID(), sender: 'Bob', text: 'みかん', timestamp: new Date()},
-	]);
-
 	const handleSendMessage = (text: string) => {
-		const newMessage = {
+		if (!socket || socket.readyState !== WebSocket.OPEN) {
+			console.error('❌ WebSocket not connected');
+			return ;
+		}
+
+		const message = {
+			type: 'chat',
 			id: crypto.randomUUID(),
 			sender: 'Ken',
 			text: text,
-			timestamp: new Date(),
+			timestamp: new Date().toISOString(),
 		};
-		setMessages([...messages, newMessage]);
+
+		socket.send(JSON.stringify(message));
 	};
 
 	// タイマー処理

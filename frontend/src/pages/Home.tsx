@@ -1,4 +1,4 @@
-import Footer from "../components/Footer"
+import Footer from "../components/footer/Footer"
 import { useEffect, useState } from 'react'
 import { userApi } from '../api/userApi'
 import { roomApi } from '../api/roomApi'
