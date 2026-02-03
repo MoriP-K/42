@@ -160,8 +160,16 @@ export const registerUser = async (
 		});
 
 		// 登録成功後、そのままログイン（セッション作成＋Cookieセット）して返す
-		const successResponse = await login(reply, createdUser.id)
-		return (reply.code(201).send(successResponse));
+		try {
+			const successResponse = await login(reply, createdUser.id);
+			return reply.code(201).send(successResponse);
+		} catch (err) {
+			request.log?.error?.(err);
+			//TODO: アカウント登録はできたが、ログインに失敗した場合の処理書く。この場合、ログイン画面にリダイレクトする。
+			return reply.code(500).send({
+				message: 'ユーザー登録は完了しましたが、自動ログイン中にエラーが発生しました。ログイン画面から再度ログインしてください。'
+			});
+		}
 
 	} catch (err) {
 		request.log?.error?.(err);

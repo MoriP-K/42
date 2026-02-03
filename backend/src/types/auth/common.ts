@@ -4,7 +4,7 @@
 
 
 /**
- * ユーザー名を返す成功レスポンス型 (201)
+ * ユーザー名を返す成功レスポンス型 POST→201 その他→200
  */
 export interface AuthSuccessResponse {
 	name: string;

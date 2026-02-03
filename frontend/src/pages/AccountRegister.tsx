@@ -88,7 +88,6 @@ const AccountRegister = () => {
 		try {
 			await authApi.register({ name, email, password })
 			navigate('/');
-			// TODO: 成功時のページ遷移処理をする
 		} catch (err) {
 			// レスポンスの正規化
 			const result = normalizeErrResponse(err)

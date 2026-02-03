@@ -3,6 +3,7 @@ import { AuthSuccessResponse } from '../../types/auth/common';
 import { prisma } from '../../lib/prisma';
 import { randomUUID } from 'crypto';
 
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000 //1日
 
 export const login = async (reply: FastifyReply, userId: number) => {
 	// セッションIDとuserIDを紐づけて保存
@@ -11,7 +12,7 @@ export const login = async (reply: FastifyReply, userId: number) => {
 		data: {
 			id: randomUUID(),
 			user_id: userId,
-			expires_at: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+			expires_at: new Date(now.getTime() + SESSION_TTL_MS),
 		},
 		include: {
 			user: {
@@ -22,17 +23,19 @@ export const login = async (reply: FastifyReply, userId: number) => {
 		},
 	});
 
+	//TODO: データーベース接続エラー時の処理書く
+
 	// Cookie に session_id をセット
 	reply.setCookie('session_id', newSession.id, {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		secure: false,
+		secure: process.env.NODE_ENV === 'production',
 		expires: newSession.expires_at,
-	})
+	});
 
 	const successResponse: AuthSuccessResponse = {
 		name: newSession.user.name,
-	}
+	};
 	return (successResponse)
 }
