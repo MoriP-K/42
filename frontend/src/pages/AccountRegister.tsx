@@ -5,6 +5,7 @@ import { ApiError } from '../api/apiClient'
 import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
 import BackButton from '../components/BackButton'
+import { useNavigate } from "react-router-dom"
 
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
@@ -12,6 +13,7 @@ type RegisterError =
 	| { type: 'unknown'; message: string }
 
 const AccountRegister = () => {
+	const navigate = useNavigate();
 	const [name, setName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -85,6 +87,7 @@ const AccountRegister = () => {
 
 		try {
 			await authApi.register({ name, email, password })
+			navigate('/');
 			// TODO: 成功時のページ遷移処理をする
 		} catch (err) {
 			// レスポンスの正規化

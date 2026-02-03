@@ -14,6 +14,7 @@ export const authApi = {
 		return apiClient('/register', {
 			method: 'POST',
 			body: JSON.stringify(data),
+			credentials: 'include'
 		});
 	},
 };
