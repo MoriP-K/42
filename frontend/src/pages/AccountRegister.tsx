@@ -1,6 +1,6 @@
 import Footer from "../components/footer/Footer"
 import React, { useState } from 'react'
-import { userApi } from '../api/userApi'
+import { authApi } from '../api/authApi'
 import { ApiError } from '../api/apiClient'
 import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
@@ -84,7 +84,7 @@ const AccountRegister = () => {
 			return
 
 		try {
-			await userApi.register({ name, email, password })
+			await authApi.register({ name, email, password })
 			// TODO: 成功時のページ遷移処理をする
 		} catch (err) {
 			// レスポンスの正規化

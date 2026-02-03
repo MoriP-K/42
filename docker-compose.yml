@@ -4,10 +4,11 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app 
+      - ./frontend:/app
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:3000
+      - VITE_AUTH_REDIRECT_ENABLED=false # ログイン画面へのリダイレクトを無効にしたい場合、コメントアウトを外す
 
   backend:
     build: ./backend
