@@ -1,3 +1,8 @@
+import {
+	AuthSuccessResponse,
+	AuthServerErrorResponse
+} from './common'
+
 /**
  * Register API の型定義
  */
@@ -12,13 +17,6 @@ export interface RegisterRequest {
 }
 
 /**
- * POST /api/register 成功レスポンス型 (201)
- */
-export interface RegisterSuccessResponse {
-	userId: number;
-}
-
-/**
  * POST /api/register エラーレスポンス型 (400)
  */
 export interface RegisterErrorResponse {
@@ -27,16 +25,9 @@ export interface RegisterErrorResponse {
 }
 
 /**
- * POST /api/register サーバーエラーレスポンス型 (500)
- */
-export interface RegisterServerErrorResponse {
-	message: string;
-}
-
-/**
  * POST /api/register ルートの型定義
  */
 export type RegisterRoute = {
 	Body: RegisterRequest;
-	Reply: RegisterSuccessResponse | RegisterErrorResponse | RegisterServerErrorResponse;
+	Reply: AuthSuccessResponse | AuthServerErrorResponse | RegisterErrorResponse;
 };

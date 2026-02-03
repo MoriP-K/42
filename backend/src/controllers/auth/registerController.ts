@@ -1,12 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
 	RegisterRequest,
-	RegisterSuccessResponse,
 	RegisterErrorResponse,
 	RegisterRoute
-} from '../../types/register';
+} from '../../types/auth/register';
 import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
+import { login } from './loginController'
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -153,17 +153,8 @@ export const registerUser = async (
 			}
 		});
 
-		// ダミーレスポンス成功時 (201)
-		const successResponse: RegisterSuccessResponse = {
-			userId: createdUser.id
-		};
-
-		//TODO:ここからログイン処理
-		// 1. セッションIDを生成
-		// 2. セッションIDとuserIDを紐づけて保存
-		// 3. クッキーに設定し、レスポンスを返す
-
-		//TODO: クッキーにセッションIDをセットしてレスポンスを返す
+		// 登録成功後、そのままログイン（セッション作成＋Cookieセット）して返す
+		const successResponse = await login(reply, createdUser.id)
 		return (reply.code(201).send(successResponse));
 
 	} catch (err) {

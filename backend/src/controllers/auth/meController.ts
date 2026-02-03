@@ -1,11 +1,11 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../lib/prisma';
-import { MeRoute } from '../../types/me';
+import { MeRoute } from '../../types/auth/me';
 
 /**
  * GET /api/me
  *
- * 成功(ログイン済み): 200 { id, name }
+ * 成功(ログイン済み): 200 { name }
  * 失敗(未ログイン): 401 { message }
  *
  * セッションIDは Cookie(session_id) から取得し、
@@ -24,7 +24,6 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 		include: {
 			user: {
 				select: {
-					id: true,
 					name: true,
 				},
 			},
@@ -43,7 +42,6 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 	}
 
 	return reply.code(200).send({
-		id: session.user.id,
 		name: session.user.name,
 	});
 };
