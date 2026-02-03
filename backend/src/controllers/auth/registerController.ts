@@ -118,7 +118,13 @@ const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
 
 /**
  * POST /api/register
- * ユーザー登録エンドポイント
+ *
+ * 成功: 201 { name }
+ * 失敗(パラメータ不備): 400 { field, message }
+ * 失敗(サーバーエラー): 500 { message }
+ *
+ * パラメーターに不備がないか確認後、アカウントを新規作成。
+ * 作成したアカウントでログイン処理をした状態でレスポンスを返す。
  */
 export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,

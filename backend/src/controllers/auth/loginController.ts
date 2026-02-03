@@ -22,7 +22,7 @@ export const login = async (reply: FastifyReply, userId: number) => {
 		},
 	});
 
-	// Cookie に session_id をセット（credentials: 'include' で送受信される）
+	// Cookie に session_id をセット
 	reply.setCookie('session_id', newSession.id, {
 		path: '/',
 		httpOnly: true,

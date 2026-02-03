@@ -7,6 +7,7 @@ import { MeRoute } from '../../types/auth/me';
  *
  * 成功(ログイン済み): 200 { name }
  * 失敗(未ログイン): 401 { message }
+ * TODO: 失敗(サーバーエラー): 500 { message }
  *
  * セッションIDは Cookie(session_id) から取得し、
  * Sessionテーブルの revoked_at/expires_at を検証して user を返す。
