@@ -1,8 +1,8 @@
-import { FastifyRequest, FastifyReply, FastifyRouterOptions } from 'fastify';
+import fastify, { FastifyRequest, FastifyReply, FastifyRouterOptions } from 'fastify';
 import { prisma } from '../lib/prisma';
 import { randomUUID } from 'node:crypto';
-import { CreateRoomRoute, GetRoomRoute } from '../types/room';
-import { UpdateMemberRoute } from '../types/roomMember';
+import { CreateRoomRoute, GetRoomRoute, UpdateGameModeRoute } from '../types/room';
+import { UpdateRoomMemberRoleRoute } from '../types/roomMember';
 
 /*
  * POST /api/rooms ルーム作成
@@ -38,27 +38,51 @@ export const getRoomDetails = async (
 /*
  * PATCH /api/rooms/:id/members/:userId ルームメンバー更新
  */
-export const updateRoomMember = async (
-	request: FastifyRequest<UpdateMemberRoute>,
+export const updateRoomMemberRole = async (
+	request: FastifyRequest<UpdateRoomMemberRoleRoute>,
 	reply: FastifyReply
 ) => {
-	const { id: roomId, userId } = request.params;
-	const room = await prisma.room.update({
-		where: {
-			id: roomId,
-		},
-		data: {
-		}
-	})
-	return reply.code(200).send(room);
+	const { id: roomId, userId: userId } = request.params;
+	const { role } = request.body;
+	try {
+		const room = await prisma.roomMember.update({
+			where: {
+				room_id_user_id: {
+					room_id: Number(roomId),
+					user_id: Number(userId),
+				}
+			},
+			data: {
+				role: role,
+			}
+		})
+		return reply.code(200).send(room);
+	} catch (error) {
+		console.log(error);
+		return reply.code(500).send({ error: 'Failed to update room member role' });
+	}
 }
 
 /*
 * PATCH /api/rooms/${roomId}/game-mode ゲームモード変更
 */
-export const upateGameMode = async (
+export const updateGameMode = async (
 	request: FastifyRequest<UpdateGameModeRoute>,
 	reply: FastifyReply
 ) => {
-	
+	try {
+		const roomId = Number(request.params.roomId);
+		const room = await prisma.room.update({
+			where: {
+				id: roomId,
+			},
+			data: {
+				game_mode: request.body.mode,
+			}
+		})
+		return reply.code(200).send(room);
+	} catch (error) {
+		console.log(error);
+		return reply.code(500).send({ error: 'Failed to update game mode' });
+}
 }
