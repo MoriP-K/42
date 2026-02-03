@@ -112,5 +112,5 @@ enum RoomStatus {
 
 enum UserRole {
   PLAYER
-  SPECTOR
+  SPECTATOR
 }

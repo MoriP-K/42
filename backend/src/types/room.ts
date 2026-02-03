@@ -28,3 +28,25 @@ export type GetRoomParams = z.infer<typeof GetRoomParamsSchema>;
 export interface GetRoomRoute {
 	Params: GetRoomParams;
 }
+
+/**
+ * PATCH /api/rooms/:roomId/game-mode パラメータ型
+ */
+export const UpdateGameModeParamsSchema = z.object({
+	roomId: z.coerce.number(),
+});
+
+/**
+ * PATCH /api/rooms/:roomId/game-mode ボディ型
+ */
+export const UpdateGameModeBodySchema = z.object({
+	mode: z.enum(['DEFAULT', 'ONE_STROKE']),
+});
+
+export type UpdateGameModeParams = z.infer<typeof UpdateGameModeParamsSchema>;
+export type UpdateGameModeBody = z.infer<typeof UpdateGameModeBodySchema>;
+
+export interface UpdateGameModeRoute {
+	Params: UpdateGameModeParams;
+	Body: UpdateGameModeBody;
+}

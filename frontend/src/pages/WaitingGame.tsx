@@ -1,48 +1,47 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { roomApi } from '../api/roomApi'
-
-interface User {
-	id: number;
-	name: string;
-	role: 'player' | 'spectator';
-}
+import { roomApi } from '../api/roomApi';
+import { GameMode, Role, type User } from '../types/room';
+import Toast from '../components/Toast';
 
 const WaitingGame = () => {
 	const location = useLocation();
-	const [me] = useState<User>({ id: 1, name: 'MORI', role: 'player' }); // ログイン後自分のデータを取得する
+	const [me] = useState<User>({ id: 1, name: 'MORI', role: Role.PLAYER }); // ログイン後自分のデータを取得する
 	const navigate = useNavigate();
 
 	const [users, setUsers] = useState<User[]>([
 		{ id: me.id, name: me.name, role: me.role },
-		{ id: 2, name: 'KEN', role: 'player' },
-		{ id: 3, name: 'FUNA', role: 'player' },
-		{ id: 4, name: 'NUSU', role: 'player' },
+		{ id: 2, name: 'KEN', role: Role.PLAYER },
+		{ id: 3, name: 'FUNA', role: Role.PLAYER },
+		{ id: 4, name: 'NUSU', role: Role.PLAYER },
 	]);
 
-	const [gameMode, setGameMode] = useState('default');
+	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
-	const isHost = location.state?.hostId === me.id;
-	const roomId = location.state?.roomId;
+	const [isHost, setIsHost] = useState(location.state?.hostId === me.id);
+	const [roomId, setRoomId] = useState(location.state?.roomId);
 
-	const toggleRole = (id: number) => {
+	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
-		
-		setUsers(prevUser =>
-			prevUser.map(user =>
-				user.id === id
-					? { ...user, role: user.role === 'player' ? 'spectator' : 'player' }
-					: user
-			)
-		);
+		const targetUser = users.find(user => user.id === id);
+		if (!targetUser)
+			return;
+		const newRole = targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
+		try {
+			const res = await roomApi.updateRoomMemberRole(roomId, id, newRole);
+			// setUsers();
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	// ゲームモード変更 API叩く hostのみ変更可能
 	const updateGameMode = async (mode: string) => {
 		try {
 			const res = await roomApi.updateGameMode(roomId, mode);
-			if (res.status === 200) {
-				setGameMode(mode);
+			console.log(res);
+			if (res && res.game_mode === mode) {
+				setGameMode(res.game_mode);
 			}
 		} catch (error) {
 			console.log(error);
@@ -60,14 +59,10 @@ const WaitingGame = () => {
 			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
 				{/* トースト通知 */}
 				{showToast && (
-					<div className="toast toast-top toast-center">
-						<div className="alert alert-success shadow-lg border-none bg-emerald-500 text-white">
-							<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-							<span className="font-bold">招待URLをコピーしました！</span>
-						</div>
-					</div>
+					<Toast
+						type="success"
+						message="招待URLをコピーしました！"
+					/>
 				)}
 				<div>Waiting Game</div>
 
@@ -133,9 +128,9 @@ const WaitingGame = () => {
 					</h3>
 					<div className="bg-base-200 p-1 rounded-xl flex gap-1 shadow-inner">
 						<button
-							onClick={() => updateGameMode('default')}
+							onClick={() => updateGameMode(GameMode.DEFAULT)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'default'
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === GameMode.DEFAULT
 								? 'bg-white text-indigo-700 font-bold shadow-md scale-[1.02]'
 								: 'text-gray-500 hover:bg-base-300'
 								}`}
@@ -143,9 +138,9 @@ const WaitingGame = () => {
 							デフォルト
 						</button>
 						<button
-							onClick={() => updateGameMode('one-stroke')}
+							onClick={() => updateGameMode(GameMode.ONE_STROKE)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === 'one-stroke'
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === GameMode.ONE_STROKE
 								? 'bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]'
 								: 'text-gray-500 hover:bg-base-300'
 								}`}
