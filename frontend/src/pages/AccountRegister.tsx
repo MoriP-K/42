@@ -6,6 +6,8 @@ import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
 import BackButton from '../components/BackButton'
 import { useNavigate } from "react-router-dom"
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../features/auth/useAuth'
 
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
@@ -21,6 +23,13 @@ const AccountRegister = () => {
 
 	const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>>>({})
 	const [serverError, setServerError] = useState<string | null>(null)
+
+	const { isAuthenticated } = useAuth()
+
+	// すでにログイン認証済みだったら、ホーム画面に自動遷移する
+	if (isAuthenticated) {
+		return <Navigate to="/" replace />
+	}
 
 	const validateRequired = () => {
 		const nextErrors: Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>> = {}
