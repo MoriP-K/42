@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { roomApi } from '../api/roomApi';
 import { GameMode, Role, type User } from '../types/room';
 import Toast from '../components/Toast';
 
 const WaitingGame = () => {
-	const location = useLocation();
 	const [me] = useState<User>({ id: 1, name: 'MORI', role: Role.PLAYER }); // ログイン後自分のデータを取得する
 	const navigate = useNavigate();
 
@@ -18,8 +17,22 @@ const WaitingGame = () => {
 
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
+	const { id: roomId } = useParams();
+	const location = useLocation();
 	const [isHost, setIsHost] = useState(location.state?.hostId === me.id);
-	const [roomId, setRoomId] = useState(location.state?.roomId);
+
+	useEffect(() => {
+		const getRoomDetails = async () => {
+			try {
+				const res = await roomApi.getRoomDetails(Number(roomId));
+				setIsHost(res.host_id === me.id);
+				setGameMode(res.game_mode);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		getRoomDetails();
+	}, []);
 
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
@@ -28,7 +41,9 @@ const WaitingGame = () => {
 			return;
 		const newRole = targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
 		try {
-			const res = await roomApi.updateRoomMemberRole(roomId, id, newRole);
+			const res = await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
+			console.log(res);
+
 			// setUsers();
 		} catch (error) {
 			console.log(error);
@@ -38,7 +53,7 @@ const WaitingGame = () => {
 	// ゲームモード変更 API叩く hostのみ変更可能
 	const updateGameMode = async (mode: string) => {
 		try {
-			const res = await roomApi.updateGameMode(roomId, mode);
+			const res = await roomApi.updateGameMode(Number(roomId), mode);
 			console.log(res);
 			if (res && res.game_mode === mode) {
 				setGameMode(res.game_mode);

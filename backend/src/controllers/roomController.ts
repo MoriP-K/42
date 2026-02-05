@@ -29,7 +29,7 @@ export const getRoomDetails = async (
 ) => {
 	const room = await prisma.room.findUnique({
 		where: {
-			id: request.params.id,
+			id: Number(request.params.id),
 		}
 	})
 	return reply.code(200).send(room);
@@ -42,7 +42,7 @@ export const updateRoomMemberRole = async (
 	request: FastifyRequest<UpdateRoomMemberRoleRoute>,
 	reply: FastifyReply
 ) => {
-	const { id: roomId, userId: userId } = request.params;
+	const { roomId, userId } = request.params;
 	const { role } = request.body;
 	try {
 		const room = await prisma.roomMember.update({

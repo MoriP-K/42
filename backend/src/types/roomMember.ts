@@ -4,7 +4,7 @@ import { z } from 'zod';
  * PATCH /api/rooms/:roomId/members/:userId パラメータ型
  */
 export const UpdateRoomMemberParamsSchema = z.object({
-	id: z.coerce.number(),
+	roomId: z.coerce.number(),
 	userId: z.coerce.number(),
 });
 
