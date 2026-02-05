@@ -8,7 +8,7 @@ const WaitingGame = () => {
 	const [me] = useState<User>({ id: 1, name: 'MORI', role: Role.PLAYER }); // ログイン後自分のデータを取得する
 	const navigate = useNavigate();
 
-	const [users, setUsers] = useState<User[]>([
+	const [users, _setUsers] = useState<User[]>([
 		{ id: me.id, name: me.name, role: me.role },
 		{ id: 2, name: 'KEN', role: Role.PLAYER },
 		{ id: 3, name: 'FUNA', role: Role.PLAYER },
