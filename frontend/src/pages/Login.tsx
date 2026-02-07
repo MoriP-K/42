@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../features/auth/useAuth'
 import { authApi } from '../api/authApi'
+import { ApiError } from '../api/apiClient'
 import Footer from "../components/footer/Footer"
 import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
@@ -34,10 +35,30 @@ const Login = () => {
 		return (Object.keys(nextErrors).length === 0)
 	}
 
+	const normalizeErrResponse = (err: unknown) => {
+		if (!(err instanceof ApiError)) {
+			return {
+				message: err instanceof Error ? err.message : '予期しないエラーが発生しました',
+			}
+		}
+
+		const body = typeof err.data === 'object' && err.data !== null ? (err.data as { field?: unknown; message?: unknown }) : null
+		const message = typeof body?.message === 'string' ? body.message : null
+
+		if (message !== null) {
+			return {
+				message: message,
+			}
+		}
+
+		return {
+			message: '予期しないエラーが発生しました',
+		}
+	}
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setServerError(null)
-		setFieldErrors({})
 
 		// 未入力チェック
 		if (!validateRequired())
@@ -50,12 +71,7 @@ const Login = () => {
 		} catch (err) {
 			// レスポンスの正規化
 			const result = normalizeErrResponse(err)
-
-			if (result.type === 'field') {
-				setFieldErrors((prev) => ({ ...prev, [result.field]: result.message }))
-			} else {
-				setServerError(result.message)
-			}
+			setServerError(result.message)
 		}
 	}
 
