@@ -22,7 +22,7 @@ export async function seedRooms(prisma: PrismaClient) {
 			id: 1,
 			host_id: funa.id,
 			game_mode: 'DEFAULT',
-			status: 'WATING',
+			status: 'WAITING',
 			invitation_token: randomUUID(),
 			members: {
 				create: [
@@ -59,7 +59,7 @@ export async function seedRooms(prisma: PrismaClient) {
 			id: 2,
 			host_id: ken.id,
 			game_mode: 'ONE_STROKE',
-			status: 'WATING',
+			status: 'WAITING',
 			invitation_token: randomUUID(),
 			members: {
 				create: [

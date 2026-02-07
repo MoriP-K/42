@@ -28,20 +28,20 @@ function App() {
 				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
 				{/* ↓未ログイン状態でアクセスした場合、ログイン画面にリダイレクトされるページ */}
-				<Route
+				{/* <Route
 					path="/"
 					element={
 						<RequireAuth>
 							<Outlet />
 						</RequireAuth>
 					}
-				>
+				> */}
 					<Route index element={<Home />} />
 					<Route path="waiting-game/:id" element={<WaitingGame />} />
 					<Route path="prepare/:id" element={<Prepare />} />
 					<Route path="game" element={<Game />} />
 					<Route path="profile" element={<Profile />} />
-				</Route>
+				{/* </Route> */}
 			</Routes >
 		</BrowserRouter >
 	)

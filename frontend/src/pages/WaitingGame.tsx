@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { roomApi } from '../api/roomApi';
-import { GameMode, Role, type User } from '../types/room';
+import { GameMode, Role, type User, type RoomDetails } from '../types/room';
 import Toast from '../components/Toast';
 
 const WaitingGame = () => {
 	const [me] = useState<User>({ id: 1, name: 'MORI', role: Role.PLAYER }); // ログイン後自分のデータを取得する
 	const navigate = useNavigate();
 
-	const [users, _setUsers] = useState<User[]>([
-		{ id: me.id, name: me.name, role: me.role },
-		{ id: 2, name: 'KEN', role: Role.PLAYER },
-		{ id: 3, name: 'FUNA', role: Role.PLAYER },
-		{ id: 4, name: 'NUSU', role: Role.PLAYER },
-	]);
+	const [users, setUsers] = useState<User[]>([]);
+
+	// usersの変更を監視してログ出力
+	useEffect(() => {
+		if (users.length > 0) {
+			console.log('現在のusers:', users);
+		}
+	}, [users]);
 
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
@@ -24,15 +26,22 @@ const WaitingGame = () => {
 	useEffect(() => {
 		const getRoomDetails = async () => {
 			try {
-				const res = await roomApi.getRoomDetails(Number(roomId));
+				const res = await roomApi.getRoomDetails(Number(roomId)) as RoomDetails;
 				setIsHost(res.host_id === me.id);
 				setGameMode(res.game_mode);
+				const mappedUsers = res.members.map(member => ({
+					id: member.user.id,
+					name: member.user.name,
+					role: member.role,
+				}));
+				setUsers(mappedUsers);
+				console.log('取得したユーザーデータ:', mappedUsers);
 			} catch (error) {
 				console.log(error);
 			}
 		}
 		getRoomDetails();
-	}, []);
+	}, [me.id, roomId]);
 
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
@@ -43,6 +52,9 @@ const WaitingGame = () => {
 		try {
 			const res = await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
 			console.log(res);
+			setUsers(users.map(user => (
+				user.id === id ? { ...user, role: newRole } : user
+			)));
 
 			// setUsers();
 		} catch (error) {
@@ -102,6 +114,7 @@ const WaitingGame = () => {
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
+											checked={user.role === Role.PLAYER}
 											onChange={() => toggleRole(user.id)}
 											disabled={!isHost && user.id !== me.id}
 										/>

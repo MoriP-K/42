@@ -15,10 +15,16 @@ export const createRoom = async (
 		data: {
 			host_id: request.body.hostId,
 			invitation_token: randomUUID(),
-		}
-	})
+			members: {
+				create: {
+					user_id: request.body.hostId,
+					role: 'PLAYER'
+				}
+			}
+		},
+	});
 	return reply.code(201).send(room);
-}
+};
 
 /*
  * GET /api/rooms/:id ルーム詳細取得
@@ -30,10 +36,17 @@ export const getRoomDetails = async (
 	const room = await prisma.room.findUnique({
 		where: {
 			id: Number(request.params.id),
+		},
+		include: {
+			members: {
+				include: {
+					user: true
+				}
+			}
 		}
-	})
+	});
 	return reply.code(200).send(room);
-}
+};
 
 /*
  * PATCH /api/rooms/:id/members/:userId ルームメンバー更新
@@ -50,22 +63,22 @@ export const updateRoomMemberRole = async (
 				room_id_user_id: {
 					room_id: Number(roomId),
 					user_id: Number(userId),
-				}
+				},
 			},
 			data: {
 				role: role,
-			}
-		})
+			},
+		});
 		return reply.code(200).send(room);
 	} catch (error) {
 		console.log(error);
 		return reply.code(500).send({ error: 'Failed to update room member role' });
 	}
-}
+};
 
 /*
-* PATCH /api/rooms/${roomId}/game-mode ゲームモード変更
-*/
+ * PATCH /api/rooms/${roomId}/game-mode ゲームモード変更
+ */
 export const updateGameMode = async (
 	request: FastifyRequest<UpdateGameModeRoute>,
 	reply: FastifyReply
@@ -78,11 +91,11 @@ export const updateGameMode = async (
 			},
 			data: {
 				game_mode: request.body.mode,
-			}
-		})
+			},
+		});
 		return reply.code(200).send(room);
 	} catch (error) {
 		console.log(error);
 		return reply.code(500).send({ error: 'Failed to update game mode' });
-}
-}
+	}
+};
