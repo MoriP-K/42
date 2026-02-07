@@ -10,13 +10,6 @@ const WaitingGame = () => {
 
 	const [users, setUsers] = useState<User[]>([]);
 
-	// usersの変更を監視してログ出力
-	useEffect(() => {
-		if (users.length > 0) {
-			console.log('現在のusers:', users);
-		}
-	}, [users]);
-
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
@@ -35,7 +28,6 @@ const WaitingGame = () => {
 					role: member.role,
 				}));
 				setUsers(mappedUsers);
-				console.log('取得したユーザーデータ:', mappedUsers);
 			} catch (error) {
 				console.log(error);
 			}
@@ -49,15 +41,17 @@ const WaitingGame = () => {
 		if (!targetUser)
 			return;
 		const newRole = targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
+		const oldRole = targetUser.role;
 		try {
-			const res = await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
-			console.log(res);
-			setUsers(users.map(user => (
+			await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
+			setUsers(prevUser =>
+				prevUser.map(user => (
 				user.id === id ? { ...user, role: newRole } : user
 			)));
-
-			// setUsers();
 		} catch (error) {
+			setUsers(prevUser =>
+				prevUser.map(user => (user.id === id ? { ...user, role: oldRole } : user))
+			);
 			console.log(error);
 		}
 	};
@@ -66,7 +60,6 @@ const WaitingGame = () => {
 	const updateGameMode = async (mode: string) => {
 		try {
 			const res = await roomApi.updateGameMode(Number(roomId), mode);
-			console.log(res);
 			if (res && res.game_mode === mode) {
 				setGameMode(res.game_mode);
 			}
