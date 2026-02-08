@@ -1,11 +1,12 @@
 import { apiClient } from './apiClient';
+import { type AuthUser } from '../types/user';
 
 /**
  * ユーザー関連のAPI定義
  */
 export const authApi = {
 	// GET /api/me
-	me: async (): Promise<{ id: number; name: string }> => {
+	me: async (): Promise<AuthUser> => {
 		return apiClient('/me', { credentials: 'include' });
 	},
 
