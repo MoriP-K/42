@@ -1,25 +1,29 @@
+import { z } from 'zod';
+
 /**
  * auth系API共通レスポンス型
  */
 
-
 /**
  * ユーザー名を返す成功レスポンス型 POST→201 その他→200
  */
-export interface AuthSuccessResponse {
-	name: string;
-}
+export const AuthSuccessResponse = z.object({
+	name: z.string(),
+});
+export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponse>;
 
 /**
- * エラーレスポンス型 (401)
+ * エラーレスポンス型 (400/401)
  */
-export interface AuthErrorResponse {
-	message: string;
-}
+export const AuthErrorResponse = z.object({
+	message: z.string(),
+});
+export type AuthErrorResponse = z.infer<typeof AuthErrorResponse>;
 
 /**
  * サーバーエラーレスポンス型 (500)
  */
-export interface AuthServerErrorResponse {
-	message: string;
-}
+export const AuthServerErrorResponse = z.object({
+	message: z.string(),
+});
+export type AuthServerErrorResponse = z.infer<typeof AuthServerErrorResponse>;
