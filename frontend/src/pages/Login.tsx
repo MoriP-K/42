@@ -78,6 +78,7 @@ const Login = () => {
 	return (
 		<>
 			{/* ヘッダー */}
+			{/* TODO: ゲームタイトル */}
 			<div className="text-center mb-4">
 				<span className="text-2xl font-bold">ログイン画面</span>
 			</div>
@@ -137,6 +138,7 @@ const Login = () => {
 
 			</AuthFormShell>
 
+			{/* TODO: 新規アカウント登録ボタン */}
 			{/* フッター */}
 			<Footer />
 		</>
