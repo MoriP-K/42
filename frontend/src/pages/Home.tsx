@@ -1,13 +1,14 @@
-import Footer from '../components/footer/Footer';
-import { useState } from 'react';
-import { roomApi } from '../api/roomApi';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../features/auth/useAuth';
+import { roomApi } from '../api/roomApi';
+import Footer from '../components/footer/Footer';
 
 function Home() {
 	const navigate = useNavigate();
-	const [user] = useState({ id: 1 });
+	const { isAuthenticated, user } = useAuth();
 
 	const handleCreateRoom = async () => {
+		if (!isAuthenticated || !user) return;
 		try {
 			const room = await roomApi.createRoom(user.id);
 			if (!room) throw new Error('Room cannot be created');

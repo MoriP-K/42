@@ -7,12 +7,9 @@ import { GameMode, type RoomDetails } from '../types/room';
 import Toast from '../components/Toast';
 
 const WaitingGame = () => {
-	const { user } = useAuth();
-	// const [me] = useState<User>({ id: 1, name: 'MORI' }); // ログイン後自分のデータを取得する
+	const { user } = useAuth(); // login中ユーザの情報
 	const navigate = useNavigate();
-
 	const [users, setUsers] = useState<User[]>([]);
-
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
