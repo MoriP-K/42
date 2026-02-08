@@ -52,7 +52,7 @@ export const login = async (
 	const parsed = LoginRequest.safeParse(request.body);
 	if (!parsed.success) {
 		return reply.code(400).send({
-			message: 'メールアドレスまたはパスワードが正しくありません'
+			message: '入力に不備があります。'
 		});
 	}
 	const { email, password } = parsed.data;
@@ -67,14 +67,14 @@ export const login = async (
 		});
 
 		if (!user) {
-			return reply.code(400).send({
+			return reply.code(401).send({
 				message: 'メールアドレスまたはパスワードが正しくありません'
 			});
 		}
 
 		const ok = await bcrypt.compare(password, user.password);
 		if (!ok) {
-			return reply.code(400).send({
+			return reply.code(401).send({
 				message: 'メールアドレスまたはパスワードが正しくありません'
 			});
 		}

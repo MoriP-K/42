@@ -66,7 +66,8 @@ const Login = () => {
 
 		try {
 			await authApi.login({ email, password })
-			//todo トーストの表示
+			//TODO: トーストの表示
+			//TODO: 元々アクセスしようとしていたページに戻す(?)
 			navigate('/');
 		} catch (err) {
 			// レスポンスの正規化
