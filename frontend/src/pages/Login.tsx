@@ -130,7 +130,7 @@ const Login = () => {
 						id: 'password',
 						type: 'password',
 						name: 'password',
-						autoComplete: 'password',
+						autoComplete: 'current-password',
 						value: password,
 						onChange: (e) => setPassword(e.target.value),
 					}}

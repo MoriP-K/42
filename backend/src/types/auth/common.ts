@@ -13,7 +13,7 @@ export const AuthSuccessResponse = z.object({
 export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponse>;
 
 /**
- * エラーレスポンス型 (401)
+ * エラーレスポンス型 (400/401)
  */
 export const AuthErrorResponse = z.object({
 	message: z.string(),
