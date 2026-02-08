@@ -73,7 +73,7 @@ model Room {
   game_mode        GameMode     @default(DEFAULT)
   host_id          Int
   invitation_token String?
-  status           RoomStatus   @default(WATING)
+  status           RoomStatus   @default(WAITING)
   created_at       DateTime     @default(now())
 
   // relation
@@ -119,7 +119,7 @@ enum GameMode {
 }
 
 enum RoomStatus {
-  WATING
+  WAITING
   PLAYING
   RESULT
   FINISHED
@@ -127,5 +127,5 @@ enum RoomStatus {
 
 enum UserRole {
   PLAYER
-  SPECTOR
+  SPECTATOR
 }
