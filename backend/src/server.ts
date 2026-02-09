@@ -14,6 +14,7 @@ const fastify = Fastify({
 // CORS設定 (Reactアプリからのリクエストを許可)
 fastify.register(cors, {
 	origin: true, // 開発環境なので全て許可 (本番では制限を推奨)
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 	credentials: true, // Cookieを送受信するため
 });
 

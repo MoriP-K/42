@@ -1,12 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
 	RegisterRequest,
-	RegisterSuccessResponse,
 	RegisterErrorResponse,
 	RegisterRoute
-} from '../../types/register';
+} from '../../types/auth/register';
 import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
+import { createSessionAndSetCookie } from './loginController'
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -118,7 +118,13 @@ const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
 
 /**
  * POST /api/register
- * ユーザー登録エンドポイント
+ *
+ * 成功: 201 { name }
+ * 失敗(パラメータ不備): 400 { field, message }
+ * 失敗(サーバーエラー): 500 { message }
+ *
+ * パラメーターに不備がないか確認後、アカウントを新規作成。
+ * 作成したアカウントでログイン処理をした状態でレスポンスを返す。
  */
 export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,
@@ -153,18 +159,17 @@ export const registerUser = async (
 			}
 		});
 
-		// ダミーレスポンス成功時 (201)
-		const successResponse: RegisterSuccessResponse = {
-			userId: createdUser.id
-		};
-
-		//TODO:ここからログイン処理
-		// 1. セッションIDを生成
-		// 2. セッションIDとuserIDを紐づけて保存
-		// 3. クッキーに設定し、レスポンスを返す
-
-		//TODO: クッキーにセッションIDをセットしてレスポンスを返す
-		return (reply.code(201).send(successResponse));
+		// 登録成功後、そのままログイン（セッション作成＋Cookieセット）して返す
+		try {
+			const successResponse = await createSessionAndSetCookie(reply, createdUser.id);
+			return reply.code(201).send(successResponse);
+		} catch (err) {
+			request.log?.error?.(err);
+			//TODO: アカウント登録はできたが、ログインに失敗した場合の処理書く。この場合、ログイン画面にリダイレクトする。
+			return reply.code(500).send({
+				message: 'ユーザー登録は完了しましたが、自動ログイン中にエラーが発生しました。ログイン画面から再度ログインしてください。'
+			});
+		}
 
 	} catch (err) {
 		request.log?.error?.(err);

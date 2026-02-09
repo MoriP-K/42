@@ -5,6 +5,9 @@ import { ApiError } from '../api/apiClient'
 import { AuthFormShell } from '../components/auth/AuthFormShell'
 import { AuthTextField } from '../components/auth/AuthTextField'
 import BackButton from '../components/BackButton'
+import { useNavigate } from "react-router-dom"
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../features/auth/useAuth'
 
 type RegisterError =
 	| { type: 'field'; field: 'name' | 'email' | 'password'; message: string }
@@ -12,6 +15,7 @@ type RegisterError =
 	| { type: 'unknown'; message: string }
 
 const AccountRegister = () => {
+	const navigate = useNavigate();
 	const [name, setName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -19,6 +23,13 @@ const AccountRegister = () => {
 
 	const [fieldErrors, setFieldErrors] = useState<Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>>>({})
 	const [serverError, setServerError] = useState<string | null>(null)
+
+	const { isAuthenticated } = useAuth()
+
+	// すでにログイン認証済みだったら、ホーム画面に自動遷移する
+	if (isAuthenticated) {
+		return <Navigate to="/" replace />
+	}
 
 	const validateRequired = () => {
 		const nextErrors: Partial<Record<'name' | 'email' | 'password' | 'passwordConfirm', string>> = {}
@@ -85,7 +96,7 @@ const AccountRegister = () => {
 
 		try {
 			await authApi.register({ name, email, password })
-			// TODO: 成功時のページ遷移処理をする
+			navigate('/');
 		} catch (err) {
 			// レスポンスの正規化
 			const result = normalizeErrResponse(err)
