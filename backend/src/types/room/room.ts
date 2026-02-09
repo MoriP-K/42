@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { WebSocket } from 'ws';
 import { GameModeEnum, RoomIdParamsSchema } from "./common";
 
 /**
@@ -46,3 +47,12 @@ export interface UpdateGameModeRoute {
 	Params: UpdateGameModeParams;
 	Body: UpdateGameModeBody;
 }
+
+/**
+ * WebSocket用 ルームクライアント型
+ */
+export interface RoomClient {
+	socket: WebSocket,
+	userId: string,
+	roomId: string,
+};

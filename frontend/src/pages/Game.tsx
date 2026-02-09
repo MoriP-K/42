@@ -18,6 +18,15 @@ const Game = () => {
 
 		ws.onopen = () => {
 			console.log('✅ WebSocket connected');
+
+			const tempUserId = 'user-' + Math.random().toString(36).substring(2, 9);
+			const tempRoomId = 'room-test-2';
+
+			ws.send(JSON.stringify({
+				type: 'join',
+				userId: tempUserId,
+				roomId: tempRoomId,
+			}));
 		};
 
 		ws.onmessage = (event) => {
