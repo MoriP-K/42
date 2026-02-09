@@ -58,23 +58,23 @@ const AccountRegister = () => {
 		}
 
 		const body = typeof err.data === 'object' && err.data !== null ? (err.data as { field?: unknown; message?: unknown }) : null
-		const field = typeof body?.field === 'string' ? body.field : null
+		// const field = typeof body?.field === 'string' ? body.field : null
 		const message = typeof body?.message === 'string' ? body.message : null
 
-		if (err.status === 400 && field !== null && message !== null) {
-			if (field === 'name' || field === 'email' || field === 'password') {
+		// if (err.status === 400 && field !== null && message !== null) {
+		// 	if (field === 'name' || field === 'email' || field === 'password') {
 
-				return {
-					type: 'field',
-					field: field,
-					message: message,
-				}
-			}
-		}
+		// 		return {
+		// 			type: 'field',
+		// 			field: field,
+		// 			message: message,
+		// 		}
+		// 	}
+		// }
 
-		if (err.status === 500 && message !== null) {
+		if (message !== null) {
 			return {
-				type: 'server',
+				type: 'unknown',
 				message: message,
 			}
 		}

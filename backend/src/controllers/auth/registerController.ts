@@ -131,10 +131,20 @@ export const registerUser = async (
 	reply: FastifyReply<RegisterRoute>
 ) => {
 
-	const validationResult = validateRegisterRequest(request.body);
-	if (!validationResult.success) {
-		return (reply.code(400).send(validationResult.error));
+	const parsed = RegisterRequest.safeParse(request.body);
+	if (!parsed.success) {
+		const issue = parsed.error.issues[0];
+		const message = issue?.message ?? "test";
+
+		return reply.code(400).send({
+			// field,
+			message,
+		})
 	}
+	// const validationResult = validateRegisterRequest(request.body);
+	// if (!validationResult.success) {
+	// 	return (reply.code(400).send(validationResult.error));
+	// }
 
 	try {
 		// emailの重複チェック
