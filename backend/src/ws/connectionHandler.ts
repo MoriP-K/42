@@ -1,12 +1,7 @@
 import { WebSocket } from 'ws';
-
-import { handleChatMessage } from './chatHandler'
-
-interface RoomClient {
-	socket: WebSocket,
-	userId: string,
-	roomId: string,
-};
+import { RoomClient } from '../types/room';
+import { joinRoom, leaveRoom, broadcastToRoom } from './roomManager';
+import { handleChatMessage } from './chatHandler';
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -25,11 +20,18 @@ export const handleConnection = (socket: WebSocket) => {
 					roomId: data.roomId,
 				};
 
+				joinRoom(currentClient);
+
 				socket.send(JSON.stringify({
 					type: 'joined',
 					roomId: data.roomId,
 					userId: data.userId,
 				}));
+
+				broadcastToRoom(data.roomId, {
+					type: 'userJoined',
+					userId: data.userId,
+				});
 
 				return ;
 			}
@@ -54,7 +56,12 @@ export const handleConnection = (socket: WebSocket) => {
 
 	socket.on('close', () => {
 		if (currentClient) {
-			;
+			broadcastToRoom(currentClient.roomId, {
+				type: 'userLeft',
+				userId: currentClient.userId,
+			});
+
+			leaveRoom(currentClient);
 		}
 		console.log("🔌 Client disconnected");
 	});
