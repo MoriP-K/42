@@ -6,7 +6,7 @@ import {
 } from '../../types/auth/register';
 import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
-import { login } from './loginController'
+import { createSessionAndSetCookie } from './loginController'
 
 type ValidateResult = { success: true } | { success: false; error: RegisterErrorResponse };
 
@@ -161,7 +161,7 @@ export const registerUser = async (
 
 		// 登録成功後、そのままログイン（セッション作成＋Cookieセット）して返す
 		try {
-			const successResponse = await login(reply, createdUser.id);
+			const successResponse = await createSessionAndSetCookie(reply, createdUser.id);
 			return reply.code(201).send(successResponse);
 		} catch (err) {
 			request.log?.error?.(err);

@@ -17,4 +17,13 @@ export const authApi = {
 			credentials: 'include'
 		});
 	},
+
+	// POST /api/login
+	login: async (data: { email: string; password: string }) => {
+		return apiClient('/login', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			credentials: 'include'
+		});
+	},
 };
