@@ -34,27 +34,38 @@ export const getProfile = async (
 	request: FastifyRequest<ProfileRoute>,
 	reply: FastifyReply<ProfileRoute>
 ) => {
-	const userId = Number(request.query.userId);
+	const sessionId = request.cookies["session_id"];
+	const session = await prisma.session.findUnique({
+		where: { id: sessionId },
+		include: { user: true },
+	});
+	console.log(session);
+	if (!session || !session.user) {
+		return reply.code(401).send({ message: "Invalid Session" });
+	}
+
+	const userId = Number(session.user.id);
+	console.log("userId " + userId);
+
 	const user = await prisma.user.findUnique({
-		where: { id: Number((request.query as { userId: number }).userId) },
+		where: { id: userId },
 	});
 	if (!user) return reply.code(404).send({ message: "User not found" });
 
 	// userbadgesから取得
-	const user_badges = await prisma.userBadge.findMany({
+	const userBadgesWithDetails = await prisma.userBadge.findMany({
 		where: {
-			user_id: Number((request.query as { userId: number }).userId),
+			user_id: userId,
+		},
+		include: {
+			badge: true, // リレーション名を指定して実体を取得
 		},
 	});
-	let badges: Array<string> = new Array(0);
-	for (let i: number = 0; i < user_badges.length; i++) {
-		console.log(user_badges[i]);
-		badges.push(
-			await prisma.badge.findUnique({
-				where: { id: Number(user_badges[i].badge_id) },
-			})
-		);
-	}
+	console.log("userBadgesWithDetails  ");
+	console.log(userBadgesWithDetails);
+
+	// 取得した結果からバッジの実体だけを取り出す場合
+	// const badges = userBadgesWithDetails.map((ub) => ub.badge);
 
 	const data: ProfileSuccessResponse = {
 		name: user.name,

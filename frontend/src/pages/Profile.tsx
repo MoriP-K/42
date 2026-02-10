@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../api/apiClient";
+import { userApi } from "../api/userApi";
 import Footer from "../components/footer/Footer";
 import test1 from "../images/badges/food_kakuni_manju.png";
 import test2 from "../images/badges/food_ika_ikidukuri_naruko.png";
@@ -14,11 +14,7 @@ const Profile = () => {
 	useEffect(() => {
 		const fetchProfile = async () => {
 			try {
-				// バックエンドで取得するようにする
-				const currentUserId = 1;
-				const data = await apiClient(
-					`/profile?userId=${currentUserId}`
-				);
+				const data = await userApi.getProfile();
 				setProfileData(data);
 			} catch (error) {
 				console.error("データの取得に失敗しました", error);
