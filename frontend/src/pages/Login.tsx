@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../features/auth/useAuth'
+import { useNavigate } from 'react-router-dom'
 import { authApi } from '../api/authApi'
 import { ApiError } from '../api/apiClient'
 import Footer from "../components/footer/Footer"
@@ -15,13 +14,6 @@ const Login = () => {
 
 	const [fieldErrors, setFieldErrors] = useState<Partial<Record<'email' | 'password', string>>>({})
 	const [serverError, setServerError] = useState<string | null>(null)
-
-	const { isAuthenticated } = useAuth()
-
-	// すでにログイン認証済みだったら、ホーム画面に自動遷移する
-	if (isAuthenticated) {
-		return <Navigate to="/" replace />
-	}
 
 	const validateRequired = () => {
 		const nextErrors: Partial<Record<'email' | 'password', string>> = {}

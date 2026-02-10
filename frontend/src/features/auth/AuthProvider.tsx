@@ -14,7 +14,7 @@ const PUBLIC_PATHS = [
 	'/privacy-policy',
 ];
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [user, setUser] = useState<AuthUser | null>(null);
 
@@ -51,4 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
+
+export default AuthProvider;
