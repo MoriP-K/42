@@ -1,5 +1,5 @@
 # ワークフロー名（GitHub上に表示）
-name: CI
+name: format-check
 
 # いつ実行されるか
 on:
