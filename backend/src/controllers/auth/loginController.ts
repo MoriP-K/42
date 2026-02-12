@@ -24,6 +24,7 @@ export const createSessionAndSetCookie = async (reply: FastifyReply, userId: num
 		include: {
 			user: {
 				select: {
+					id: true,
 					name: true,
 				},
 			},
@@ -40,6 +41,7 @@ export const createSessionAndSetCookie = async (reply: FastifyReply, userId: num
 	});
 
 	const successResponse: AuthSuccessResponse = {
+		id: newSession.user.id,
 		name: newSession.user.name,
 	};
 	return (successResponse)

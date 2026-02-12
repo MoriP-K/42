@@ -8,6 +8,7 @@ import { z } from 'zod';
  * ユーザー名を返す成功レスポンス型 POST→201 その他→200
  */
 export const AuthSuccessResponse = z.object({
+	id: z.number(),
 	name: z.string(),
 });
 export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponse>;
