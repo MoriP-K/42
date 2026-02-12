@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { WebSocket } from 'ws';
+import { WebSocket } from "ws";
 import { GameModeEnum, RoomIdParamsSchema } from "./common";
 
 /**
@@ -55,4 +55,4 @@ export interface RoomClient {
 	socket: WebSocket;
 	userId: string;
 	roomId: string;
-};
+}

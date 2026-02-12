@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { createWebSocket } from '../api/wsClient';
+import { useState, useEffect } from "react";
+import { createWebSocket } from "../api/wsClient";
 
 import Timer from "../components/game/Timer";
 import Canvas from "../components/game/Canvas";
@@ -31,32 +31,32 @@ const Game = () => {
 			}));
 		};
 
-		ws.onmessage = (event) => {
+		ws.onmessage = event => {
 			try {
 				const data = JSON.parse(event.data);
-				console.log('✉️ Received: ', data);
+				console.log("✉️ Received: ", data);
 
-				if (data.type == 'chat') {
+				if (data.type == "chat") {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
 						text: data.text,
 						timestamp: new Date(data.timestamp),
-					}
+					};
 					setMessages(prev => [...prev, newMessage]);
 				}
 			} catch (error) {
-				console.error('❌ Failed to parse message:', error)
+				console.error("❌ Failed to parse message:", error);
 			}
 		};
 
-		ws.onerror = (error) => {
-			console.error('❌ WebSocket error: ', error);
+		ws.onerror = error => {
+			console.error("❌ WebSocket error: ", error);
 		};
 
 		ws.onclose = () => {
-			console.log('🔌 WebSocket disconnected');
-		}
+			console.log("🔌 WebSocket disconnected");
+		};
 
 		setSocket(ws);
 
@@ -67,21 +67,21 @@ const Game = () => {
 
 	// プレイヤーデータ
 	const [players] = useState([
-		{ id: 1, name: 'Ken', score: 0, isDrawing: true },
-		{ id: 2, name: 'Alice', score: 0, isDrawing: false },
-		{ id: 3, name: 'Bob', score: 0, isDrawing: false },
+		{ id: 1, name: "Ken", score: 0, isDrawing: true },
+		{ id: 2, name: "Alice", score: 0, isDrawing: false },
+		{ id: 3, name: "Bob", score: 0, isDrawing: false },
 	]);
 
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
-			console.error('❌ WebSocket not connected');
-			return ;
+			console.error("❌ WebSocket not connected");
+			return;
 		}
 
 		const message = {
-			type: 'chat',
+			type: "chat",
 			id: crypto.randomUUID(),
-			sender: 'Ken',
+			sender: "Ken",
 			text: text,
 			timestamp: new Date().toISOString(),
 		};
@@ -95,10 +95,12 @@ const Game = () => {
 
 	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
 	useEffect(() => {
-		if (timeLeft <= 0) // useEffectの停止条件: timeLeftが0以下になったら
-			return ;
+		if (timeLeft <= 0)
+			// useEffectの停止条件: timeLeftが0以下になったら
+			return;
 
-		const timer = setInterval(() => { // 1000msごとにsetInterval()の中の処理を実行する
+		const timer = setInterval(() => {
+			// 1000msごとにsetInterval()の中の処理を実行する
 			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
 		}, 1000);
 
@@ -114,7 +116,6 @@ const Game = () => {
 
 	return (
 		<div className="min-h-screen bg-base-200">
-
 			{/* ヘッダー */}
 			<div className="navbar bg-base-100 shadow-lg">
 				<div className="flex-1">
@@ -124,7 +125,6 @@ const Game = () => {
 
 			<div className="w-full max-w-[1280px] mx-auto px-8 py-8">
 				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
-
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
 						<Timer totalTime={totalTime} timeLeft={timeLeft} />
@@ -137,18 +137,18 @@ const Game = () => {
 
 						<div className="card bg-base-100 shadow-xl">
 							<div className="card-body p-0">
-								<h2 className="card-title font-mono text-base font-semibold mb-1">コメント</h2>
+								<h2 className="card-title font-mono text-base font-semibold mb-1">
+									コメント
+								</h2>
 								<ChatMessages messages={messages} />
-								<ChatInput onSendMessage={handleSendMessage}/>
+								<ChatInput onSendMessage={handleSendMessage} />
 							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
-
 		</div>
 	);
-}
+};
 
 export default Game;

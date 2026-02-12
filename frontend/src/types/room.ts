@@ -1,8 +1,8 @@
-import { Role, type User } from './user';
+import { Role, type User } from "./user";
 
 export const GameMode = {
-	DEFAULT: 'DEFAULT',
-	ONE_STROKE: 'ONE_STROKE',
+	DEFAULT: "DEFAULT",
+	ONE_STROKE: "ONE_STROKE",
 };
 
 export interface RoomMember {

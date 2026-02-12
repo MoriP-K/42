@@ -1,14 +1,25 @@
-import fastify, { FastifyRequest, FastifyReply, FastifyRouterOptions } from 'fastify';
-import { prisma } from '../lib/prisma';
-import { randomUUID } from 'node:crypto';
-import { CreateRoomRoute, GetRoomRoute, UpdateGameModeRoute } from '../types/room/room';
-import { UpdateRoomMemberRoleRoute } from '../types/room/roomMember';
-import { RoomMemberRoute } from '../types/room/common';
+import fastify, {
+	FastifyRequest,
+	FastifyReply,
+	FastifyRouterOptions,
+} from "fastify";
+import { prisma } from "../lib/prisma";
+import { randomUUID } from "node:crypto";
+import {
+	CreateRoomRoute,
+	GetRoomRoute,
+	UpdateGameModeRoute,
+} from "../types/room/room";
+import { UpdateRoomMemberRoleRoute } from "../types/room/roomMember";
+import { RoomMemberRoute } from "../types/room/common";
 
 /*
  * POST /api/rooms ルーム作成
  */
-export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply: FastifyReply) => {
+export const createRoom = async (
+	request: FastifyRequest<CreateRoomRoute>,
+	reply: FastifyReply,
+) => {
 	const room = await prisma.room.create({
 		data: {
 			host_id: request.body.hostId,
@@ -16,7 +27,7 @@ export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply
 			members: {
 				create: {
 					user_id: request.body.hostId,
-					role: 'PLAYER',
+					role: "PLAYER",
 				},
 			},
 		},
@@ -29,7 +40,7 @@ export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply
  */
 export const getRoomDetails = async (
 	request: FastifyRequest<GetRoomRoute>,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	const room = await prisma.room.findUnique({
 		where: {
@@ -51,7 +62,7 @@ export const getRoomDetails = async (
  */
 export const updateRoomMemberRole = async (
 	request: FastifyRequest<UpdateRoomMemberRoleRoute>,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	const { roomId, userId } = request.params;
 	const { role } = request.body;
@@ -70,7 +81,9 @@ export const updateRoomMemberRole = async (
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
 		console.log(error);
-		return reply.code(500).send({ error: 'Failed to update room member role' });
+		return reply
+			.code(500)
+			.send({ error: "Failed to update room member role" });
 	}
 };
 
@@ -79,7 +92,7 @@ export const updateRoomMemberRole = async (
  */
 export const updateGameMode = async (
 	request: FastifyRequest<UpdateGameModeRoute>,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	try {
 		const roomId = Number(request.params.roomId);
@@ -94,7 +107,7 @@ export const updateGameMode = async (
 		return reply.code(200).send(room);
 	} catch (error) {
 		console.log(error);
-		return reply.code(500).send({ error: 'Failed to update game mode' });
+		return reply.code(500).send({ error: "Failed to update game mode" });
 	}
 };
 
@@ -103,7 +116,7 @@ export const updateGameMode = async (
  */
 export const updateRoomMemberReady = async (
 	request: FastifyRequest<RoomMemberRoute>,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	try {
 	} catch (error) {}

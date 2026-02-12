@@ -1,17 +1,23 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { authApi } from '../../api/authApi';
-import { AuthContext, type AuthContextValue } from './authContext';
-import { type AuthUser } from '../../types/user';
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+	type ReactNode,
+} from "react";
+import { authApi } from "../../api/authApi";
+import { AuthContext, type AuthContextValue } from "./authContext";
+import { type AuthUser } from "../../types/user";
 
 // 認証不要なページ
 const PUBLIC_PATHS = [
-	'/login',
-	'/login/redirect',
-	'/register',
-	'/password-reset',
-	'/password-reset/send-mail',
-	'/terms',
-	'/privacy-policy',
+	"/login",
+	"/login/redirect",
+	"/register",
+	"/password-reset",
+	"/password-reset/send-mail",
+	"/terms",
+	"/privacy-policy",
 ];
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -47,10 +53,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 			refreshAuth,
 			user,
 		}),
-		[isAuthenticated, refreshAuth, user]
+		[isAuthenticated, refreshAuth, user],
 	);
 
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+	return (
+		<AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+	);
 };
 
 export default AuthProvider;
