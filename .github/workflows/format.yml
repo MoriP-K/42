@@ -1,0 +1,16 @@
+# ワークフロー名（GitHub上に表示）
+name: CI
+
+# いつ実行されるか
+on:
+  push:
+    branches:
+      - "**" # すべてのブランチへのpush
+
+jobs: # 実行するジョブ
+  format:
+    runs-on: ubuntu-latest # Ubuntu環境で実行
+
+    steps: # 実行する手順（上から順番に実行）
+      - name: Check format
+        run: npm run format:check
