@@ -52,7 +52,7 @@ export interface UpdateGameModeRoute {
  * WebSocket用 ルームクライアント型
  */
 export interface RoomClient {
-	socket: WebSocket,
-	userId: string,
-	roomId: string,
+	socket: WebSocket;
+	userId: string;
+	roomId: string;
 };

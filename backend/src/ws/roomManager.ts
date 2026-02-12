@@ -15,7 +15,7 @@ export const joinRoom = (client: RoomClient) => {
 	if (room) {
 		room.add(client);
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
-		console.log(`📈 Room ${client.roomId} now has ${rooms.size} members`);
+		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
 	}
 
 };
@@ -48,7 +48,7 @@ export const broadcastToRoom = (roomId: string, message: any) => {
 	let sentCount = 0;
 
 	room.forEach(client => {
-		if (client.socket.readyState == WebSocket.OPEN) {
+		if (client.socket.readyState === WebSocket.OPEN) {
 			client.socket.send(payload);
 			sentCount++;
 		}
