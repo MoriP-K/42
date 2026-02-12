@@ -13,23 +13,25 @@ export const handleConnection = (socket: WebSocket) => {
 			const data = JSON.parse(rawMessage.toString());
 			console.log("📥 Received: ", data);
 
-			if (!data.userId || typeof data.userId !== 'string' || data.userId.trim() === '') {
-				socket.send(JSON.stringify({
-					type: 'error',
-					message: 'Invalid userId'
-				}));
-				return ;
-			}
-
-			if (!data.roomId || typeof data.roomId !== 'string' || data.roomId.trim() === '') {
-				socket.send(JSON.stringify({
-					type: 'error',
-					message: 'Invalid roomId'
-				}));
-				return ;
-			}
-
 			if (data.type === 'join') {
+
+				if (!data.userId || typeof data.userId !== 'string' || data.userId.trim() === '') {
+					console.log('❌ Invalid userId:', data.userId);
+					socket.send(JSON.stringify({
+						type: 'error',
+						message: 'Invalid userId'
+					}));
+					return ;
+				}
+	
+				if (!data.roomId || typeof data.roomId !== 'string' || data.roomId.trim() === '') {
+					socket.send(JSON.stringify({
+						type: 'error',
+						message: 'Invalid roomId'
+					}));
+					return ;
+				}
+
 				if (currentClient) {
 					leaveRoom(currentClient);
 				}
