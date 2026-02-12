@@ -1,31 +1,65 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
-import './App.css'
-import Home from './pages/Home'
-import WaitingGame from './pages/WaitingGame'
-import Prepare from './pages/Prepare'
-import Game from './pages/Game'
-import TermsOfService from './pages/TermsOfService'
-import AccountRegister from './pages/AccountRegister'
-import PaaswordResetSendMail from './pages/PaaswordResetSendMail'
-import PaaswordReset from './pages/PasswordReset'
-import PrivacyPolicy from './pages/PrivacyPolicy'
-import RedirectLogin from './pages/RedirectLogin'
-import Login from './pages/Login'
-import Profile from './pages/Profile'
-import { RequireAuth } from './features/auth/RequireAuth'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import './App.css';
+import Home from './pages/Home';
+import WaitingGame from './pages/WaitingGame';
+import Prepare from './pages/Prepare';
+import Game from './pages/Game';
+import TermsOfService from './pages/TermsOfService';
+import AccountRegister from './pages/AccountRegister';
+import PasswordResetSendMail from './pages/PasswordResetSendMail';
+import PasswordReset from './pages/PasswordReset';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import RedirectLogin from './pages/RedirectLogin';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import RequireAuth from './features/auth/RequireAuth';
+import RequireGuest from './features/auth/RequireGuest';
 
-function App() {
+const App = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{/* ↓未ログインでも表示可能なページ */}
-				<Route path="/login" element={<Login />} />
-				<Route path="/login/redirect" element={<RedirectLogin />} />
-				<Route path="/register" element={<AccountRegister />} />
-				<Route path="/password-reset/send-mail" element={<PaaswordResetSendMail />} />
-				<Route path="/password-reset" element={<PaaswordReset />} />
-				<Route path="/terms" element={<TermsOfService />} />
-				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+				{/* 未ログインの場合に表示するページ */}
+				<Route
+					path="/login"
+					element={
+						<RequireGuest>
+							<Login />
+						</RequireGuest>
+					}
+				/>
+				<Route
+					path="/login/redirect"
+					element={
+						<RequireGuest>
+							<RedirectLogin />
+						</RequireGuest>
+					}
+				/>
+				<Route
+					path="/register"
+					element={
+						<RequireGuest>
+							<AccountRegister />
+						</RequireGuest>
+					}
+				/>
+				<Route
+					path="/password-reset/send-mail"
+					element={
+						<RequireGuest>
+							<PasswordResetSendMail />
+						</RequireGuest>
+					}
+				/>
+				<Route
+					path="/password-reset"
+					element={
+						<RequireGuest>
+							<PasswordReset />
+						</RequireGuest>
+					}
+				/>
 
 				{/* ↓未ログイン状態でアクセスした場合、ログイン画面にリダイレクトされるページ */}
 				<Route
@@ -42,9 +76,12 @@ function App() {
 					<Route path="game" element={<Game />} />
 					<Route path="profile" element={<Profile />} />
 				</Route>
-			</Routes >
-		</BrowserRouter >
-	)
-}
 
-export default App
+				<Route path="/terms" element={<TermsOfService />} />
+				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
+			</Routes>
+		</BrowserRouter>
+	);
+};
+
+export default App;

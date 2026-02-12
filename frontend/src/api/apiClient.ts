@@ -34,7 +34,7 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
 	const response = await fetch(url, { ...options, headers });
 
 	if (!response.ok) {
-		// ここで共通のエラーハンドリングが可能（LaravelのAxios Interceptor相当）
+		// ここで共通のエラーハンドリングが可能
 		const errorBody = await response.json().catch(() => ({}));
 		throw new ApiError(response.status, errorBody);
 	}

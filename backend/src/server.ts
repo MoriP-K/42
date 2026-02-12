@@ -24,10 +24,6 @@ fastify.register(websocket);
 // Cookie機能を有効化する
 fastify.register(cookie);
 
-fastify.get('/', async (request, reply) => {
-	return { hello: 'world' }
-});
-
 // ルートの登録
 fastify.register(userRoutes, { prefix: '/api' });
 fastify.register(authRoutes, { prefix: '/api' });

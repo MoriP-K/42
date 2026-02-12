@@ -26,6 +26,7 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 			include: {
 				user: {
 					select: {
+						id: true,
 						name: true,
 					},
 				},
@@ -44,6 +45,7 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 		}
 
 		return reply.code(200).send({
+			id: session.user.id,
 			name: session.user.name,
 		});
 	} catch (err) {
