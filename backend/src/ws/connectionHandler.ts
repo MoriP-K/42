@@ -24,7 +24,7 @@ export const handleConnection = (socket: WebSocket) => {
 			if (!data.roomId || typeof data.roomId !== 'string' || data.roomId.trim() === '') {
 				socket.send(JSON.stringify({
 					type: 'error',
-					message: 'Invalid userId'
+					message: 'Invalid roomId'
 				}));
 				return ;
 			}
