@@ -11,8 +11,7 @@ function Home() {
 		if (!isAuthenticated || !user) return;
 		try {
 			const room = await roomApi.createRoom(user.id);
-			if (!room)
-				throw new Error('Room cannot be created');
+			if (!room) throw new Error("Room cannot be created");
 			navigate(`/waiting-game/${room.id}`);
 		} catch (error) {
 			console.error("Error:", error);
