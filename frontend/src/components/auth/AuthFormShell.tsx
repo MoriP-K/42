@@ -1,14 +1,20 @@
-import type { FormEventHandler, ReactNode } from 'react'
+import type { FormEventHandler, ReactNode } from "react";
 
 type Props = {
-	serverError?: string | null
-	onSubmit: FormEventHandler<HTMLFormElement>
-	top?: ReactNode
-	children: ReactNode
-	actions: ReactNode
-}
+	serverError?: string | null;
+	onSubmit: FormEventHandler<HTMLFormElement>;
+	top?: ReactNode;
+	children: ReactNode;
+	actions: ReactNode;
+};
 
-export function AuthFormShell({ serverError, onSubmit, top, children, actions }: Props) {
+export function AuthFormShell({
+	serverError,
+	onSubmit,
+	top,
+	children,
+	actions,
+}: Props) {
 	return (
 		<div className="hero min-h-screen">
 			<div className="w-full max-w-md">
@@ -30,6 +36,5 @@ export function AuthFormShell({ serverError, onSubmit, top, children, actions }:
 				</div>
 			</div>
 		</div>
-	)
+	);
 }
-

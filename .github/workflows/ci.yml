@@ -5,7 +5,7 @@ name: CI
 on:
   push:
     branches:
-      - '**' # すべてのブランチへのpush
+      - "**" # すべてのブランチへのpush
 
 jobs: # 実行するジョブ
   frontend: # frontendジョブ
@@ -17,8 +17,8 @@ jobs: # 実行するジョブ
       - name: Setup Node.js # Node.jsをセットアップ（ステップ名）
         uses: actions/setup-node@v4 # Node.jsをセットアップ
         with:
-          node-version: '20' # Node.js 20をインストール　
-          cache: 'npm' # npmキャッシュを有効化
+          node-version: "20" # Node.js 20をインストール　
+          cache: "npm" # npmキャッシュを有効化
           cache-dependency-path: frontend/package-lock.json # package-lock.jsonが変わらなければキャッシュを使用
 
       - name: Install dependencies # 依存関係（必要なパッケージなど）をインストール
@@ -45,8 +45,8 @@ jobs: # 実行するジョブ
       - name: Setup Node.js # Node.jsをセットアップ（ステップ名）
         uses: actions/setup-node@v4 # Node.jsをセットアップ
         with:
-          node-version: '20' # Node.js 20をインストール
-          cache: 'npm' # npmキャッシュを有効化
+          node-version: "20" # Node.js 20をインストール
+          cache: "npm" # npmキャッシュを有効化
           cache-dependency-path: backend/package-lock.json # # package-lock.jsonが変わらなければキャッシュを使用
 
       - name: Install dependencies # 依存関係（必要なパッケージなど）をインストール
