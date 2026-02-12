@@ -17,3 +17,7 @@ export const UserIdParamsSchema = z.object({
 });
 
 export type RoomMemberParams = z.infer<typeof RoomMemberParamsSchema>;
+
+export interface RoomMemberRoute {
+	Params: RoomMemberParams;
+}

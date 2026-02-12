@@ -15,10 +15,10 @@ export interface CreateRoomRoute {
 }
 
 /**
- * GET /api/rooms/:id パラメータ型
+ * GET /api/rooms/:roomId パラメータ型
  */
 export const GetRoomParamsSchema = z.object({
-	id: z.coerce.number(),
+	roomId: z.coerce.number(),
 });
 
 export type GetRoomParams = z.infer<typeof GetRoomParamsSchema>;

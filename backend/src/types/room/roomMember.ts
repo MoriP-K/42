@@ -4,7 +4,6 @@ import { RoomMemberParamsSchema, UserRoleEnum } from './common';
  * PATCH /api/rooms/:roomId/members/:userId パラメータ型
  */
 
-
 /**
  * PATCH /api/rooms/:roomId/members/:userId ボディ型
  */
