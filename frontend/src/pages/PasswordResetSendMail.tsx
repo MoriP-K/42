@@ -1,11 +1,11 @@
 import Footer from '../components/footer/Footer';
 
-const PasswordReset = () => {
+const PasswordResetSendMail = () => {
 	return (
 		<>
 			{/* ヘッダー */}
 			<div className="text-center mb-4">
-				<span className="text-2xl font-bold">パスワード再設定画面</span>
+				<span className="text-2xl font-bold">パスワード再設定用メール送信画面</span>
 			</div>
 
 			{/* フッター */}
@@ -14,4 +14,4 @@ const PasswordReset = () => {
 	);
 };
 
-export default PasswordReset;
+export default PasswordResetSendMail;

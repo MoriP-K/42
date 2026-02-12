@@ -1,11 +1,11 @@
-import Footer from "../components/footer/Footer"
+import Footer from '../components/footer/Footer';
 
-function  RedirectLogin() {
+function RedirectLogin() {
 	return (
-    <div>
-        <Footer></Footer>
-    </div>
-	)
+		<div>
+			<Footer></Footer>
+		</div>
+	);
 }
 
-export default RedirectLogin
+export default RedirectLogin;

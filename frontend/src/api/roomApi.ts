@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient';
-import { GameMode, Role } from '../types/room';
+import { Role } from '../types/user';
+import { GameMode } from '../types/room';
 
 export const roomApi = {
 	// POST /api/rooms
@@ -13,20 +14,24 @@ export const roomApi = {
 	getRoomDetails: async (roomId: number) => {
 		return apiClient(`/rooms/${roomId}`, {
 			method: 'GET',
-		})
+		});
 	},
 
-	updateRoomMemberRole: async (roomId: number, id: number, role: typeof Role[keyof typeof Role]) => {
+	updateRoomMemberRole: async (
+		roomId: number,
+		id: number,
+		role: (typeof Role)[keyof typeof Role]
+	) => {
 		return apiClient(`/rooms/${roomId}/members/${id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ role }),
-		})
+		});
 	},
 
-	updateGameMode: async (roomId: number, mode: typeof GameMode[keyof typeof GameMode]) => {
+	updateGameMode: async (roomId: number, mode: (typeof GameMode)[keyof typeof GameMode]) => {
 		return apiClient(`/rooms/${roomId}/game-mode`, {
 			method: 'PATCH',
 			body: JSON.stringify({ mode }),
 		});
-	}
-}
+	},
+};
