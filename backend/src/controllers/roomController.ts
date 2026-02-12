@@ -1,16 +1,14 @@
 import fastify, { FastifyRequest, FastifyReply, FastifyRouterOptions } from 'fastify';
 import { prisma } from '../lib/prisma';
 import { randomUUID } from 'node:crypto';
-import { CreateRoomRoute, GetRoomRoute, UpdateGameModeRoute } from '../types/room';
-import { UpdateRoomMemberRoleRoute } from '../types/roomMember';
+import { CreateRoomRoute, GetRoomRoute, UpdateGameModeRoute } from '../types/room/room';
+import { UpdateRoomMemberRoleRoute } from '../types/room/roomMember';
+import { UpdateRoomMemberRoute } from '../types/room/roomMember';
 
 /*
  * POST /api/rooms ルーム作成
  */
-export const createRoom = async (
-	request: FastifyRequest<CreateRoomRoute>,
-	reply: FastifyReply
-) => {
+export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply: FastifyReply) => {
 	const room = await prisma.room.create({
 		data: {
 			host_id: request.body.hostId,
@@ -18,9 +16,9 @@ export const createRoom = async (
 			members: {
 				create: {
 					user_id: request.body.hostId,
-					role: 'PLAYER'
-				}
-			}
+					role: 'PLAYER',
+				},
+			},
 		},
 	});
 	return reply.code(201).send(room);
@@ -40,10 +38,10 @@ export const getRoomDetails = async (
 		include: {
 			members: {
 				include: {
-					user: true
-				}
-			}
-		}
+					user: true,
+				},
+			},
+		},
 	});
 	return reply.code(200).send(room);
 };
@@ -77,7 +75,7 @@ export const updateRoomMemberRole = async (
 };
 
 /*
- * PATCH /api/rooms/${roomId}/game-mode ゲームモード変更
+ * PATCH /api/rooms/:roomId/game-mode ゲームモード変更
  */
 export const updateGameMode = async (
 	request: FastifyRequest<UpdateGameModeRoute>,
@@ -98,4 +96,15 @@ export const updateGameMode = async (
 		console.log(error);
 		return reply.code(500).send({ error: 'Failed to update game mode' });
 	}
+};
+
+/*
+ * PATCH /api/rooms/:roomId/members/:userId/ready 各プレイヤーの準備ステータス
+ */
+export const updateRoomMemberReady = async (
+	request: FastifyRequest<UpdateRoomMemberRoute>,
+	reply: FastifyReply
+) => {
+	try {
+	} catch (error) {}
 };

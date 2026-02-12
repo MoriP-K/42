@@ -14,7 +14,7 @@ const WaitingGame = () => {
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
 	const location = useLocation();
-	const [isHost, setIsHost] = useState(location.state?.hostId === user?.id);
+	const [isHost, setIsHost] = useState(false);
 
 	useEffect(() => {
 		const getRoomDetails = async () => {
