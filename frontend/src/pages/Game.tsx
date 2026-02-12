@@ -19,6 +19,8 @@ const Game = () => {
 		ws.onopen = () => {
 			console.log('✅ WebSocket connected');
 
+			// TODO: ログイン機能実装後、実際のuserIdを使用
+			// TODO: URLパラメータからroomIdを取得
 			const tempUserId = 'user-' + Math.random().toString(36).substring(2, 9);
 			const tempRoomId = 'room-test-2';
 
