@@ -1,4 +1,8 @@
-export type RegisterFormField = "name" | "email" | "password" | "passwordConfirm";
+export type RegisterFormField =
+	| "name"
+	| "email"
+	| "password"
+	| "passwordConfirm";
 
 export type RegisterFormValues = {
 	name: string;
@@ -6,4 +10,3 @@ export type RegisterFormValues = {
 	password: string;
 	passwordConfirm: string;
 };
-
