@@ -73,10 +73,12 @@ const Game = () => {
 			console.log("🔌 WebSocket disconnected");
 		};
 
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setSocket(ws);
 
 		return () => {
 			ws.close();
+			setSocket(null);
 		};
 	}, []);
 
