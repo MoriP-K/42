@@ -1,35 +1,46 @@
-import { WebSocket } from 'ws';
-import { RoomClient } from '../types/room';
-import { joinRoom, leaveRoom, broadcastToRoom } from './roomManager';
-import { handleChatMessage } from './chatHandler';
+import { WebSocket } from "ws";
+import { RoomClient } from "../types/room";
+import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
+import { handleChatMessage } from "./chatHandler";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
 
 	console.log("✅ Client connected");
 
-	socket.on('message', (rawMessage) => {
+	socket.on("message", rawMessage => {
 		try {
 			const data = JSON.parse(rawMessage.toString());
 			console.log("📥 Received: ", data);
 
-			if (data.type === 'join') {
-
-				if (!data.userId || typeof data.userId !== 'string' || data.userId.trim() === '') {
-					console.log('❌ Invalid userId:', data.userId);
-					socket.send(JSON.stringify({
-						type: 'error',
-						message: 'Invalid userId'
-					}));
-					return ;
+			if (data.type === "join") {
+				if (
+					!data.userId ||
+					typeof data.userId !== "string" ||
+					data.userId.trim() === ""
+				) {
+					console.log("❌ Invalid userId:", data.userId);
+					socket.send(
+						JSON.stringify({
+							type: "error",
+							message: "Invalid userId",
+						}),
+					);
+					return;
 				}
-	
-				if (!data.roomId || typeof data.roomId !== 'string' || data.roomId.trim() === '') {
-					socket.send(JSON.stringify({
-						type: 'error',
-						message: 'Invalid roomId'
-					}));
-					return ;
+
+				if (
+					!data.roomId ||
+					typeof data.roomId !== "string" ||
+					data.roomId.trim() === ""
+				) {
+					socket.send(
+						JSON.stringify({
+							type: "error",
+							message: "Invalid roomId",
+						}),
+					);
+					return;
 				}
 
 				if (currentClient) {
@@ -44,31 +55,35 @@ export const handleConnection = (socket: WebSocket) => {
 
 				joinRoom(currentClient);
 
-				socket.send(JSON.stringify({
-					type: 'joined',
-					roomId: data.roomId,
-					userId: data.userId,
-				}));
+				socket.send(
+					JSON.stringify({
+						type: "joined",
+						roomId: data.roomId,
+						userId: data.userId,
+					}),
+				);
 
 				broadcastToRoom(data.roomId, {
-					type: 'userJoined',
+					type: "userJoined",
 					userId: data.userId,
 				});
 
-				return ;
+				return;
 			}
 
 			if (!currentClient) {
 				console.error("❌ Not joined to any room");
-				socket.send(JSON.stringify({
-					type: 'error',
-					message: "Join a room first",
-				}));
+				socket.send(
+					JSON.stringify({
+						type: "error",
+						message: "Join a room first",
+					}),
+				);
 
-				return ;
+				return;
 			}
 
-			if (data.type === 'chat') {
+			if (data.type === "chat") {
 				handleChatMessage(currentClient, data);
 			}
 		} catch (error) {
@@ -76,10 +91,10 @@ export const handleConnection = (socket: WebSocket) => {
 		}
 	});
 
-	socket.on('close', () => {
+	socket.on("close", () => {
 		if (currentClient) {
 			broadcastToRoom(currentClient.roomId, {
-				type: 'userLeft',
+				type: "userLeft",
 				userId: currentClient.userId,
 			});
 
@@ -87,4 +102,4 @@ export const handleConnection = (socket: WebSocket) => {
 		}
 		console.log("🔌 Client disconnected");
 	});
-}
+};

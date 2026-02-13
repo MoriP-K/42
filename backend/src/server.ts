@@ -1,11 +1,11 @@
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import cookie from '@fastify/cookie';
-import websocket from '@fastify/websocket';
-import { userRoutes } from './routes/userRoutes';
-import { authRoutes } from './routes/authRoutes';
-import { roomRoutes } from './routes/roomRoutes';
-import { handleConnection } from './ws/connectionHandler';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
+import websocket from "@fastify/websocket";
+import { userRoutes } from "./routes/userRoutes";
+import { authRoutes } from "./routes/authRoutes";
+import { roomRoutes } from "./routes/roomRoutes";
+import { handleConnection } from "./ws/connectionHandler";
 
 const fastify = Fastify({
 	logger: true,
@@ -30,8 +30,8 @@ fastify.register(authRoutes, { prefix: "/api" });
 fastify.register(roomRoutes, { prefix: "/api" });
 
 // WebSocketのルートを定義
-fastify.register(async (fastify) => {
-	fastify.get('/ws', { websocket: true }, (socket, request) => {
+fastify.register(async fastify => {
+	fastify.get("/ws", { websocket: true }, (socket, request) => {
 		handleConnection(socket);
 	});
 });
