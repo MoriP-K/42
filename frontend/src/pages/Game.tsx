@@ -38,7 +38,7 @@ const Game = () => {
 				const data = JSON.parse(event.data);
 				console.log("✉️ Received: ", data);
 
-				if (data.type === 'chat') {
+				if (data.type === "chat") {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -46,8 +46,7 @@ const Game = () => {
 						timestamp: new Date(data.timestamp),
 					};
 					setMessages(prev => [...prev, newMessage]);
-				}
-				else if (data.type === 'draw') {
+				} else if (data.type === "draw") {
 					setDrawData({
 						x: data.x,
 						y: data.y,
@@ -55,11 +54,9 @@ const Game = () => {
 						lineWidth: data.lineWidth,
 						isStart: data.isStart,
 					});
-				}
-				else if (data.type === 'drawEnd') {
+				} else if (data.type === "drawEnd") {
 					setDrawData(null);
 				}
-
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
 			}

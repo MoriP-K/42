@@ -85,27 +85,26 @@ export const handleConnection = (socket: WebSocket) => {
 
 			if (data.type === "chat") {
 				handleChatMessage(currentClient, data);
-			}
-			else if (data.type === 'draw') {
-				console.log(`Draw from ${currentClient.userId} in rom ${currentClient.roomId}`);
+			} else if (data.type === "draw") {
+				console.log(
+					`Draw from ${currentClient.userId} in rom ${currentClient.roomId}`,
+				);
 
 				broadcastToRoom(currentClient.roomId, {
-					type: 'draw',
+					type: "draw",
 					x: data.x,
 					y: data.y,
 					color: data.color,
 					lineWidth: data.lineWidth,
 					isStart: data.isStart,
 				});
-			}
-			else if (data.type === 'drawEnd') {
+			} else if (data.type === "drawEnd") {
 				console.log(`DrawEnd from ${currentClient.userId}`);
 
 				broadcastToRoom(currentClient.roomId, {
-					type: 'drawEnd',
-				})
+					type: "drawEnd",
+				});
 			}
-
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
 		}
