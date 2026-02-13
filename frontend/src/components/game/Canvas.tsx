@@ -11,16 +11,10 @@ export interface DrawData {
 interface CanvasProps {
 	socket: WebSocket | null;
 	drawData: DrawData | null;
-	shouldClear: boolean;
-	onClearComplete: () => void;
+	clearTrigger: number;
 }
 
-const Canvas = ({
-	socket,
-	drawData,
-	shouldClear,
-	onClearComplete,
-}: CanvasProps) => {
+const Canvas = ({ socket, drawData, clearTrigger }: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
@@ -59,7 +53,7 @@ const Canvas = ({
 	}, [drawData]);
 
 	useEffect(() => {
-		if (!shouldClear) return;
+		if (clearTrigger === 0) return;
 
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -69,9 +63,7 @@ const Canvas = ({
 
 		ctx.fillStyle = "white";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-		onClearComplete();
-	}, [shouldClear, onClearComplete]);
+	}, [clearTrigger]);
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;

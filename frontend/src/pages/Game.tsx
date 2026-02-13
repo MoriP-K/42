@@ -11,7 +11,7 @@ const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
-	const [shouldClear, setShouldClear] = useState(false); // キャンバスクリア処理
+	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 
 	useEffect(() => {
 		const ws = createWebSocket();
@@ -58,7 +58,7 @@ const Game = () => {
 				} else if (data.type === "drawEnd") {
 					setDrawData(null);
 				} else if (data.type === "clear") {
-					setShouldClear(true);
+					setClearTrigger(prev => prev + 1);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -86,10 +86,6 @@ const Game = () => {
 		{ id: 2, name: "Alice", score: 0, isDrawing: false },
 		{ id: 3, name: "Bob", score: 0, isDrawing: false },
 	]);
-
-	const handleClearComplete = () => {
-		setShouldClear(false);
-	};
 
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -150,8 +146,7 @@ const Game = () => {
 						<Canvas
 							socket={socket}
 							drawData={drawData}
-							shouldClear={shouldClear}
-							onClearComplete={handleClearComplete}
+							clearTrigger={clearTrigger}
 						/>
 					</div>
 
