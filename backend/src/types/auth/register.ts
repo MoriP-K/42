@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { AuthSuccessResponse, AuthServerErrorResponse } from "./common";
+import {
+	AuthSuccessResponse,
+	AuthServerErrorResponse,
+	AuthErrorResponse,
+} from "./common";
 
 /**
  * Register API の型定義
@@ -28,20 +32,9 @@ export const RegisterRequest = z.object({
 export type RegisterRequest = z.infer<typeof RegisterRequest>;
 
 /**
- * POST /api/register エラーレスポンス型 (400)
- */
-export const RegisterErrorResponse = z.object({
-	message: z.string(),
-});
-export type RegisterErrorResponse = z.infer<typeof RegisterErrorResponse>;
-
-/**
  * POST /api/register ルートの型定義
  */
 export type RegisterRoute = {
 	Body: RegisterRequest;
-	Reply:
-		| AuthSuccessResponse
-		| AuthServerErrorResponse
-		| RegisterErrorResponse;
+	Reply: AuthSuccessResponse | AuthServerErrorResponse | AuthErrorResponse;
 };
