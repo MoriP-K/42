@@ -104,6 +104,12 @@ export const handleConnection = (socket: WebSocket) => {
 				broadcastToRoom(currentClient.roomId, {
 					type: "drawEnd",
 				});
+			} else if (data.type === "clear") {
+				console.log(`Clear from ${currentClient.userId}`);
+
+				broadcastToRoom(currentClient.roomId, {
+					type: "clear",
+				});
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);

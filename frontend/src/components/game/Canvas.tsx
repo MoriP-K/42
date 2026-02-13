@@ -11,9 +11,16 @@ export interface DrawData {
 interface CanvasProps {
 	socket: WebSocket | null;
 	drawData: DrawData | null;
+	shouldClear: boolean;
+	onClearComplete: () => void;
 }
 
-const Canvas = ({ socket, drawData }: CanvasProps) => {
+const Canvas = ({
+	socket,
+	drawData,
+	shouldClear,
+	onClearComplete,
+}: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
@@ -51,6 +58,21 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 		}
 	}, [drawData]);
 
+	useEffect(() => {
+		if (!shouldClear) return;
+
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		onClearComplete();
+	}, [shouldClear, onClearComplete]);
+
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -80,7 +102,6 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 					color: strokeColor,
 					lineWidth: lineWidth,
 					isStart: true,
-					// isEnd: false,
 				}),
 			);
 		}
@@ -124,13 +145,13 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 	};
 
 	const stopDrawing = () => {
-		// const canvas = canvasRef.current;
-		// if (canvas) {
-		// 	const ctx = canvas.getContext("2d");
-		// 	if (ctx) {
-		// 		ctx.closePath();
-		// 	}
-		// }
+		const canvas = canvasRef.current;
+		if (canvas) {
+			const ctx = canvas.getContext("2d");
+			if (ctx) {
+				ctx.closePath();
+			}
+		}
 
 		setIsDrawing(false);
 
@@ -152,6 +173,14 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 
 		ctx.fillStyle = "white";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(
+				JSON.stringify({
+					type: "clear",
+				}),
+			);
+		}
 	};
 
 	return (
