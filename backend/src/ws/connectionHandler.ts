@@ -2,6 +2,12 @@ import { WebSocket } from "ws";
 import { RoomClient } from "../types/room";
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
+import {
+	CANVAS_WIDTH,
+	CANVAS_HEIGHT,
+	PEN_LINE_WIDTH,
+	ERASER_LINE_WIDTH,
+} from "../types/canvas";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -87,29 +93,59 @@ export const handleConnection = (socket: WebSocket) => {
 				handleChatMessage(currentClient, data);
 			} else if (data.type === "draw") {
 				console.log(
-					`Draw from ${currentClient.userId} in rom ${currentClient.roomId}`,
+					`Draw from ${currentClient.userId} in room ${currentClient.roomId}`,
 				);
 
-				broadcastToRoom(currentClient.roomId, {
-					type: "draw",
-					x: data.x,
-					y: data.y,
-					color: data.color,
-					lineWidth: data.lineWidth,
-					isStart: data.isStart,
-				});
+				if (
+					typeof data.x !== "number" ||
+					typeof data.y !== "number" ||
+					typeof data.color !== "string" ||
+					typeof data.lineWidth !== "number"
+				) {
+					console.log("❌ Invalid draw message");
+					return;
+				}
+
+				const x = Math.max(0, Math.min(CANVAS_WIDTH, data.x));
+				const y = Math.max(0, Math.min(CANVAS_HEIGHT, data.y));
+
+				const lineWidth =
+					data.lineWidth === ERASER_LINE_WIDTH
+						? ERASER_LINE_WIDTH
+						: PEN_LINE_WIDTH;
+
+				broadcastToRoom(
+					currentClient.roomId,
+					{
+						type: "draw",
+						x: x,
+						y: y,
+						color: data.color,
+						lineWidth: lineWidth,
+						isStart: data.isStart,
+					},
+					socket,
+				);
 			} else if (data.type === "drawEnd") {
 				console.log(`DrawEnd from ${currentClient.userId}`);
 
-				broadcastToRoom(currentClient.roomId, {
-					type: "drawEnd",
-				});
+				broadcastToRoom(
+					currentClient.roomId,
+					{
+						type: "drawEnd",
+					},
+					socket,
+				);
 			} else if (data.type === "clear") {
 				console.log(`Clear from ${currentClient.userId}`);
 
-				broadcastToRoom(currentClient.roomId, {
-					type: "clear",
-				});
+				broadcastToRoom(
+					currentClient.roomId,
+					{
+						type: "clear",
+					},
+					socket,
+				);
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
