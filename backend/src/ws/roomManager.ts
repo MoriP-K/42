@@ -1,9 +1,9 @@
-import { WebSocket } from 'ws';
-import { RoomClient } from '../types/room';
+import { WebSocket } from "ws";
+import { RoomClient } from "../types/room";
 
 // キー：roomId (string)
 // 値: Set<RoomClient>
-const rooms = new Map<string, Set<RoomClient>>()
+const rooms = new Map<string, Set<RoomClient>>();
 
 export const joinRoom = (client: RoomClient) => {
 	// ルームが存在しなければ作成
@@ -17,13 +17,11 @@ export const joinRoom = (client: RoomClient) => {
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
 	}
-
 };
 
 export const leaveRoom = (client: RoomClient) => {
 	const room = rooms.get(client.roomId);
-	if (!room)
-		return ;
+	if (!room) return;
 
 	room.delete(client);
 	console.log(`👋 User ${client.userId} left room ${client.roomId}`);
@@ -41,7 +39,7 @@ export const broadcastToRoom = (roomId: string, message: any) => {
 	const room = rooms.get(roomId);
 	if (!room) {
 		console.log(`⚠️ Room ${roomId} not found`);
-		return ;
+		return;
 	}
 
 	const payload = JSON.stringify(message);
@@ -54,5 +52,7 @@ export const broadcastToRoom = (roomId: string, message: any) => {
 		}
 	});
 
-	console.log(`📤 Broadcasted to ${sentCount}/${room.size} clients in room ${roomId}`);
+	console.log(
+		`📤 Broadcasted to ${sentCount}/${room.size} clients in room ${roomId}`,
+	);
 };

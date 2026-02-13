@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 export interface DrawData {
 	x: number;
@@ -21,12 +21,10 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
-		if (!canvas)
-			return ;
+		if (!canvas) return;
 
 		const ctx = canvas.getContext("2d");
-		if (!ctx)
-			return ;
+		if (!ctx) return;
 
 		ctx.fillStyle = "white";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -60,8 +58,7 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
-		if (!canvas)
-			return ;
+		if (!canvas) return;
 
 		const rect = canvas.getBoundingClientRect();
 		const scaleX = canvas.width / rect.width;
@@ -70,8 +67,7 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 		const y = (e.clientY - rect.top) * scaleY;
 
 		const ctx = canvas.getContext("2d");
-		if (!ctx)
-			return ;
+		if (!ctx) return;
 
 		ctx.beginPath();
 		ctx.moveTo(x, y);
@@ -94,12 +90,10 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 	};
 
 	const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-		if (!isDrawing)
-			return ;
+		if (!isDrawing) return;
 
 		const canvas = canvasRef.current;
-		if (!canvas)
-			return ;
+		if (!canvas) return;
 
 		const rect = canvas.getBoundingClientRect();
 		const scaleX = canvas.width / rect.width;
@@ -108,8 +102,7 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 		const y = (e.clientY - rect.top) * scaleY;
 
 		const ctx = canvas.getContext("2d");
-		if (!ctx)
-			return ;
+		if (!ctx) return;
 
 		const strokeColor = isEraser ? "white" : color;
 		const lineWidth = isEraser ? 15 : 3;
@@ -151,12 +144,10 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 
 	const clearCanvas = () => {
 		const canvas = canvasRef.current;
-		if (!canvas)
-			return ;
+		if (!canvas) return;
 
 		const ctx = canvas.getContext("2d");
-		if (!ctx)
-			return ;
+		if (!ctx) return;
 
 		ctx.fillStyle = "white";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -166,10 +157,10 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 		<div className="card bg-base-100 shadow-xl">
 			<div className="card-body p-0">
 				<div className="flex items-center justify-between mb-1">
-					<h2 className="card-title font-mono text-base font-semibold mb-1">お題: ???</h2>
-					<button
-						className="btn btn-sm btn-primary ml-auto"
-					>
+					<h2 className="card-title font-mono text-base font-semibold mb-1">
+						お題: ???
+					</h2>
+					<button className="btn btn-sm btn-primary ml-auto">
 						スキップ
 					</button>
 				</div>
@@ -188,12 +179,12 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 
 				<div className="flex items-center gap-2">
 					{[
-						{hex: "#000000", label: "黒"},
-						{hex: "#ef4444", label: "赤"},
-						{hex: "#3b82f6", label: "青"},
-						{hex: "#22c55e", label: "緑"},
-						{hex: "#eab308", label: "黄"},
-						{hex: "#a855f7", label: "紫"},
+						{ hex: "#000000", label: "黒" },
+						{ hex: "#ef4444", label: "赤" },
+						{ hex: "#3b82f6", label: "青" },
+						{ hex: "#22c55e", label: "緑" },
+						{ hex: "#eab308", label: "黄" },
+						{ hex: "#a855f7", label: "紫" },
 					].map(({ hex, label }) => (
 						<button
 							key={hex}
@@ -202,9 +193,9 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 								setIsEraser(false);
 							}}
 							className={`btn btn-sm btn-circle border-2 border-transparent
-								${ color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
+								${color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
 							`}
-							style={{backgroundColor: hex}}
+							style={{ backgroundColor: hex }}
 							aria-label={label}
 						/>
 					))}
@@ -220,10 +211,9 @@ const Canvas = ({ socket, drawData }: CanvasProps) => {
 						onClick={clearCanvas}
 						className="btn btn-sm btn-primary ml-auto"
 					>
-					クリア
+						クリア
 					</button>
 				</div>
-
 			</div>
 		</div>
 	);

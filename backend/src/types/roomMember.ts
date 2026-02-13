@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * PATCH /api/rooms/:roomId/members/:userId パラメータ型
@@ -12,14 +12,18 @@ export const UpdateRoomMemberParamsSchema = z.object({
  * PATCH /api/rooms/:roomId/members/:userId ボディ型
  */
 export const UpdateRoomMemberRoleBodySchema = z.object({
-	role: z.enum(['PLAYER', 'SPECTATOR']),
+	role: z.enum(["PLAYER", "SPECTATOR"]),
 });
 
 /**
  * TypeScriptの型をZodから抽出
  */
-export type UpdateRoomMemberParams = z.infer<typeof UpdateRoomMemberParamsSchema>;
-export type UpdateRoomMemberRoleBody = z.infer<typeof UpdateRoomMemberRoleBodySchema>;
+export type UpdateRoomMemberParams = z.infer<
+	typeof UpdateRoomMemberParamsSchema
+>;
+export type UpdateRoomMemberRoleBody = z.infer<
+	typeof UpdateRoomMemberRoleBodySchema
+>;
 
 /**
  * Route型

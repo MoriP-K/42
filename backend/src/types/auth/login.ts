@@ -1,9 +1,9 @@
 import {
 	AuthSuccessResponse,
 	AuthErrorResponse,
-	AuthServerErrorResponse
-} from './common'
-import { z } from 'zod';
+	AuthServerErrorResponse,
+} from "./common";
+import { z } from "zod";
 
 /**
  * Login API の型定義
