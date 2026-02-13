@@ -2,16 +2,15 @@ import { useState, useEffect } from 'react';
 import { createWebSocket } from '../api/wsClient';
 
 import Timer from "../components/game/Timer";
-import Canvas from "../components/game/Canvas";
+import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
-
-	// メッセージデータ
-	const [messages, setMessages] = useState<Message[]>([]);
+	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
+	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 
 	useEffect(() => {
 		const ws = createWebSocket();
@@ -36,7 +35,7 @@ const Game = () => {
 				const data = JSON.parse(event.data);
 				console.log('✉️ Received: ', data);
 
-				if (data.type == 'chat') {
+				if (data.type === 'chat') {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -45,6 +44,19 @@ const Game = () => {
 					}
 					setMessages(prev => [...prev, newMessage]);
 				}
+				else if (data.type === 'draw') {
+					setDrawData({
+						x: data.x,
+						y: data.y,
+						color: data.color,
+						lineWidth: data.lineWidth,
+						isStart: data.isStart,
+					});
+				}
+				else if (data.type === 'drawEnd') {
+					setDrawData(null);
+				}
+
 			} catch (error) {
 				console.error('❌ Failed to parse message:', error)
 			}
@@ -128,7 +140,7 @@ const Game = () => {
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
 						<Timer totalTime={totalTime} timeLeft={timeLeft} />
-						<Canvas />
+						<Canvas socket={socket} drawData={drawData} />
 					</div>
 
 					{/* 右カラム: スコアボード, コメント*/}

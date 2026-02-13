@@ -1,6 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 
-const Canvas = () => {
+export interface DrawData {
+	x: number;
+	y: number;
+	color: string;
+	lineWidth: number;
+	isStart?: boolean;
+}
+
+interface CanvasProps {
+	socket: WebSocket | null;
+	drawData: DrawData | null;
+}
+
+const Canvas = ({ socket, drawData }: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
@@ -18,6 +31,32 @@ const Canvas = () => {
 		ctx.fillStyle = "white";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}, []);
+
+	useEffect(() => {
+		if (!drawData)
+			return ;
+
+		const canvas = canvasRef.current;
+		if (!canvas)
+			return ;
+
+		const ctx = canvas.getContext("2d");
+		if (!ctx)
+			return ;
+
+		if (drawData.isStart) {
+			ctx.beginPath();
+			ctx.moveTo(drawData.x, drawData.y);
+		}
+		else {
+			ctx.strokeStyle = drawData.color;
+			ctx.lineWidth = drawData.lineWidth;
+			ctx.lineCap = "round";
+			ctx.lineTo(drawData.x, drawData.y);
+			ctx.stroke();
+		}
+
+	}, [drawData]);
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
@@ -37,6 +76,21 @@ const Canvas = () => {
 		ctx.beginPath();
 		ctx.moveTo(x, y);
 		setIsDrawing(true);
+
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			const strokeColor = isEraser ? "white" : color;
+			const lineWidth = isEraser ? 15 : 3;
+
+			socket.send(JSON.stringify({
+				type: 'draw',
+				x: x,
+				y: y,
+				color: strokeColor,
+				lineWidth: lineWidth,
+				isStart: true,
+				// isEnd: false,
+			}));
+		}
 	};
 
 	const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -57,23 +111,42 @@ const Canvas = () => {
 		if (!ctx)
 			return ;
 
-		ctx.strokeStyle = isEraser ? "white" : color;
-		ctx.lineWidth = isEraser ? 15 : 3;
+		const strokeColor = isEraser ? "white" : color;
+		const lineWidth = isEraser ? 15 : 3;
+
+		ctx.strokeStyle = strokeColor;
+		ctx.lineWidth = lineWidth;
 		ctx.lineCap = "round";
 		ctx.lineTo(x, y);
 		ctx.stroke();
+
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(JSON.stringify({
+				type: 'draw',
+				x: x,
+				y: y,
+				color: strokeColor,
+				lineWidth: lineWidth
+			}));
+		}
 	};
 
 	const stopDrawing = () => {
-		const canvas = canvasRef.current;
-		if (canvas) {
-			const ctx = canvas.getContext("2d");
-			if (ctx) {
-				ctx.closePath();
-			}
-		}
+		// const canvas = canvasRef.current;
+		// if (canvas) {
+		// 	const ctx = canvas.getContext("2d");
+		// 	if (ctx) {
+		// 		ctx.closePath();
+		// 	}
+		// }
 
 		setIsDrawing(false);
+
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(JSON.stringify({
+				type: 'drawEnd',
+			}));
+		}
 	};
 
 	const clearCanvas = () => {
