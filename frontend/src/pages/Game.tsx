@@ -18,6 +18,20 @@ const Game = () => {
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
+
+			// TODO: ログイン機能実装後、実際のuserIdを使用
+			// TODO: URLパラメータからroomIdを取得
+			const tempUserId =
+				"user-" + Math.random().toString(36).substring(2, 9);
+			const tempRoomId = "room-test-1";
+
+			ws.send(
+				JSON.stringify({
+					type: "join",
+					userId: tempUserId, // TODO: GET /api/me から取得
+					roomId: tempRoomId, // TODO: useParams() から取得
+				}),
+			);
 		};
 
 		ws.onmessage = event => {
