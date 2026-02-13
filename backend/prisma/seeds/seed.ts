@@ -1,78 +1,78 @@
-import { PrismaClient } from '../../src/generated/prisma/client';
-import * as bcrypt from 'bcrypt';
-import { seedRooms } from './roomSeeder';
-import { seedSessions } from './sessionSeeder';
+import { PrismaClient } from "../../src/generated/prisma/client";
+import * as bcrypt from "bcrypt";
+import { seedRooms } from "./roomSeeder";
+import { seedSessions } from "./sessionSeeder";
 
 const prisma = new PrismaClient();
 
 async function main() {
-	console.log('🌱 Starting database seeding...\n');
+	console.log("🌱 Starting database seeding...\n");
 
 	// 1. Seed Users
-	console.log('👤 Seeding users...');
+	console.log("👤 Seeding users...");
 	const saltRounds = 10;
-	const hashedPassword = await bcrypt.hash('Password123', saltRounds);
+	const hashedPassword = await bcrypt.hash("Password123", saltRounds);
 
 	const funa = await prisma.user.upsert({
-		where: { name: 'funa' },
+		where: { name: "funa" },
 		update: {},
 		create: {
-			name: 'funa',
-			email: 'funa@example.com',
+			name: "funa",
+			email: "funa@example.com",
 			password: hashedPassword,
 		},
 	});
 
 	const ken = await prisma.user.upsert({
-		where: { name: 'ken' },
+		where: { name: "ken" },
 		update: {},
 		create: {
-			name: 'ken',
-			email: 'ken@example.com',
+			name: "ken",
+			email: "ken@example.com",
 			password: hashedPassword,
 		},
 	});
 
 	const nusu = await prisma.user.upsert({
-		where: { name: 'nusu' },
+		where: { name: "nusu" },
 		update: {},
 		create: {
-			name: 'nusu',
-			email: 'nusu@example.com',
+			name: "nusu",
+			email: "nusu@example.com",
 			password: hashedPassword,
 		},
 	});
 
 	const mori = await prisma.user.upsert({
-		where: { name: 'mori' },
+		where: { name: "mori" },
 		update: {},
 		create: {
-			name: 'mori',
-			email: 'mori@example.com',
+			name: "mori",
+			email: "mori@example.com",
 			password: hashedPassword,
 		},
 	});
 
 	const alice = await prisma.user.upsert({
-		where: { name: 'alice' },
+		where: { name: "alice" },
 		update: {},
 		create: {
-			name: 'alice',
-			email: 'alice@example.com',
+			name: "alice",
+			email: "alice@example.com",
 			password: hashedPassword,
 		},
 	});
 
-	console.log('✅ Users seeded:', { mori, ken, nusu, funa, alice });
+	console.log("✅ Users seeded:", { mori, ken, nusu, funa, alice });
 
 	// 2. Seed Badges
-	console.log('\n🏅 Seeding badges...');
+	console.log("\n🏅 Seeding badges...");
 	const firstWin = await prisma.badge.upsert({
 		where: { id: 1 },
 		update: {},
 		create: {
-			name: 'First Win',
-			description: 'Won your first game!',
+			name: "First Win",
+			description: "Won your first game!",
 		},
 	});
 
@@ -80,15 +80,15 @@ async function main() {
 		where: { id: 2 },
 		update: {},
 		create: {
-			name: 'Social Butterfly',
-			description: 'Played with 5 different users.',
+			name: "Social Butterfly",
+			description: "Played with 5 different users.",
 		},
 	});
 
-	console.log('✅ Badges seeded:', { firstWin, socialButterfly });
+	console.log("✅ Badges seeded:", { firstWin, socialButterfly });
 
 	// 3. Seed UserBadges
-	console.log('\n🎖️  Seeding user badges...');
+	console.log("\n🎖️  Seeding user badges...");
 	await prisma.userBadge.upsert({
 		where: {
 			user_id_badge_id: {
@@ -103,24 +103,24 @@ async function main() {
 		},
 	});
 
-	console.log('✅ User badges seeded');
+	console.log("✅ User badges seeded");
 
 	// 4. Seed Rooms (with members)
-	console.log('');
+	console.log("");
 	await seedRooms(prisma);
 
 	// 5. Seed Sessions (for auth testing)
-	console.log('');
+	console.log("");
 	await seedSessions(prisma);
 
-	console.log('\n🎉 All seeding completed successfully!');
+	console.log("\n🎉 All seeding completed successfully!");
 }
 
 main()
 	.then(async () => {
 		await prisma.$disconnect();
 	})
-	.catch(async (e) => {
+	.catch(async e => {
 		console.error(e);
 		await prisma.$disconnect();
 		process.exit(1);

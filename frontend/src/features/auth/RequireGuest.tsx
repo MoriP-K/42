@@ -1,7 +1,7 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import Footer from '../../components/footer/Footer';
-import { useAuth } from './useAuth';
+import { useEffect, useState, type ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import Footer from "../../components/footer/Footer";
+import { useAuth } from "./useAuth";
 
 const RequireGuest = ({ children }: { children: ReactNode }) => {
 	const { isAuthenticated, refreshAuth } = useAuth();

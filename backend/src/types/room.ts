@@ -41,7 +41,7 @@ export const UpdateGameModeParamsSchema = z.object({
  * PATCH /api/rooms/:roomId/game-mode ボディ型
  */
 export const UpdateGameModeBodySchema = z.object({
-	mode: z.enum(['DEFAULT', 'ONE_STROKE']),
+	mode: z.enum(["DEFAULT", "ONE_STROKE"]),
 });
 
 export type UpdateGameModeParams = z.infer<typeof UpdateGameModeParamsSchema>;
