@@ -1,18 +1,16 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import {
-	AuthSuccessResponse,
-} from '../../types/auth/common';
-import {
-	LoginRequest,
-	LoginRoute,
-} from '../../types/auth/login';
-import { prisma } from '../../lib/prisma';
-import { randomUUID } from 'crypto';
-import bcrypt from 'bcrypt';
+import { FastifyRequest, FastifyReply } from "fastify";
+import { AuthSuccessResponse } from "../../types/auth/common";
+import { LoginRequest, LoginRoute } from "../../types/auth/login";
+import { prisma } from "../../lib/prisma";
+import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
 
-const SESSION_TTL_MS = 24 * 60 * 60 * 1000 //1日
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000; //1日
 
-export const createSessionAndSetCookie = async (reply: FastifyReply, userId: number) => {
+export const createSessionAndSetCookie = async (
+	reply: FastifyReply,
+	userId: number,
+) => {
 	// セッションIDとuserIDを紐づけて保存
 	const now = new Date();
 	const newSession = await prisma.session.create({
@@ -32,11 +30,11 @@ export const createSessionAndSetCookie = async (reply: FastifyReply, userId: num
 	});
 
 	// Cookie に session_id をセット
-	reply.setCookie('session_id', newSession.id, {
-		path: '/',
+	reply.setCookie("session_id", newSession.id, {
+		path: "/",
 		httpOnly: true,
-		sameSite: 'lax',
-		secure: process.env.NODE_ENV === 'production',
+		sameSite: "lax",
+		secure: process.env.NODE_ENV === "production",
 		expires: newSession.expires_at,
 	});
 
@@ -44,17 +42,17 @@ export const createSessionAndSetCookie = async (reply: FastifyReply, userId: num
 		id: newSession.user.id,
 		name: newSession.user.name,
 	};
-	return (successResponse)
-}
+	return successResponse;
+};
 
 export const login = async (
 	request: FastifyRequest<LoginRoute>,
-	reply: FastifyReply<LoginRoute>
+	reply: FastifyReply<LoginRoute>,
 ) => {
 	const parsed = LoginRequest.safeParse(request.body);
 	if (!parsed.success) {
 		return reply.code(400).send({
-			message: '入力に不備があります。'
+			message: "入力に不備があります。",
 		});
 	}
 	const { email, password } = parsed.data;
@@ -70,14 +68,14 @@ export const login = async (
 
 		if (!user) {
 			return reply.code(401).send({
-				message: 'メールアドレスまたはパスワードが正しくありません'
+				message: "メールアドレスまたはパスワードが正しくありません",
 			});
 		}
 
 		const ok = await bcrypt.compare(password, user.password);
 		if (!ok) {
 			return reply.code(401).send({
-				message: 'メールアドレスまたはパスワードが正しくありません'
+				message: "メールアドレスまたはパスワードが正しくありません",
 			});
 		}
 
@@ -86,7 +84,8 @@ export const login = async (
 	} catch (err) {
 		request.log?.error?.(err);
 		return reply.code(500).send({
-			message: '予期しないエラーが発生しました。時間をおいて再度お試しください'
+			message:
+				"予期しないエラーが発生しました。時間をおいて再度お試しください",
 		});
 	}
-}
+};

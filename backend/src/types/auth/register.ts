@@ -1,7 +1,4 @@
-import {
-	AuthSuccessResponse,
-	AuthServerErrorResponse
-} from './common'
+import { AuthSuccessResponse, AuthServerErrorResponse } from "./common";
 
 /**
  * Register API の型定義
@@ -29,5 +26,8 @@ export interface RegisterErrorResponse {
  */
 export type RegisterRoute = {
 	Body: RegisterRequest;
-	Reply: AuthSuccessResponse | AuthServerErrorResponse | RegisterErrorResponse;
+	Reply:
+		| AuthSuccessResponse
+		| AuthServerErrorResponse
+		| RegisterErrorResponse;
 };
