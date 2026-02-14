@@ -35,7 +35,11 @@ export const leaveRoom = (client: RoomClient) => {
 	}
 };
 
-export const broadcastToRoom = (roomId: string, message: any) => {
+export const broadcastToRoom = (
+	roomId: string,
+	message: any,
+	excludeSocket?: WebSocket,
+) => {
 	const room = rooms.get(roomId);
 	if (!room) {
 		console.log(`⚠️ Room ${roomId} not found`);
@@ -46,6 +50,8 @@ export const broadcastToRoom = (roomId: string, message: any) => {
 	let sentCount = 0;
 
 	room.forEach(client => {
+		if (excludeSocket && client.socket === excludeSocket) return;
+
 		if (client.socket.readyState === WebSocket.OPEN) {
 			client.socket.send(payload);
 			sentCount++;
