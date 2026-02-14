@@ -142,12 +142,18 @@ const AccountRegister = () => {
 		switch (field) {
 			case "name": {
 				setName(value);
-				setFieldErrors(prev => ({ ...prev, name: validateName(value) }));
+				setFieldErrors(prev => ({
+					...prev,
+					name: validateName(value),
+				}));
 				return;
 			}
 			case "email": {
 				setEmail(value);
-				setFieldErrors(prev => ({ ...prev, email: validateEmail(value) }));
+				setFieldErrors(prev => ({
+					...prev,
+					email: validateEmail(value),
+				}));
 				return;
 			}
 			case "password": {
@@ -287,7 +293,8 @@ const AccountRegister = () => {
 						placeholder: "例: user_name",
 						autoComplete: "username",
 						value: name,
-						onChange: e => handleFieldChange("name", e.target.value),
+						onChange: e =>
+							handleFieldChange("name", e.target.value),
 					}}
 				/>
 
@@ -302,7 +309,8 @@ const AccountRegister = () => {
 						placeholder: "example@example.com",
 						autoComplete: "email",
 						value: email,
-						onChange: e => handleFieldChange("email", e.target.value),
+						onChange: e =>
+							handleFieldChange("email", e.target.value),
 					}}
 				/>
 
@@ -317,7 +325,8 @@ const AccountRegister = () => {
 						name: "password",
 						autoComplete: "new-password",
 						value: password,
-						onChange: e => handleFieldChange("password", e.target.value),
+						onChange: e =>
+							handleFieldChange("password", e.target.value),
 					}}
 				/>
 
@@ -336,7 +345,10 @@ const AccountRegister = () => {
 						autoComplete: "new-password",
 						value: passwordConfirm,
 						onChange: e =>
-							handleFieldChange("passwordConfirm", e.target.value),
+							handleFieldChange(
+								"passwordConfirm",
+								e.target.value,
+							),
 					}}
 				/>
 			</AuthFormShell>

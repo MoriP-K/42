@@ -12,11 +12,11 @@ import { z } from "zod";
 /**
  * POST /api/login リクエスト型
  */
-export const LoginRequest = z.object({
+export const LoginRequestSchema = z.object({
 	email: z.string().min(1),
 	password: z.string().min(1),
 });
-export type LoginRequest = z.infer<typeof LoginRequest>;
+export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
 /**
  * POST /api/login ルートの型定義
