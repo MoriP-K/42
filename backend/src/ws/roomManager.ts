@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { RoomClient } from "../types/room";
+import { RoomClient } from "../types/room/room";
 
 // キー：roomId (string)
 // 値: Set<RoomClient>

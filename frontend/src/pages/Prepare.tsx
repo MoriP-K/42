@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../features/auth/useAuth";
+import { GameRole } from "../types/user";
+import { roomApi } from "../api/roomApi";
 
 interface Player {
 	id: number;
@@ -9,7 +12,10 @@ interface Player {
 }
 
 const Prepare = () => {
+	const { user } = useAuth();
 	const navigate = useNavigate();
+	const { roomId } = useParams();
+
 	// Mock data
 	const players: Player[] = [
 		{ id: 1, name: "Tanaka", isReady: true, avatar: "🐙" },
@@ -22,7 +28,7 @@ const Prepare = () => {
 	const currentWriter = players[0];
 	type Role = "回答者" | "描き手";
 	const [role] = useState<Role>("回答者");
-	const [countdown, setCountdown] = useState(3);
+	const [countdown, setCountdown] = useState(1000);
 
 	useEffect(() => {
 		if (countdown < 0) {
@@ -38,6 +44,21 @@ const Prepare = () => {
 		return () => clearInterval(timer);
 	}, [countdown, navigate]);
 
+	useEffect(() => {
+		// const me = await userApi.getUsers
+	});
+
+	const toggleIsReady = async (isReady: boolean) => {
+		if (roomId === undefined || user?.id === undefined) {
+			return;
+		}
+		try {
+			await roomApi.updateRoomMemberReady(Number(roomId), user.id, isReady);
+		} catch (error) {
+			console.error("Error:", error);
+		}
+	};
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
 			{/* Background Decorations */}
@@ -50,9 +71,7 @@ const Prepare = () => {
 					<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
 						GAME STARTING...
 					</h1>
-					<p className="text-gray-400 tracking-[0.3em] font-light">
-						まもなく開始します
-					</p>
+					<p className="text-gray-400 tracking-[0.3em] font-light">まもなく開始します</p>
 				</div>
 
 				{/* Main Content Grid */}
@@ -68,15 +87,11 @@ const Prepare = () => {
 								<div className="flex items-center gap-6">
 									<div className="avatar placeholder">
 										<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
-											<span className="text-4xl">
-												{currentWriter.avatar}
-											</span>
+											<span className="text-4xl">{currentWriter.avatar}</span>
 										</div>
 									</div>
 									<div>
-										<p className="text-3xl font-bold">
-											{currentWriter.name}
-										</p>
+										<p className="text-3xl font-bold">{currentWriter.name}</p>
 										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">
 											Artist
 										</div>
@@ -85,20 +100,21 @@ const Prepare = () => {
 							</div>
 						</div>
 
-						{/* Your Role Card */}
+						{/* Your PlayerRole Card */}
 						<div className="card bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform">
 							<div className="card-body p-6">
 								<h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">
 									あなたの役割
 								</h2>
 								<div className="flex items-center justify-between">
-									<span className="text-4xl font-black italic">
-										{role}
-									</span>
-									<div
-										className={`w-12 h-12 rounded-xl flex items-center justify-center ${role === "描き手" ? "bg-orange-500" : "bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] animate-pulse"}`}
-									>
-										{role === "描き手" ? "🎨" : "💡"}
+									<span className="text-4xl font-black italic">{role}</span>
+									<div className="flex gap-4 w-32 justify-end">
+										<input
+											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
+											type="checkbox"
+											checked={user?.role === GameRole.PLAYER}
+											onChange={() => toggleIsReady(user.id)}
+										/>
 									</div>
 								</div>
 							</div>
@@ -118,9 +134,7 @@ const Prepare = () => {
 										className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors"
 									>
 										<div className="flex items-center gap-3">
-											<span className="text-2xl">
-												{player.avatar}
-											</span>
+											<span className="text-2xl">{player.avatar}</span>
 											<span
 												className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}
 											>

@@ -1,11 +1,15 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const UserRoleEnum = z.enum(['PLAYER', 'SPECTATOR']);
-export const GameModeEnum = z.enum(['DEFAULT', 'ONE_STROKE']);
+export const UserRoleEnum = z.enum(["PLAYER", "SPECTATOR"]);
+export const GameModeEnum = z.enum(["DEFAULT", "ONE_STROKE"]);
 
 export const RoomMemberParamsSchema = z.object({
 	roomId: z.coerce.number(),
 	userId: z.coerce.number(),
+});
+
+export const RoomMemberBodySchema = z.object({
+	isReady: z.coerce.boolean(),
 });
 
 export const RoomIdParamsSchema = z.object({
@@ -17,7 +21,9 @@ export const UserIdParamsSchema = z.object({
 });
 
 export type RoomMemberParams = z.infer<typeof RoomMemberParamsSchema>;
+export type RoomMemberBody = z.infer<typeof RoomMemberBodySchema>;
 
 export interface RoomMemberRoute {
 	Params: RoomMemberParams;
+	Body: RoomMemberBody;
 }

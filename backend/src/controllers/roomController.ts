@@ -1,38 +1,42 @@
-import fastify, {
-	FastifyRequest,
-	FastifyReply,
-	FastifyRouterOptions,
-} from "fastify";
+import fastify, { FastifyRequest, FastifyReply, FastifyRouterOptions } from "fastify";
 import { prisma } from "../lib/prisma";
 import { randomUUID } from "node:crypto";
 import {
 	CreateRoomRoute,
 	GetRoomRoute,
+	UpdateGameModeBodySchema,
+	UpdateGameModeParamsSchema,
 	UpdateGameModeRoute,
 } from "../types/room/room";
 import { UpdateRoomMemberRoleRoute } from "../types/room/roomMember";
-import { RoomMemberRoute } from "../types/room/common";
+import {
+	RoomMemberBodySchema,
+	RoomMemberParamsSchema,
+	RoomMemberRoute,
+} from "../types/room/common";
 
 /*
  * POST /api/rooms ルーム作成
  */
-export const createRoom = async (
-	request: FastifyRequest<CreateRoomRoute>,
-	reply: FastifyReply,
-) => {
-	const room = await prisma.room.create({
-		data: {
-			host_id: request.body.hostId,
-			invitation_token: randomUUID(),
-			members: {
-				create: {
-					user_id: request.body.hostId,
-					role: "PLAYER",
+export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply: FastifyReply) => {
+	try {
+		const room = await prisma.room.create({
+			data: {
+				host_id: request.body.hostId,
+				invitation_token: randomUUID(),
+				members: {
+					create: {
+						user_id: request.body.hostId,
+						role: "PLAYER",
+					},
 				},
 			},
-		},
-	});
-	return reply.code(201).send(room);
+		});
+		return reply.code(201).send(room);
+	} catch (error) {
+		console.log("Error:", error);
+		return reply.code(403).send();
+	}
 };
 
 /*
@@ -81,9 +85,7 @@ export const updateRoomMemberRole = async (
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
 		console.log(error);
-		return reply
-			.code(500)
-			.send({ error: "Failed to update room member role" });
+		return reply.code(500).send({ error: "Failed to update room member role" });
 	}
 };
 
@@ -94,17 +96,30 @@ export const updateGameMode = async (
 	request: FastifyRequest<UpdateGameModeRoute>,
 	reply: FastifyReply,
 ) => {
+	const paramResult = UpdateGameModeParamsSchema.safeParse(request.params);
+	const bodyResult = UpdateGameModeBodySchema.safeParse(request.body);
+
+	if (!paramResult.success) {
+		return reply.code(400).send({ message: "パラメータに不備があります。" });
+	}
+
+	if (!bodyResult.success) {
+		return reply.code(400).send({ message: "リクエストボディに不備があります。" });
+	}
+
+	const roomId = paramResult.data.roomId;
+	const mode = bodyResult.data.mode;
+
 	try {
-		const roomId = Number(request.params.roomId);
-		const room = await prisma.room.update({
+		const updatedMode = await prisma.room.update({
 			where: {
 				id: roomId,
 			},
 			data: {
-				game_mode: request.body.mode,
+				game_mode: mode,
 			},
 		});
-		return reply.code(200).send(room);
+		return reply.code(200).send(updatedMode);
 	} catch (error) {
 		console.log(error);
 		return reply.code(500).send({ error: "Failed to update game mode" });
@@ -119,5 +134,35 @@ export const updateRoomMemberReady = async (
 	reply: FastifyReply,
 ) => {
 	try {
-	} catch (error) {}
+		const paramResult = RoomMemberParamsSchema.safeParse(request.params);
+		const bodyResult = RoomMemberBodySchema.safeParse(request.body);
+
+		if (!paramResult.success) {
+			return reply.code(400).send({ message: "パラメータに不備があります。" });
+		}
+
+		if (!bodyResult.success) {
+			return reply.code(400).send({ message: "リクエストボディに不備があります。" });
+		}
+
+		const { roomId, userId } = paramResult.data;
+		const isReady = bodyResult.data.isReady;
+
+		const userStatus = await prisma.roomMember.update({
+			where: {
+				room_id_user_id: {
+					room_id: roomId,
+					user_id: userId,
+				},
+			},
+			data: {
+				is_ready: isReady,
+			},
+		});
+
+		return reply.code(200).send(userStatus);
+	} catch (error) {
+		console.log(error);
+		return reply.code(500).send({ error: "Failed to update user status" });
+	}
 };
