@@ -125,6 +125,56 @@ const AccountRegister = () => {
 		return undefined;
 	};
 
+	const getValues = (
+		overrides: Partial<RegisterFormValues> = {},
+	): RegisterFormValues => ({
+		name,
+		email,
+		password,
+		passwordConfirm,
+		...overrides,
+	});
+
+	const handleFieldChange = (field: RegisterFormField, value: string) => {
+		setTouched(prev => ({ ...prev, [field]: true }));
+		if (serverError !== null) setServerError(null);
+
+		switch (field) {
+			case "name": {
+				setName(value);
+				setFieldErrors(prev => ({ ...prev, name: validateName(value) }));
+				return;
+			}
+			case "email": {
+				setEmail(value);
+				setFieldErrors(prev => ({ ...prev, email: validateEmail(value) }));
+				return;
+			}
+			case "password": {
+				setPassword(value);
+				setFieldErrors(prev => ({
+					...prev,
+					password: validatePassword(value),
+				}));
+				return;
+			}
+			case "passwordConfirm": {
+				setPasswordConfirm(value);
+				const values = getValues({ passwordConfirm: value });
+				setFieldErrors(prev => ({
+					...prev,
+					passwordConfirm: validatePasswordConfirm(
+						values.password,
+						values.passwordConfirm,
+					),
+				}));
+				return;
+			}
+			default:
+				return;
+		}
+	};
+
 	const normalizeErrResponse = (err: unknown): RegisterError => {
 		if (!(err instanceof ApiError)) {
 			return {
@@ -237,16 +287,7 @@ const AccountRegister = () => {
 						placeholder: "例: user_name",
 						autoComplete: "username",
 						value: name,
-						onChange: e => {
-							const nextName = e.target.value;
-							setName(nextName);
-							setTouched(prev => ({ ...prev, name: true }));
-							setServerError(null);
-							setFieldErrors(prev => ({
-								...prev,
-								name: validateName(nextName),
-							}));
-						},
+						onChange: e => handleFieldChange("name", e.target.value),
 					}}
 				/>
 
@@ -261,16 +302,7 @@ const AccountRegister = () => {
 						placeholder: "example@example.com",
 						autoComplete: "email",
 						value: email,
-						onChange: e => {
-							const nextEmail = e.target.value;
-							setEmail(nextEmail);
-							setTouched(prev => ({ ...prev, email: true }));
-							setServerError(null);
-							setFieldErrors(prev => ({
-								...prev,
-								email: validateEmail(nextEmail),
-							}));
-						},
+						onChange: e => handleFieldChange("email", e.target.value),
 					}}
 				/>
 
@@ -285,29 +317,7 @@ const AccountRegister = () => {
 						name: "password",
 						autoComplete: "new-password",
 						value: password,
-						onChange: e => {
-							const nextPassword = e.target.value;
-							setPassword(nextPassword);
-							setTouched(prev => ({ ...prev, password: true }));
-							setServerError(null);
-							setFieldErrors(prev => {
-								const next: typeof prev = {
-									...prev,
-									password: validatePassword(nextPassword),
-								};
-
-								// passwordConfirm は password に依存するので、
-								// 触っている場合のみ再検証する
-								if (touched.passwordConfirm) {
-									next.passwordConfirm =
-										validatePasswordConfirm(
-											nextPassword,
-											passwordConfirm,
-										);
-								}
-								return next;
-							});
-						},
+						onChange: e => handleFieldChange("password", e.target.value),
 					}}
 				/>
 
@@ -325,22 +335,8 @@ const AccountRegister = () => {
 						name: "passwordConfirm",
 						autoComplete: "new-password",
 						value: passwordConfirm,
-						onChange: e => {
-							const nextPasswordConfirm = e.target.value;
-							setPasswordConfirm(nextPasswordConfirm);
-							setTouched(prev => ({
-								...prev,
-								passwordConfirm: true,
-							}));
-							setServerError(null);
-							setFieldErrors(prev => ({
-								...prev,
-								passwordConfirm: validatePasswordConfirm(
-									password,
-									nextPasswordConfirm,
-								),
-							}));
-						},
+						onChange: e =>
+							handleFieldChange("passwordConfirm", e.target.value),
 					}}
 				/>
 			</AuthFormShell>
