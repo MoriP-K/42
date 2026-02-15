@@ -148,10 +148,6 @@ export const registerUser = async (
 			message,
 		});
 	}
-	// const validationResult = validateRegisterRequest(request.body);
-	// if (!validationResult.success) {
-	// 	return (reply.code(400).send(validationResult.error));
-	// }
 
 	try {
 		// emailの重複チェック
