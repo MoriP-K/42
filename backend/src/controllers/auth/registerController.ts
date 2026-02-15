@@ -20,6 +20,7 @@ const validateEmail = (email: string): ValidateResult => {
 		return {
 			success: false,
 			error: {
+				field: "email",
 				message: "メールアドレスの形式が正しくありません",
 			},
 		};
@@ -34,6 +35,7 @@ const validateName = (name: string): ValidateResult => {
 		return {
 			success: false,
 			error: {
+				field: "name",
 				message: "ユーザー名には半角英数字と「_」のみ使用できます",
 			},
 		};
@@ -46,6 +48,7 @@ const validatePassword = (password: string): ValidateResult => {
 		return {
 			success: false,
 			error: {
+				field: "password",
 				message: "パスワードは8文字以上で入力してください",
 			},
 		};
@@ -58,6 +61,7 @@ const validatePassword = (password: string): ValidateResult => {
 		return {
 			success: false,
 			error: {
+				field: "password",
 				message:
 					"パスワードには英大文字・英小文字・数字をそれぞれ1文字以上含めてください",
 			},
@@ -88,6 +92,7 @@ const checkEmailDuplicate = async (email: string): Promise<ValidateResult> => {
 		return {
 			success: false,
 			error: {
+				field: "email",
 				message: "このメールアドレスは既に登録されています",
 			},
 		};
@@ -104,6 +109,7 @@ const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
 		return {
 			success: false,
 			error: {
+				field: "name",
 				message: "このユーザー名は既に使用されています",
 			},
 		};
@@ -128,9 +134,15 @@ export const registerUser = async (
 	const parsed = RegisterRequest.safeParse(request.body);
 	if (!parsed.success) {
 		const issue = parsed.error.issues[0];
-		const message = issue?.message ?? "test";
+		const message = issue?.message ?? "入力内容に不備があります";
+		const pathField = issue?.path?.[0];
+		const field =
+			pathField === "email" || pathField === "name" || pathField === "password"
+				? pathField
+				: "email"; // pathが不明な場合のフォールバック
 
 		return reply.code(400).send({
+			field,
 			message,
 		});
 	}

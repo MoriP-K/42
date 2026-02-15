@@ -30,7 +30,11 @@ export type RegisterRequest = z.infer<typeof RegisterRequest>;
 /**
  * POST /api/register エラーレスポンス型 (400)
  */
+const RegisterErrorField = z.enum(["email", "name", "password"]);
+export type RegisterErrorField = z.infer<typeof RegisterErrorField>;
+
 export const RegisterErrorResponse = z.object({
+	field: RegisterErrorField,
 	message: z.string(),
 });
 export type RegisterErrorResponse = z.infer<typeof RegisterErrorResponse>;
