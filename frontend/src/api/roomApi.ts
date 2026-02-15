@@ -28,14 +28,21 @@ export const roomApi = {
 		});
 	},
 
-	updateGameMode: async (roomId: number, mode: (typeof GameMode)[keyof typeof GameMode]) => {
+	updateGameMode: async (
+		roomId: number,
+		mode: (typeof GameMode)[keyof typeof GameMode],
+	) => {
 		return apiClient(`/rooms/${roomId}/game-mode`, {
 			method: "PATCH",
 			body: JSON.stringify({ mode }),
 		});
 	},
 
-	updateRoomMemberReady: async (roomId: number, userId: number, isReady: boolean) => {
+	updateRoomMemberReady: async (
+		roomId: number,
+		userId: number,
+		isReady: boolean,
+	) => {
 		return apiClient(`/rooms/${roomId}/members/${userId}/ready`, {
 			method: "PATCH",
 			body: JSON.stringify({ isReady }),

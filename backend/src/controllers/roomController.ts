@@ -1,4 +1,8 @@
-import fastify, { FastifyRequest, FastifyReply, FastifyRouterOptions } from "fastify";
+import fastify, {
+	FastifyRequest,
+	FastifyReply,
+	FastifyRouterOptions,
+} from "fastify";
 import { prisma } from "../lib/prisma";
 import { randomUUID } from "node:crypto";
 import {
@@ -18,7 +22,10 @@ import {
 /*
  * POST /api/rooms ルーム作成
  */
-export const createRoom = async (request: FastifyRequest<CreateRoomRoute>, reply: FastifyReply) => {
+export const createRoom = async (
+	request: FastifyRequest<CreateRoomRoute>,
+	reply: FastifyReply,
+) => {
 	try {
 		const room = await prisma.room.create({
 			data: {
@@ -85,7 +92,9 @@ export const updateRoomMemberRole = async (
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
 		console.log(error);
-		return reply.code(500).send({ error: "Failed to update room member role" });
+		return reply
+			.code(500)
+			.send({ error: "Failed to update room member role" });
 	}
 };
 
@@ -100,11 +109,15 @@ export const updateGameMode = async (
 	const bodyResult = UpdateGameModeBodySchema.safeParse(request.body);
 
 	if (!paramResult.success) {
-		return reply.code(400).send({ message: "パラメータに不備があります。" });
+		return reply
+			.code(400)
+			.send({ message: "パラメータに不備があります。" });
 	}
 
 	if (!bodyResult.success) {
-		return reply.code(400).send({ message: "リクエストボディに不備があります。" });
+		return reply
+			.code(400)
+			.send({ message: "リクエストボディに不備があります。" });
 	}
 
 	const roomId = paramResult.data.roomId;
@@ -138,11 +151,15 @@ export const updateRoomMemberReady = async (
 		const bodyResult = RoomMemberBodySchema.safeParse(request.body);
 
 		if (!paramResult.success) {
-			return reply.code(400).send({ message: "パラメータに不備があります。" });
+			return reply
+				.code(400)
+				.send({ message: "パラメータに不備があります。" });
 		}
 
 		if (!bodyResult.success) {
-			return reply.code(400).send({ message: "リクエストボディに不備があります。" });
+			return reply
+				.code(400)
+				.send({ message: "リクエストボディに不備があります。" });
 		}
 
 		const { roomId, userId } = paramResult.data;

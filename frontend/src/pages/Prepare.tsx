@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
-import { GameRole } from "../types/user";
 import { roomApi } from "../api/roomApi";
 
 interface Player {
@@ -14,7 +13,8 @@ interface Player {
 const Prepare = () => {
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	const { roomId } = useParams();
+	const { id: roomId } = useParams();
+	const [isReady, setIsReady] = useState<boolean>(false);
 
 	// Mock data
 	const players: Player[] = [
@@ -45,15 +45,35 @@ const Prepare = () => {
 	}, [countdown, navigate]);
 
 	useEffect(() => {
-		// const me = await userApi.getUsers
-	});
+		const getMyStatus = async () => {
+			if (roomId === undefined || user?.id === undefined) return;
+			try {
+				const res = await roomApi.getRoomDetails(Number(roomId));
+				const myStatus = res.members.find(
+					(member: { user: { id: number } }) =>
+						member.user.id === user.id,
+				);
+				setIsReady(myStatus?.is_ready ?? false);
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		};
+		getMyStatus();
+		console.log(roomId, user);
+	}, [roomId, user]);
 
-	const toggleIsReady = async (isReady: boolean) => {
+	const toggleIsReady = async () => {
 		if (roomId === undefined || user?.id === undefined) {
 			return;
 		}
+		const nextReady = !isReady;
 		try {
-			await roomApi.updateRoomMemberReady(Number(roomId), user.id, isReady);
+			await roomApi.updateRoomMemberReady(
+				Number(roomId),
+				user.id,
+				nextReady,
+			);
+			setIsReady(nextReady);
 		} catch (error) {
 			console.error("Error:", error);
 		}
@@ -71,7 +91,9 @@ const Prepare = () => {
 					<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
 						GAME STARTING...
 					</h1>
-					<p className="text-gray-400 tracking-[0.3em] font-light">まもなく開始します</p>
+					<p className="text-gray-400 tracking-[0.3em] font-light">
+						まもなく開始します
+					</p>
 				</div>
 
 				{/* Main Content Grid */}
@@ -87,11 +109,15 @@ const Prepare = () => {
 								<div className="flex items-center gap-6">
 									<div className="avatar placeholder">
 										<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
-											<span className="text-4xl">{currentWriter.avatar}</span>
+											<span className="text-4xl">
+												{currentWriter.avatar}
+											</span>
 										</div>
 									</div>
 									<div>
-										<p className="text-3xl font-bold">{currentWriter.name}</p>
+										<p className="text-3xl font-bold">
+											{currentWriter.name}
+										</p>
 										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">
 											Artist
 										</div>
@@ -107,13 +133,15 @@ const Prepare = () => {
 									あなたの役割
 								</h2>
 								<div className="flex items-center justify-between">
-									<span className="text-4xl font-black italic">{role}</span>
+									<span className="text-4xl font-black italic">
+										{role}
+									</span>
 									<div className="flex gap-4 w-32 justify-end">
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
-											checked={user?.role === GameRole.PLAYER}
-											onChange={() => toggleIsReady(user.id)}
+											checked={isReady}
+											onChange={toggleIsReady}
 										/>
 									</div>
 								</div>
@@ -134,7 +162,9 @@ const Prepare = () => {
 										className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors"
 									>
 										<div className="flex items-center gap-3">
-											<span className="text-2xl">{player.avatar}</span>
+											<span className="text-2xl">
+												{player.avatar}
+											</span>
 											<span
 												className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}
 											>
@@ -172,7 +202,7 @@ const Prepare = () => {
 
 				{/* Countdown Overlay Section */}
 				<div className="mt-8 relative flex flex-col items-center">
-					<div className="absolute inset-0 bg-white/20 rounded-full blur-3xl opacity-20 scale-150 animate-ping"></div>
+					<div className="absolute inset-0 bg-white/20 rounded-full blur-3xl opacity-20 animate-ping pointer-events-none"></div>
 					<div className="relative text-center">
 						{countdown >= 0 ? (
 							<>

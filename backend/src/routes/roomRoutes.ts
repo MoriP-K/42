@@ -12,5 +12,8 @@ export async function roomRoutes(fastify: FastifyInstance) {
 	fastify.get("/rooms/:roomId", getRoomDetails);
 	fastify.patch("/rooms/:roomId/members/:userId", updateRoomMemberRole);
 	fastify.patch("/rooms/:roomId/game-mode", updateGameMode);
-	fastify.patch("/rooms/:roomId/members/:userId/ready", updateRoomMemberReady);
+	fastify.patch(
+		"/rooms/:roomId/members/:userId/ready",
+		updateRoomMemberReady,
+	);
 }
