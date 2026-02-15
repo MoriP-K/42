@@ -73,7 +73,7 @@ const Game = () => {
 				} else if (data.type === "roundStarted") {
 					console.log("Game started!");
 					/**
-					 * TODO: フロンド側のゲーム開始時の処理（お題表示など）
+					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
 				}
 			} catch (error) {

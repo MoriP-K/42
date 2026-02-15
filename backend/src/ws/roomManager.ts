@@ -57,8 +57,4 @@ export const broadcastToRoom = (
 			sentCount++;
 		}
 	});
-
-	console.log(
-		`📤 Broadcasted to ${sentCount}/${room.size} clients in room ${roomId}`,
-	);
 };
