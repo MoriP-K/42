@@ -131,9 +131,22 @@ export const registerUser = async (
 	request: FastifyRequest<RegisterRoute>,
 	reply: FastifyReply<RegisterRoute>,
 ) => {
-	const validationResult = validateRegisterRequest(request.body);
-	if (!validationResult.success) {
-		return reply.code(400).send(validationResult.error);
+	const parsed = RegisterRequest.safeParse(request.body);
+	if (!parsed.success) {
+		const issue = parsed.error.issues[0];
+		const message = issue?.message ?? "入力内容に不備があります";
+		const pathField = issue?.path?.[0];
+		const field =
+			pathField === "email" ||
+			pathField === "name" ||
+			pathField === "password"
+				? pathField
+				: "email"; // pathが不明な場合のフォールバック
+
+		return reply.code(400).send({
+			field,
+			message,
+		});
 	}
 
 	try {
