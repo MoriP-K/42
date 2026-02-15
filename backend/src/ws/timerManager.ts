@@ -21,6 +21,11 @@ export const startTimer = (roomId: string, duration: number = 60) => {
 		interval: null,
 	};
 
+	broadcastToRoom(roomId, {
+		type: "timer",
+		timeLeft: timer.timeLeft,
+	});
+
 	timer.interval = setInterval(() => {
 		timer.timeLeft -= 1;
 

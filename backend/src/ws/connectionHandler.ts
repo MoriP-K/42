@@ -154,6 +154,7 @@ export const handleConnection = (socket: WebSocket) => {
 			} else if (data.type === "roundStart") {
 				if (!currentClient) {
 					console.log("❌ Not joined to any room");
+					return;
 				}
 
 				console.log(

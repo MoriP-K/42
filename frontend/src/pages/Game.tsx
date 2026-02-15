@@ -46,7 +46,6 @@ const Game = () => {
 		ws.onmessage = event => {
 			try {
 				const data = JSON.parse(event.data);
-				console.log("✉️ Received: ", data);
 
 				if (data.type === "chat") {
 					const newMessage: Message = {
@@ -75,6 +74,8 @@ const Game = () => {
 					/**
 					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
+				} else if (data.type === "roundEnd") {
+					console.log("Round Ended");
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
