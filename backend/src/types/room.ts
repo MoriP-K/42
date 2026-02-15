@@ -2,6 +2,7 @@
  * Room API の型定義
  */
 import { z } from "zod";
+import type { WebSocket } from "ws";
 
 /**
  * POST /api/rooms リクエスト型
@@ -49,4 +50,13 @@ export type UpdateGameModeBody = z.infer<typeof UpdateGameModeBodySchema>;
 export interface UpdateGameModeRoute {
 	Params: UpdateGameModeParams;
 	Body: UpdateGameModeBody;
+}
+
+/**
+ * WebSocket用 ルームクライアント型
+ */
+export interface RoomClient {
+	socket: WebSocket;
+	userId: string;
+	roomId: string;
 }

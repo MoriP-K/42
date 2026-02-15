@@ -2,22 +2,36 @@ import { useState, useEffect } from "react";
 import { createWebSocket } from "../api/wsClient";
 
 import Timer from "../components/game/Timer";
-import Canvas from "../components/game/Canvas";
+import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
-
-	// メッセージデータ
-	const [messages, setMessages] = useState<Message[]>([]);
+	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
+	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
+	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 
 	useEffect(() => {
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
+
+			// TODO: ログイン機能実装後、実際のuserIdを使用
+			// TODO: URLパラメータからroomIdを取得
+			const tempUserId =
+				"user-" + Math.random().toString(36).substring(2, 9);
+			const tempRoomId = "room-test-1";
+
+			ws.send(
+				JSON.stringify({
+					type: "join",
+					userId: tempUserId, // TODO: GET /api/me から取得
+					roomId: tempRoomId, // TODO: useParams() から取得
+				}),
+			);
 		};
 
 		ws.onmessage = event => {
@@ -25,7 +39,7 @@ const Game = () => {
 				const data = JSON.parse(event.data);
 				console.log("✉️ Received: ", data);
 
-				if (data.type == "chat") {
+				if (data.type === "chat") {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -33,6 +47,18 @@ const Game = () => {
 						timestamp: new Date(data.timestamp),
 					};
 					setMessages(prev => [...prev, newMessage]);
+				} else if (data.type === "draw") {
+					setDrawData({
+						x: data.x,
+						y: data.y,
+						color: data.color,
+						lineWidth: data.lineWidth,
+						isStart: data.isStart,
+					});
+				} else if (data.type === "drawEnd") {
+					setDrawData(null);
+				} else if (data.type === "clear") {
+					setClearTrigger(prev => prev + 1);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -47,10 +73,12 @@ const Game = () => {
 			console.log("🔌 WebSocket disconnected");
 		};
 
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setSocket(ws);
 
 		return () => {
 			ws.close();
+			setSocket(null);
 		};
 	}, []);
 
@@ -117,7 +145,11 @@ const Game = () => {
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
 						<Timer totalTime={totalTime} timeLeft={timeLeft} />
-						<Canvas />
+						<Canvas
+							socket={socket}
+							drawData={drawData}
+							clearTrigger={clearTrigger}
+						/>
 					</div>
 
 					{/* 右カラム: スコアボード, コメント*/}
