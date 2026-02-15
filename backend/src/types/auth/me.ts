@@ -1,8 +1,8 @@
 import {
 	AuthSuccessResponse,
 	AuthServerErrorResponse,
-	AuthErrorResponse
-} from './common'
+	AuthErrorResponse,
+} from "./common";
 
 /**
  * Me API の型定義

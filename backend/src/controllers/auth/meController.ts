@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { prisma } from '../../lib/prisma';
-import { MeRoute } from '../../types/auth/me';
+import { FastifyReply, FastifyRequest } from "fastify";
+import { prisma } from "../../lib/prisma";
+import { MeRoute } from "../../types/auth/me";
 
 /**
  * GET /api/me
@@ -12,12 +12,15 @@ import { MeRoute } from '../../types/auth/me';
  * セッションIDは Cookie(session_id) から取得し、
  * Sessionテーブルの revoked_at/expires_at を検証して user を返す。
  */
-export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<MeRoute>) => {
-	const cookieName = 'session_id';
+export const me = async (
+	request: FastifyRequest<MeRoute>,
+	reply: FastifyReply<MeRoute>,
+) => {
+	const cookieName = "session_id";
 	const sessionId = request.cookies?.[cookieName];
 
 	if (!sessionId) {
-		return reply.code(401).send({ message: 'Unauthorized' });
+		return reply.code(401).send({ message: "Unauthorized" });
 	}
 
 	try {
@@ -35,13 +38,13 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 
 		const now = new Date();
 		if (!session) {
-			return reply.code(401).send({ message: 'Unauthorized' });
+			return reply.code(401).send({ message: "Unauthorized" });
 		}
 		if (session.revoked_at !== null) {
-			return reply.code(401).send({ message: 'Unauthorized' });
+			return reply.code(401).send({ message: "Unauthorized" });
 		}
 		if (session.expires_at <= now) {
-			return reply.code(401).send({ message: 'Unauthorized' });
+			return reply.code(401).send({ message: "Unauthorized" });
 		}
 
 		return reply.code(200).send({
@@ -51,7 +54,8 @@ export const me = async (request: FastifyRequest<MeRoute>, reply: FastifyReply<M
 	} catch (err) {
 		request.log?.error?.(err);
 		return reply.code(500).send({
-			message: '予期しないエラーが発生しました。時間をおいて再度お試しください'
+			message:
+				"予期しないエラーが発生しました。時間をおいて再度お試しください",
 		});
 	}
 };

@@ -1,19 +1,19 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import './App.css';
-import Home from './pages/Home';
-import WaitingGame from './pages/WaitingGame';
-import Prepare from './pages/Prepare';
-import Game from './pages/Game';
-import TermsOfService from './pages/TermsOfService';
-import AccountRegister from './pages/AccountRegister';
-import PasswordResetSendMail from './pages/PasswordResetSendMail';
-import PasswordReset from './pages/PasswordReset';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import RedirectLogin from './pages/RedirectLogin';
-import Login from './pages/Login';
-import Profile from './pages/Profile';
-import RequireAuth from './features/auth/RequireAuth';
-import RequireGuest from './features/auth/RequireGuest';
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import "./App.css";
+import Home from "./pages/Home";
+import WaitingGame from "./pages/WaitingGame";
+import Prepare from "./pages/Prepare";
+import Game from "./pages/Game";
+import TermsOfService from "./pages/TermsOfService";
+import AccountRegister from "./pages/AccountRegister";
+import PasswordResetSendMail from "./pages/PasswordResetSendMail";
+import PasswordReset from "./pages/PasswordReset";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RedirectLogin from "./pages/RedirectLogin";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import RequireAuth from "./features/auth/RequireAuth";
+import RequireGuest from "./features/auth/RequireGuest";
 
 const App = () => {
 	return (
