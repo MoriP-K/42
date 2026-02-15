@@ -63,6 +63,11 @@ const Game = () => {
 					setClearTrigger(prev => prev + 1);
 				} else if (data.type === "timer") {
 					setTimeLeft(data.timeLeft);
+				} else if (data.type === "roundStarted") {
+					console.log("Game started!");
+					/**
+					 * TODO: フロンド側のゲーム開始時の処理（お題表示など）
+					 */
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);

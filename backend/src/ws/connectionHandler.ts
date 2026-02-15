@@ -77,7 +77,7 @@ export const handleConnection = (socket: WebSocket) => {
 
 				/**
 				 * タイマー開始（仮）
-				 * TODO: ルーム参加者が全員参加チェック後に開始
+				 * TODO: else if (data.type === "roundStart")のstartTimerのみを残す
 				 */
 				startTimer(data.roomId, ROUND_DURATION);
 
@@ -94,9 +94,7 @@ export const handleConnection = (socket: WebSocket) => {
 				);
 
 				return;
-			}
-
-			if (data.type === "chat") {
+			} else if (data.type === "chat") {
 				handleChatMessage(currentClient, data);
 			} else if (data.type === "draw") {
 				console.log(
@@ -153,6 +151,20 @@ export const handleConnection = (socket: WebSocket) => {
 					},
 					socket,
 				);
+			} else if (data.type === "roundStart") {
+				if (!currentClient) {
+					console.log("❌ Not joined to any room");
+				}
+
+				console.log(
+					`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
+				);
+
+				startTimer(currentClient.roomId, ROUND_DURATION);
+
+				broadcastToRoom(currentClient.roomId, {
+					type: "roundStarted",
+				});
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);

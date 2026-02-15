@@ -29,8 +29,6 @@ export const startTimer = (roomId: string, duration: number = 60) => {
 			timeLeft: timer.timeLeft,
 		});
 
-		console.log(`Timer ${roomId}: ${timer.timeLeft}s`);
-
 		if (timer.timeLeft <= 0) {
 			stopTimer(roomId);
 
