@@ -5,7 +5,7 @@ import websocket from "@fastify/websocket";
 import { userRoutes } from "./routes/userRoutes";
 import { authRoutes } from "./routes/authRoutes";
 import { roomRoutes } from "./routes/roomRoutes";
-import { handleConnection } from "./ws/connectionHandler";
+import { handleChatConnection } from "./ws/chatHandler";
 
 const fastify = Fastify({
 	logger: true,
@@ -32,7 +32,7 @@ fastify.register(roomRoutes, { prefix: "/api" });
 // WebSocketのルートを定義
 fastify.register(async fastify => {
 	fastify.get("/ws", { websocket: true }, (socket, request) => {
-		handleConnection(socket);
+		handleChatConnection(socket);
 	});
 });
 
