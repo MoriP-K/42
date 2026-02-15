@@ -7,7 +7,7 @@ const Footer = () => {
 				<a href="/privacy-policy">プライバシーポリシー</a>
 			</p>
 		</div>
-	);
-};
+	)
+}
 
-export default Footer;
+export default Footer

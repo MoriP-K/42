@@ -2,11 +2,11 @@
  * WebSocket URLを生成
  */
 export const getWebSocketUrl = () => {
-	const base = import.meta.env.VITE_API_URL || "http://localhost:3000";
+	const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 	// http → ws, https → wss に変換
-	const wsBase = base.replace(/^http/, "ws");
+	const wsBase = base.replace(/^http/, 'ws');
 
-	return `${wsBase}/ws`;
+	return (`${wsBase}/ws`);
 };
 
 /**
@@ -14,6 +14,6 @@ export const getWebSocketUrl = () => {
  */
 export const createWebSocket = (): WebSocket => {
 	const url = getWebSocketUrl();
-	console.log("🔗 Connecting to: ", url);
-	return new WebSocket(url);
+	console.log('🔗 Connecting to: ', url);
+	return (new WebSocket(url));
 };

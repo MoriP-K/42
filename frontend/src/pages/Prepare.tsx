@@ -50,9 +50,7 @@ const Prepare = () => {
 					<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
 						GAME STARTING...
 					</h1>
-					<p className="text-gray-400 tracking-[0.3em] font-light">
-						まもなく開始します
-					</p>
+					<p className="text-gray-400 tracking-[0.3em] font-light">まもなく開始します</p>
 				</div>
 
 				{/* Main Content Grid */}
@@ -62,24 +60,16 @@ const Prepare = () => {
 						{/* Current Writer Card */}
 						<div className="card bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform">
 							<div className="card-body p-6">
-								<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">
-									今回の書き手
-								</h2>
+								<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">今回の書き手</h2>
 								<div className="flex items-center gap-6">
 									<div className="avatar placeholder">
 										<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
-											<span className="text-4xl">
-												{currentWriter.avatar}
-											</span>
+											<span className="text-4xl">{currentWriter.avatar}</span>
 										</div>
 									</div>
 									<div>
-										<p className="text-3xl font-bold">
-											{currentWriter.name}
-										</p>
-										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">
-											Artist
-										</div>
+										<p className="text-3xl font-bold">{currentWriter.name}</p>
+										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">Artist</div>
 									</div>
 								</div>
 							</div>
@@ -88,16 +78,10 @@ const Prepare = () => {
 						{/* Your Role Card */}
 						<div className="card bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform">
 							<div className="card-body p-6">
-								<h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">
-									あなたの役割
-								</h2>
+								<h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">あなたの役割</h2>
 								<div className="flex items-center justify-between">
-									<span className="text-4xl font-black italic">
-										{role}
-									</span>
-									<div
-										className={`w-12 h-12 rounded-xl flex items-center justify-center ${role === "描き手" ? "bg-orange-500" : "bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] animate-pulse"}`}
-									>
+									<span className="text-4xl font-black italic">{role}</span>
+									<div className={`w-12 h-12 rounded-xl flex items-center justify-center ${role === "描き手" ? "bg-orange-500" : "bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] animate-pulse"}`}>
 										{role === "描き手" ? "🎨" : "💡"}
 									</div>
 								</div>
@@ -108,38 +92,20 @@ const Prepare = () => {
 					{/* Right Column: Player Readiness */}
 					<div className="card bg-black/30 backdrop-blur-sm border border-white/10 shadow-2xl">
 						<div className="card-body p-6">
-							<h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">
-								プレイヤーの準備状況
-							</h2>
+							<h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">プレイヤーの準備状況</h2>
 							<div className="space-y-4">
-								{players.map(player => (
-									<div
-										key={player.id}
-										className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors"
-									>
+								{players.map((player) => (
+									<div key={player.id} className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
 										<div className="flex items-center gap-3">
-											<span className="text-2xl">
-												{player.avatar}
-											</span>
-											<span
-												className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}
-											>
+											<span className="text-2xl">{player.avatar}</span>
+											<span className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}>
 												{player.name}
 											</span>
 										</div>
 										{player.isReady ? (
 											<span className="flex items-center gap-1 text-emerald-400 text-sm font-bold">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													className="h-4 w-4"
-													viewBox="0 0 20 20"
-													fill="currentColor"
-												>
-													<path
-														fillRule="evenodd"
-														d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-														clipRule="evenodd"
-													/>
+												<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+													<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 												</svg>
 												READY
 											</span>
@@ -160,16 +126,10 @@ const Prepare = () => {
 				<div className="mt-8 relative flex flex-col items-center">
 					<div className="absolute inset-0 bg-white/20 rounded-full blur-3xl opacity-20 scale-150 animate-ping"></div>
 					<div className="relative text-center">
-						{countdown >= 0 ? (
+						{countdown >= 0 ?
 							<>
 								<span className="countdown font-mono text-9xl md:text-[12rem] leading-none text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-									<span
-										style={
-											{
-												"--value": countdown,
-											} as React.CSSProperties
-										}
-									></span>
+									<span style={{ "--value": countdown } as React.CSSProperties}></span>
 								</span>
 								<div className="mt-4 flex gap-2 justify-center">
 									{[...Array(count)].map((_, i) => (
@@ -179,15 +139,15 @@ const Prepare = () => {
 										></div>
 									))}
 								</div>
-							</>
-						) : (
-							<div className="flex flex-col items-center animate-game-start">
-								<span className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] tracking-widest italic">
-									GAME START!
-								</span>
-								<div className="mt-4 h-1 w-64 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-expand-width"></div>
-							</div>
-						)}
+							</> : (
+								<div className="flex flex-col items-center animate-game-start">
+									<span className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] tracking-widest italic">
+										GAME START!
+									</span>
+									<div className="mt-4 h-1 w-64 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-expand-width"></div>
+								</div>
+							)
+						}
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,4 @@
-const BASE_URL =
-	import.meta.env.VITE_API_URL + "/api" || "http://localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_API_URL + '/api' || 'http://localhost:3000/api';
 
 /**
  * API 通信失敗時に使用するエラークラス。
@@ -8,14 +7,14 @@ const BASE_URL =
  * @property data   サーバーが返したエラーレスポンスの body
  */
 export class ApiError extends Error {
-	status: number;
-	data: unknown;
+	status: number
+	data: unknown
 
 	constructor(status: number, data: unknown) {
-		super("API Request Failed");
-		this.name = "ApiError";
-		this.status = status;
-		this.data = data;
+		super('API Request Failed')
+		this.name = 'ApiError'
+		this.status = status
+		this.data = data
 	}
 }
 
@@ -23,15 +22,12 @@ export class ApiError extends Error {
  * 共通のAPIクライアント
  * fetchをラップして共通の処理（エラーハンドリング等）を行う
  */
-export const apiClient = async (
-	endpoint: string,
-	options: RequestInit = {},
-) => {
+export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
 	const url = `${BASE_URL}${endpoint}`;
 
 	// 必要に応じてヘッダーを追加
 	const headers = {
-		"Content-Type": "application/json",
+		'Content-Type': 'application/json',
 		...options.headers,
 	};
 

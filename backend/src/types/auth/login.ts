@@ -1,9 +1,9 @@
 import {
 	AuthSuccessResponse,
 	AuthErrorResponse,
-	AuthServerErrorResponse,
-} from "./common";
-import { z } from "zod";
+	AuthServerErrorResponse
+} from './common'
+import { z } from 'zod';
 
 /**
  * Login API の型定義
@@ -12,11 +12,11 @@ import { z } from "zod";
 /**
  * POST /api/login リクエスト型
  */
-export const LoginRequestSchema = z.object({
+export const LoginRequest = z.object({
 	email: z.string().min(1),
 	password: z.string().min(1),
 });
-export type LoginRequest = z.infer<typeof LoginRequestSchema>;
+export type LoginRequest = z.infer<typeof LoginRequest>;
 
 /**
  * POST /api/login ルートの型定義

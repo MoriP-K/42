@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface ChatInputProps {
-	onSendMessage: (text: string) => void;
-}
+	onSendMessage: (text: string) => void,
+};
 
 const ChatInput = ({ onSendMessage }: ChatInputProps) => {
 	const [input, setInput] = useState("");
@@ -10,7 +10,8 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (input.trim() === "") return;
+		if (input.trim() === "")
+			return ;
 
 		onSendMessage(input);
 		setInput("");
@@ -21,7 +22,7 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
 			<input
 				type="text"
 				value={input}
-				onChange={e => setInput(e.target.value)}
+				onChange={(e) => setInput(e.target.value)}
 				className="input input-bordered join-item flex-1"
 				placeholder="コメントを入力…"
 			/>

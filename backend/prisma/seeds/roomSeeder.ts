@@ -1,17 +1,17 @@
-import { PrismaClient } from "../../src/generated/prisma/client";
-import { randomUUID } from "node:crypto";
+import { PrismaClient } from '../../src/generated/prisma/client';
+import { randomUUID } from 'node:crypto';
 
 export async function seedRooms(prisma: PrismaClient) {
-	console.log("🏠 Seeding rooms...");
+	console.log('🏠 Seeding rooms...');
 
 	// ユーザーを取得（既に seed.ts で作成されている前提）
-	const funa = await prisma.user.findUnique({ where: { name: "funa" } });
-	const ken = await prisma.user.findUnique({ where: { name: "ken" } });
-	const mori = await prisma.user.findUnique({ where: { name: "mori" } });
-	const nusu = await prisma.user.findUnique({ where: { name: "nusu" } });
+	const funa = await prisma.user.findUnique({ where: { name: 'funa' } });
+	const ken = await prisma.user.findUnique({ where: { name: 'ken' } });
+	const mori = await prisma.user.findUnique({ where: { name: 'mori' } });
+	const nusu = await prisma.user.findUnique({ where: { name: 'nusu' } });
 
 	if (!mori || !ken || !funa || !nusu) {
-		throw new Error("Users not found. Please run user seeder first.");
+		throw new Error('Users not found. Please run user seeder first.');
 	}
 
 	// Room 1: funa がホスト、DEFAULT モード
@@ -21,29 +21,29 @@ export async function seedRooms(prisma: PrismaClient) {
 		create: {
 			id: 1,
 			host_id: funa.id,
-			game_mode: "DEFAULT",
-			status: "WAITING",
+			game_mode: 'DEFAULT',
+			status: 'WAITING',
 			invitation_token: randomUUID(),
 			members: {
 				create: [
 					{
 						user_id: funa.id,
-						role: "SPECTATOR",
+						role: 'SPECTATOR',
 						is_ready: false,
 					},
 					{
 						user_id: ken.id,
-						role: "PLAYER",
+						role: 'PLAYER',
 						is_ready: false,
 					},
 					{
 						user_id: nusu.id,
-						role: "PLAYER",
+						role: 'PLAYER',
 						is_ready: false,
 					},
 					{
 						user_id: mori.id,
-						role: "PLAYER",
+						role: 'PLAYER',
 						is_ready: false,
 					},
 				],
@@ -58,19 +58,19 @@ export async function seedRooms(prisma: PrismaClient) {
 		create: {
 			id: 2,
 			host_id: ken.id,
-			game_mode: "ONE_STROKE",
-			status: "WAITING",
+			game_mode: 'ONE_STROKE',
+			status: 'WAITING',
 			invitation_token: randomUUID(),
 			members: {
 				create: [
 					{
 						user_id: ken.id,
-						role: "PLAYER",
+						role: 'PLAYER',
 						is_ready: true,
 					},
 					{
 						user_id: mori.id,
-						role: "PLAYER",
+						role: 'PLAYER',
 						is_ready: false,
 					},
 				],
@@ -78,6 +78,6 @@ export async function seedRooms(prisma: PrismaClient) {
 		},
 	});
 
-	console.log("✅ Rooms seeded:", { room1, room2 });
+	console.log('✅ Rooms seeded:', { room1, room2 });
 	return { room1, room2 };
 }

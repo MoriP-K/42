@@ -1,6 +1,6 @@
 export const Role = {
-	PLAYER: "PLAYER",
-	SPECTATOR: "SPECTATOR",
+	PLAYER: 'PLAYER',
+	SPECTATOR: 'SPECTATOR',
 };
 
 export interface AuthUser {

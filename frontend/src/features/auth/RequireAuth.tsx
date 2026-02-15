@@ -1,7 +1,7 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import Footer from "../../components/footer/Footer";
-import { useAuth } from "./useAuth";
+import { useEffect, useState, type ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import Footer from '../../components/footer/Footer';
+import { useAuth } from './useAuth';
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
 	const { isAuthenticated, refreshAuth } = useAuth();
@@ -10,8 +10,7 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
 	const [isChecking, setIsChecking] = useState(false);
 	const [isInitialized, setIsInitialized] = useState(false);
 
-	const redirectEnabled =
-		import.meta.env.VITE_AUTH_REDIRECT_ENABLED !== "false";
+	const redirectEnabled = import.meta.env.VITE_AUTH_REDIRECT_ENABLED !== 'false';
 
 	useEffect(() => {
 		// すでに認証済み、または初期化済み、または確認中なら何もしない

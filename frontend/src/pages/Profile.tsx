@@ -12,7 +12,7 @@ const Profile = () => {
 			try {
 				const currentUserId = 1;
 				const data = await apiClient(
-					`/profile?userId=${currentUserId}`,
+					`/profile?userId=${currentUserId}`
 				);
 				setProfileData(data);
 			} catch (error) {
