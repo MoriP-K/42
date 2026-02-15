@@ -15,6 +15,13 @@ const Game = () => {
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
+	// プレイヤーデータ
+	const [players] = useState([
+		{ id: 1, name: "Ken", score: 0, isDrawing: true },
+		{ id: 2, name: "Alice", score: 0, isDrawing: false },
+		{ id: 3, name: "Bob", score: 0, isDrawing: false },
+	]);
+
 	useEffect(() => {
 		const ws = createWebSocket();
 
@@ -91,13 +98,6 @@ const Game = () => {
 		};
 	}, []);
 
-	// プレイヤーデータ
-	const [players] = useState([
-		{ id: 1, name: "Ken", score: 0, isDrawing: true },
-		{ id: 2, name: "Alice", score: 0, isDrawing: false },
-		{ id: 3, name: "Bob", score: 0, isDrawing: false },
-	]);
-
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
 			console.error("❌ WebSocket not connected");
@@ -114,20 +114,6 @@ const Game = () => {
 
 		socket.send(JSON.stringify(message));
 	};
-
-	// // タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
-	// useEffect(() => {
-	// 	if (timeLeft <= 0)
-	// 		// useEffectの停止条件: timeLeftが0以下になったら
-	// 		return;
-
-	// 	const timer = setInterval(() => {
-	// 		// 1000msごとにsetInterval()の中の処理を実行する
-	// 		setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
-	// 	}, 1000);
-
-	// 	return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
-	// }, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
 
 	return (
 		<div className="min-h-screen bg-base-200">
