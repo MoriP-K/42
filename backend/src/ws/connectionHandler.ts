@@ -1,5 +1,9 @@
 import { WebSocket } from "ws";
-import { RoomClient, ROUND_DURATION } from "../types/room";
+import {
+	RoomClient,
+	WebSocketMessageType,
+	ROUND_DURATION,
+} from "../types/room";
 import {
 	CANVAS_WIDTH,
 	CANVAS_HEIGHT,
@@ -20,7 +24,7 @@ export const handleConnection = (socket: WebSocket) => {
 			const data = JSON.parse(rawMessage.toString());
 			console.log("📥 Received: ", data);
 
-			if (data.type === "join") {
+			if (data.type === WebSocketMessageType.JOIN) {
 				if (
 					!data.userId ||
 					typeof data.userId !== "string" ||
@@ -29,7 +33,7 @@ export const handleConnection = (socket: WebSocket) => {
 					console.log("❌ Invalid userId:", data.userId);
 					socket.send(
 						JSON.stringify({
-							type: "error",
+							type: WebSocketMessageType.ERROR,
 							message: "Invalid userId",
 						}),
 					);
@@ -43,7 +47,7 @@ export const handleConnection = (socket: WebSocket) => {
 				) {
 					socket.send(
 						JSON.stringify({
-							type: "error",
+							type: WebSocketMessageType.ERROR,
 							message: "Invalid roomId",
 						}),
 					);
@@ -62,19 +66,6 @@ export const handleConnection = (socket: WebSocket) => {
 
 				joinRoom(currentClient);
 
-				socket.send(
-					JSON.stringify({
-						type: "joined",
-						roomId: data.roomId,
-						userId: data.userId,
-					}),
-				);
-
-				broadcastToRoom(data.roomId, {
-					type: "userJoined",
-					userId: data.userId,
-				});
-
 				/**
 				 * タイマー開始（仮）
 				 * TODO: else if (data.type === "roundStart")のstartTimerのみを残す
@@ -88,15 +79,15 @@ export const handleConnection = (socket: WebSocket) => {
 				console.error("❌ Not joined to any room");
 				socket.send(
 					JSON.stringify({
-						type: "error",
+						type: WebSocketMessageType.ERROR,
 						message: "Join a room first",
 					}),
 				);
 
 				return;
-			} else if (data.type === "chat") {
+			} else if (data.type === WebSocketMessageType.CHAT) {
 				handleChatMessage(currentClient, data);
-			} else if (data.type === "draw") {
+			} else if (data.type === WebSocketMessageType.DRAW) {
 				console.log(
 					`Draw from ${currentClient.userId} in room ${currentClient.roomId}`,
 				);
@@ -122,7 +113,7 @@ export const handleConnection = (socket: WebSocket) => {
 				broadcastToRoom(
 					currentClient.roomId,
 					{
-						type: "draw",
+						type: WebSocketMessageType.DRAW,
 						x: x,
 						y: y,
 						color: data.color,
@@ -131,27 +122,23 @@ export const handleConnection = (socket: WebSocket) => {
 					},
 					socket,
 				);
-			} else if (data.type === "drawEnd") {
-				console.log(`DrawEnd from ${currentClient.userId}`);
-
+			} else if (data.type === WebSocketMessageType.DRAW_END) {
 				broadcastToRoom(
 					currentClient.roomId,
 					{
-						type: "drawEnd",
+						type: WebSocketMessageType.DRAW_END,
 					},
 					socket,
 				);
-			} else if (data.type === "clear") {
-				console.log(`Clear from ${currentClient.userId}`);
-
+			} else if (data.type === WebSocketMessageType.CLEAR) {
 				broadcastToRoom(
 					currentClient.roomId,
 					{
-						type: "clear",
+						type: WebSocketMessageType.CLEAR,
 					},
 					socket,
 				);
-			} else if (data.type === "roundStart") {
+			} else if (data.type === WebSocketMessageType.ROUND_START) {
 				if (!currentClient) {
 					console.log("❌ Not joined to any room");
 					return;
@@ -161,11 +148,15 @@ export const handleConnection = (socket: WebSocket) => {
 					`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
 				);
 
-				startTimer(currentClient.roomId, ROUND_DURATION);
+				broadcastToRoom(
+					currentClient.roomId,
+					{
+						type: WebSocketMessageType.ROUND_START,
+					},
+					socket,
+				);
 
-				broadcastToRoom(currentClient.roomId, {
-					type: "roundStarted",
-				});
+				startTimer(currentClient.roomId, ROUND_DURATION);
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
@@ -175,7 +166,7 @@ export const handleConnection = (socket: WebSocket) => {
 	socket.on("close", () => {
 		if (currentClient) {
 			broadcastToRoom(currentClient.roomId, {
-				type: "userLeft",
+				type: WebSocketMessageType.LEFT,
 				userId: currentClient.userId,
 			});
 

@@ -6,7 +6,7 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
-import { ROUND_DURATION } from "../types/room";
+import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -32,11 +32,11 @@ const Game = () => {
 			// TODO: URLパラメータからroomIdを取得
 			const tempUserId =
 				"user-" + Math.random().toString(36).substring(2, 9);
-			const tempRoomId = "room-test-1";
+			const tempRoomId = "room-test-2";
 
 			ws.send(
 				JSON.stringify({
-					type: "join",
+					type: WebSocketMessageType.JOIN,
 					userId: tempUserId, // TODO: GET /api/me から取得
 					roomId: tempRoomId, // TODO: useParams() から取得
 				}),
@@ -47,7 +47,7 @@ const Game = () => {
 			try {
 				const data = JSON.parse(event.data);
 
-				if (data.type === "chat") {
+				if (data.type === WebSocketMessageType.CHAT) {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -55,7 +55,7 @@ const Game = () => {
 						timestamp: new Date(data.timestamp),
 					};
 					setMessages(prev => [...prev, newMessage]);
-				} else if (data.type === "draw") {
+				} else if (data.type === WebSocketMessageType.DRAW) {
 					setDrawData({
 						x: data.x,
 						y: data.y,
@@ -63,19 +63,22 @@ const Game = () => {
 						lineWidth: data.lineWidth,
 						isStart: data.isStart,
 					});
-				} else if (data.type === "drawEnd") {
+				} else if (data.type === WebSocketMessageType.DRAW_END) {
 					setDrawData(null);
-				} else if (data.type === "clear") {
+				} else if (data.type === WebSocketMessageType.CLEAR) {
 					setClearTrigger(prev => prev + 1);
-				} else if (data.type === "timer") {
+				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
-				} else if (data.type === "roundStarted") {
-					console.log("Game started!");
+				} else if (data.type === WebSocketMessageType.ROUND_START) {
+					console.log("Round started!");
 					/**
 					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
-				} else if (data.type === "roundEnd") {
-					console.log("Round Ended");
+				} else if (data.type === WebSocketMessageType.ROUND_END) {
+					console.log("Round Ended!");
+					/**
+					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
+					 */
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);

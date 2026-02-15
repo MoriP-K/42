@@ -69,14 +69,15 @@ export const ROUND_DURATION = 60;
 /**
  * WebSocketメッセージタイプ
  */
-export enum WebSocketMessageType {
-	JOIN = "join",
-	JOINED = "joined",
-	CHAT = "chat",
-	DRAW = "draw",
-	DRAW_END = "drawEnd",
-	CLEAR = "clear",
-	ROUND_START = "roundStart",
-	ROUND_END = "roundEnd",
-	TIMER = "timer",
-}
+export const WebSocketMessageType = {
+	JOIN: "join",
+	LEFT: "userLeft",
+	CHAT: "chat",
+	DRAW: "draw",
+	DRAW_END: "drawEnd",
+	CLEAR: "clear",
+	ROUND_START: "roundStart",
+	ROUND_END: "roundEnd",
+	TIMER: "timer",
+	ERROR: "error",
+};

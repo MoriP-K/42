@@ -1,5 +1,5 @@
 import { broadcastToRoom } from "./roomManager";
-
+import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
 interface RoomTimer {
 	roomId: string;
 	timeLeft: number;
@@ -9,7 +9,10 @@ interface RoomTimer {
 // ルームごとのタイマーを管理
 const timers = new Map<string, RoomTimer>();
 
-export const startTimer = (roomId: string, duration: number = 60) => {
+export const startTimer = (
+	roomId: string,
+	duration: number = ROUND_DURATION,
+) => {
 	// 既存のタイマーがあれば停止
 	if (timers.has(roomId)) {
 		stopTimer(roomId);
@@ -22,7 +25,7 @@ export const startTimer = (roomId: string, duration: number = 60) => {
 	};
 
 	broadcastToRoom(roomId, {
-		type: "timer",
+		type: WebSocketMessageType.TIMER,
 		timeLeft: timer.timeLeft,
 	});
 
@@ -30,7 +33,7 @@ export const startTimer = (roomId: string, duration: number = 60) => {
 		timer.timeLeft -= 1;
 
 		broadcastToRoom(roomId, {
-			type: "timer",
+			type: WebSocketMessageType.TIMER,
 			timeLeft: timer.timeLeft,
 		});
 
@@ -38,7 +41,7 @@ export const startTimer = (roomId: string, duration: number = 60) => {
 			stopTimer(roomId);
 
 			broadcastToRoom(roomId, {
-				type: "roundEnd",
+				type: WebSocketMessageType.ROUND_END,
 			});
 		}
 	}, 1000);
