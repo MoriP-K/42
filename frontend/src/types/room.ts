@@ -19,3 +19,5 @@ export interface RoomDetails {
 	game_mode: (typeof GameMode)[keyof typeof GameMode];
 	members: RoomMember[];
 }
+
+export const ROUND_DURATION = 60;

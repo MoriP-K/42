@@ -60,3 +60,5 @@ export interface RoomClient {
 	userId: string;
 	roomId: string;
 }
+
+export const ROUND_DURATION = 60;

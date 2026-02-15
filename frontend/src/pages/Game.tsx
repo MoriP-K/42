@@ -6,12 +6,14 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
+import { ROUND_DURATION } from "../types/room";
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
+	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // useStateを使って, setTimeLeftでtimeLeftを更新する
 
 	useEffect(() => {
 		const ws = createWebSocket();
@@ -59,6 +61,8 @@ const Game = () => {
 					setDrawData(null);
 				} else if (data.type === "clear") {
 					setClearTrigger(prev => prev + 1);
+				} else if (data.type === "timer") {
+					setTimeLeft(data.timeLeft);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -106,30 +110,19 @@ const Game = () => {
 		socket.send(JSON.stringify(message));
 	};
 
-	// タイマー処理
-	const totalTime = 60; // 制限時間用の変数
-	const [timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
-
-	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
-	useEffect(() => {
-		if (timeLeft <= 0)
-			// useEffectの停止条件: timeLeftが0以下になったら
-			return;
-
-		const timer = setInterval(() => {
-			// 1000msごとにsetInterval()の中の処理を実行する
-			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
-		}, 1000);
-
-		return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
-	}, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
-
-	// あとでWebSocketに置き換える
+	// // タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
 	// useEffect(() => {
-	//     socket.on('gameState', (state) => {
-	//         setTimeLeft(state.timeLeft);
-	//     });
-	//} []);
+	// 	if (timeLeft <= 0)
+	// 		// useEffectの停止条件: timeLeftが0以下になったら
+	// 		return;
+
+	// 	const timer = setInterval(() => {
+	// 		// 1000msごとにsetInterval()の中の処理を実行する
+	// 		setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
+	// 	}, 1000);
+
+	// 	return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
+	// }, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
 
 	return (
 		<div className="min-h-screen bg-base-200">
@@ -144,7 +137,7 @@ const Game = () => {
 				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
-						<Timer totalTime={totalTime} timeLeft={timeLeft} />
+						<Timer totalTime={ROUND_DURATION} timeLeft={timeLeft} />
 						<Canvas
 							socket={socket}
 							drawData={drawData}

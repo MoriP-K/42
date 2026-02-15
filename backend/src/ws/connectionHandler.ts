@@ -1,13 +1,14 @@
 import { WebSocket } from "ws";
-import { RoomClient } from "../types/room";
-import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
-import { handleChatMessage } from "./chatHandler";
+import { RoomClient, ROUND_DURATION } from "../types/room";
 import {
 	CANVAS_WIDTH,
 	CANVAS_HEIGHT,
 	PEN_LINE_WIDTH,
 	ERASER_LINE_WIDTH,
 } from "../types/canvas";
+import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
+import { handleChatMessage } from "./chatHandler";
+import { startTimer } from "./timerManager";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -73,6 +74,12 @@ export const handleConnection = (socket: WebSocket) => {
 					type: "userJoined",
 					userId: data.userId,
 				});
+
+				/**
+				 * タイマー開始（仮）
+				 * TODO: ルーム参加者が全員参加チェック後に開始
+				 */
+				startTimer(data.roomId, ROUND_DURATION);
 
 				return;
 			}
