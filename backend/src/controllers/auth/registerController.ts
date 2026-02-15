@@ -137,7 +137,9 @@ export const registerUser = async (
 		const message = issue?.message ?? "入力内容に不備があります";
 		const pathField = issue?.path?.[0];
 		const field =
-			pathField === "email" || pathField === "name" || pathField === "password"
+			pathField === "email" ||
+			pathField === "name" ||
+			pathField === "password"
 				? pathField
 				: "email"; // pathが不明な場合のフォールバック
 
