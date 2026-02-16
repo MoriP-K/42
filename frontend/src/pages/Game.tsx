@@ -3,6 +3,7 @@ import { createWebSocket } from "../api/wsClient";
 import { useParams } from "react-router-dom";
 
 import { roomApi } from "../api/roomApi";
+import { authApi } from "../api/authApi";
 import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
 import Timer from "../components/game/Timer";
 import Canvas, { type DrawData } from "../components/game/Canvas";
@@ -13,6 +14,7 @@ import ChatInput from "../components/game/ChatInput";
 const Game = () => {
 	const { id } = useParams<{ id: string }>(); // URLパラメータ取得
 
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
@@ -27,21 +29,31 @@ const Game = () => {
 	]);
 
 	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const user = await authApi.me();
+				setCurrentUserId(user.id);
+			} catch (error) {
+				console.error("❌ Failed to get user:", error);
+			}
+		};
+
+		fetchUser();
+	}, []);
+
+	useEffect(() => {
+		if (!currentUserId) return;
+
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
 
-			// TODO: ログイン機能実装後、実際のuserIdを使用
-			// TODO: URLパラメータからroomIdを取得
-			const tempUserId =
-				"user-" + Math.random().toString(36).substring(2, 9);
-
 			if (id) {
 				ws.send(
 					JSON.stringify({
 						type: WebSocketMessageType.JOIN,
-						userId: tempUserId,
+						userId: currentUserId,
 						roomId: id,
 					}),
 				);
@@ -105,7 +117,7 @@ const Game = () => {
 			ws.close();
 			setSocket(null);
 		};
-	}, []);
+	}, [currentUserId, id]);
 
 	const checkAndStartRound = async (socket: WebSocket) => {
 		if (!id) return;
