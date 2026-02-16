@@ -66,12 +66,6 @@ export const handleConnection = (socket: WebSocket) => {
 
 				joinRoom(currentClient);
 
-				/**
-				 * タイマー開始（仮）
-				 * TODO: else if (data.type === "roundStart")のstartTimerのみを残す
-				 */
-				startTimer(data.roomId, ROUND_DURATION);
-
 				return;
 			}
 
