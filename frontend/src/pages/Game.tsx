@@ -3,7 +3,12 @@ import { createWebSocket } from "../api/wsClient";
 import { useParams } from "react-router-dom";
 
 import { roomApi } from "../api/roomApi";
-import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
+import {
+	type RoomDetails,
+	type RoomMember,
+	WebSocketMessageType,
+	ROUND_DURATION,
+} from "../types/room";
 import Timer from "../components/game/Timer";
 import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
@@ -11,7 +16,7 @@ import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
-	const { id } = useParams<{ id: string }>(); // URLパラメータ取得
+	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
@@ -27,6 +32,8 @@ const Game = () => {
 	]);
 
 	useEffect(() => {
+		if (!id) return;
+
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
@@ -105,17 +112,21 @@ const Game = () => {
 			ws.close();
 			setSocket(null);
 		};
-	}, []);
+	}, [id]);
 
 	const checkAndStartRound = async (socket: WebSocket) => {
 		if (!id) return;
 
 		try {
-			const roomData = await roomApi.getRoomDetails(Number(id));
+			const roomData: RoomDetails = await roomApi.getRoomDetails(
+				Number(id),
+			);
 
 			if (!roomData || !roomData.members) return;
 
-			const allReady = roomData.members.every((m: any) => m.is_ready);
+			const allReady = roomData.members.every(
+				(m: RoomMember) => m.is_ready,
+			);
 
 			if (allReady && socket.readyState === WebSocket.OPEN) {
 				socket.send(
