@@ -77,12 +77,10 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
 				} else if (data.type === WebSocketMessageType.ROUND_START) {
-					console.log("Round started!");
 					/**
 					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
-					console.log("Round Ended!");
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
 					 */
@@ -115,15 +113,11 @@ const Game = () => {
 		try {
 			const roomData = await roomApi.getRoomDetails(Number(id));
 
-			console.log("📊 Room data:", roomData);
-			console.log("📊 Members:", roomData.members);
-
 			if (!roomData || !roomData.members) return;
 
 			const allReady = roomData.members.every((m: any) => m.is_ready);
 
 			if (allReady && socket.readyState === WebSocket.OPEN) {
-				console.log("Sending roundStart");
 				socket.send(
 					JSON.stringify({
 						type: WebSocketMessageType.ROUND_START,
