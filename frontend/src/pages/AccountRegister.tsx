@@ -1,5 +1,5 @@
 import Footer from "../components/footer/Footer";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
@@ -12,6 +12,59 @@ type RegisterError =
 	| { type: "server"; message: string }
 	| { type: "unknown"; message: string };
 
+type RegisterField = "name" | "email" | "password" | "passwordConfirm";
+type FormErrors = Partial<Record<RegisterField, string>>;
+
+/** バックエンドと同一のルールでフォームを検証 */
+const validateRegisterForm = (
+	name: string,
+	email: string,
+	password: string,
+	passwordConfirm: string,
+): { valid: boolean; errors: FormErrors } => {
+	const errors: FormErrors = {};
+
+	if (!name.trim()) {
+		errors.name = "ユーザー名を入力してください";
+	} else if (!/^[a-z0-9_]+$/.test(name)) {
+		errors.name = "ユーザー名には半角英数字と「_」のみ使用できます";
+	}
+
+	if (!email.trim()) {
+		errors.email = "メールアドレスを入力してください";
+	} else if (
+		!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
+			email,
+		)
+	) {
+		errors.email = "メールアドレスの形式が正しくありません";
+	}
+
+	if (!password.trim()) {
+		errors.password = "パスワードを入力してください";
+	} else if (password.length < 8) {
+		errors.password = "パスワードは8文字以上で入力してください";
+	} else if (
+		!/[A-Z]/.test(password) ||
+		!/[a-z]/.test(password) ||
+		!/[0-9]/.test(password)
+	) {
+		errors.password =
+			"パスワードには英大文字・英小文字・数字をそれぞれ1文字以上含めてください";
+	}
+
+	if (!passwordConfirm.trim()) {
+		errors.passwordConfirm = "パスワード確認を入力してください";
+	} else if (password !== passwordConfirm) {
+		errors.passwordConfirm = "パスワードが一致しません";
+	}
+
+	return {
+		valid: Object.keys(errors).length === 0,
+		errors,
+	};
+};
+
 const AccountRegister = () => {
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
@@ -19,30 +72,37 @@ const AccountRegister = () => {
 	const [password, setPassword] = useState("");
 	const [passwordConfirm, setPasswordConfirm] = useState("");
 
-	const [fieldErrors, setFieldErrors] = useState<
-		Partial<
-			Record<"name" | "email" | "password" | "passwordConfirm", string>
-		>
+	const [touched, setTouched] = useState<
+		Partial<Record<RegisterField, boolean>>
 	>({});
 	const [serverError, setServerError] = useState<string | null>(null);
+	const [submitErrors, setSubmitErrors] = useState<FormErrors>({});
 
-	const validateRequired = () => {
-		const nextErrors: Partial<
-			Record<"name" | "email" | "password" | "passwordConfirm", string>
-		> = {};
+	const validationResult = useMemo(
+		() => validateRegisterForm(name, email, password, passwordConfirm),
+		[name, email, password, passwordConfirm],
+	);
 
-		if (!email.trim())
-			nextErrors.email = "メールアドレスを入力してください";
-		if (!name.trim()) nextErrors.name = "ユーザー名を入力してください";
-		if (!password.trim())
-			nextErrors.password = "パスワードを入力してください";
-		if (!passwordConfirm.trim())
-			nextErrors.passwordConfirm = "パスワード確認を入力してください";
-		if (password !== passwordConfirm)
-			nextErrors.passwordConfirm = "パスワードが一致しません";
+	const isFormValid = validationResult.valid;
 
-		setFieldErrors(nextErrors);
-		return Object.keys(nextErrors).length === 0;
+	const fieldErrorsToShow: FormErrors = useMemo(() => {
+		const result: FormErrors = {};
+		for (const field of [
+			"name",
+			"email",
+			"password",
+			"passwordConfirm",
+		] as const) {
+			const err = submitErrors[field] ?? validationResult.errors[field];
+			if (err && touched[field]) {
+				result[field] = err;
+			}
+		}
+		return result;
+	}, [validationResult.errors, touched, submitErrors]);
+
+	const setFieldTouched = (field: RegisterField) => {
+		setTouched(prev => ({ ...prev, [field]: true }));
 	};
 
 	const normalizeErrResponse = (err: unknown): RegisterError => {
@@ -89,20 +149,28 @@ const AccountRegister = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setServerError(null);
-		setFieldErrors({});
+		setSubmitErrors({});
 
-		// 未入力チェック・パスワード一致確認
-		if (!validateRequired()) return;
+		if (!validationResult.valid) {
+			setTouched({
+				name: true,
+				email: true,
+				password: true,
+				passwordConfirm: true,
+			});
+			setSubmitErrors(validationResult.errors);
+			return;
+		}
 
 		try {
 			await authApi.register({ name, email, password });
 			navigate("/");
 		} catch (err) {
-			// レスポンスの正規化
 			const result = normalizeErrResponse(err);
 
 			if (result.type === "field") {
-				setFieldErrors(prev => ({
+				setTouched(prev => ({ ...prev, [result.field]: true }));
+				setSubmitErrors(prev => ({
 					...prev,
 					[result.field]: result.message,
 				}));
@@ -147,6 +215,7 @@ const AccountRegister = () => {
 						<button
 							type="submit"
 							className="btn btn-primary w-full"
+							disabled={!isFormValid}
 						>
 							アカウント作成
 						</button>
@@ -158,7 +227,7 @@ const AccountRegister = () => {
 					label="ユーザー名"
 					htmlFor="name"
 					description="半角英字、数字、_を使用できます。"
-					error={fieldErrors.name}
+					error={fieldErrorsToShow.name}
 					inputProps={{
 						id: "name",
 						type: "text",
@@ -167,13 +236,14 @@ const AccountRegister = () => {
 						autoComplete: "username",
 						value: name,
 						onChange: e => setName(e.target.value),
+						onBlur: () => setFieldTouched("name"),
 					}}
 				/>
 
 				<AuthTextField
 					label="メールアドレス"
 					htmlFor="email"
-					error={fieldErrors.email}
+					error={fieldErrorsToShow.email}
 					inputProps={{
 						id: "email",
 						type: "text",
@@ -182,6 +252,7 @@ const AccountRegister = () => {
 						autoComplete: "email",
 						value: email,
 						onChange: e => setEmail(e.target.value),
+						onBlur: () => setFieldTouched("email"),
 					}}
 				/>
 
@@ -189,7 +260,7 @@ const AccountRegister = () => {
 					label="パスワード"
 					htmlFor="password"
 					description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
-					error={fieldErrors.password}
+					error={fieldErrorsToShow.password}
 					inputProps={{
 						id: "password",
 						type: "password",
@@ -197,13 +268,14 @@ const AccountRegister = () => {
 						autoComplete: "new-password",
 						value: password,
 						onChange: e => setPassword(e.target.value),
+						onBlur: () => setFieldTouched("password"),
 					}}
 				/>
 
 				<AuthTextField
 					label="パスワード確認"
 					htmlFor="passwordConfirm"
-					error={fieldErrors.passwordConfirm}
+					error={fieldErrorsToShow.passwordConfirm}
 					inputProps={{
 						id: "passwordConfirm",
 						type: "password",
@@ -211,6 +283,7 @@ const AccountRegister = () => {
 						autoComplete: "new-password",
 						value: passwordConfirm,
 						onChange: e => setPasswordConfirm(e.target.value),
+						onBlur: () => setFieldTouched("passwordConfirm"),
 					}}
 				/>
 			</AuthFormShell>
