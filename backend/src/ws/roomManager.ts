@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { RoomClient } from "../types/room";
+import { stopTimer } from "./timerManager";
 
 // キー：roomId (string)
 // 値: Set<RoomClient>
@@ -29,6 +30,7 @@ export const leaveRoom = (client: RoomClient) => {
 	// ルームが空になったらルームを削除
 	if (room.size === 0) {
 		rooms.delete(client.roomId);
+		stopTimer(client.roomId);
 		console.log(`🗑️ Room ${client.roomId} delete (empty)`);
 	} else {
 		console.log(`📉 Room ${client.roomId} now has ${room.size} members`);
@@ -57,8 +59,4 @@ export const broadcastToRoom = (
 			sentCount++;
 		}
 	});
-
-	console.log(
-		`📤 Broadcasted to ${sentCount}/${room.size} clients in room ${roomId}`,
-	);
 };

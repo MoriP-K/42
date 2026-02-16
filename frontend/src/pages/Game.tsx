@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { createWebSocket } from "../api/wsClient";
+import { useParams } from "react-router-dom";
 
+import { roomApi } from "../api/roomApi";
+import { authApi } from "../api/authApi";
+import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
 import Timer from "../components/game/Timer";
 import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
@@ -8,38 +12,61 @@ import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
+	const { id } = useParams<{ id: string }>(); // URLパラメータ取得
+
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
+	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
+
+	// プレイヤーデータ
+	const [players] = useState([
+		{ id: 1, name: "Ken", score: 0, isDrawing: true },
+		{ id: 2, name: "Alice", score: 0, isDrawing: false },
+		{ id: 3, name: "Bob", score: 0, isDrawing: false },
+	]);
 
 	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const user = await authApi.me();
+				setCurrentUserId(user.id);
+			} catch (error) {
+				console.error("❌ Failed to get user:", error);
+			}
+		};
+
+		fetchUser();
+	}, []);
+
+	useEffect(() => {
+		if (!currentUserId) return;
+
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
 
-			// TODO: ログイン機能実装後、実際のuserIdを使用
-			// TODO: URLパラメータからroomIdを取得
-			const tempUserId =
-				"user-" + Math.random().toString(36).substring(2, 9);
-			const tempRoomId = "room-test-1";
+			if (id) {
+				ws.send(
+					JSON.stringify({
+						type: WebSocketMessageType.JOIN,
+						userId: currentUserId,
+						roomId: id,
+					}),
+				);
 
-			ws.send(
-				JSON.stringify({
-					type: "join",
-					userId: tempUserId, // TODO: GET /api/me から取得
-					roomId: tempRoomId, // TODO: useParams() から取得
-				}),
-			);
+				checkAndStartRound(ws);
+			}
 		};
 
 		ws.onmessage = event => {
 			try {
 				const data = JSON.parse(event.data);
-				console.log("✉️ Received: ", data);
 
-				if (data.type === "chat") {
+				if (data.type === WebSocketMessageType.CHAT) {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -47,7 +74,7 @@ const Game = () => {
 						timestamp: new Date(data.timestamp),
 					};
 					setMessages(prev => [...prev, newMessage]);
-				} else if (data.type === "draw") {
+				} else if (data.type === WebSocketMessageType.DRAW) {
 					setDrawData({
 						x: data.x,
 						y: data.y,
@@ -55,10 +82,20 @@ const Game = () => {
 						lineWidth: data.lineWidth,
 						isStart: data.isStart,
 					});
-				} else if (data.type === "drawEnd") {
+				} else if (data.type === WebSocketMessageType.DRAW_END) {
 					setDrawData(null);
-				} else if (data.type === "clear") {
+				} else if (data.type === WebSocketMessageType.CLEAR) {
 					setClearTrigger(prev => prev + 1);
+				} else if (data.type === WebSocketMessageType.TIMER) {
+					setTimeLeft(data.timeLeft);
+				} else if (data.type === WebSocketMessageType.ROUND_START) {
+					/**
+					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
+					 */
+				} else if (data.type === WebSocketMessageType.ROUND_END) {
+					/**
+					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
+					 */
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -80,14 +117,29 @@ const Game = () => {
 			ws.close();
 			setSocket(null);
 		};
-	}, []);
+	}, [currentUserId, id]);
 
-	// プレイヤーデータ
-	const [players] = useState([
-		{ id: 1, name: "Ken", score: 0, isDrawing: true },
-		{ id: 2, name: "Alice", score: 0, isDrawing: false },
-		{ id: 3, name: "Bob", score: 0, isDrawing: false },
-	]);
+	const checkAndStartRound = async (socket: WebSocket) => {
+		if (!id) return;
+
+		try {
+			const roomData = await roomApi.getRoomDetails(Number(id));
+
+			if (!roomData || !roomData.members) return;
+
+			const allReady = roomData.members.every((m: any) => m.is_ready);
+
+			if (allReady && socket.readyState === WebSocket.OPEN) {
+				socket.send(
+					JSON.stringify({
+						type: WebSocketMessageType.ROUND_START,
+					}),
+				);
+			}
+		} catch (error) {
+			console.error("❌ Failed to check room status: ", error);
+		}
+	};
 
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -106,31 +158,6 @@ const Game = () => {
 		socket.send(JSON.stringify(message));
 	};
 
-	// タイマー処理
-	const totalTime = 60; // 制限時間用の変数
-	const [timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
-
-	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
-	useEffect(() => {
-		if (timeLeft <= 0)
-			// useEffectの停止条件: timeLeftが0以下になったら
-			return;
-
-		const timer = setInterval(() => {
-			// 1000msごとにsetInterval()の中の処理を実行する
-			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
-		}, 1000);
-
-		return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
-	}, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
-
-	// あとでWebSocketに置き換える
-	// useEffect(() => {
-	//     socket.on('gameState', (state) => {
-	//         setTimeLeft(state.timeLeft);
-	//     });
-	//} []);
-
 	return (
 		<div className="min-h-screen bg-base-200">
 			{/* ヘッダー */}
@@ -144,7 +171,7 @@ const Game = () => {
 				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
-						<Timer totalTime={totalTime} timeLeft={timeLeft} />
+						<Timer totalTime={ROUND_DURATION} timeLeft={timeLeft} />
 						<Canvas
 							socket={socket}
 							drawData={drawData}
