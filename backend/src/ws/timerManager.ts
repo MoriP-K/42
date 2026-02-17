@@ -61,3 +61,7 @@ export const stopTimer = (roomId: string) => {
 	timers.delete(roomId);
 	console.log(`Timer stopped for room ${roomId}`);
 };
+
+export const isTimerRunning = (roomId: string): boolean => {
+	return timers.has(roomId);
+};
