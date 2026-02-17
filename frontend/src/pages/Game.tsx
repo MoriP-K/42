@@ -7,6 +7,7 @@ import { authApi } from "../api/authApi";
 import {
 	type RoomDetails,
 	type RoomMember,
+	type Player,
 	WebSocketMessageType,
 	ROUND_DURATION,
 } from "../types/room";
@@ -21,19 +22,13 @@ const Game = () => {
 
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+	const [players, setPlayers] = useState<Player[]>([]);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
-
-	// プレイヤーデータ
-	const [players] = useState([
-		{ id: 1, name: "Ken", score: 0, isDrawing: true },
-		{ id: 2, name: "Alice", score: 0, isDrawing: false },
-		{ id: 3, name: "Bob", score: 0, isDrawing: false },
-	]);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -134,9 +129,20 @@ const Game = () => {
 			const roomData: RoomDetails = await roomApi.getRoomDetails(
 				Number(id),
 			);
-			console.log("Room details:", roomData);
-
 			if (!roomData || !roomData.members) return;
+
+			const playerData: Player[] = roomData.members
+				.filter(m => m.role === "PLAYER")
+				.map((m: RoomMember) => ({
+					id: m.user_id,
+					name: m.user.name,
+					score: 0,
+					isDrawing: false, // TODO: rounds取得後に修正
+				}));
+
+			setPlayers(playerData);
+
+			console.log("Room details:", roomData);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,

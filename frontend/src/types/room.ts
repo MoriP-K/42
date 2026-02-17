@@ -39,3 +39,10 @@ export const WebSocketMessageType = {
 	TIMER: "timer",
 	ERROR: "error",
 };
+
+export interface Player {
+	id: number;
+	name: string;
+	score: number;
+	isDrawing: boolean;
+}
