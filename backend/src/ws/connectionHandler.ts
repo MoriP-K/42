@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { prisma } from "../lib/prisma";
 import {
 	RoomClient,
 	WebSocketMessageType,
@@ -12,8 +13,8 @@ import {
 } from "../types/canvas";
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
-import { startTimer } from "./timerManager";
 import { wsUpdateReady } from "../controllers/roomController";
+import { isTimerRunning, startTimer } from "./timerManager";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -66,12 +67,6 @@ export const handleConnection = (socket: WebSocket) => {
 				};
 
 				joinRoom(currentClient);
-
-				/**
-				 * タイマー開始（仮）
-				 * TODO: else if (data.type === "roundStart")のstartTimerのみを残す
-				 */
-				startTimer(data.roomId, ROUND_DURATION);
 
 				return;
 			}
@@ -167,9 +162,50 @@ export const handleConnection = (socket: WebSocket) => {
 					return;
 				}
 
-				console.log(
-					`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
-				);
+				if (isTimerRunning(currentClient.roomId)) {
+					console.log(
+						`⚠️ Timer already running in room ${currentClient.roomId}`,
+					);
+					return;
+				}
+
+				try {
+					const room = await prisma.room.findUnique({
+						where: { id: Number(currentClient.roomId) },
+						include: { members: true },
+					});
+
+					if (!room) {
+						console.log(
+							`❌ Room ${currentClient.roomId} not found`,
+						);
+						return;
+					}
+
+					const allReady = room?.members.every(m => m.is_ready);
+					if (!allReady) {
+						console.log(
+							`⚠️ Not all members ready in room ${currentClient.roomId}`,
+						);
+						return;
+					}
+
+					console.log(
+						`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
+					);
+
+					broadcastToRoom(
+						currentClient.roomId,
+						{
+							type: WebSocketMessageType.ROUND_START,
+						},
+						socket,
+					);
+
+					startTimer(currentClient.roomId, ROUND_DURATION);
+				} catch (error) {
+					console.error(`❌ Failed to check room status:`, error);
+				}
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
