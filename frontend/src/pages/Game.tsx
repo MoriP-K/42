@@ -173,7 +173,7 @@ const Game = () => {
 
 		const message = {
 			type: WebSocketMessageType.CHAT,
-			id: crypto.randomUUID,
+			id: crypto.randomUUID(),
 			sender: currentUserName,
 			text: text,
 			timestamp: new Date().toISOString(),
