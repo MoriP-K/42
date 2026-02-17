@@ -6,12 +6,21 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
+import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
 
 const Game = () => {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
+	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // useStateを使って, setTimeLeftでtimeLeftを更新する
+
+	// プレイヤーデータ
+	const [players] = useState([
+		{ id: 1, name: "Ken", score: 0, isDrawing: true },
+		{ id: 2, name: "Alice", score: 0, isDrawing: false },
+		{ id: 3, name: "Bob", score: 0, isDrawing: false },
+	]);
 
 	useEffect(() => {
 		const ws = createWebSocket();
@@ -23,11 +32,11 @@ const Game = () => {
 			// TODO: URLパラメータからroomIdを取得
 			const tempUserId =
 				"user-" + Math.random().toString(36).substring(2, 9);
-			const tempRoomId = "room-test-1";
+			const tempRoomId = "room-test-2";
 
 			ws.send(
 				JSON.stringify({
-					type: "join",
+					type: WebSocketMessageType.JOIN,
 					userId: tempUserId, // TODO: GET /api/me から取得
 					roomId: tempRoomId, // TODO: useParams() から取得
 				}),
@@ -37,9 +46,8 @@ const Game = () => {
 		ws.onmessage = event => {
 			try {
 				const data = JSON.parse(event.data);
-				console.log("✉️ Received: ", data);
 
-				if (data.type === "chat") {
+				if (data.type === WebSocketMessageType.CHAT) {
 					const newMessage: Message = {
 						id: data.id,
 						sender: data.sender,
@@ -47,7 +55,7 @@ const Game = () => {
 						timestamp: new Date(data.timestamp),
 					};
 					setMessages(prev => [...prev, newMessage]);
-				} else if (data.type === "draw") {
+				} else if (data.type === WebSocketMessageType.DRAW) {
 					setDrawData({
 						x: data.x,
 						y: data.y,
@@ -55,10 +63,22 @@ const Game = () => {
 						lineWidth: data.lineWidth,
 						isStart: data.isStart,
 					});
-				} else if (data.type === "drawEnd") {
+				} else if (data.type === WebSocketMessageType.DRAW_END) {
 					setDrawData(null);
-				} else if (data.type === "clear") {
+				} else if (data.type === WebSocketMessageType.CLEAR) {
 					setClearTrigger(prev => prev + 1);
+				} else if (data.type === WebSocketMessageType.TIMER) {
+					setTimeLeft(data.timeLeft);
+				} else if (data.type === WebSocketMessageType.ROUND_START) {
+					console.log("Round started!");
+					/**
+					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
+					 */
+				} else if (data.type === WebSocketMessageType.ROUND_END) {
+					console.log("Round Ended!");
+					/**
+					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
+					 */
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -82,13 +102,6 @@ const Game = () => {
 		};
 	}, []);
 
-	// プレイヤーデータ
-	const [players] = useState([
-		{ id: 1, name: "Ken", score: 0, isDrawing: true },
-		{ id: 2, name: "Alice", score: 0, isDrawing: false },
-		{ id: 3, name: "Bob", score: 0, isDrawing: false },
-	]);
-
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
 			console.error("❌ WebSocket not connected");
@@ -106,31 +119,6 @@ const Game = () => {
 		socket.send(JSON.stringify(message));
 	};
 
-	// タイマー処理
-	const totalTime = 60; // 制限時間用の変数
-	const [timeLeft, setTimeLeft] = useState(totalTime); // useStateを使って, setTimeLeftでtimeLeftを更新する
-
-	// タイマー処理: timeLeftが更新される度にuseEffectの中の処理を実行する
-	useEffect(() => {
-		if (timeLeft <= 0)
-			// useEffectの停止条件: timeLeftが0以下になったら
-			return;
-
-		const timer = setInterval(() => {
-			// 1000msごとにsetInterval()の中の処理を実行する
-			setTimeLeft(prev => prev - 1); // 処理: 前のtimeLeftの値から1引く
-		}, 1000);
-
-		return () => clearInterval(timer); // useEffectが停止したら: clearInterval()でtimerを解放
-	}, [timeLeft]); // timeLeftが更新される度に上の処理を再実行, その度にコンポーネントは再描画される
-
-	// あとでWebSocketに置き換える
-	// useEffect(() => {
-	//     socket.on('gameState', (state) => {
-	//         setTimeLeft(state.timeLeft);
-	//     });
-	//} []);
-
 	return (
 		<div className="min-h-screen bg-base-200">
 			{/* ヘッダー */}
@@ -144,7 +132,7 @@ const Game = () => {
 				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4">
-						<Timer totalTime={totalTime} timeLeft={timeLeft} />
+						<Timer totalTime={ROUND_DURATION} timeLeft={timeLeft} />
 						<Canvas
 							socket={socket}
 							drawData={drawData}

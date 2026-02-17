@@ -56,3 +56,24 @@ export interface RoomClient {
 	userId: string;
 	roomId: string;
 }
+
+/**
+ * ラウンドタイマー用の定数
+ */
+export const ROUND_DURATION = 60;
+
+/**
+ * WebSocketメッセージタイプ
+ */
+export const WebSocketMessageType = {
+	JOIN: "join",
+	LEFT: "userLeft",
+	CHAT: "chat",
+	DRAW: "draw",
+	DRAW_END: "drawEnd",
+	CLEAR: "clear",
+	ROUND_START: "roundStart",
+	ROUND_END: "roundEnd",
+	TIMER: "timer",
+	ERROR: "error",
+};
