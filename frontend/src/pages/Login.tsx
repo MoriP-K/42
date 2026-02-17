@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
+import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
@@ -9,6 +10,7 @@ import BackButton from "../components/BackButton";
 
 const Login = () => {
 	const navigate = useNavigate();
+	const { refreshAuth } = useAuth();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -65,6 +67,12 @@ const Login = () => {
 
 		try {
 			await authApi.login({ email, password });
+			// 認証状態を更新してから遷移（Cookie反映を待つ）
+			const ok = await refreshAuth();
+			if (!ok) {
+				setServerError("ログインに失敗しました。再度お試しください。");
+				return;
+			}
 			//TODO: トーストの表示
 			//TODO: 元々アクセスしようとしていたページに戻す(?)
 			navigate("/");

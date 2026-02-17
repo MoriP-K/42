@@ -16,5 +16,7 @@ export interface AuthUser {
 export interface User {
 	id: number;
 	name: string;
+	avatar: string;
+	isReady: boolean;
 	role: (typeof GameRole)[keyof typeof GameRole];
 }

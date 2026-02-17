@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RoomMemberParamsSchema, UserRoleEnum } from "./common";
+
 /**
  * PATCH /api/rooms/:roomId/members/:userId パラメータ型
  */

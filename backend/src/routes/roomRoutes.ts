@@ -5,15 +5,17 @@ import {
 	updateRoomMemberRole,
 	updateGameMode,
 	updateRoomMemberReady,
+	getRoomMembers,
 } from "../controllers/roomController";
 
 export async function roomRoutes(fastify: FastifyInstance) {
 	fastify.post("/rooms", createRoom);
 	fastify.get("/rooms/:roomId", getRoomDetails);
-	fastify.patch("/rooms/:roomId/members/:userId", updateRoomMemberRole);
-	fastify.patch("/rooms/:roomId/game-mode", updateGameMode);
 	fastify.patch(
 		"/rooms/:roomId/members/:userId/ready",
 		updateRoomMemberReady,
 	);
+	fastify.patch("/rooms/:roomId/members/:userId", updateRoomMemberRole);
+	fastify.patch("/rooms/:roomId/game-mode", updateGameMode);
+	fastify.get("/rooms/:roomId/members", getRoomMembers);
 }

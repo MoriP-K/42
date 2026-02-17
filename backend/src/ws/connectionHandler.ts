@@ -13,13 +13,14 @@ import {
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { startTimer } from "./timerManager";
+import { wsUpdateReady } from "../controllers/roomController";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
 
 	console.log("✅ Client connected");
 
-	socket.on("message", rawMessage => {
+	socket.on("message", async rawMessage => {
 		try {
 			const data = JSON.parse(rawMessage.toString());
 			console.log("📥 Received: ", data);
@@ -85,6 +86,28 @@ export const handleConnection = (socket: WebSocket) => {
 				);
 
 				return;
+			} else if (data.type === WebSocketMessageType.UPDATE_READY) {
+				if (typeof data.isReady !== "boolean") return;
+				try {
+					await wsUpdateReady(
+						Number(currentClient.roomId),
+						Number(currentClient.userId),
+						data.isReady,
+					);
+					broadcastToRoom(currentClient.roomId, {
+						type: WebSocketMessageType.UPDATE_READY,
+						userId: currentClient.userId,
+						isReady: data.isReady,
+					});
+				} catch (error) {
+					console.error("Error:", error);
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: "Failed to update ready",
+						}),
+					);
+				}
 			} else if (data.type === WebSocketMessageType.CHAT) {
 				handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {
@@ -147,16 +170,6 @@ export const handleConnection = (socket: WebSocket) => {
 				console.log(
 					`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
 				);
-
-				broadcastToRoom(
-					currentClient.roomId,
-					{
-						type: WebSocketMessageType.ROUND_START,
-					},
-					socket,
-				);
-
-				startTimer(currentClient.roomId, ROUND_DURATION);
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);

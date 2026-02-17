@@ -1,5 +1,5 @@
 import { broadcastToRoom } from "./roomManager";
-import { WebSocketMessageType, ROUND_DURATION } from "../types/room";
+import { WebSocketMessageType, ROUND_DURATION } from "../types/room/room";
 interface RoomTimer {
 	roomId: string;
 	timeLeft: number;

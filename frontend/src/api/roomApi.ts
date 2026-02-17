@@ -17,6 +17,12 @@ export const roomApi = {
 		});
 	},
 
+	getRoomMembers: async (roomId: number) => {
+		return apiClient(`/rooms/${roomId}/members`, {
+			method: "GET",
+		});
+	},
+
 	updateRoomMemberRole: async (
 		roomId: number,
 		userId: number,

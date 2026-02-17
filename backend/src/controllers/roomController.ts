@@ -14,6 +14,7 @@ import {
 } from "../types/room/room";
 import { UpdateRoomMemberRoleRoute } from "../types/room/roomMember";
 import {
+	RoomIdParamsSchema,
 	RoomMemberBodySchema,
 	RoomMemberParamsSchema,
 	RoomMemberRoute,
@@ -66,6 +67,37 @@ export const getRoomDetails = async (
 		},
 	});
 	return reply.code(200).send(room);
+};
+
+/*
+ * GET /api/rooms/:roomId/members ルームメンバーの取得
+ */
+export const getRoomMembers = async (
+	request: FastifyRequest<RoomMemberRoute>,
+	reply: FastifyReply,
+) => {
+	const paramResult = RoomIdParamsSchema.safeParse(request.params);
+	if (!paramResult.success) {
+		return reply
+			.code(400)
+			.send({ message: "パラメータに不備があります。" });
+	}
+
+	const roomId = paramResult.data.roomId;
+	try {
+		const roomMembers = await prisma.roomMember.findMany({
+			where: {
+				room_id: roomId,
+			},
+			include: {
+				user: true,
+			},
+		});
+		return reply.code(200).send(roomMembers);
+	} catch (error) {
+		console.error("Error:", error);
+		return reply.code(500).send({ error: "Failed to fetch roomMembers" });
+	}
 };
 
 /*
@@ -181,5 +213,27 @@ export const updateRoomMemberReady = async (
 	} catch (error) {
 		console.log(error);
 		return reply.code(500).send({ error: "Failed to update user status" });
+	}
+};
+
+export const wsUpdateReady = async (
+	roomId: number,
+	userId: number,
+	isReady: boolean,
+) => {
+	try {
+		await prisma.roomMember.update({
+			where: {
+				room_id_user_id: {
+					room_id: roomId,
+					user_id: userId,
+				},
+			},
+			data: {
+				is_ready: isReady,
+			},
+		});
+	} catch (error) {
+		console.error(error);
 	}
 };

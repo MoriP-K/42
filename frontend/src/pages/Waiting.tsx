@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
-import { GameMode, type RoomDetails } from "../types/room";
+import { GameMode, type RoomDetails, type RoomMember } from "../types/room";
 import Toast from "../components/Toast";
 
-const WaitingGame = () => {
+const Waiting = () => {
 	const { user } = useAuth(); // login中ユーザの情報
 	const navigate = useNavigate();
 	const [users, setUsers] = useState<User[]>([]);
@@ -15,6 +15,7 @@ const WaitingGame = () => {
 	const { id: roomId } = useParams();
 	const [isHost, setIsHost] = useState(false);
 
+	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
 		const getRoomDetails = async () => {
 			try {
@@ -23,10 +24,12 @@ const WaitingGame = () => {
 				)) as RoomDetails;
 				setIsHost(res.host_id === user?.id);
 				setGameMode(res.game_mode);
-				const mappedUsers = res.members.map(member => ({
+				const mappedUsers = res.members.map((member: RoomMember) => ({
 					id: member.user.id,
 					name: member.user.name,
 					role: member.role,
+					avatar: member.user.avatar,
+					isReady: member.user.isReady,
 				}));
 				setUsers(mappedUsers);
 			} catch (error) {
@@ -198,4 +201,4 @@ const WaitingGame = () => {
 	);
 };
 
-export default WaitingGame;
+export default Waiting;

@@ -12,7 +12,7 @@ function Home() {
 		try {
 			const room = await roomApi.createRoom(user.id);
 			if (!room) throw new Error("Room cannot be created");
-			navigate(`/waiting-game/${room.id}`);
+			navigate(`/waiting/${room.id}`);
 		} catch (error) {
 			console.error("Error:", error);
 		}
@@ -33,6 +33,10 @@ function Home() {
 							おえかきの森へようこそ！
 						</h1>
 						<p className="py-6">友達と一緒にお絵かきで遊ぼう</p>
+						<ul>
+							<li>ID: {user?.id}</li>
+							<li>NAME: {user?.name}</li>
+						</ul>
 						<button
 							onClick={handleCreateRoom}
 							className="btn btn-primary btn-lg"
