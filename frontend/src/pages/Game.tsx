@@ -20,6 +20,8 @@ const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
 
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
@@ -38,6 +40,7 @@ const Game = () => {
 			try {
 				const user = await authApi.me();
 				setCurrentUserId(user.id);
+				setCurrentUserName(user.name);
 			} catch (error) {
 				console.error("❌ Failed to get user:", error);
 			}
@@ -47,9 +50,7 @@ const Game = () => {
 	}, []);
 
 	useEffect(() => {
-		if (!currentUserId) return;
-
-		if (!id) return;
+		if (!currentUserId || !id) return;
 
 		const ws = createWebSocket();
 
@@ -133,6 +134,7 @@ const Game = () => {
 			const roomData: RoomDetails = await roomApi.getRoomDetails(
 				Number(id),
 			);
+			console.log("Room details:", roomData);
 
 			if (!roomData || !roomData.members) return;
 
@@ -158,10 +160,15 @@ const Game = () => {
 			return;
 		}
 
+		if (!currentUserName) {
+			console.error("❌ User name not found");
+			return;
+		}
+
 		const message = {
-			type: "chat",
-			id: crypto.randomUUID(),
-			sender: "Ken",
+			type: WebSocketMessageType.CHAT,
+			id: crypto.randomUUID,
+			sender: currentUserName,
 			text: text,
 			timestamp: new Date().toISOString(),
 		};
