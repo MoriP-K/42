@@ -7,8 +7,7 @@ import test3 from "../images/badges/food_kanazawa_curry.png";
 import test4 from "../images/badges/food_nasu_yakinasu.png";
 
 const Profile = () => {
-
-	interface profileData{
+	interface profileData {
 		name: string;
 		total_score: number;
 		first_place_count: number;
