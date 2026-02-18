@@ -12,7 +12,7 @@ const Profile = () => {
 		total_score: number;
 		first_place_count: number;
 		play_count: number;
-		badges: string[];
+		// badges: string[];
 	}
 
 	// 1ユーザのデータがそのまま帰ってくる
@@ -71,7 +71,7 @@ const Profile = () => {
 
 			<div>
 				<p className="font-bold">バッジ</p>
-				<p>バッジ: {profileData.badges}</p>
+				{/* <p>バッジ: {profileData.badges}</p> */}
 				<MyComponent rank="first" />
 				<MyComponent rank="second" />
 				<MyComponent rank="third" />
