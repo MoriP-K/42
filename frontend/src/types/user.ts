@@ -1,6 +1,11 @@
-export const Role = {
+export const GameRole = {
 	PLAYER: "PLAYER",
 	SPECTATOR: "SPECTATOR",
+};
+
+export const PlayerRole = {
+	DRAWER: "DRAWER",
+	GUESSER: "GUESSER",
 };
 
 export interface AuthUser {
@@ -11,5 +16,7 @@ export interface AuthUser {
 export interface User {
 	id: number;
 	name: string;
-	role: (typeof Role)[keyof typeof Role];
+	avatar: string;
+	isReady: boolean;
+	role: (typeof GameRole)[keyof typeof GameRole];
 }

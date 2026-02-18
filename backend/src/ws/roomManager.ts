@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { RoomClient } from "../types/room";
+import { RoomClient } from "../types/room/room";
 import { stopTimer } from "./timerManager";
 
 // キー：roomId (string)

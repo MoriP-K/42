@@ -1,28 +1,103 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-interface Player {
-	id: number;
-	name: string;
-	isReady: boolean;
-	avatar: string;
-}
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../features/auth/useAuth";
+import { roomApi } from "../api/roomApi";
+import { GameRole, type User } from "../types/user";
+import type { RoomMember } from "../types/room";
+import { createWebSocket } from "../api/wsClient";
 
 const Prepare = () => {
 	const navigate = useNavigate();
-	// Mock data
-	const players: Player[] = [
-		{ id: 1, name: "Tanaka", isReady: true, avatar: "🐙" },
-		{ id: 2, name: "Sato", isReady: true, avatar: "🐼" },
-		{ id: 3, name: "Suzuki", isReady: false, avatar: "🦊" },
-		{ id: 4, name: "You", isReady: true, avatar: "🐱" },
-	];
+	const { user } = useAuth();
+	const { id: paramRoomId } = useParams();
+	const roomId = paramRoomId !== undefined ? Number(paramRoomId) : undefined;
+	const [isReady, setIsReady] = useState<boolean>(false);
+	const [spectatorCount, setSpectatorCount] = useState<number>(0);
+	const [players, setPlayers] = useState<User[]>([]);
+	const [socket, setSocket] = useState<WebSocket | null>(null);
+
+	useEffect(() => {
+		if (roomId === undefined || user?.id === undefined) return;
+
+		const ws = createWebSocket();
+
+		ws.onopen = () => {
+			ws.send(
+				JSON.stringify({
+					type: "join",
+					userId: String(user.id),
+					roomId: String(roomId),
+				}),
+			);
+		};
+
+		ws.onmessage = event => {
+			try {
+				const data = JSON.parse(event.data);
+				if (data.type === "updateReady") {
+					setPlayers(prev =>
+						prev.map(p =>
+							p.id === Number(data.userId)
+								? { ...p, isReady: data.isReady }
+								: p,
+						),
+					);
+					if (Number(data.userId) === user?.id) {
+						setIsReady(data.isReady);
+					}
+				}
+			} catch (error) {
+				console.error("Failed to parse message:", error);
+			}
+		};
+
+		ws.onerror = error => console.error("Websocket error:", error);
+		ws.onclose = () => console.log("Websocket disconnected");
+		setSocket(ws);
+
+		return () => {
+			ws.close();
+			setSocket(null);
+		};
+	}, [roomId, user?.id]);
+
+	useEffect(() => {
+		const getRoomMembers = async () => {
+			if (roomId === undefined || user?.id === undefined) return;
+			try {
+				const res = await roomApi.getRoomMembers(roomId);
+				let spectatorCnt = 0;
+				const mappedMembers = res
+					.filter(
+						(member: RoomMember) => member.role === GameRole.PLAYER,
+					)
+					.map((member: RoomMember) => {
+						if (member.role === GameRole.PLAYER) {
+							return {
+								id: member.user_id,
+								role: member.role,
+								avatar: member.user.avatar ?? "👤",
+								isReady: member.is_ready,
+							};
+						} else if (member.role === GameRole.SPECTATOR) {
+							spectatorCnt++;
+							return;
+						}
+					});
+				setSpectatorCount(spectatorCnt);
+				setPlayers(mappedMembers);
+			} catch (error) {
+				console.error("Error", error);
+			}
+		};
+		getRoomMembers();
+	}, [roomId, user]);
 	const count: number = 3;
 
 	const currentWriter = players[0];
 	type Role = "回答者" | "描き手";
 	const [role] = useState<Role>("回答者");
-	const [countdown, setCountdown] = useState(3);
+	const [countdown, setCountdown] = useState(1000);
 
 	useEffect(() => {
 		if (countdown < 0) {
@@ -37,6 +112,36 @@ const Prepare = () => {
 		}, 1000);
 		return () => clearInterval(timer);
 	}, [countdown, navigate]);
+
+	useEffect(() => {
+		const getMyStatus = async () => {
+			if (roomId === undefined || user?.id === undefined) return;
+			try {
+				const res = await roomApi.getRoomDetails(roomId);
+				const myStatus = res.members.find(
+					(member: { user: { id: number } }) =>
+						member.user.id === user.id,
+				);
+				setIsReady(myStatus?.is_ready ?? false);
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		};
+		getMyStatus();
+	}, [roomId, user]);
+
+	const toggleIsReady = () => {
+		if (roomId === undefined || user?.id === undefined) return;
+		if (!socket || socket.readyState !== WebSocket.OPEN) {
+			console.error("Websocket not connected");
+			return;
+		}
+		const nextReady = !isReady;
+		setIsReady(nextReady);
+		socket.send(
+			JSON.stringify({ type: "updateReady", isReady: nextReady }),
+		);
+	};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
@@ -69,13 +174,14 @@ const Prepare = () => {
 									<div className="avatar placeholder">
 										<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
 											<span className="text-4xl">
-												{currentWriter.avatar}
+												{currentWriter?.avatar ??
+													"AVATAR"}
 											</span>
 										</div>
 									</div>
 									<div>
 										<p className="text-3xl font-bold">
-											{currentWriter.name}
+											{currentWriter?.name ?? "NAME"}
 										</p>
 										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">
 											Artist
@@ -85,7 +191,7 @@ const Prepare = () => {
 							</div>
 						</div>
 
-						{/* Your Role Card */}
+						{/* Your PlayerRole Card */}
 						<div className="card bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform">
 							<div className="card-body p-6">
 								<h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">
@@ -95,10 +201,27 @@ const Prepare = () => {
 									<span className="text-4xl font-black italic">
 										{role}
 									</span>
-									<div
-										className={`w-12 h-12 rounded-xl flex items-center justify-center ${role === "描き手" ? "bg-orange-500" : "bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] animate-pulse"}`}
-									>
-										{role === "描き手" ? "🎨" : "💡"}
+									<div className="flex gap-4 w-32 justify-end">
+										<button
+											className={`
+												min-w-[7rem] px-4 py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider
+												cursor-pointer select-none
+												transition-all duration-200
+												hover:scale-[1.02] hover:brightness-110
+												active:scale-[0.98]
+												focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-transparent
+												${
+													isReady
+														? "bg-emerald-500/80 border border-emerald-400/50 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
+														: "bg-rose-500/80 border border-rose-400/50 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
+												}
+											`}
+											onClick={toggleIsReady}
+										>
+											{isReady === true
+												? "READY"
+												: "WAITING"}
+										</button>
 									</div>
 								</div>
 							</div>
@@ -109,7 +232,7 @@ const Prepare = () => {
 					<div className="card bg-black/30 backdrop-blur-sm border border-white/10 shadow-2xl">
 						<div className="card-body p-6">
 							<h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">
-								プレイヤーの準備状況
+								プレイヤーの準備状況 (観戦：{spectatorCount}人)
 							</h2>
 							<div className="space-y-4">
 								{players.map(player => (
@@ -119,7 +242,7 @@ const Prepare = () => {
 									>
 										<div className="flex items-center gap-3">
 											<span className="text-2xl">
-												{player.avatar}
+												{player?.avatar ?? "AVATAR"}
 											</span>
 											<span
 												className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}
@@ -158,7 +281,7 @@ const Prepare = () => {
 
 				{/* Countdown Overlay Section */}
 				<div className="mt-8 relative flex flex-col items-center">
-					<div className="absolute inset-0 bg-white/20 rounded-full blur-3xl opacity-20 scale-150 animate-ping"></div>
+					<div className="absolute inset-0 bg-white/20 rounded-full blur-3xl opacity-20 animate-ping pointer-events-none"></div>
 					<div className="relative text-center">
 						{countdown >= 0 ? (
 							<>

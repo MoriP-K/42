@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient";
-import { Role } from "../types/user";
+import { GameRole } from "../types/user";
 import { GameMode } from "../types/room";
 
 export const roomApi = {
@@ -17,12 +17,18 @@ export const roomApi = {
 		});
 	},
 
+	getRoomMembers: async (roomId: number) => {
+		return apiClient(`/rooms/${roomId}/members`, {
+			method: "GET",
+		});
+	},
+
 	updateRoomMemberRole: async (
 		roomId: number,
-		id: number,
-		role: (typeof Role)[keyof typeof Role],
+		userId: number,
+		role: (typeof GameRole)[keyof typeof GameRole],
 	) => {
-		return apiClient(`/rooms/${roomId}/members/${id}`, {
+		return apiClient(`/rooms/${roomId}/members/${userId}`, {
 			method: "PATCH",
 			body: JSON.stringify({ role }),
 		});
@@ -35,6 +41,17 @@ export const roomApi = {
 		return apiClient(`/rooms/${roomId}/game-mode`, {
 			method: "PATCH",
 			body: JSON.stringify({ mode }),
+		});
+	},
+
+	updateRoomMemberReady: async (
+		roomId: number,
+		userId: number,
+		isReady: boolean,
+	) => {
+		return apiClient(`/rooms/${roomId}/members/${userId}/ready`, {
+			method: "PATCH",
+			body: JSON.stringify({ isReady }),
 		});
 	},
 };

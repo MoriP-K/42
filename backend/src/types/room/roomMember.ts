@@ -1,25 +1,25 @@
 import { z } from "zod";
+import { RoomMemberParamsSchema, UserRoleEnum } from "./common";
 
 /**
  * PATCH /api/rooms/:roomId/members/:userId パラメータ型
  */
-export const UpdateRoomMemberParamsSchema = z.object({
-	roomId: z.coerce.number(),
-	userId: z.coerce.number(),
-});
 
 /**
  * PATCH /api/rooms/:roomId/members/:userId ボディ型
  */
+export const UpdateRoomMemberRoleParamSchema = RoomMemberParamsSchema;
+
 export const UpdateRoomMemberRoleBodySchema = z.object({
-	role: z.enum(["PLAYER", "SPECTATOR"]),
+	role: UserRoleEnum,
 });
 
 /**
  * TypeScriptの型をZodから抽出
  */
-export type UpdateRoomMemberParams = z.infer<
-	typeof UpdateRoomMemberParamsSchema
+
+export type UpdateRoomMemberRoleParams = z.infer<
+	typeof UpdateRoomMemberRoleParamSchema
 >;
 export type UpdateRoomMemberRoleBody = z.infer<
 	typeof UpdateRoomMemberRoleBodySchema
@@ -29,6 +29,6 @@ export type UpdateRoomMemberRoleBody = z.infer<
  * Route型
  */
 export interface UpdateRoomMemberRoleRoute {
-	Params: UpdateRoomMemberParams;
+	Params: UpdateRoomMemberRoleParams;
 	Body: UpdateRoomMemberRoleBody;
 }
