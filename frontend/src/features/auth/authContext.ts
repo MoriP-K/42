@@ -1,9 +1,10 @@
-import { createContext } from 'react'
+import { createContext } from "react";
+import { type AuthUser } from "../../types/user";
 
 export type AuthContextValue = {
-	isAuthenticated: boolean
-	refreshAuth: () => Promise<boolean>
-}
+	isAuthenticated: boolean;
+	user: AuthUser | null;
+	refreshAuth: () => Promise<boolean>;
+};
 
-export const AuthContext = createContext<AuthContextValue | null>(null)
-
+export const AuthContext = createContext<AuthContextValue | null>(null);

@@ -1,26 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { roomApi } from '../api/roomApi';
-import { GameMode, Role, type User, type RoomDetails } from '../types/room';
-import Toast from '../components/Toast';
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../features/auth/useAuth";
+import { roomApi } from "../api/roomApi";
+import { Role, type User } from "../types/user";
+import { GameMode, type RoomDetails } from "../types/room";
+import Toast from "../components/Toast";
 
 const WaitingGame = () => {
-	const [me] = useState<User>({ id: 1, name: 'MORI', role: Role.PLAYER }); // ログイン後自分のデータを取得する
+	const { user } = useAuth(); // login中ユーザの情報
 	const navigate = useNavigate();
-
 	const [users, setUsers] = useState<User[]>([]);
-
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
 	const location = useLocation();
-	const [isHost, setIsHost] = useState(location.state?.hostId === me.id);
+	const [isHost, setIsHost] = useState(location.state?.hostId === user?.id);
 
 	useEffect(() => {
 		const getRoomDetails = async () => {
 			try {
-				const res = await roomApi.getRoomDetails(Number(roomId)) as RoomDetails;
-				setIsHost(res.host_id === me.id);
+				const res = (await roomApi.getRoomDetails(
+					Number(roomId),
+				)) as RoomDetails;
+				setIsHost(res.host_id === user?.id);
 				setGameMode(res.game_mode);
 				const mappedUsers = res.members.map(member => ({
 					id: member.user.id,
@@ -31,26 +33,29 @@ const WaitingGame = () => {
 			} catch (error) {
 				console.log(error);
 			}
-		}
+		};
 		getRoomDetails();
-	}, [me.id, roomId]);
+	}, [user?.id, roomId]);
 
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
 		const targetUser = users.find(user => user.id === id);
-		if (!targetUser)
-			return;
-		const newRole = targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
+		if (!targetUser) return;
+		const newRole =
+			targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
 		const oldRole = targetUser.role;
 		try {
 			await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
 			setUsers(prevUser =>
-				prevUser.map(user => (
-				user.id === id ? { ...user, role: newRole } : user
-			)));
+				prevUser.map(user =>
+					user.id === id ? { ...user, role: newRole } : user,
+				),
+			);
 		} catch (error) {
 			setUsers(prevUser =>
-				prevUser.map(user => (user.id === id ? { ...user, role: oldRole } : user))
+				prevUser.map(user =>
+					user.id === id ? { ...user, role: oldRole } : user,
+				),
 			);
 			console.log(error);
 		}
@@ -66,10 +71,10 @@ const WaitingGame = () => {
 		} catch (error) {
 			console.log(error);
 		}
-	}
+	};
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText(window.location.href || '');
+		navigator.clipboard.writeText(window.location.href || "");
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 1500);
 	};
@@ -79,10 +84,7 @@ const WaitingGame = () => {
 			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
 				{/* トースト通知 */}
 				{showToast && (
-					<Toast
-						type="success"
-						message="招待URLをコピーしました！"
-					/>
+					<Toast type="success" message="招待URLをコピーしました！" />
 				)}
 				<div>Waiting Game</div>
 
@@ -102,14 +104,18 @@ const WaitingGame = () => {
 									key={user.id}
 									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
 								>
-									<span className="font-bold">{user.name}</span>
+									<span className="font-bold">
+										{user.name}
+									</span>
 									<div className="flex gap-4 w-32 justify-end">
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
 											checked={user.role === Role.PLAYER}
 											onChange={() => toggleRole(user.id)}
-											disabled={!isHost && user.id !== me.id}
+											disabled={
+												!isHost && user.id !== user.id
+											}
 										/>
 									</div>
 								</div>
@@ -151,20 +157,22 @@ const WaitingGame = () => {
 						<button
 							onClick={() => updateGameMode(GameMode.DEFAULT)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === GameMode.DEFAULT
-								? 'bg-white text-indigo-700 font-bold shadow-md scale-[1.02]'
-								: 'text-gray-500 hover:bg-base-300'
-								}`}
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
+								gameMode === GameMode.DEFAULT
+									? "bg-white text-indigo-700 font-bold shadow-md scale-[1.02]"
+									: "text-gray-500 hover:bg-base-300"
+							}`}
 						>
 							デフォルト
 						</button>
 						<button
 							onClick={() => updateGameMode(GameMode.ONE_STROKE)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${gameMode === GameMode.ONE_STROKE
-								? 'bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]'
-								: 'text-gray-500 hover:bg-base-300'
-								}`}
+							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
+								gameMode === GameMode.ONE_STROKE
+									? "bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]"
+									: "text-gray-500 hover:bg-base-300"
+							}`}
 						>
 							一筆書き
 						</button>

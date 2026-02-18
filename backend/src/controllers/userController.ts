@@ -11,7 +11,7 @@ import {
  */
 export const getHello = async (
 	request: FastifyRequest,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	return {
 		message: "Hello from Controller!",
@@ -21,7 +21,7 @@ export const getHello = async (
 
 export const getUsers = async (
 	request: FastifyRequest,
-	reply: FastifyReply
+	reply: FastifyReply,
 ) => {
 	const users = await prisma.user.findMany();
 	return users;
