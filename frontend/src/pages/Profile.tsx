@@ -7,8 +7,17 @@ import test3 from "../images/badges/food_kanazawa_curry.png";
 import test4 from "../images/badges/food_nasu_yakinasu.png";
 
 const Profile = () => {
+
+	interface profileData{
+		name: string;
+		total_score: number;
+		first_place_count: number;
+		play_count: number;
+		badges: string[];
+	}
+
 	// 1ユーザのデータがそのまま帰ってくる
-	const [profileData, setProfileData] = useState<any>(null);
+	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {

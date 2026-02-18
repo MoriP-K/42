@@ -5,6 +5,7 @@ import {
 	ProfileSuccessResponse,
 	ProfileRoute,
 } from "../types/profile";
+import { getUserIdFromRequest } from "../lib/auth";
 
 /**
  * LaravelのUserControllerに相当
@@ -34,35 +35,23 @@ export const getProfile = async (
 	request: FastifyRequest<ProfileRoute>,
 	reply: FastifyReply<ProfileRoute>
 ) => {
-	const sessionId = request.cookies["session_id"];
-	const session = await prisma.session.findUnique({
-		where: { id: sessionId },
-		include: { user: true },
-	});
-	console.log(session);
-	if (!session || !session.user) {
-		return reply.code(401).send({ message: "Invalid Session" });
-	}
-
-	const userId = Number(session.user.id);
-	console.log("userId " + userId);
-
+	const userId = getUserIdFromRequest(request);
+	if (!userId)
+		return reply.code(404).send({ message: "User not found" });
 	const user = await prisma.user.findUnique({
-		where: { id: userId },
+		where: { id: Number(userId) },
 	});
 	if (!user) return reply.code(404).send({ message: "User not found" });
 
 	// userbadgesから取得
 	const userBadgesWithDetails = await prisma.userBadge.findMany({
 		where: {
-			user_id: userId,
+			user_id: Number(userId),
 		},
 		include: {
-			badge: true, // リレーション名を指定して実体を取得
+			badge: true,
 		},
 	});
-	console.log("userBadgesWithDetails  ");
-	console.log(userBadgesWithDetails);
 
 	// 取得した結果からバッジの実体だけを取り出す場合
 	// const badges = userBadgesWithDetails.map((ub) => ub.badge);
