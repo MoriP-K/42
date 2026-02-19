@@ -23,6 +23,7 @@ const Game = () => {
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 	const [players, setPlayers] = useState<Player[]>([]);
+	const [isDrawer, setIsDrawer] = useState(false);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
@@ -145,8 +146,7 @@ const Game = () => {
 				}));
 
 			setPlayers(playerData);
-
-			console.log("Room details:", roomData);
+			setIsDrawer(currentRound?.drawer_id === currentUserId);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,
@@ -204,6 +204,7 @@ const Game = () => {
 							socket={socket}
 							drawData={drawData}
 							clearTrigger={clearTrigger}
+							isDrawer={isDrawer}
 						/>
 					</div>
 
