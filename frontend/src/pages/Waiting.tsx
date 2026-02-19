@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
@@ -41,6 +41,11 @@ const Waiting = () => {
 		}
 	}, [roomId, user]);
 
+	const getRoomDetailsRef = useRef(getRoomDetails);
+	useEffect(() => {
+		getRoomDetailsRef.current = getRoomDetails;
+	}, [getRoomDetails]);
+
 	// 参加者一覧を取得する
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect
@@ -62,16 +67,19 @@ const Waiting = () => {
 		ws.onmessage = event => {
 			const data = JSON.parse(event.data);
 			if (data.type === "memberJoined") {
-				getRoomDetails();
+				getRoomDetailsRef.current();
 			}
 			if (data.type === "memberRoleUpdated") {
-				getRoomDetails();
+				getRoomDetailsRef.current();
 			}
 			if (data.type === "gameModeUpdated") {
 				setGameMode(data.mode);
 			}
 		};
-	}, [roomId, user, getRoomDetails]);
+		return () => {
+			ws.close();
+		};
+	}, [roomId, user?.id]);
 
 	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
