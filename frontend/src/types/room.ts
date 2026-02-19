@@ -1,4 +1,4 @@
-import { Role, type User } from "./user";
+import { GameRole, type User } from "./user";
 
 export const GameMode = {
 	DEFAULT: "DEFAULT",
@@ -9,7 +9,7 @@ export interface RoomMember {
 	room_id: number;
 	user_id: number;
 	is_ready: boolean;
-	role: (typeof Role)[keyof typeof Role];
+	role: (typeof GameRole)[keyof typeof GameRole];
 	user: User;
 }
 

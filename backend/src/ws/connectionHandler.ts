@@ -4,7 +4,7 @@ import {
 	RoomClient,
 	WebSocketMessageType,
 	ROUND_DURATION,
-} from "../types/room";
+} from "../types/room/room";
 import {
 	CANVAS_WIDTH,
 	CANVAS_HEIGHT,
@@ -13,6 +13,7 @@ import {
 } from "../types/canvas";
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
+import { wsUpdateReady } from "../controllers/roomController";
 import { isTimerRunning, startTimer } from "./timerManager";
 
 export const handleConnection = (socket: WebSocket) => {
@@ -76,6 +77,28 @@ export const handleConnection = (socket: WebSocket) => {
 				);
 
 				return;
+			} else if (data.type === WebSocketMessageType.UPDATE_READY) {
+				if (typeof data.isReady !== "boolean") return;
+				try {
+					await wsUpdateReady(
+						Number(currentClient.roomId),
+						Number(currentClient.userId),
+						data.isReady,
+					);
+					broadcastToRoom(currentClient.roomId, {
+						type: WebSocketMessageType.UPDATE_READY,
+						userId: currentClient.userId,
+						isReady: data.isReady,
+					});
+				} catch (error) {
+					console.error("Error:", error);
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: "Failed to update ready",
+						}),
+					);
+				}
 			} else if (data.type === WebSocketMessageType.CHAT) {
 				handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {

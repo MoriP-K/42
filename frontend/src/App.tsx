@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
-import WaitingGame from "./pages/WaitingGame";
+import Waiting from "./pages/Waiting";
 import Prepare from "./pages/Prepare";
 import Game from "./pages/Game";
 import TermsOfService from "./pages/TermsOfService";
@@ -71,7 +71,7 @@ const App = () => {
 					}
 				>
 					<Route index element={<Home />} />
-					<Route path="waiting-game/:id" element={<WaitingGame />} />
+					<Route path="waiting/:id" element={<Waiting />} />
 					<Route path="prepare/:id" element={<Prepare />} />
 					<Route path="game/:id" element={<Game />} />
 					<Route path="profile" element={<Profile />} />

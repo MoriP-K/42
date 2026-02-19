@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
-import { Role, type User } from "../types/user";
-import { GameMode, type RoomDetails } from "../types/room";
+import { GameRole, type User } from "../types/user";
+import { GameMode, type RoomDetails, type RoomMember } from "../types/room";
 import Toast from "../components/Toast";
 
-const WaitingGame = () => {
+const Waiting = () => {
 	const { user } = useAuth(); // login中ユーザの情報
 	const navigate = useNavigate();
 	const [users, setUsers] = useState<User[]>([]);
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
-	const location = useLocation();
-	const [isHost, setIsHost] = useState(location.state?.hostId === user?.id);
+	const [isHost, setIsHost] = useState(false);
 
+	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
 		const getRoomDetails = async () => {
 			try {
@@ -24,10 +24,12 @@ const WaitingGame = () => {
 				)) as RoomDetails;
 				setIsHost(res.host_id === user?.id);
 				setGameMode(res.game_mode);
-				const mappedUsers = res.members.map(member => ({
+				const mappedUsers = res.members.map((member: RoomMember) => ({
 					id: member.user.id,
 					name: member.user.name,
 					role: member.role,
+					avatar: member.user.avatar,
+					isReady: member.user.isReady,
 				}));
 				setUsers(mappedUsers);
 			} catch (error) {
@@ -35,6 +37,7 @@ const WaitingGame = () => {
 			}
 		};
 		getRoomDetails();
+		console.log(roomId);
 	}, [user?.id, roomId]);
 
 	const toggleRole = async (id: number) => {
@@ -42,7 +45,9 @@ const WaitingGame = () => {
 		const targetUser = users.find(user => user.id === id);
 		if (!targetUser) return;
 		const newRole =
-			targetUser.role === Role.PLAYER ? Role.SPECTATOR : Role.PLAYER;
+			targetUser.role === GameRole.PLAYER
+				? GameRole.SPECTATOR
+				: GameRole.PLAYER;
 		const oldRole = targetUser.role;
 		try {
 			await roomApi.updateRoomMemberRole(Number(roomId), id, newRole);
@@ -94,8 +99,8 @@ const WaitingGame = () => {
 						<div className="flex justify-between items-center mb-4">
 							<h2 className="card-title text-lg">参加者一覧</h2>
 							<div className="flex gap-4 text-sm font-bold text-gray-500">
-								<span>プレイヤー</span>
 								<span>観戦者</span>
+								<span>プレイヤー</span>
 							</div>
 						</div>
 						<div className="flex flex-col gap-2">
@@ -111,7 +116,9 @@ const WaitingGame = () => {
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
-											checked={user.role === Role.PLAYER}
+											checked={
+												user.role === GameRole.PLAYER
+											}
 											onChange={() => toggleRole(user.id)}
 											disabled={
 												!isHost && user.id !== user.id
@@ -194,4 +201,4 @@ const WaitingGame = () => {
 	);
 };
 
-export default WaitingGame;
+export default Waiting;

@@ -5,127 +5,128 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  name              String    @unique
-  password          String
-  email             String    @unique
-  total_score       Int?      @default(0)
-  first_place_count Int?      @default(0)
-  play_count        Int?      @default(0)
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
+    id                Int      @id @default(autoincrement())
+    name              String   @unique
+    password          String
+    email             String   @unique
+    total_score       Int?     @default(0)
+    first_place_count Int?     @default(0)
+    play_count        Int?     @default(0)
+    avatar            String   @default("👤")
+    created_at        DateTime @default(now())
+    updated_at        DateTime @updatedAt
 
-  // relation
-  sessions          Session[]
-  badges            UserBadge[]
-  hosted_rooms      Room[]      @relation("HostRelation")
-  drawings          Round[]     @relation("DrawerRelation")
-  won_rounds        Round[]     @relation("WinnerRelation")
-  room_memberships  RoomMember[]
+    // relation
+    sessions         Session[]
+    badges           UserBadge[]
+    hosted_rooms     Room[]       @relation("HostRelation")
+    drawings         Round[]      @relation("DrawerRelation")
+    won_rounds       Round[]      @relation("WinnerRelation")
+    room_memberships RoomMember[]
 }
 
 model Session {
-  id         String    @id @default(uuid())
-  user_id    Int
-  created_at DateTime  @default(now())
-  expires_at DateTime
-  revoked_at DateTime?
+    id         String    @id @default(uuid())
+    user_id    Int
+    created_at DateTime  @default(now())
+    expires_at DateTime
+    revoked_at DateTime?
 
-  // relation
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    // relation
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([expires_at])
-  @@index([user_id])
+    @@index([expires_at])
+    @@index([user_id])
 }
 
 model Badge {
-  id          Int     @id @default(autoincrement())
-  name        String?
-  description String?
+    id          Int     @id @default(autoincrement())
+    name        String?
+    description String?
 
-  // relation
-  users       UserBadge[]
+    // relation
+    users UserBadge[]
 }
 
 model UserBadge {
-  user_id   Int
-  badge_id  Int
-  createdAt DateTime @default(now())
+    user_id   Int
+    badge_id  Int
+    createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [user_id], references: [id])
-  badge     Badge    @relation(fields: [badge_id], references: [id])
+    user  User  @relation(fields: [user_id], references: [id])
+    badge Badge @relation(fields: [badge_id], references: [id])
 
-  @@id([user_id, badge_id])
+    @@id([user_id, badge_id])
 }
 
 model Room {
-  id               Int          @id @default(autoincrement())
-  game_mode        GameMode     @default(DEFAULT)
-  host_id          Int
-  invitation_token String?
-  status           RoomStatus   @default(WAITING)
-  created_at       DateTime     @default(now())
+    id               Int        @id @default(autoincrement())
+    game_mode        GameMode   @default(DEFAULT)
+    host_id          Int
+    invitation_token String?
+    status           RoomStatus @default(WAITING)
+    created_at       DateTime   @default(now())
 
-  // relation
-  host             User         @relation("HostRelation", fields: [host_id], references: [id])
-  rounds           Round[]
-  members          RoomMember[]
+    // relation
+    host    User         @relation("HostRelation", fields: [host_id], references: [id])
+    rounds  Round[]
+    members RoomMember[]
 }
 
 model Round {
-  id         Int       @id @default(autoincrement())
-  room_id    Int
-  drawer_id  Int
-  word       String?
-  winner_id  Int?
-  duration   Int       @default(60)
-  created_at DateTime  @default(now())
-  started_at DateTime?
-  ended_time DateTime?
+    id         Int       @id @default(autoincrement())
+    room_id    Int
+    drawer_id  Int
+    word       String?
+    winner_id  Int?
+    duration   Int       @default(60)
+    created_at DateTime  @default(now())
+    started_at DateTime?
+    ended_time DateTime?
 
-  // relation
-  room       Room      @relation(fields: [room_id], references: [id])
-  drawer     User      @relation("DrawerRelation", fields: [drawer_id], references: [id])
-  winner     User?     @relation("WinnerRelation", fields: [winner_id], references: [id])
+    // relation
+    room   Room  @relation(fields: [room_id], references: [id])
+    drawer User  @relation("DrawerRelation", fields: [drawer_id], references: [id])
+    winner User? @relation("WinnerRelation", fields: [winner_id], references: [id])
 }
 
 model RoomMember {
-  room_id  Int
-  user_id  Int
-  is_ready Boolean  @default(false)
-  role     UserRole @default(PLAYER)
+    room_id  Int
+    user_id  Int
+    is_ready Boolean  @default(false)
+    role     UserRole @default(PLAYER)
 
-  // relation
-  room     Room     @relation(fields: [room_id], references: [id])
-  user     User     @relation(fields: [user_id], references: [id])
+    // relation
+    room Room @relation(fields: [room_id], references: [id])
+    user User @relation(fields: [user_id], references: [id])
 
-  @@id([room_id, user_id])
+    @@id([room_id, user_id])
 }
 
 // Enum definition
 enum GameMode {
-  DEFAULT
-  ONE_STROKE
+    DEFAULT
+    ONE_STROKE
 }
 
 enum RoomStatus {
-  WAITING
-  PLAYING
-  RESULT
-  FINISHED
+    WAITING
+    PLAYING
+    RESULT
+    FINISHED
 }
 
 enum UserRole {
-  PLAYER
-  SPECTATOR
+    PLAYER
+    SPECTATOR
 }

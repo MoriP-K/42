@@ -1,8 +1,6 @@
-/**
- * Room API の型定義
- */
 import { z } from "zod";
-import type { WebSocket } from "ws";
+import { WebSocket } from "ws";
+import { GameModeEnum, RoomIdParamsSchema } from "./common";
 
 /**
  * POST /api/rooms リクエスト型
@@ -18,10 +16,10 @@ export interface CreateRoomRoute {
 }
 
 /**
- * GET /api/rooms/:id パラメータ型
+ * GET /api/rooms/:roomId パラメータ型
  */
 export const GetRoomParamsSchema = z.object({
-	id: z.coerce.number(),
+	roomId: z.coerce.number(),
 });
 
 export type GetRoomParams = z.infer<typeof GetRoomParamsSchema>;
@@ -33,15 +31,13 @@ export interface GetRoomRoute {
 /**
  * PATCH /api/rooms/:roomId/game-mode パラメータ型
  */
-export const UpdateGameModeParamsSchema = z.object({
-	roomId: z.coerce.number(),
-});
+export const UpdateGameModeParamsSchema = RoomIdParamsSchema;
 
 /**
  * PATCH /api/rooms/:roomId/game-mode ボディ型
  */
 export const UpdateGameModeBodySchema = z.object({
-	mode: z.enum(["DEFAULT", "ONE_STROKE"]),
+	mode: GameModeEnum,
 });
 
 export type UpdateGameModeParams = z.infer<typeof UpdateGameModeParamsSchema>;
@@ -79,5 +75,6 @@ export const WebSocketMessageType = {
 	ROUND_START: "roundStart",
 	ROUND_END: "roundEnd",
 	TIMER: "timer",
+	UPDATE_READY: "updateReady",
 	ERROR: "error",
 };

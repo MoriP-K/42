@@ -1,5 +1,6 @@
 import { broadcastToRoom } from "./roomManager";
-import { RoomClient } from "../types/room";
+import { RoomClient } from "../types/room/room";
+import { WebSocket } from "ws";
 
 export const handleChatMessage = (client: RoomClient, data: any) => {
 	console.log(
