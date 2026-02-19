@@ -78,6 +78,21 @@ export async function seedRooms(prisma: PrismaClient) {
 		},
 	});
 
+	// Round 1: kenがDrawer
+	await prisma.round.upsert({
+		where: { id: 1 },
+		update: {},
+		create: {
+			id: 1,
+			room_id: room1.id,
+			drawer_id: nusu.id,
+			started_at: new Date(),
+			ended_time: null,
+		},
+	});
+
 	console.log("✅ Rooms seeded:", { room1, room2 });
+	console.log("✅ Round seeded");
+
 	return { room1, room2 };
 }

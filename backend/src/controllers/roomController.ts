@@ -51,6 +51,7 @@ export const getRoomDetails = async (
 					user: true,
 				},
 			},
+			rounds: true,
 		},
 	});
 	return reply.code(200).send(room);

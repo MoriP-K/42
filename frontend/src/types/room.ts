@@ -13,11 +13,22 @@ export interface RoomMember {
 	user: User;
 }
 
+export interface Round {
+	id: number;
+	room_id: number;
+	drawer_id: number;
+	word: string | null;
+	winner_id: number | null;
+	started_at: string | null;
+	ended_time: string | null;
+}
+
 export interface RoomDetails {
 	id: number;
 	host_id: number;
 	game_mode: (typeof GameMode)[keyof typeof GameMode];
 	members: RoomMember[];
+	rounds: Round[];
 }
 
 /**

@@ -131,13 +131,17 @@ const Game = () => {
 			);
 			if (!roomData || !roomData.members) return;
 
+			const currentRound = roomData.rounds?.find(
+				r => r.started_at !== null && r.ended_time === null,
+			);
+
 			const playerData: Player[] = roomData.members
 				.filter(m => m.role === "PLAYER")
 				.map((m: RoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
 					score: 0,
-					isDrawing: false, // TODO: rounds取得後に修正
+					isDrawing: currentRound?.drawer_id === m.user_id,
 				}));
 
 			setPlayers(playerData);
