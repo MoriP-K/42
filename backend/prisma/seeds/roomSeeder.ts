@@ -78,7 +78,7 @@ export async function seedRooms(prisma: PrismaClient) {
 		},
 	});
 
-	// Round 1: kenがDrawer
+	// Round 1: nusuがDrawer
 	await prisma.round.upsert({
 		where: { id: 1 },
 		update: {},
