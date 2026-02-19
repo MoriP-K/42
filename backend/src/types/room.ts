@@ -57,7 +57,7 @@ export interface UpdateGameModeRoute {
  */
 export interface RoomClient {
 	socket: WebSocket;
-	userId: string;
+	userId: number;
 	roomId: string;
 }
 

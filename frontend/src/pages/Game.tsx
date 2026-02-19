@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createWebSocket } from "../api/wsClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { roomApi } from "../api/roomApi";
 import { authApi } from "../api/authApi";
@@ -19,6 +19,7 @@ import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
+	const navigate = useNavigate();
 
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
@@ -39,6 +40,7 @@ const Game = () => {
 				setCurrentUserName(user.name);
 			} catch (error) {
 				console.error("❌ Failed to get user:", error);
+				navigate("/login");
 			}
 		};
 
@@ -142,11 +144,15 @@ const Game = () => {
 					id: m.user_id,
 					name: m.user.name,
 					score: 0,
-					isDrawing: currentRound?.drawer_id === m.user_id,
+					isDrawing: currentRound
+						? currentRound.drawer_id === m.user_id
+						: false,
 				}));
 
 			setPlayers(playerData);
-			setIsDrawer(currentRound?.drawer_id === currentUserId);
+			setIsDrawer(
+				currentRound ? currentRound.drawer_id === currentUserId : false,
+			);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,
