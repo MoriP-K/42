@@ -74,6 +74,7 @@ export const getRoomDetails = async (
 					joined_at: "asc",
 				},
 			},
+			rounds: true,
 		},
 	});
 	return reply.code(200).send(room);

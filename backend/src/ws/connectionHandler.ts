@@ -27,11 +27,7 @@ export const handleConnection = (socket: WebSocket) => {
 			console.log("📥 Received: ", data);
 
 			if (data.type === WebSocketMessageType.JOIN) {
-				if (
-					!data.userId ||
-					typeof data.userId !== "string" ||
-					data.userId.trim() === ""
-				) {
+				if (!data.userId || typeof data.userId !== "number") {
 					console.log("❌ Invalid userId:", data.userId);
 					socket.send(
 						JSON.stringify({
