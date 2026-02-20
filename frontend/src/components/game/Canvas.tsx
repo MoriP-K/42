@@ -13,9 +13,16 @@ interface CanvasProps {
 	drawData: DrawData | null;
 	clearTrigger: number;
 	isDrawer: boolean;
+	currentWord: string | null;
 }
 
-const Canvas = ({ socket, drawData, clearTrigger, isDrawer }: CanvasProps) => {
+const Canvas = ({
+	socket,
+	drawData,
+	clearTrigger,
+	isDrawer,
+	currentWord,
+}: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
@@ -182,7 +189,7 @@ const Canvas = ({ socket, drawData, clearTrigger, isDrawer }: CanvasProps) => {
 				{isDrawer && (
 					<div className="flex items-center justify-between mb-1">
 						<h2 className="card-title font-mono text-base font-semibold mb-1">
-							お題: ???
+							お題: {currentWord}
 						</h2>
 						<button className="btn btn-sm btn-primary ml-auto">
 							スキップ

@@ -10,10 +10,11 @@ import {
 	CANVAS_HEIGHT,
 	PEN_LINE_WIDTH,
 	ERASER_LINE_WIDTH,
-} from "../types/canvas";
+} from "../types/game/canvas";
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
+import { selectRandomWord } from "./wordSelector";
 import { updateReadyStatus } from "../services/roomService";
 
 export const handleConnection = (socket: WebSocket) => {
@@ -168,7 +169,7 @@ export const handleConnection = (socket: WebSocket) => {
 				try {
 					const room = await prisma.room.findUnique({
 						where: { id: Number(currentClient.roomId) },
-						include: { members: true },
+						include: { members: true, rounds: true },
 					});
 
 					if (!room) {
@@ -186,14 +187,31 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
-					console.log(
-						`Game start from ${currentClient.userId} in room ${currentClient.roomId}`,
-					);
+					const currenRound = room.rounds[room.rounds.length - 1];
+					if (!currenRound) {
+						console.log(
+							`❌ No round found in room ${currentClient.roomId}`,
+						);
+						return;
+					}
+
+					const word = selectRandomWord();
+
+					await prisma.round.update({
+						where: { id: currenRound.id },
+						data: {
+							word: word,
+							started_at: new Date(),
+						},
+					});
 
 					broadcastToRoom(
 						currentClient.roomId,
 						{
-							type: WebSocketMessageType.ROUND_START,
+							type: WebSocketMessageType.ROUND_STARTED,
+							rounId: currenRound.id,
+							drawerId: currenRound.drawer_id,
+							word: word,
 						},
 						socket,
 					);

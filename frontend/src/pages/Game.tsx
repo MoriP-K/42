@@ -25,6 +25,8 @@ const Game = () => {
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 	const [players, setPlayers] = useState<Player[]>([]);
 	const [isDrawer, setIsDrawer] = useState(false);
+	const [currentWord, setCurrentWord] = useState<string | null>(null);
+	const [currentDrawerId, setCurrentDrawerId] = useState<number | null>(null);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
@@ -94,10 +96,19 @@ const Game = () => {
 					setClearTrigger(prev => prev + 1);
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
-				} else if (data.type === WebSocketMessageType.ROUND_START) {
+				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
 					/**
 					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
+					setCurrentWord(data.word);
+					setCurrentDrawerId(data.drawer_id);
+					setIsDrawer(data.drawerId === currentUserId);
+					setPlayers(prev =>
+						prev.map(p => ({
+							...p,
+							isDrawing: p.id === data.drawerId,
+						})),
+					);
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
@@ -134,25 +145,16 @@ const Game = () => {
 			);
 			if (!roomData || !roomData.members) return;
 
-			const currentRound = roomData.rounds?.find(
-				r => r.started_at !== null && r.ended_time === null,
-			);
-
 			const playerData: Player[] = roomData.members
 				.filter(m => m.role === "PLAYER")
 				.map((m: RoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
 					score: 0,
-					isDrawing: currentRound
-						? currentRound.drawer_id === m.user_id
-						: false,
+					isDrawing: false,
 				}));
 
 			setPlayers(playerData);
-			setIsDrawer(
-				currentRound ? currentRound.drawer_id === currentUserId : false,
-			);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,
@@ -211,6 +213,7 @@ const Game = () => {
 							drawData={drawData}
 							clearTrigger={clearTrigger}
 							isDrawer={isDrawer}
+							currentWord={currentWord}
 						/>
 					</div>
 
