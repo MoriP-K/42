@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createWebSocket } from "../api/wsClient";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -22,11 +22,11 @@ const Game = () => {
 	const navigate = useNavigate();
 
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+	const currentUserIdRef = useRef<number | null>(null);
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 	const [players, setPlayers] = useState<Player[]>([]);
 	const [isDrawer, setIsDrawer] = useState(false);
 	const [currentWord, setCurrentWord] = useState<string | null>(null);
-	const [currentDrawerId, setCurrentDrawerId] = useState<number | null>(null);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
@@ -39,6 +39,7 @@ const Game = () => {
 			try {
 				const user = await authApi.me();
 				setCurrentUserId(user.id);
+				currentUserIdRef.current = user.id;
 				setCurrentUserName(user.name);
 			} catch (error) {
 				console.error("❌ Failed to get user:", error);
@@ -56,6 +57,7 @@ const Game = () => {
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
+			console.log("currentUserId:", currentUserId);
 
 			if (id) {
 				ws.send(
@@ -100,9 +102,15 @@ const Game = () => {
 					/**
 					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
 					 */
+					console.log("ROUND_STARTED:", {
+						word: data.word,
+						drawerId: data.drawerId,
+						currentUserId: currentUserIdRef.current,
+						isDrawer: data.drawerId === currentUserId,
+					});
+
 					setCurrentWord(data.word);
-					setCurrentDrawerId(data.drawer_id);
-					setIsDrawer(data.drawerId === currentUserId);
+					setIsDrawer(data.drawerId === currentUserIdRef.current);
 					setPlayers(prev =>
 						prev.map(p => ({
 							...p,

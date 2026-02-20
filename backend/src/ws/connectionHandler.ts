@@ -205,16 +205,12 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 					});
 
-					broadcastToRoom(
-						currentClient.roomId,
-						{
-							type: WebSocketMessageType.ROUND_STARTED,
-							rounId: currenRound.id,
-							drawerId: currenRound.drawer_id,
-							word: word,
-						},
-						socket,
-					);
+					broadcastToRoom(currentClient.roomId, {
+						type: WebSocketMessageType.ROUND_STARTED,
+						rounId: currenRound.id,
+						drawerId: currenRound.drawer_id,
+						word: word,
+					});
 
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
