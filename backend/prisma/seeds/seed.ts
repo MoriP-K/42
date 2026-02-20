@@ -2,6 +2,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import * as bcrypt from "bcrypt";
 import { seedRooms } from "./roomSeeder";
 import { seedSessions } from "./sessionSeeder";
+import { seedBadegs } from "./badgesSeeder"
 
 const prisma = new PrismaClient();
 
@@ -112,6 +113,10 @@ async function main() {
 	// 5. Seed Sessions (for auth testing)
 	console.log("");
 	await seedSessions(prisma);
+
+	// 6. badges data & user score update (for profile)
+	console.log("");
+	await seedBadegs(prisma);
 
 	console.log("\n🎉 All seeding completed successfully!");
 }
