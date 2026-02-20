@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
-import { GameRole, type User } from "../types/user";
+import { GameRole, PlayerRole, type User } from "../types/user";
 import type { RoomMember } from "../types/room";
 import { createWebSocket } from "../api/wsClient";
 
@@ -15,10 +15,19 @@ const Prepare = () => {
 	const [spectatorCount, setSpectatorCount] = useState<number>(0);
 	const [players, setPlayers] = useState<User[]>([]);
 	const [socket, setSocket] = useState<WebSocket | null>(null);
+	const count: number = 3;
+	const [countdown, setCountdown] = useState(3);
+	const currentDrawer = players[0];
+	const role =
+		user?.id !== undefined &&
+		currentDrawer?.id !== undefined &&
+		Number(currentDrawer.id) === Number(user?.id)
+			? PlayerRole.DRAWER
+			: PlayerRole.GUESSER;
 
 	useEffect(() => {
 		if (roomId === undefined || user?.id === undefined) return;
-
+		// WebSocketの作成
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
@@ -75,6 +84,7 @@ const Prepare = () => {
 						if (member.role === GameRole.PLAYER) {
 							return {
 								id: member.user_id,
+								name: member.user.name,
 								role: member.role,
 								avatar: member.user.avatar ?? "👤",
 								isReady: member.is_ready,
@@ -92,17 +102,11 @@ const Prepare = () => {
 		};
 		getRoomMembers();
 	}, [roomId, user]);
-	const count: number = 3;
-
-	const currentWriter = players[0];
-	type Role = "回答者" | "描き手";
-	const [role] = useState<Role>("回答者");
-	const [countdown, setCountdown] = useState(1000);
 
 	useEffect(() => {
 		if (countdown < 0) {
 			const redirectTimer = setTimeout(() => {
-				navigate("/game");
+				navigate(`/game/${roomId}`);
 			}, 1500);
 			return () => clearTimeout(redirectTimer);
 		}
@@ -111,7 +115,7 @@ const Prepare = () => {
 			setCountdown(prev => prev - 1);
 		}, 1000);
 		return () => clearInterval(timer);
-	}, [countdown, navigate]);
+	}, [countdown, navigate, roomId]);
 
 	useEffect(() => {
 		const getMyStatus = async () => {
@@ -143,6 +147,18 @@ const Prepare = () => {
 		);
 	};
 
+	useEffect(() => {
+		if (roomId === undefined || user?.id === undefined) return;
+		const ensureRound = async () => {
+			try {
+				await roomApi.createRound(roomId);
+			} catch (error) {
+				console.error("Failed to create round:", error);
+			}
+		};
+		ensureRound();
+	}, [roomId, user?.id]);
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">
 			{/* Background Decorations */}
@@ -170,18 +186,17 @@ const Prepare = () => {
 								<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">
 									今回の書き手
 								</h2>
-								<div className="flex items-center gap-6">
+								<div className="flex justify-center items-center gap-6">
 									<div className="avatar placeholder">
-										<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
+										<div className="flex justify-center items-center bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 h-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
 											<span className="text-4xl">
-												{currentWriter?.avatar ??
-													"AVATAR"}
+												{currentDrawer?.avatar}
 											</span>
 										</div>
 									</div>
 									<div>
 										<p className="text-3xl font-bold">
-											{currentWriter?.name ?? "NAME"}
+											{currentDrawer?.name ?? "NAME"}
 										</p>
 										<div className="badge badge-outline badge-primary mt-1 px-3 py-1 font-mono uppercase">
 											Artist
@@ -197,14 +212,13 @@ const Prepare = () => {
 								<h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">
 									あなたの役割
 								</h2>
-								<div className="flex items-center justify-between">
+								<div className="flex flex-col items-center gap-4">
 									<span className="text-4xl font-black italic">
 										{role}
 									</span>
-									<div className="flex gap-4 w-32 justify-end">
-										<button
-											className={`
-												min-w-[7rem] px-4 py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider
+									<button
+										className={`
+												flex justify-center items-center w-[7rem] px-10 py-2.5 rounded-xl font-bold text-sm uppercase tracking-wider
 												cursor-pointer select-none
 												transition-all duration-200
 												hover:scale-[1.02] hover:brightness-110
@@ -216,13 +230,10 @@ const Prepare = () => {
 														: "bg-rose-500/80 border border-rose-400/50 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]"
 												}
 											`}
-											onClick={toggleIsReady}
-										>
-											{isReady === true
-												? "READY"
-												: "WAITING"}
-										</button>
-									</div>
+										onClick={toggleIsReady}
+									>
+										{isReady === true ? "READY" : "WAITING"}
+									</button>
 								</div>
 							</div>
 						</div>

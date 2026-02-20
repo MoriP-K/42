@@ -14,6 +14,7 @@ const Waiting = () => {
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
+	const [hostId, setHostId] = useState(0);
 	const [isHost, setIsHost] = useState(false);
 	const [invitationToken, setInvitationToken] = useState<string | null>(null);
 	const [searchParams] = useSearchParams();
@@ -26,6 +27,7 @@ const Waiting = () => {
 				Number(roomId),
 			)) as RoomDetails;
 			setIsHost(res.host_id === user?.id);
+			setHostId(res.host_id);
 			setGameMode(res.game_mode);
 			const mappedUsers = res.members.map((member: RoomMember) => ({
 				id: member.user.id,
@@ -84,12 +86,15 @@ const Waiting = () => {
 	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
 		if (!token || !user?.id || !roomId) return;
-		roomApi
-			.joinByToken(token)
-			.then(() => {
+		const joinRoomByToken = async () => {
+			try {
+				await roomApi.joinRoomByToken(token);
 				getRoomDetails();
-			})
-			.catch(console.error);
+			} catch (error) {
+				console.error("Error", error);
+			}
+		};
+		joinRoomByToken();
 	}, [token, user?.id, roomId, getRoomDetails]);
 
 	const toggleRole = async (id: number) => {
@@ -165,6 +170,7 @@ const Waiting = () => {
 									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
 								>
 									<span className="font-bold">
+										{hostId === member.id ? <>👑 </> : ""}
 										{member.name}
 									</span>
 									<div className="flex gap-4 w-32 justify-end">

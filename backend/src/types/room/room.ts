@@ -48,6 +48,10 @@ export interface UpdateGameModeRoute {
 	Body: UpdateGameModeBody;
 }
 
+export interface CreateRoundRoute {
+	Params: GetRoomParams;
+}
+
 /**
  * PATCH /api/rooms/join ボディ型
  */
@@ -73,7 +77,7 @@ export interface RoomClient {
 /**
  * ラウンドタイマー用の定数
  */
-export const ROUND_DURATION = 60;
+export const ROUND_DURATION = 5;
 
 /**
  * WebSocketメッセージタイプ

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createWebSocket } from "../api/wsClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { roomApi } from "../api/roomApi";
 import {
@@ -23,6 +23,7 @@ const Game = () => {
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
+	const navigate = useNavigate();
 
 	// プレイヤーデータ
 	const [players] = useState([
@@ -91,6 +92,7 @@ const Game = () => {
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
 					 */
+					if (id) navigate(`/prepare/${id}`);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
