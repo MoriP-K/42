@@ -66,7 +66,7 @@ export interface JoinByTokenRoute {
  */
 export interface RoomClient {
 	socket: WebSocket;
-	userId: string;
+	userId: number;
 	roomId: string;
 }
 

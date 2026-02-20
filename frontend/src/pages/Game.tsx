@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { createWebSocket } from "../api/wsClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { roomApi } from "../api/roomApi";
+import { authApi } from "../api/authApi";
 import {
 	type RoomDetails,
 	type RoomMember,
+	type Player,
 	WebSocketMessageType,
 	ROUND_DURATION,
 } from "../types/room";
@@ -17,6 +19,12 @@ import ChatInput from "../components/game/ChatInput";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
+	const navigate = useNavigate();
+
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+	const [players, setPlayers] = useState<Player[]>([]);
+	const [isDrawer, setIsDrawer] = useState(false);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
@@ -24,31 +32,34 @@ const Game = () => {
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
 
-	// プレイヤーデータ
-	const [players] = useState([
-		{ id: 1, name: "Ken", score: 0, isDrawing: true },
-		{ id: 2, name: "Alice", score: 0, isDrawing: false },
-		{ id: 3, name: "Bob", score: 0, isDrawing: false },
-	]);
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const user = await authApi.me();
+				setCurrentUserId(user.id);
+				setCurrentUserName(user.name);
+			} catch (error) {
+				console.error("❌ Failed to get user:", error);
+				navigate("/login");
+			}
+		};
+
+		fetchUser();
+	}, []);
 
 	useEffect(() => {
-		if (!id) return;
+		if (!currentUserId || !id) return;
 
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
 
-			// TODO: ログイン機能実装後、実際のuserIdを使用
-			// TODO: URLパラメータからroomIdを取得
-			const tempUserId =
-				"user-" + Math.random().toString(36).substring(2, 9);
-
 			if (id) {
 				ws.send(
 					JSON.stringify({
 						type: WebSocketMessageType.JOIN,
-						userId: tempUserId,
+						userId: currentUserId,
 						roomId: id,
 					}),
 				);
@@ -112,7 +123,7 @@ const Game = () => {
 			ws.close();
 			setSocket(null);
 		};
-	}, [id]);
+	}, [currentUserId, id]);
 
 	const checkAndStartRound = async (socket: WebSocket) => {
 		if (!id) return;
@@ -121,8 +132,27 @@ const Game = () => {
 			const roomData: RoomDetails = await roomApi.getRoomDetails(
 				Number(id),
 			);
-
 			if (!roomData || !roomData.members) return;
+
+			const currentRound = roomData.rounds?.find(
+				r => r.started_at !== null && r.ended_time === null,
+			);
+
+			const playerData: Player[] = roomData.members
+				.filter(m => m.role === "PLAYER")
+				.map((m: RoomMember) => ({
+					id: m.user_id,
+					name: m.user.name,
+					score: 0,
+					isDrawing: currentRound
+						? currentRound.drawer_id === m.user_id
+						: false,
+				}));
+
+			setPlayers(playerData);
+			setIsDrawer(
+				currentRound ? currentRound.drawer_id === currentUserId : false,
+			);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,
@@ -146,10 +176,15 @@ const Game = () => {
 			return;
 		}
 
+		if (!currentUserName) {
+			console.error("❌ User name not found");
+			return;
+		}
+
 		const message = {
-			type: "chat",
+			type: WebSocketMessageType.CHAT,
 			id: crypto.randomUUID(),
-			sender: "Ken",
+			sender: currentUserName,
 			text: text,
 			timestamp: new Date().toISOString(),
 		};
@@ -175,6 +210,7 @@ const Game = () => {
 							socket={socket}
 							drawData={drawData}
 							clearTrigger={clearTrigger}
+							isDrawer={isDrawer}
 						/>
 					</div>
 

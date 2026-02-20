@@ -12,9 +12,10 @@ interface CanvasProps {
 	socket: WebSocket | null;
 	drawData: DrawData | null;
 	clearTrigger: number;
+	isDrawer: boolean;
 }
 
-const Canvas = ({ socket, drawData, clearTrigger }: CanvasProps) => {
+const Canvas = ({ socket, drawData, clearTrigger, isDrawer }: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
@@ -178,64 +179,68 @@ const Canvas = ({ socket, drawData, clearTrigger }: CanvasProps) => {
 	return (
 		<div className="card bg-base-100 shadow-xl">
 			<div className="card-body p-0">
-				<div className="flex items-center justify-between mb-1">
-					<h2 className="card-title font-mono text-base font-semibold mb-1">
-						お題: ???
-					</h2>
-					<button className="btn btn-sm btn-primary ml-auto">
-						スキップ
-					</button>
-				</div>
+				{isDrawer && (
+					<div className="flex items-center justify-between mb-1">
+						<h2 className="card-title font-mono text-base font-semibold mb-1">
+							お題: ???
+						</h2>
+						<button className="btn btn-sm btn-primary ml-auto">
+							スキップ
+						</button>
+					</div>
+				)}
 
 				<canvas
 					ref={canvasRef}
 					width={1280}
 					height={720}
-					onMouseDown={startDrawing}
-					onMouseMove={draw}
-					onMouseUp={stopDrawing}
-					onMouseLeave={stopDrawing}
-					className="border border-base-300 rounded-lg bg-white cursor-crosshair w-full"
+					onMouseDown={isDrawer ? startDrawing : undefined}
+					onMouseMove={isDrawer ? draw : undefined}
+					onMouseUp={isDrawer ? stopDrawing : undefined}
+					onMouseLeave={isDrawer ? stopDrawing : undefined}
+					className={`border border-base-300 rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
 					aria-label="描画キャンバス"
 				/>
 
-				<div className="flex items-center gap-2">
-					{[
-						{ hex: "#000000", label: "黒" },
-						{ hex: "#ef4444", label: "赤" },
-						{ hex: "#3b82f6", label: "青" },
-						{ hex: "#22c55e", label: "緑" },
-						{ hex: "#eab308", label: "黄" },
-						{ hex: "#a855f7", label: "紫" },
-					].map(({ hex, label }) => (
+				{isDrawer && (
+					<div className="flex items-center gap-2">
+						{[
+							{ hex: "#000000", label: "黒" },
+							{ hex: "#ef4444", label: "赤" },
+							{ hex: "#3b82f6", label: "青" },
+							{ hex: "#22c55e", label: "緑" },
+							{ hex: "#eab308", label: "黄" },
+							{ hex: "#a855f7", label: "紫" },
+						].map(({ hex, label }) => (
+							<button
+								key={hex}
+								onClick={() => {
+									setColor(hex);
+									setIsEraser(false);
+								}}
+								className={`btn btn-sm btn-circle border-2 border-transparent
+									${color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
+								`}
+								style={{ backgroundColor: hex }}
+								aria-label={label}
+							/>
+						))}
 						<button
-							key={hex}
-							onClick={() => {
-								setColor(hex);
-								setIsEraser(false);
-							}}
-							className={`btn btn-sm btn-circle border-2 border-transparent
-								${color === hex ? "ring-2 ring-offset-2 ring-primary border-primary" : "opacity-70"}
+							onClick={() => setIsEraser(!isEraser)}
+							className={`btn btn-sm
+								${isEraser ? "btn-outline btn-accent btn-active" : "btn-ghost"}
 							`}
-							style={{ backgroundColor: hex }}
-							aria-label={label}
-						/>
-					))}
-					<button
-						onClick={() => setIsEraser(!isEraser)}
-						className={`btn btn-sm
-							${isEraser ? "btn-outline btn-accent btn-active" : "btn-ghost"}
-						`}
-					>
-						消しゴム
-					</button>
-					<button
-						onClick={clearCanvas}
-						className="btn btn-sm btn-primary ml-auto"
-					>
-						クリア
-					</button>
-				</div>
+						>
+							消しゴム
+						</button>
+						<button
+							onClick={clearCanvas}
+							className="btn btn-sm btn-primary ml-auto"
+						>
+							クリア
+						</button>
+					</div>
+				)}
 			</div>
 		</div>
 	);
