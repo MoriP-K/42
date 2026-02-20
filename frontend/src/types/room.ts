@@ -15,8 +15,9 @@ export interface RoomMember {
 
 export interface RoomDetails {
 	id: number;
-	host_id: number;
 	game_mode: (typeof GameMode)[keyof typeof GameMode];
+	host_id: number;
+	invitation_token?: string;
 	members: RoomMember[];
 }
 

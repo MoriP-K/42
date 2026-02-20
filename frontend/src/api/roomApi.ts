@@ -54,4 +54,11 @@ export const roomApi = {
 			body: JSON.stringify({ isReady }),
 		});
 	},
+
+	joinByToken: async (token: string) => {
+		return apiClient("/rooms/join", {
+			method: "POST",
+			body: JSON.stringify({ token }),
+		});
+	},
 };

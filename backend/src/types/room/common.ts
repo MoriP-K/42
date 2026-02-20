@@ -10,6 +10,7 @@ export const RoomMemberParamsSchema = z.object({
 
 export const RoomMemberBodySchema = z.object({
 	isReady: z.coerce.boolean(),
+	token: z.coerce.string(),
 });
 
 export const RoomIdParamsSchema = z.object({

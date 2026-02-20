@@ -73,7 +73,7 @@ model Room {
     id               Int        @id @default(autoincrement())
     game_mode        GameMode   @default(DEFAULT)
     host_id          Int
-    invitation_token String?
+    invitation_token String?    @unique
     status           RoomStatus @default(WAITING)
     created_at       DateTime   @default(now())
 
@@ -101,10 +101,11 @@ model Round {
 }
 
 model RoomMember {
-    room_id  Int
-    user_id  Int
-    is_ready Boolean  @default(false)
-    role     UserRole @default(PLAYER)
+    room_id   Int
+    user_id   Int
+    is_ready  Boolean  @default(false)
+    role      UserRole @default(PLAYER)
+    joined_at DateTime @default(now())
 
     // relation
     room Room @relation(fields: [room_id], references: [id])
