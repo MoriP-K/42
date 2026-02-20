@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../api/apiClient";
+import { userApi } from "../api/userApi";
 import Footer from "../components/footer/Footer";
+import test1 from "../images/badges/food_kakuni_manju.png";
+import test2 from "../images/badges/food_ika_ikidukuri_naruko.png";
+import test3 from "../images/badges/food_kanazawa_curry.png";
+import test4 from "../images/badges/food_nasu_yakinasu.png";
 
 const Profile = () => {
+	interface profileData {
+		name: string;
+		total_score: number;
+		first_place_count: number;
+		play_count: number;
+		// badges: string[];
+	}
+
 	// 1ユーザのデータがそのまま帰ってくる
-	const [profileData, setProfileData] = useState<any>(null);
+	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchProfile = async () => {
 			try {
-				const currentUserId = 1;
-				const data = await apiClient(
-					`/profile?userId=${currentUserId}`,
-				);
+				const data = await userApi.getProfile();
 				setProfileData(data);
 			} catch (error) {
 				console.error("データの取得に失敗しました", error);
@@ -24,6 +33,25 @@ const Profile = () => {
 
 		fetchProfile();
 	}, []);
+
+	// バッジは直近で取得したもの３つを表示する
+	// 画像のマッピング（Record型を使用）
+	const imageMap: Record<string, string> = {
+		first: test1,
+		second: test2,
+		third: test3,
+		fource: test4,
+	};
+
+	const MyComponent = ({ rank }: { rank: string }) => {
+		return (
+			<img
+				src={imageMap[rank]} // 型の「Rank」ではなく、小文字の変数「rank」を使う
+				alt={`${rank} test`}
+				width={100}
+			/>
+		);
+	};
 
 	if (isLoading) {
 		return <div className="p-10">読み込み中...</div>;
@@ -43,6 +71,10 @@ const Profile = () => {
 
 			<div>
 				<p className="font-bold">バッジ</p>
+				{/* <p>バッジ: {profileData.badges}</p> */}
+				<MyComponent rank="first" />
+				<MyComponent rank="second" />
+				<MyComponent rank="third" />
 			</div>
 			<Footer></Footer>
 		</div>
