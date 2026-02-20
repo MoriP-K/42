@@ -57,7 +57,6 @@ const Game = () => {
 
 		ws.onopen = () => {
 			console.log("✅ WebSocket connected");
-			console.log("currentUserId:", currentUserId);
 
 			if (id) {
 				ws.send(
@@ -99,16 +98,6 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
 				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
-					/**
-					 * TODO: フロント側のゲーム開始時の処理（お題表示など）
-					 */
-					console.log("ROUND_STARTED:", {
-						word: data.word,
-						drawerId: data.drawerId,
-						currentUserId: currentUserIdRef.current,
-						isDrawer: data.drawerId === currentUserId,
-					});
-
 					setCurrentWord(data.word);
 					setIsDrawer(data.drawerId === currentUserIdRef.current);
 					setPlayers(prev =>
