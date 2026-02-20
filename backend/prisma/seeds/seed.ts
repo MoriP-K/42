@@ -2,7 +2,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import * as bcrypt from "bcrypt";
 import { seedRooms } from "./roomSeeder";
 import { seedSessions } from "./sessionSeeder";
-import { seedBadegs } from "./badgesSeeder"
+import { seedBadegs } from "./badgesSeeder";
 
 const prisma = new PrismaClient();
 
@@ -81,17 +81,22 @@ async function main() {
 		where: { id: 2 },
 		update: {
 			name: "happy player",
-			description: "you played 5 times" },
+			description: "you played 5 times",
+		},
 		create: {
 			name: "happy player",
-			description: "you played 5 times" }});
+			description: "you played 5 times",
+		},
+	});
 
 	const richScore = await prisma.badge.upsert({
-		 where: { id: 3 },
+		where: { id: 3 },
 		update: {},
 		create: {
 			name: "rich score",
-			 description: "you get 100 score"}});
+			description: "you get 100 score",
+		},
+	});
 
 	console.log("✅ Badges seeded:", { firstWin, happyPlayer, richScore });
 

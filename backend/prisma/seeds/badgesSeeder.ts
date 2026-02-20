@@ -50,12 +50,9 @@ export async function seedBadegs(prisma: PrismaClient) {
 		},
 	});
 
-
-
-
 	const now = new Date();
 
 	console.log("✅ badges seeded");
 
-	return {  };
+	return {};
 }
