@@ -77,16 +77,23 @@ async function main() {
 		},
 	});
 
-	const socialButterfly = await prisma.badge.upsert({
+	const happyPlayer = await prisma.badge.upsert({
 		where: { id: 2 },
+		update: {
+			name: "happy player",
+			description: "you played 5 times" },
+		create: {
+			name: "happy player",
+			description: "you played 5 times" }});
+
+	const richScore = await prisma.badge.upsert({
+		 where: { id: 3 },
 		update: {},
 		create: {
-			name: "Social Butterfly",
-			description: "Played with 5 different users.",
-		},
-	});
+			name: "rich score",
+			 description: "you get 100 score"}});
 
-	console.log("✅ Badges seeded:", { firstWin, socialButterfly });
+	console.log("✅ Badges seeded:", { firstWin, happyPlayer, richScore });
 
 	// 3. Seed UserBadges
 	console.log("\n🎖️  Seeding user badges...");

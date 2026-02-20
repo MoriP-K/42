@@ -4,31 +4,58 @@ import { randomUUID } from "node:crypto";
 export async function seedBadegs(prisma: PrismaClient) {
 	console.log("🔐 Seeding sessions for auth testing...");
 
-	// users tableのbadges[]を全削除
-	const delete_user_badges = await prisma.user.update({
-										data: {badges: null },
-										where: { name: "alice" } });
-
-	// userBadgeのデータを削除
-	const delete_useBadge = await prisma.userBadge.delete({ where: { user_id: 1 } });
-
-	// badges tableからSocial Butterflyを削除
-	const delete_socialButterfly = await prisma.badge.delete({ where: { name: "SocialButterfly" } });
-	console.log("✅ delete old data:", { delete_user_badges, delete_useBadge, delete_socialButterfly });
-
-	// badges tableに新規データを追加
-	const add_badge_play_count = await prisma.badge.create({ data: { id: 2, name: "", description: ""}});
-	const add_badge_total_score = await prisma.badge.create({ data: { id: 3, name: "", description: ""}});
-	console.log("✅ add badge data:", { add_badge_play_count, add_badge_total_score });
+	// alice ユーザーを取得（既に seed.ts で作成されている前提）
+	const alice = await prisma.user.findUnique({ where: { name: "alice" } });
 
 	// userBadgesとusersを更新
-		// funaはすべてのバッジを持つ
-		// kenは一つのバッジを持つ
+	await prisma.userBadge.upsert({
+		where: {
+			user_id_badge_id: {
+				user_id: alice.id,
+				badge_id: 1,
+			},
+		},
+		update: {},
+		create: {
+			user_id: alice.id,
+			badge_id: 1,
+		},
+	});
+
+	await prisma.userBadge.upsert({
+		where: {
+			user_id_badge_id: {
+				user_id: alice.id,
+				badge_id: 2,
+			},
+		},
+		update: {},
+		create: {
+			user_id: alice.id,
+			badge_id: 2,
+		},
+	});
+
+	await prisma.userBadge.upsert({
+		where: {
+			user_id_badge_id: {
+				user_id: alice.id,
+				badge_id: 3,
+			},
+		},
+		update: {},
+		create: {
+			user_id: alice.id,
+			badge_id: 3,
+		},
+	});
+
+
 
 
 	const now = new Date();
 
-	console.log("✅ Sessions seeded");
+	console.log("✅ badges seeded");
 
-	return { validSession };
+	return {  };
 }
