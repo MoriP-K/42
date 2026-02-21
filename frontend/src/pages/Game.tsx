@@ -31,7 +31,6 @@ const Game = () => {
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
-	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchUser = async () => {

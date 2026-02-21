@@ -24,7 +24,6 @@ import {
 } from "../types/room/common";
 import { updateReadyStatus } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
-import { UserRole } from "../generated/prisma/enums";
 import { broadcastToRoom } from "../ws/roomManager";
 
 /*
