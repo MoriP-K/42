@@ -11,7 +11,12 @@ import {
 	PEN_LINE_WIDTH,
 	ERASER_LINE_WIDTH,
 } from "../types/game/canvas";
-import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
+import {
+	joinRoom,
+	leaveRoom,
+	broadcastToRoom,
+	findClientByUserId,
+} from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
 import { selectRandomWord } from "./wordSelector";
@@ -169,7 +174,13 @@ export const handleConnection = (socket: WebSocket) => {
 				try {
 					const room = await prisma.room.findUnique({
 						where: { id: Number(currentClient.roomId) },
-						include: { members: true, rounds: true },
+						include: {
+							members: true,
+							rounds: {
+								where: { started_at: null, ended_time: null },
+								take: 1,
+							},
+						},
 					});
 
 					if (!room) {
@@ -187,8 +198,8 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
-					const currenRound = room.rounds[room.rounds.length - 1];
-					if (!currenRound) {
+					const currentRound = room.rounds[0];
+					if (!currentRound) {
 						console.log(
 							`❌ No round found in room ${currentClient.roomId}`,
 						);
@@ -197,20 +208,43 @@ export const handleConnection = (socket: WebSocket) => {
 
 					const word = selectRandomWord();
 
-					await prisma.round.update({
-						where: { id: currenRound.id },
+					const result = await prisma.round.updateMany({
+						where: { id: currentRound.id, started_at: null },
 						data: {
 							word: word,
 							started_at: new Date(),
 						},
 					});
 
-					broadcastToRoom(currentClient.roomId, {
-						type: WebSocketMessageType.ROUND_STARTED,
-						roundId: currenRound.id,
-						drawerId: currenRound.drawer_id,
-						word: word,
-					});
+					if (result.count === 0) {
+						console.log("⚠️ Round already started");
+						return;
+					}
+
+					const drawerClient = findClientByUserId(
+						currentClient.roomId,
+						currentRound.drawer_id,
+					);
+
+					if (drawerClient) {
+						broadcastToRoom(currentClient.roomId, {
+							type: WebSocketMessageType.ROUND_STARTED,
+							roundId: currentRound.id,
+							drawerId: currentRound.drawer_id,
+							word: word,
+						});
+					}
+
+					broadcastToRoom(
+						currentClient.roomId,
+						{
+							type: WebSocketMessageType.ROUND_STARTED,
+							roundId: currentRound.id,
+							drawerId: currentRound.drawer_id,
+							word: null,
+						},
+						drawerClient?.socket,
+					);
 
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
