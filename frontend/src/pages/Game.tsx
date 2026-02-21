@@ -98,14 +98,13 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
 				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
-					setCurrentWord(data.word);
-					setIsDrawer(data.drawerId === currentUserIdRef.current);
-					setPlayers(prev =>
-						prev.map(p => ({
-							...p,
-							isDrawing: p.id === data.drawerId,
-						})),
-					);
+					console.log("ROUND_STARTED received:", {
+						word: data.word,
+						drawerId: data.drawerId,
+						isDrawer: data.drawerId === currentUserId,
+						currentUserId: currentUserIdRef.current,
+					});
+					updateRoundState(data.word, data.drawerId);
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
@@ -133,6 +132,17 @@ const Game = () => {
 		};
 	}, [currentUserId, id]);
 
+	const updateRoundState = (word: string, drawerId: number) => {
+		setCurrentWord(word);
+		setIsDrawer(drawerId === currentUserIdRef.current);
+		setPlayers(prev =>
+			prev.map(p => ({
+				...p,
+				isDrawing: p.id === drawerId,
+			})),
+		);
+	};
+
 	const checkAndStartRound = async (socket: WebSocket) => {
 		if (!id) return;
 
@@ -152,6 +162,14 @@ const Game = () => {
 				}));
 
 			setPlayers(playerData);
+
+			const currentRound = roomData.rounds?.find(
+				r => r.started_at !== null && r.ended_time === null,
+			);
+
+			if (currentRound && currentRound.word) {
+				updateRoundState(currentRound.word, currentRound.drawer_id);
+			}
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,

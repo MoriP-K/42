@@ -207,14 +207,14 @@ export const handleConnection = (socket: WebSocket) => {
 
 					broadcastToRoom(currentClient.roomId, {
 						type: WebSocketMessageType.ROUND_STARTED,
-						rounId: currenRound.id,
+						roundId: currenRound.id,
 						drawerId: currenRound.drawer_id,
 						word: word,
 					});
 
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
-					console.error(`❌ Failed to check room status:`, error);
+					console.error(`❌ Failed to start round:`, error);
 				}
 			}
 		} catch (error) {
