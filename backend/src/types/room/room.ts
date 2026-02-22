@@ -86,6 +86,7 @@ export const WebSocketMessageType = {
 	DRAW_END: "drawEnd",
 	CLEAR: "clear",
 	ROUND_START: "roundStart",
+	ROUND_STARTED: "roundStarted",
 	ROUND_END: "roundEnd",
 	TIMER: "timer",
 	UPDATE_READY: "updateReady",
