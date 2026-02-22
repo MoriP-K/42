@@ -4,6 +4,7 @@ import cookie from "@fastify/cookie";
 import websocket from "@fastify/websocket";
 import { userRoutes } from "./routes/userRoutes";
 import { authRoutes } from "./routes/authRoutes";
+import { googleAuthRoutes } from "./routes/googleAuthRoutes";
 import { roomRoutes } from "./routes/roomRoutes";
 import { handleConnection } from "./ws/connectionHandler";
 
@@ -27,6 +28,7 @@ fastify.register(cookie);
 // ルートの登録
 fastify.register(userRoutes, { prefix: "/api" });
 fastify.register(authRoutes, { prefix: "/api" });
+fastify.register(googleAuthRoutes, { prefix: "/v1/auth" });
 fastify.register(roomRoutes, { prefix: "/api" });
 
 // WebSocketのルートを定義
