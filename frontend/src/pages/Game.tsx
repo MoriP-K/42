@@ -16,6 +16,7 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
+import { GameRole } from "../types/user";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
@@ -45,7 +46,7 @@ const Game = () => {
 		};
 
 		fetchUser();
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		if (!currentUserId || !id) return;
@@ -140,7 +141,7 @@ const Game = () => {
 			);
 
 			const playerData: Player[] = roomData.members
-				.filter(m => m.role === "PLAYER")
+				.filter(m => m.role === GameRole.PLAYER)
 				.map((m: RoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
@@ -155,9 +156,9 @@ const Game = () => {
 				currentRound ? currentRound.drawer_id === currentUserId : false,
 			);
 
-			const allReady = roomData.members.every(
-				(m: RoomMember) => m.is_ready,
-			);
+			const allReady = roomData.members
+				.filter((m: RoomMember) => m.role === GameRole.PLAYER)
+				.every((m: RoomMember) => m.is_ready);
 
 			if (allReady && socket.readyState === WebSocket.OPEN) {
 				socket.send(

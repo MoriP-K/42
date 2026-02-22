@@ -45,7 +45,7 @@ export const createRoom = async (
 		});
 		return reply.code(201).send(room);
 	} catch (error) {
-		console.log("Error:", error);
+		console.log("createRoomError:", error);
 		return reply.code(403).send();
 	}
 };
@@ -316,6 +316,7 @@ export const createRound = async (
 	const roomId = paramResult.data.roomId;
 	try {
 		const result = await prisma.$transaction(async tx => {
+			// このroomIdに対してmutexのロックをかけている、他のSQLは処理が終わるまで実行されない
 			await tx.$queryRaw`SELECT id FROM "Room" WHERE id = ${roomId} FOR UPDATE`;
 			const room = await tx.room.findUnique({
 				where: { id: roomId },
@@ -334,10 +335,12 @@ export const createRound = async (
 					.filter(m => m.user_id !== room.host_id)
 					.map(m => m.user_id),
 			];
+			// 最新のRoundを取得
 			const latestRound = await tx.round.findFirst({
 				where: { room_id: roomId },
 				orderBy: { id: "desc" },
 			});
+			// latestRound の冪等チェック
 			if (latestRound?.started_at === null) {
 				const existing = await tx.round.findUnique({
 					where: { id: latestRound.id },
@@ -345,7 +348,15 @@ export const createRound = async (
 				});
 				if (existing) return existing;
 			}
+
+			// 新規ラウンド用にRoomMemberのis_readyのリセット（Game から Prepare に戻ったとき）
+			await tx.roomMember.updateMany({
+				where: { room_id: roomId },
+				data: { is_ready: false },
+			});
+
 			let drawerId: number;
+			// Roundがなければ最初のDrawerをホストに設定
 			if (!latestRound) {
 				drawerId = room.host_id;
 			} else {

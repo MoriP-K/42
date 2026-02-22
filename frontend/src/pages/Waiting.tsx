@@ -20,6 +20,7 @@ const Waiting = () => {
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 	const currentUserId = user?.id;
+	const socketRef = useRef<WebSocket | null>(null);
 
 	const getRoomDetails = useCallback(async () => {
 		try {
@@ -51,10 +52,10 @@ const Waiting = () => {
 	// 参加者一覧を取得する（初回 + WebSocketで取りこぼしを防ぐためポーリング）
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
-		getRoomDetails();
-		const intervalId = setInterval(getRoomDetails, 1000); // 5000が適切だが遅いので1000（負荷は多い）
+		queueMicrotask(() => getRoomDetailsRef.current());
+		const intervalId = setInterval(() => getRoomDetailsRef.current(), 1000); // 5000が適切だが遅いので1000（負荷は多い）
 		return () => clearInterval(intervalId);
-	}, [user?.id, roomId, getRoomDetails]);
+	}, [user?.id, roomId]);
 
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
@@ -89,11 +90,16 @@ const Waiting = () => {
 			if (data.type === "gameModeUpdated") {
 				setGameMode(data.mode);
 			}
+			if (data.type === "navigateToPrepare" && data.roomId != null) {
+				navigate(`/prepare/${data.roomId}`);
+			}
 		};
+		socketRef.current = ws;
 		return () => {
 			ws.close();
+			socketRef.current = null;
 		};
-	}, [roomId, user?.id]);
+	}, [roomId, user?.id, navigate]);
 
 	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
@@ -154,6 +160,17 @@ const Waiting = () => {
 		navigator.clipboard.writeText(url);
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 1500);
+	};
+
+	const handlePrepareClick = () => {
+		const ws = socketRef.current;
+		if (!isHost || !roomId || !ws || ws.readyState !== WebSocket.OPEN) {
+			return;
+		}
+		ws.send(
+			JSON.stringify({ type: "prepareStarted", roomId: String(roomId) }),
+		);
+		navigate(`/prepare/${roomId}`);
 	};
 
 	return (
@@ -265,7 +282,9 @@ const Waiting = () => {
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
 					<button
-						onClick={() => navigate(`/prepare/${roomId}`)}
+						onClick={() =>
+							isHost ? handlePrepareClick() : undefined
+						}
 						disabled={!isHost}
 						className={`btn w-full text-lg border-none shadow-xl transition-all duration-200 flex items-center justify-center gap-2 ${
 							isHost
