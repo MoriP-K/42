@@ -54,7 +54,8 @@ export const googleCallback = async (
 		});
 		const userInfo = userInfoRes.data;
 
-		// TODO: DBへの保存・セッション作成はここに追加予定
+		// TODO: DBへの保存・セッション作成はここに追加予定。nameは適当な値にする。
+		//TODO: name入力画面にリダイレクト。return reply.code(302).redirect("http://localhost:5173/");
 		return reply.code(200).send({
 			message: "Google認証成功（デバッグ用レスポンス）",
 			email: userInfo.email,
