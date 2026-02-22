@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
 import { GameMode, type RoomDetails, type RoomMember } from "../types/room";
 import Toast from "../components/Toast";
 import { createWebSocket } from "../api/wsClient";
+import Footer from "../components/footer/Footer";
 
 const Waiting = () => {
 	const { user } = useAuth();
@@ -140,122 +141,198 @@ const Waiting = () => {
 	};
 
 	return (
-		<>
-			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
-				{/* トースト通知 */}
-				{showToast && (
-					<Toast type="success" message="招待URLをコピーしました！" />
-				)}
-				<div>Waiting Game</div>
+		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white flex flex-col font-sans overflow-hidden">
+			{/* トースト通知 */}
+			{showToast && (
+				<Toast type="success" message="招待URLをコピーしました！" />
+			)}
 
-				{/* 参加者一覧セクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300">
-					<div className="card-body p-6">
-						<div className="flex justify-between items-center mb-4">
-							<h2 className="card-title text-lg">参加者一覧</h2>
-							<div className="flex gap-4 text-sm font-bold text-gray-500">
-								<span>観戦者</span>
-								<span>プレイヤー</span>
-							</div>
-						</div>
-						<div className="flex flex-col gap-2">
-							{users.map(member => (
-								<div
-									key={member.id}
-									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
-								>
-									<span className="font-bold">
-										{member.name}
-									</span>
-									<div className="flex gap-4 w-32 justify-end">
-										<input
-											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
-											type="checkbox"
-											checked={
-												member.role === GameRole.PLAYER
-											}
-											onChange={() =>
-												toggleRole(member.id)
-											}
-											disabled={
-												!isHost &&
-												member.id !== currentUserId
-											}
-										/>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-
-				{/* 招待URLセクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<button
-						onClick={copyToClipboard}
-						className="btn w-full text-md border-none bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+			{/* Navbar */}
+			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
+				<div className="flex-1">
+					<Link
+						to="/"
+						className="btn btn-ghost text-xl text-white"
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="h-5 w-5 mr-2"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-							/>
-						</svg>
-						招待URLをコピー
-					</button>
-				</div>
-
-				{/* ゲームモードセクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<h3 className="text-md font-bold text-gray-400 mb-4 uppercase tracking-wider">
-						ゲームモード
-					</h3>
-					<div className="bg-base-200 p-1 rounded-xl flex gap-1 shadow-inner">
-						<button
-							onClick={() => updateGameMode(GameMode.DEFAULT)}
-							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === GameMode.DEFAULT
-									? "bg-white text-indigo-700 font-bold shadow-md scale-[1.02]"
-									: "text-gray-500 hover:bg-base-300"
-							}`}
-						>
-							デフォルト
-						</button>
-						<button
-							onClick={() => updateGameMode(GameMode.ONE_STROKE)}
-							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === GameMode.ONE_STROKE
-									? "bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]"
-									: "text-gray-500 hover:bg-base-300"
-							}`}
-						>
-							一筆書き
-						</button>
-					</div>
-				</div>
-
-				{/* ゲーム開始ボタン */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<button
-						onClick={() => navigate(`/prepare/${roomId}`)}
-						disabled={!isHost}
-						className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-					>
-						準備完了！
-					</button>
+						🎨 おえかきの森
+					</Link>
 				</div>
 			</div>
-		</>
+
+			{/* Background Decorations */}
+			<div className="absolute top-10 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+			<div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+
+			{/* Main Content */}
+			<div className="flex-1 relative z-10 flex flex-col items-center p-6 overflow-y-auto">
+				<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+					{/* Header */}
+					<div className="text-center space-y-2">
+						<h1 className="text-3xl md:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
+							WAITING ROOM
+						</h1>
+						<p className="text-gray-400 tracking-[0.2em] font-light text-sm">
+							参加者を待っています
+						</p>
+					</div>
+
+					{/* 参加者一覧セクション */}
+					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.01] transition-transform">
+						<div className="card-body p-6">
+							<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">
+								参加者一覧
+							</h2>
+							<div className="flex flex-col gap-3">
+								{users.map(member => (
+									<div
+										key={member.id}
+										className="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors"
+									>
+										<div className="flex items-center gap-3">
+											<div className="avatar placeholder flex items-center justify-center">
+												<div className="bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-12 h-12 flex items-center justify-center ring ring-cyan-400/50 ring-offset-2 ring-offset-transparent">
+													<span className="text-xl">
+														{member.avatar ?? "👤"}
+													</span>
+												</div>
+											</div>
+											<span
+												className={`font-bold ${member.id === currentUserId ? "text-cyan-400" : "text-white"}`}
+											>
+												{member.name}
+												{member.id === currentUserId && (
+													<span className="text-gray-400 text-xs font-normal ml-2">
+														(あなた)
+													</span>
+												)}
+											</span>
+										</div>
+										<div className="bg-black/30 p-0.5 rounded-lg flex gap-0.5">
+											<button
+												type="button"
+												onClick={() => {
+													if (
+														member.role !== GameRole.SPECTATOR &&
+														(isHost || member.id === currentUserId)
+													) {
+														toggleRole(member.id);
+													}
+												}}
+												disabled={
+													!isHost && member.id !== currentUserId
+												}
+												className={`flex-1 min-w-0 py-1.5 ps-2 pe-5 text-xs font-bold rounded-md transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap text-center ${
+													member.role === GameRole.SPECTATOR
+														? "bg-gradient-to-r from-purple-500 to-violet-500 text-white shadow-md"
+														: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+												}`}
+											>
+												SPECTATOR
+											</button>
+											<button
+												type="button"
+												onClick={() => {
+													if (
+														member.role !== GameRole.PLAYER &&
+														(isHost || member.id === currentUserId)
+													) {
+														toggleRole(member.id);
+													}
+												}}
+												disabled={
+													!isHost && member.id !== currentUserId
+												}
+												className={`flex-1 min-w-0 py-1.5 px-4 text-xs font-bold rounded-md transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap text-center ${
+													member.role === GameRole.PLAYER
+														? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md"
+														: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+												}`}
+											>
+												PLAYER
+											</button>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+
+					{/* 招待URLセクション */}
+					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.01] transition-transform">
+						<div className="card-body p-6">
+							<button
+								onClick={copyToClipboard}
+								className="w-full py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-wider cursor-pointer select-none transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-400/50 bg-gradient-to-r from-emerald-500 to-teal-600 border border-emerald-400/50 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="h-5 w-5"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+									/>
+								</svg>
+								招待URLをコピー
+							</button>
+						</div>
+					</div>
+
+					{/* ゲームモードセクション */}
+					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.01] transition-transform">
+						<div className="card-body p-6">
+							<h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+								ゲームモード
+							</h3>
+							<div className="bg-black/30 p-1 rounded-xl flex gap-1">
+								<button
+									onClick={() => updateGameMode(GameMode.DEFAULT)}
+									disabled={!isHost}
+									className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
+										gameMode === GameMode.DEFAULT
+											? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-md scale-[1.02]"
+											: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+									}`}
+								>
+									デフォルト
+								</button>
+								<button
+									onClick={() => updateGameMode(GameMode.ONE_STROKE)}
+									disabled={!isHost}
+									className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
+										gameMode === GameMode.ONE_STROKE
+											? "bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]"
+											: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
+									}`}
+								>
+									一筆書き
+								</button>
+							</div>
+						</div>
+					</div>
+
+					{/* ゲーム開始ボタン */}
+					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden">
+						<div className="card-body p-6">
+							<button
+								onClick={() => navigate(`/prepare/${roomId}`)}
+								disabled={!isHost}
+								className="w-full py-4 px-6 rounded-xl font-bold text-lg uppercase tracking-wider cursor-pointer select-none transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-400/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:brightness-100 bg-gradient-to-r from-cyan-500 to-purple-500 border border-cyan-400/50 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)]"
+							>
+								準備完了！
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<Footer />
+		</div>
 	);
 };
 
