@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+	Link,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
@@ -150,10 +155,7 @@ const Waiting = () => {
 			{/* Navbar */}
 			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
 				<div className="flex-1">
-					<Link
-						to="/"
-						className="btn btn-ghost text-xl text-white"
-					>
+					<Link to="/" className="btn btn-ghost text-xl text-white">
 						🎨 おえかきの森
 					</Link>
 				</div>
@@ -200,7 +202,8 @@ const Waiting = () => {
 												className={`font-bold ${member.id === currentUserId ? "text-cyan-400" : "text-white"}`}
 											>
 												{member.name}
-												{member.id === currentUserId && (
+												{member.id ===
+													currentUserId && (
 													<span className="text-gray-400 text-xs font-normal ml-2">
 														(あなた)
 													</span>
@@ -212,17 +215,22 @@ const Waiting = () => {
 												type="button"
 												onClick={() => {
 													if (
-														member.role !== GameRole.SPECTATOR &&
-														(isHost || member.id === currentUserId)
+														member.role !==
+															GameRole.SPECTATOR &&
+														(isHost ||
+															member.id ===
+																currentUserId)
 													) {
 														toggleRole(member.id);
 													}
 												}}
 												disabled={
-													!isHost && member.id !== currentUserId
+													!isHost &&
+													member.id !== currentUserId
 												}
 												className={`flex-1 min-w-0 py-1.5 ps-2 pe-5 text-xs font-bold rounded-md transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap text-center ${
-													member.role === GameRole.SPECTATOR
+													member.role ===
+													GameRole.SPECTATOR
 														? "bg-gradient-to-r from-purple-500 to-violet-500 text-white shadow-md"
 														: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
 												}`}
@@ -233,17 +241,22 @@ const Waiting = () => {
 												type="button"
 												onClick={() => {
 													if (
-														member.role !== GameRole.PLAYER &&
-														(isHost || member.id === currentUserId)
+														member.role !==
+															GameRole.PLAYER &&
+														(isHost ||
+															member.id ===
+																currentUserId)
 													) {
 														toggleRole(member.id);
 													}
 												}}
 												disabled={
-													!isHost && member.id !== currentUserId
+													!isHost &&
+													member.id !== currentUserId
 												}
 												className={`flex-1 min-w-0 py-1.5 px-4 text-xs font-bold rounded-md transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 whitespace-nowrap text-center ${
-													member.role === GameRole.PLAYER
+													member.role ===
+													GameRole.PLAYER
 														? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md"
 														: "text-gray-500 hover:bg-white/10 hover:text-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-500"
 												}`}
@@ -291,7 +304,9 @@ const Waiting = () => {
 							</h3>
 							<div className="bg-black/30 p-1 rounded-xl flex gap-1">
 								<button
-									onClick={() => updateGameMode(GameMode.DEFAULT)}
+									onClick={() =>
+										updateGameMode(GameMode.DEFAULT)
+									}
 									disabled={!isHost}
 									className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
 										gameMode === GameMode.DEFAULT
@@ -302,7 +317,9 @@ const Waiting = () => {
 									デフォルト
 								</button>
 								<button
-									onClick={() => updateGameMode(GameMode.ONE_STROKE)}
+									onClick={() =>
+										updateGameMode(GameMode.ONE_STROKE)
+									}
 									disabled={!isHost}
 									className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
 										gameMode === GameMode.ONE_STROKE

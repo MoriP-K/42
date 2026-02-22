@@ -62,6 +62,11 @@ function Home() {
 									<p className="text-3xl font-bold">
 										{user?.name ?? "ゲスト"}
 									</p>
+									{user?.id != null && (
+										<p className="text-gray-400 text-sm mt-1 font-mono">
+											ID: {user.id}
+										</p>
+									)}
 								</div>
 							</div>
 							<Link
