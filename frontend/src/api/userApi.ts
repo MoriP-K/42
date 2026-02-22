@@ -9,8 +9,8 @@ export const userApi = {
 		return apiClient("/users");
 	},
 
-	// GET /api/users
+	// GET /api/profile
 	getProfile: async () => {
-		return apiClient("/profile");
+		return apiClient("/profile", { credentials: "include" });
 	},
 };

@@ -1,44 +1,96 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
 import { GameMode, type RoomDetails, type RoomMember } from "../types/room";
 import Toast from "../components/Toast";
+import { createWebSocket } from "../api/wsClient";
 
 const Waiting = () => {
-	const { user } = useAuth(); // login中ユーザの情報
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [users, setUsers] = useState<User[]>([]);
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
 	const [isHost, setIsHost] = useState(false);
+	const [invitationToken, setInvitationToken] = useState<string | null>(null);
+	const [searchParams] = useSearchParams();
+	const token = searchParams.get("token");
+	const currentUserId = user?.id;
+
+	const getRoomDetails = useCallback(async () => {
+		try {
+			const res = (await roomApi.getRoomDetails(
+				Number(roomId),
+			)) as RoomDetails;
+			setIsHost(res.host_id === user?.id);
+			setGameMode(res.game_mode);
+			const mappedUsers = res.members.map((member: RoomMember) => ({
+				id: member.user.id,
+				name: member.user.name,
+				role: member.role,
+				avatar: member.user.avatar,
+				isReady: member.user.isReady,
+			}));
+			setUsers(mappedUsers);
+			setInvitationToken(res.invitation_token ?? null);
+		} catch (error) {
+			console.log(error);
+		}
+	}, [roomId, user]);
+
+	const getRoomDetailsRef = useRef(getRoomDetails);
+	useEffect(() => {
+		getRoomDetailsRef.current = getRoomDetails;
+	}, [getRoomDetails]);
+
+	// 参加者一覧を取得する
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		getRoomDetails();
+	}, [user?.id, roomId, getRoomDetails]);
+
+	useEffect(() => {
+		if (!roomId || !user?.id) return;
+		const ws = createWebSocket();
+		ws.onopen = () => {
+			ws.send(
+				JSON.stringify({
+					type: "join",
+					userId: String(user?.id),
+					roomId: String(roomId),
+				}),
+			);
+		};
+		ws.onmessage = event => {
+			const data = JSON.parse(event.data);
+			if (data.type === "memberJoined") {
+				getRoomDetailsRef.current();
+			}
+			if (data.type === "memberRoleUpdated") {
+				getRoomDetailsRef.current();
+			}
+			if (data.type === "gameModeUpdated") {
+				setGameMode(data.mode);
+			}
+		};
+		return () => {
+			ws.close();
+		};
+	}, [roomId, user?.id]);
 
 	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
-		const getRoomDetails = async () => {
-			try {
-				const res = (await roomApi.getRoomDetails(
-					Number(roomId),
-				)) as RoomDetails;
-				setIsHost(res.host_id === user?.id);
-				setGameMode(res.game_mode);
-				const mappedUsers = res.members.map((member: RoomMember) => ({
-					id: member.user.id,
-					name: member.user.name,
-					role: member.role,
-					avatar: member.user.avatar,
-					isReady: member.user.isReady,
-				}));
-				setUsers(mappedUsers);
-			} catch (error) {
-				console.log(error);
-			}
-		};
-		getRoomDetails();
-		console.log(roomId);
-	}, [user?.id, roomId]);
+		if (!token || !user?.id || !roomId) return;
+		roomApi
+			.joinByToken(token)
+			.then(() => {
+				getRoomDetails();
+			})
+			.catch(console.error);
+	}, [token, user?.id, roomId, getRoomDetails]);
 
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
@@ -66,7 +118,7 @@ const Waiting = () => {
 		}
 	};
 
-	// ゲームモード変更 API叩く hostのみ変更可能
+	// ゲームモード変更 API叩く（hostのみ変更可能）
 	const updateGameMode = async (mode: string) => {
 		try {
 			const res = await roomApi.updateGameMode(Number(roomId), mode);
@@ -79,7 +131,10 @@ const Waiting = () => {
 	};
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText(window.location.href || "");
+		const url = invitationToken
+			? `${window.location.origin}/waiting/${roomId}?token=${invitationToken}`
+			: window.location.href;
+		navigator.clipboard.writeText(url);
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 1500);
 	};
@@ -104,24 +159,27 @@ const Waiting = () => {
 							</div>
 						</div>
 						<div className="flex flex-col gap-2">
-							{users.map(user => (
+							{users.map(member => (
 								<div
-									key={user.id}
+									key={member.id}
 									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
 								>
 									<span className="font-bold">
-										{user.name}
+										{member.name}
 									</span>
 									<div className="flex gap-4 w-32 justify-end">
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
 											type="checkbox"
 											checked={
-												user.role === GameRole.PLAYER
+												member.role === GameRole.PLAYER
 											}
-											onChange={() => toggleRole(user.id)}
+											onChange={() =>
+												toggleRole(member.id)
+											}
 											disabled={
-												!isHost && user.id !== user.id
+												!isHost &&
+												member.id !== currentUserId
 											}
 										/>
 									</div>

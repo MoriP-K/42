@@ -6,6 +6,7 @@ import {
 	updateGameMode,
 	updateRoomMemberReady,
 	getRoomMembers,
+	joinRoomByToken,
 } from "../controllers/roomController";
 
 export async function roomRoutes(fastify: FastifyInstance) {
@@ -18,4 +19,5 @@ export async function roomRoutes(fastify: FastifyInstance) {
 	fastify.patch("/rooms/:roomId/members/:userId", updateRoomMemberRole);
 	fastify.patch("/rooms/:roomId/game-mode", updateGameMode);
 	fastify.get("/rooms/:roomId/members", getRoomMembers);
+	fastify.post("/rooms/join", joinRoomByToken);
 }

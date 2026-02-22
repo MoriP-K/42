@@ -1,9 +1,4 @@
-interface Player {
-	id: number;
-	name: string;
-	score: number;
-	isDrawing: boolean;
-}
+import { type Player } from "../../types/room";
 
 interface ScoreBoardProps {
 	players: Player[];

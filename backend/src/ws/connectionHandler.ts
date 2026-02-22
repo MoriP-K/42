@@ -13,8 +13,8 @@ import {
 } from "../types/canvas";
 import { joinRoom, leaveRoom, broadcastToRoom } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
-import { wsUpdateReady } from "../controllers/roomController";
 import { isTimerRunning, startTimer } from "./timerManager";
+import { updateReadyStatus } from "../services/roomService";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -27,11 +27,7 @@ export const handleConnection = (socket: WebSocket) => {
 			console.log("📥 Received: ", data);
 
 			if (data.type === WebSocketMessageType.JOIN) {
-				if (
-					!data.userId ||
-					typeof data.userId !== "string" ||
-					data.userId.trim() === ""
-				) {
+				if (!data.userId || typeof data.userId !== "number") {
 					console.log("❌ Invalid userId:", data.userId);
 					socket.send(
 						JSON.stringify({
@@ -84,7 +80,7 @@ export const handleConnection = (socket: WebSocket) => {
 			} else if (data.type === WebSocketMessageType.UPDATE_READY) {
 				if (typeof data.isReady !== "boolean") return;
 				try {
-					await wsUpdateReady(
+					await updateReadyStatus(
 						Number(currentClient.roomId),
 						Number(currentClient.userId),
 						data.isReady,

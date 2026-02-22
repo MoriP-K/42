@@ -49,11 +49,24 @@ export interface UpdateGameModeRoute {
 }
 
 /**
+ * PATCH /api/rooms/join ボディ型
+ */
+export const JoinByTokenBodySchema = z.object({
+	token: z.coerce.string(),
+});
+
+export type JoinByTokenBody = z.infer<typeof JoinByTokenBodySchema>;
+
+export interface JoinByTokenRoute {
+	Body: JoinByTokenBody;
+}
+
+/**
  * WebSocket用 ルームクライアント型
  */
 export interface RoomClient {
 	socket: WebSocket;
-	userId: string;
+	userId: number;
 	roomId: string;
 }
 
@@ -76,5 +89,7 @@ export const WebSocketMessageType = {
 	ROUND_END: "roundEnd",
 	TIMER: "timer",
 	UPDATE_READY: "updateReady",
+	MEMBER_JOINED: "memberJoined",
+	GAME_MODE_UPDATED: "gameModeUpdated",
 	ERROR: "error",
 };

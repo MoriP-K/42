@@ -11,6 +11,8 @@ import {
 	UpdateGameModeBodySchema,
 	UpdateGameModeParamsSchema,
 	UpdateGameModeRoute,
+	JoinByTokenBodySchema,
+	JoinByTokenRoute,
 } from "../types/room/room";
 import { UpdateRoomMemberRoleRoute } from "../types/room/roomMember";
 import {
@@ -19,6 +21,10 @@ import {
 	RoomMemberParamsSchema,
 	RoomMemberRoute,
 } from "../types/room/common";
+import { updateReadyStatus } from "../services/roomService";
+import { getUserIdFromRequest } from "../lib/auth";
+import { UserRole } from "../generated/prisma/enums";
+import { broadcastToRoom } from "../ws/roomManager";
 
 /*
  * POST /api/rooms ルーム作成
@@ -63,7 +69,11 @@ export const getRoomDetails = async (
 				include: {
 					user: true,
 				},
+				orderBy: {
+					joined_at: "asc",
+				},
 			},
+			rounds: true,
 		},
 	});
 	return reply.code(200).send(room);
@@ -92,6 +102,9 @@ export const getRoomMembers = async (
 			include: {
 				user: true,
 			},
+			orderBy: {
+				joined_at: "asc",
+			},
 		});
 		return reply.code(200).send(roomMembers);
 	} catch (error) {
@@ -107,19 +120,52 @@ export const updateRoomMemberRole = async (
 	request: FastifyRequest<UpdateRoomMemberRoleRoute>,
 	reply: FastifyReply,
 ) => {
-	const { roomId, userId } = request.params;
+	const requesterId = await getUserIdFromRequest(request);
+	if (!requesterId) {
+		return reply.code(401).send({ error: "Unauthorized" });
+	}
+	const paramResult = RoomMemberParamsSchema.safeParse(request.params);
+	if (!paramResult.success) {
+		return reply
+			.code(400)
+			.send({ message: "パラメータに不備があります。" });
+	}
+	const { roomId, userId } = paramResult.data;
 	const { role } = request.body;
+	const room = await prisma.room.findUnique({
+		where: { id: roomId },
+		select: { host_id: true },
+	});
+	if (!room) {
+		return reply.code(404).send({ error: "Room not found" });
+	}
+	const targetUserId = userId;
+	const isHost = room.host_id === requesterId;
+	const isSelf = targetUserId === requesterId;
+	if (!isHost && !isSelf) {
+		const currentMember = await prisma.roomMember.findUnique({
+			where: {
+				room_id_user_id: {
+					room_id: roomId,
+					user_id: userId,
+				},
+			},
+			include: { user: true },
+		});
+		return reply.code(200).send(currentMember);
+	}
 	try {
 		const updatedMember = await prisma.roomMember.update({
 			where: {
 				room_id_user_id: {
-					room_id: Number(roomId),
-					user_id: Number(userId),
+					room_id: roomId,
+					user_id: userId,
 				},
 			},
-			data: {
-				role: role,
-			},
+			data: { role: role },
+		});
+		broadcastToRoom(String(roomId), {
+			type: "memberRoleUpdated",
 		});
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
@@ -164,6 +210,10 @@ export const updateGameMode = async (
 				game_mode: mode,
 			},
 		});
+		broadcastToRoom(String(roomId), {
+			type: "gameModeUpdated",
+			mode: mode,
+		});
 		return reply.code(200).send(updatedMode);
 	} catch (error) {
 		console.log(error);
@@ -197,17 +247,7 @@ export const updateRoomMemberReady = async (
 		const { roomId, userId } = paramResult.data;
 		const isReady = bodyResult.data.isReady;
 
-		const userStatus = await prisma.roomMember.update({
-			where: {
-				room_id_user_id: {
-					room_id: roomId,
-					user_id: userId,
-				},
-			},
-			data: {
-				is_ready: isReady,
-			},
-		});
+		const userStatus = await updateReadyStatus(roomId, userId, isReady);
 
 		return reply.code(200).send(userStatus);
 	} catch (error) {
@@ -216,24 +256,48 @@ export const updateRoomMemberReady = async (
 	}
 };
 
-export const wsUpdateReady = async (
-	roomId: number,
-	userId: number,
-	isReady: boolean,
+/*
+ * POST /api/rooms/join 招待URLから参加したユーザをルームに追加する
+ */
+export const joinRoomByToken = async (
+	request: FastifyRequest<JoinByTokenRoute>,
+	reply: FastifyReply,
 ) => {
+	const userId = await getUserIdFromRequest(request);
+	if (!userId) return reply.code(401).send({ error: "Unauthorized" });
+
+	const bodyResult = JoinByTokenBodySchema.safeParse(request.body);
+	if (!bodyResult.success) {
+		return reply.code(400).send({ message: "招待URLに不備があります。" });
+	}
+	const { token } = bodyResult.data;
+
+	const room = await prisma.room.findUnique({
+		where: { invitation_token: token },
+	});
+	if (!room) {
+		return reply.code(404).send({ message: "招待が無効です。" });
+	}
+	const roomId = room.id;
 	try {
-		await prisma.roomMember.update({
+		await prisma.roomMember.upsert({
 			where: {
 				room_id_user_id: {
 					room_id: roomId,
 					user_id: userId,
 				},
 			},
-			data: {
-				is_ready: isReady,
+			create: {
+				room_id: room.id,
+				user_id: userId,
+				role: UserRole.PLAYER,
 			},
+			update: {},
 		});
+		broadcastToRoom(String(roomId), { type: "memberJoined" });
+		return reply.code(200).send({ roomId });
 	} catch (error) {
-		console.error(error);
+		console.error("Error:", error);
+		return reply.code(500).send("Failed to join room");
 	}
 };

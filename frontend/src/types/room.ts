@@ -13,11 +13,23 @@ export interface RoomMember {
 	user: User;
 }
 
+export interface Round {
+	id: number;
+	room_id: number;
+	drawer_id: number;
+	word: string | null;
+	winner_id: number | null;
+	started_at: string | null;
+	ended_time: string | null;
+}
+
 export interface RoomDetails {
 	id: number;
-	host_id: number;
 	game_mode: (typeof GameMode)[keyof typeof GameMode];
+	host_id: number;
+	invitation_token?: string;
 	members: RoomMember[];
+	rounds: Round[];
 }
 
 /**
@@ -39,3 +51,10 @@ export const WebSocketMessageType = {
 	TIMER: "timer",
 	ERROR: "error",
 };
+
+export interface Player {
+	id: number;
+	name: string;
+	score: number;
+	isDrawing: boolean;
+}
