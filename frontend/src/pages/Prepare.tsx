@@ -131,7 +131,9 @@ const Prepare = () => {
 						isReady: false,
 					});
 				}
-				const roomDetails = await roomApi.getRoomDetails(roomId) as RoomDetails;
+				const roomDetails = (await roomApi.getRoomDetails(
+					roomId,
+				)) as RoomDetails;
 				const members = roomDetails?.members ?? [];
 				setRoundNumber(roomDetails?.rounds?.length ?? 1);
 				const spectatorCount = members.filter(
