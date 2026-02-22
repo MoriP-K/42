@@ -1,7 +1,4 @@
-import {
-	FastifyRequest,
-	FastifyReply,
-} from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
 import { UserRole } from "../generated/prisma/enums";
 import { randomUUID } from "node:crypto";
@@ -166,6 +163,8 @@ export const updateRoomMemberRole = async (
 		});
 		broadcastToRoom(String(roomId), {
 			type: "memberRoleUpdated",
+			userId: userId,
+			role: role,
 		});
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
@@ -339,6 +338,13 @@ export const createRound = async (
 				where: { room_id: roomId },
 				orderBy: { id: "desc" },
 			});
+			if (latestRound?.started_at === null) {
+				const existing = await tx.round.findUnique({
+					where: { id: latestRound.id },
+					include: { drawer: true },
+				});
+				if (existing) return existing;
+			}
 			let drawerId: number;
 			if (!latestRound) {
 				drawerId = room.host_id;
@@ -361,7 +367,7 @@ export const createRound = async (
 		});
 		return reply.code(201).send(result);
 	} catch (error) {
-		console.error("Error: error");
+		console.error("Error:", error);
 		return reply.code(500).send({ error: "Failed to create round" });
 	}
 };

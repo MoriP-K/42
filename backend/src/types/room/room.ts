@@ -77,7 +77,7 @@ export interface RoomClient {
 /**
  * ラウンドタイマー用の定数
  */
-export const ROUND_DURATION = 5;
+export const ROUND_DURATION = 60;
 
 /**
  * WebSocketメッセージタイプ

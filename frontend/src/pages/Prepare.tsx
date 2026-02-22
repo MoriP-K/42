@@ -16,8 +16,9 @@ const Prepare = () => {
 	const [players, setPlayers] = useState<User[]>([]);
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const count: number = 3;
-	const [countdown, setCountdown] = useState(3);
-	const currentDrawer = players[0];
+	const [countdown, setCountdown] = useState(5);
+	const [currentDrawer, setCurrentDrawer] = useState<User | null>(null);
+	const [roundNumber, setRoundNumber] = useState(1);
 	const role =
 		user?.id !== undefined &&
 		currentDrawer?.id !== undefined &&
@@ -34,7 +35,7 @@ const Prepare = () => {
 			ws.send(
 				JSON.stringify({
 					type: "join",
-					userId: String(user.id),
+					userId: user.id,
 					roomId: String(roomId),
 				}),
 			);
@@ -75,25 +76,20 @@ const Prepare = () => {
 			if (roomId === undefined || user?.id === undefined) return;
 			try {
 				const res = await roomApi.getRoomMembers(roomId);
-				let spectatorCnt = 0;
+				let spectatorCnt = res.filter(
+					(m: RoomMember) => m.role === GameRole.SPECTATOR,
+				).length;
 				const mappedMembers = res
 					.filter(
 						(member: RoomMember) => member.role === GameRole.PLAYER,
 					)
-					.map((member: RoomMember) => {
-						if (member.role === GameRole.PLAYER) {
-							return {
-								id: member.user_id,
-								name: member.user.name,
-								role: member.role,
-								avatar: member.user.avatar ?? "👤",
-								isReady: member.is_ready,
-							};
-						} else if (member.role === GameRole.SPECTATOR) {
-							spectatorCnt++;
-							return;
-						}
-					});
+					.map((member: RoomMember) => ({
+						id: member.user_id,
+						name: member.user.name,
+						role: member.role,
+						avatar: member.user.avatar ?? "👤",
+						isReady: member.is_ready,
+					}));
 				setSpectatorCount(spectatorCnt);
 				setPlayers(mappedMembers);
 			} catch (error) {
@@ -151,7 +147,18 @@ const Prepare = () => {
 		if (roomId === undefined || user?.id === undefined) return;
 		const ensureRound = async () => {
 			try {
-				await roomApi.createRound(roomId);
+				const round = await roomApi.createRound(roomId);
+				if (round?.drawer) {
+					setCurrentDrawer({
+						id: round.drawer.id,
+						name: round.drawer.name,
+						avatar: round.drawer.avatar ?? "👤",
+						role: GameRole.PLAYER,
+						isReady: false,
+					});
+				}
+				const roomDetails = await roomApi.getRoomDetails(roomId);
+				setRoundNumber(roomDetails?.rounds?.length ?? 1);
 			} catch (error) {
 				console.error("Failed to create round:", error);
 			}
@@ -167,7 +174,10 @@ const Prepare = () => {
 
 			<div className="z-10 w-full max-w-4xl flex flex-col gap-8 items-center">
 				{/* Header Section */}
-				<div className="text-center space-y-2 animate-bounce-in">
+				<div className="text-center space-y-3 animate-bounce-in">
+					<p className="text-2xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 tracking-wider drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+						Round {roundNumber}
+					</p>
 					<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
 						GAME STARTING...
 					</h1>

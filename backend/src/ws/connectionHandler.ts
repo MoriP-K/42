@@ -197,7 +197,19 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 						socket,
 					);
-
+					const latestRound = await prisma.round.findFirst({
+						where: {
+							room_id: Number(currentClient.roomId),
+							started_at: null,
+						},
+						orderBy: { id: "desc" },
+					});
+					if (latestRound) {
+						await prisma.round.update({
+							where: { id: latestRound.id },
+							data: { started_at: new Date() },
+						});
+					}
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
 					console.error(`❌ Failed to check room status:`, error);

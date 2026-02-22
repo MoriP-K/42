@@ -33,8 +33,8 @@ const Waiting = () => {
 				id: member.user.id,
 				name: member.user.name,
 				role: member.role,
-				avatar: member.user.avatar,
-				isReady: member.user.isReady,
+				avatar: member.user.avatar ?? "👤",
+				isReady: member.is_ready,
 			}));
 			setUsers(mappedUsers);
 			setInvitationToken(res.invitation_token ?? null);
@@ -48,10 +48,12 @@ const Waiting = () => {
 		getRoomDetailsRef.current = getRoomDetails;
 	}, [getRoomDetails]);
 
-	// 参加者一覧を取得する
+	// 参加者一覧を取得する（初回 + WebSocketで取りこぼしを防ぐためポーリング）
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
+		if (!roomId || !user?.id) return;
 		getRoomDetails();
+		const intervalId = setInterval(getRoomDetails, 1000); // 5000が適切だが遅いので1000（負荷は多い）
+		return () => clearInterval(intervalId);
 	}, [user?.id, roomId, getRoomDetails]);
 
 	useEffect(() => {
@@ -61,7 +63,7 @@ const Waiting = () => {
 			ws.send(
 				JSON.stringify({
 					type: "join",
-					userId: String(user?.id),
+					userId: Number(user?.id),
 					roomId: String(roomId),
 				}),
 			);
@@ -71,8 +73,18 @@ const Waiting = () => {
 			if (data.type === "memberJoined") {
 				getRoomDetailsRef.current();
 			}
-			if (data.type === "memberRoleUpdated") {
-				getRoomDetailsRef.current();
+			if (
+				data.type === "memberRoleUpdated" &&
+				data.userId != null &&
+				data.role != null
+			) {
+				setUsers(prev =>
+					prev.map(u =>
+						u.id === Number(data.userId)
+							? { ...u, role: data.role }
+							: u,
+					),
+				);
 			}
 			if (data.type === "gameModeUpdated") {
 				setGameMode(data.mode);
@@ -255,9 +267,20 @@ const Waiting = () => {
 					<button
 						onClick={() => navigate(`/prepare/${roomId}`)}
 						disabled={!isHost}
-						className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+						className={`btn w-full text-lg border-none shadow-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+							isHost
+								? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+								: "bg-gradient-to-r from-indigo-600/70 to-purple-600/70 text-white/90 cursor-not-allowed"
+						}`}
 					>
-						準備完了！
+						{isHost ? (
+							"準備完了！"
+						) : (
+							<>
+								<span className="loading loading-spinner loading-sm"></span>
+								準備中
+							</>
+						)}
 					</button>
 				</div>
 			</div>
