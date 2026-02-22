@@ -29,22 +29,22 @@ export async function seedRooms(prisma: PrismaClient) {
 					{
 						user_id: funa.id,
 						role: "SPECTATOR",
-						is_ready: false,
+						is_ready: true,
 					},
 					{
 						user_id: ken.id,
 						role: "PLAYER",
-						is_ready: false,
+						is_ready: true,
 					},
 					{
 						user_id: nusu.id,
 						role: "PLAYER",
-						is_ready: false,
+						is_ready: true,
 					},
 					{
 						user_id: mori.id,
 						role: "PLAYER",
-						is_ready: false,
+						is_ready: true,
 					},
 				],
 			},
@@ -86,7 +86,7 @@ export async function seedRooms(prisma: PrismaClient) {
 			id: 1,
 			room_id: room1.id,
 			drawer_id: nusu.id,
-			started_at: new Date(),
+			started_at: null,
 			ended_time: null,
 		},
 	});

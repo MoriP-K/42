@@ -49,6 +49,7 @@ export const WebSocketMessageType = {
 	NAVIGATE_TO_PREPARE: "navigateToPrepare",
 	PREPARE_STARTED: "prepareStarted",
 	ROUND_START: "roundStart",
+	ROUND_STARTED: "roundStarted",
 	ROUND_END: "roundEnd",
 	TIMER: "timer",
 	ERROR: "error",
