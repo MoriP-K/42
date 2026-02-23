@@ -111,6 +111,16 @@ const Game = () => {
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
 					 */
 					if (id) navigate(`/prepare/${id}`);
+				} else if (data.type === WebSocketMessageType.CORRECT_ANSWER) {
+					const systemMessage: Message = {
+						id: crypto.randomUUID(),
+						sender: "system",
+						text: `🥳 ${data.sender}が正解しました！`,
+						timestamp: new Date(),
+					};
+					setMessages(prev => [...prev, systemMessage]);
+				} else if (data.type === WebSocketMessageType.NEXT_WORD) {
+					setCurrentWord(data.word);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
