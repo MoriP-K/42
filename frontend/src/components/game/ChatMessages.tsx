@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 export interface Message {
 	id: string;
 	sender: string;
@@ -7,9 +9,16 @@ export interface Message {
 
 interface ChatMessagesProps {
 	messages: Message[];
+	currentUserName: string;
 }
 
-const ChatMessages = ({ messages }: ChatMessagesProps) => {
+const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
+	const messageEndRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
+
 	return (
 		<div className="space-y-2 h-64 overflow-y-auto p-2 bg-base-200 rounded-lg">
 			{messages.length === 0 ? (
@@ -17,19 +26,28 @@ const ChatMessages = ({ messages }: ChatMessagesProps) => {
 					メッセージはまだありません
 				</p>
 			) : (
-				messages.map(message => (
-					<div key={message.id} className="chat chat-end">
-						<div className="chat-header">
-							<span className="font-semibold">
-								{message.sender}
-							</span>
+				messages.map(message => {
+					const isOwnMessage = message.sender === currentUserName;
+					return (
+						<div
+							key={message.id}
+							className={`chat ${isOwnMessage ? "chat-start" : "chat-end"}`}
+						>
+							<div className="chat-header">
+								<span className="font-semibold">
+									{message.sender}
+								</span>
+							</div>
+							<div
+								className={`chat-bubble text-sm ${isOwnMessage ? "chat-bubble-primary" : "chat-bubble-secondary"}`}
+							>
+								{message.text}
+							</div>
 						</div>
-						<div className="chat-bubble chat-bubble-primary text-sm">
-							{message.text}
-						</div>
-					</div>
-				))
+					);
+				})
 			)}
+			<div ref={messageEndRef} />
 		</div>
 	);
 };

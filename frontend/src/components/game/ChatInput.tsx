@@ -2,9 +2,10 @@ import { useState } from "react";
 
 interface ChatInputProps {
 	onSendMessage: (text: string) => void;
+	disabled?: boolean;
 }
 
-const ChatInput = ({ onSendMessage }: ChatInputProps) => {
+const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
 	const [input, setInput] = useState("");
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -23,9 +24,16 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
 				value={input}
 				onChange={e => setInput(e.target.value)}
 				className="input input-bordered join-item flex-1"
-				placeholder="コメントを入力…"
+				placeholder={
+					disabled ? "観戦者はチャットできません" : "コメントを入力…"
+				}
+				disabled={disabled}
 			/>
-			<button type="submit" className="btn btn-primary join-item">
+			<button
+				type="submit"
+				className="btn btn-primary join-item"
+				disabled={disabled}
+			>
 				送信
 			</button>
 		</form>
