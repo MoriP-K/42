@@ -16,6 +16,7 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
+import { GameRole } from "../types/user";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
@@ -48,7 +49,7 @@ const Game = () => {
 		};
 
 		fetchUser();
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		if (!currentUserId || !id) return;
@@ -109,6 +110,7 @@ const Game = () => {
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
 					 */
+					if (id) navigate(`/prepare/${id}`);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -153,7 +155,7 @@ const Game = () => {
 			if (!roomData || !roomData.members) return;
 
 			const playerData: Player[] = roomData.members
-				.filter(m => m.role === "PLAYER")
+				.filter(m => m.role === GameRole.PLAYER)
 				.map((m: RoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
@@ -170,10 +172,9 @@ const Game = () => {
 			if (currentRound && currentRound.word) {
 				updateRoundState(currentRound.word, currentRound.drawer_id);
 			}
-
-			const allReady = roomData.members.every(
-				(m: RoomMember) => m.is_ready,
-			);
+			const allReady = roomData.members
+				.filter((m: RoomMember) => m.role === GameRole.PLAYER)
+				.every((m: RoomMember) => m.is_ready);
 
 			if (allReady && socket.readyState === WebSocket.OPEN) {
 				socket.send(

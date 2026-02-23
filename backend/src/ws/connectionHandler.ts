@@ -21,6 +21,7 @@ import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
 import { selectRandomWord } from "./wordSelector";
 import { updateReadyStatus } from "../services/roomService";
+import { UserRole } from "../generated/prisma/enums";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -105,6 +106,18 @@ export const handleConnection = (socket: WebSocket) => {
 						}),
 					);
 				}
+			} else if (data.type === WebSocketMessageType.PREPARE_STARTED) {
+				const room = await prisma.room.findUnique({
+					where: { id: Number(currentClient.roomId) },
+					select: { host_id: true },
+				});
+				if (!room || room.host_id !== Number(currentClient.userId)) {
+					return;
+				}
+				broadcastToRoom(String(currentClient.roomId), {
+					type: WebSocketMessageType.NAVIGATE_TO_PREPARE,
+					roomId: currentClient.roomId,
+				});
 			} else if (data.type === WebSocketMessageType.CHAT) {
 				handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {
@@ -190,7 +203,9 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
-					const allReady = room?.members.every(m => m.is_ready);
+					const allReady = room.members
+						.filter(m => m.role === UserRole.PLAYER)
+						.every(m => m.is_ready);
 					if (!allReady) {
 						console.log(
 							`⚠️ Not all members ready in room ${currentClient.roomId}`,
@@ -245,7 +260,19 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 						drawerClient?.socket,
 					);
-
+					const latestRound = await prisma.round.findFirst({
+						where: {
+							room_id: Number(currentClient.roomId),
+							started_at: null,
+						},
+						orderBy: { id: "desc" },
+					});
+					if (latestRound) {
+						await prisma.round.update({
+							where: { id: latestRound.id },
+							data: { started_at: new Date() },
+						});
+					}
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
 					console.error(`❌ Failed to start round:`, error);
