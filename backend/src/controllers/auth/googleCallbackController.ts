@@ -15,6 +15,20 @@ const oauth2Client = new OAuth2Client(
 	GOOGLE_REDIRECT_URI,
 );
 
+const exchangeCodeForUserInfo = async (
+	code: string,
+): Promise<GoogleUserInfo> => {
+	// code をアクセストークンに交換
+	const { tokens } = await oauth2Client.getToken(code);
+	oauth2Client.setCredentials(tokens);
+
+	// アクセストークンでユーザー情報を取得
+	const userInfoRes = await oauth2Client.request<GoogleUserInfo>({
+		url: "https://www.googleapis.com/oauth2/v3/userinfo",
+	});
+	return userInfoRes.data;
+};
+
 //TODO: return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");のように、エラーコードをクエリパラメータとして渡して返す
 export const googleCallback = async (
 	request: FastifyRequest<{ Querystring: GoogleCallbackQuerystring }>,
@@ -45,18 +59,9 @@ export const googleCallback = async (
 	}
 
 	try {
-		// code をアクセストークンに交換
-		const { tokens } = await oauth2Client.getToken(code);
-		oauth2Client.setCredentials(tokens);
+		const userInfo = await exchangeCodeForUserInfo(code);
 
-		// アクセストークンでユーザー情報を取得
-		const userInfoRes = await oauth2Client.request<GoogleUserInfo>({
-			url: "https://www.googleapis.com/oauth2/v3/userinfo",
-		});
-		const userInfo = userInfoRes.data;
-
-		// TODO: DBへの保存・セッション作成はここに追加予定。nameは適当な値にする。
-		//TODO: name入力画面にリダイレクト。return reply.code(302).redirect("http://localhost:5173/");
+		// TODO: DBへの保存・セッション作成・名前入力画面へのリダイレクト
 		return reply.code(200).send({
 			message: "Google認証成功（デバッグ用レスポンス）",
 			email: userInfo.email,
