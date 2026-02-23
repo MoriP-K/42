@@ -15,6 +15,7 @@ const oauth2Client = new OAuth2Client(
 	GOOGLE_REDIRECT_URI,
 );
 
+//TODO: return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");のように、エラーコードをクエリパラメータとして渡して返す
 export const googleCallback = async (
 	request: FastifyRequest<{ Querystring: GoogleCallbackQuerystring }>,
 	reply: FastifyReply,
@@ -30,7 +31,7 @@ export const googleCallback = async (
 	// CSRF対策: stateの検証
 	const cookieState = request.cookies?.oauth_state;
 	if (!state || !cookieState || state !== cookieState) {
-		console.error("[googleCallback] state不一致 - CSRF攻撃の可能性", {
+		console.error("[googleCallback] state不一致", {
 			queryState: state,
 			cookieState: cookieState,
 		});
