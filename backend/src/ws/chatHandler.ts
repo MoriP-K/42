@@ -18,16 +18,6 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 		return;
 	}
 
-	if (client.role === "SPECTATOR") {
-		client.socket.send(
-			JSON.stringify({
-				type: WebSocketMessageType.ERROR,
-				message: "Spectators cannot send chat messages",
-			}),
-		);
-		return;
-	}
-
 	const currentRound = await prisma.round.findFirst({
 		where: {
 			room_id: Number(client.roomId),
@@ -88,6 +78,14 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 				word: newWord,
 			}),
 		);
-		return;
+	} else {
+		broadcastToRoom(client.roomId, {
+			type: "chat",
+			id: data.id,
+			sender: data.sender,
+			text: data.text,
+			timestamp: data.timestamp,
+		});
 	}
+	return;
 };
