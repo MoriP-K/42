@@ -68,6 +68,7 @@ export interface RoomClient {
 	socket: WebSocket;
 	userId: number;
 	roomId: string;
+	role: string;
 }
 
 /**

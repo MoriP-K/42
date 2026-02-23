@@ -17,7 +17,7 @@ const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
 
 	useEffect(() => {
 		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
+	}, [messages.length]);
 
 	return (
 		<div className="space-y-2 h-64 overflow-y-auto p-2 bg-base-200 rounded-lg">
