@@ -16,6 +16,7 @@ import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
+import { GameRole } from "../types/user";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
@@ -154,7 +155,7 @@ const Game = () => {
 			if (!roomData || !roomData.members) return;
 
 			const playerData: Player[] = roomData.members
-				.filter(m => m.role === "PLAYER")
+				.filter(m => m.role === GameRole.PLAYER)
 				.map((m: RoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
@@ -175,7 +176,7 @@ const Game = () => {
 			const currentMember = roomData.members.find(
 				m => m.user_id === currentUserIdRef.current,
 			);
-			setIsSpectator(currentMember?.role === "SPECTATOR");
+			setIsSpectator(currentMember?.role === GameRole.SPECTATOR);
 
 			const allReady = roomData.members.every(
 				(m: RoomMember) => m.is_ready,
@@ -247,10 +248,12 @@ const Game = () => {
 								<h2 className="card-title font-mono text-base font-semibold mb-1">
 									コメント
 								</h2>
-								<ChatMessages
-									messages={messages}
-									currentUserName={currentUserName ?? ""}
-								/>
+								{currentUserName && (
+									<ChatMessages
+										messages={messages}
+										currentUserName={currentUserName}
+									/>
+								)}
 								<ChatInput
 									onSendMessage={handleSendMessage}
 									disabled={isSpectator}
