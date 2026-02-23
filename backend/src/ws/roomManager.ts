@@ -60,3 +60,16 @@ export const broadcastToRoom = (
 		}
 	});
 };
+
+export const findClientByUserId = (
+	roomId: string,
+	userId: number,
+): RoomClient | undefined => {
+	const room = rooms.get(roomId);
+	if (!room) return undefined;
+
+	for (const client of room) {
+		if (client.userId === userId) return client;
+	}
+	return undefined;
+};
