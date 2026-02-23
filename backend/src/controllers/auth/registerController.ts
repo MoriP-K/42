@@ -117,6 +117,12 @@ const checkNameDuplicate = async (name: string): Promise<ValidateResult> => {
 	return { success: true };
 };
 
+const createPasswordUser = (data: {
+	name: string;
+	email: string;
+	password: string;
+}) => prisma.user.create({ data: { ...data, is_profile_complete: true } });
+
 /**
  * POST /api/register
  *
@@ -164,12 +170,10 @@ export const registerUser = async (
 
 		// userDBにINSERT
 		const passwordHash = await bcrypt.hash(request.body.password, 10);
-		const createdUser = await prisma.user.create({
-			data: {
-				name: request.body.name,
-				email: request.body.email,
-				password: passwordHash,
-			},
+		const createdUser = await createPasswordUser({
+			name: request.body.name,
+			email: request.body.email,
+			password: passwordHash,
 		});
 
 		// 登録成功後、そのままログイン（セッション作成＋Cookieセット）して返す

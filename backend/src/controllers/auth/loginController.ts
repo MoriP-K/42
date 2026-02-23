@@ -66,7 +66,7 @@ export const login = async (
 			},
 		});
 
-		if (!user) {
+		if (!user || user.password === null) {
 			return reply.code(401).send({
 				message: "メールアドレスまたはパスワードが正しくありません",
 			});
