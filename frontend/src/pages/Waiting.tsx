@@ -21,6 +21,10 @@ const Waiting = () => {
 	const token = searchParams.get("token");
 	const currentUserId = user?.id;
 	const socketRef = useRef<WebSocket | null>(null);
+	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+		null,
+	);
+	const isMountedRef = useRef(false);
 
 	const getRoomDetails = useCallback(async () => {
 		try {
@@ -49,55 +53,74 @@ const Waiting = () => {
 		getRoomDetailsRef.current = getRoomDetails;
 	}, [getRoomDetails]);
 
-	// 参加者一覧を取得する（初回 + WebSocketで取りこぼしを防ぐためポーリング）
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
-		queueMicrotask(() => getRoomDetailsRef.current());
-		const intervalId = setInterval(() => getRoomDetailsRef.current(), 1000); // 5000が適切だが遅いので1000（負荷は多い）
-		return () => clearInterval(intervalId);
-	}, [user?.id, roomId]);
-
-	useEffect(() => {
-		if (!roomId || !user?.id) return;
-		const ws = createWebSocket();
-		ws.onopen = () => {
-			ws.send(
-				JSON.stringify({
-					type: "join",
-					userId: Number(user?.id),
-					roomId: String(roomId),
-				}),
-			);
-		};
-		ws.onmessage = event => {
-			const data = JSON.parse(event.data);
-			if (data.type === "memberJoined") {
-				getRoomDetailsRef.current();
-			}
-			if (
-				data.type === "memberRoleUpdated" &&
-				data.userId != null &&
-				data.role != null
-			) {
-				setUsers(prev =>
-					prev.map(u =>
-						u.id === Number(data.userId)
-							? { ...u, role: data.role }
-							: u,
-					),
+		isMountedRef.current = true;
+		const connect = () => {
+			const ws = createWebSocket();
+			ws.onopen = () => {
+				ws.send(
+					JSON.stringify({
+						type: "join",
+						userId: Number(user?.id),
+						roomId: String(roomId),
+					}),
 				);
-			}
-			if (data.type === "gameModeUpdated") {
-				setGameMode(data.mode);
-			}
-			if (data.type === "navigateToPrepare" && data.roomId != null) {
-				navigate(`/prepare/${data.roomId}`);
-			}
+				getRoomDetailsRef.current();
+			};
+			socketRef.current = ws;
+
+			ws.onmessage = event => {
+				const data = JSON.parse(event.data);
+				if (data.type === "memberJoined") {
+					getRoomDetailsRef.current();
+				}
+				if (
+					data.type === "memberRoleUpdated" &&
+					data.userId != null &&
+					data.role != null
+				) {
+					setUsers(prev =>
+						prev.map(u =>
+							u.id === Number(data.userId)
+								? { ...u, role: data.role }
+								: u,
+						),
+					);
+				}
+				if (data.type === "gameModeUpdated") {
+					setGameMode(data.mode);
+				}
+				if (data.type === "navigateToPrepare" && data.roomId != null) {
+					navigate(`/prepare/${data.roomId}`);
+				}
+				if (data.type === "userLeft") {
+					getRoomDetailsRef.current();
+				}
+			};
+			ws.onerror = error => console.error("Websocket error:", error);
+			ws.onclose = () => {
+				if (!isMountedRef.current) {
+					return;
+				}
+				reconnectTimeoutRef.current = setTimeout(() => {
+					reconnectTimeoutRef.current = null;
+					connect();
+				}, 1000);
+			};
+			socketRef.current = ws;
 		};
-		socketRef.current = ws;
+		connect();
 		return () => {
-			ws.close();
-			socketRef.current = null;
+			isMountedRef.current = true;
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (socketRef.current) {
+				socketRef.current.close();
+				socketRef.current = null;
+			}
 		};
 	}, [roomId, user?.id, navigate]);
 
