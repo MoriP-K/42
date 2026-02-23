@@ -1,12 +1,10 @@
-import fastify, {
-	FastifyRequest,
-	FastifyReply,
-	FastifyRouterOptions,
-} from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
+import { UserRole } from "../generated/prisma/enums";
 import { randomUUID } from "node:crypto";
 import {
 	CreateRoomRoute,
+	CreateRoundRoute,
 	GetRoomRoute,
 	UpdateGameModeBodySchema,
 	UpdateGameModeParamsSchema,
@@ -23,7 +21,6 @@ import {
 } from "../types/room/common";
 import { updateReadyStatus } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
-import { UserRole } from "../generated/prisma/enums";
 import { broadcastToRoom } from "../ws/roomManager";
 
 /*
@@ -48,7 +45,7 @@ export const createRoom = async (
 		});
 		return reply.code(201).send(room);
 	} catch (error) {
-		console.log("Error:", error);
+		console.log("createRoomError:", error);
 		return reply.code(403).send();
 	}
 };
@@ -166,6 +163,8 @@ export const updateRoomMemberRole = async (
 		});
 		broadcastToRoom(String(roomId), {
 			type: "memberRoleUpdated",
+			userId: userId,
+			role: role,
 		});
 		return reply.code(200).send(updatedMember);
 	} catch (error) {
@@ -299,5 +298,87 @@ export const joinRoomByToken = async (
 	} catch (error) {
 		console.error("Error:", error);
 		return reply.code(500).send("Failed to join room");
+	}
+};
+
+/*
+ * POST /api/rooms/:roomId/round ラウンドの作成
+ * 冪等: すでにラウンドが存在する場合はそれを返す
+ */
+export const createRound = async (
+	request: FastifyRequest<CreateRoundRoute>,
+	reply: FastifyReply,
+) => {
+	const paramResult = RoomIdParamsSchema.safeParse(request.params);
+	if (!paramResult.success) {
+		return reply.code(400).send({ message: "パラメータに不備があります" });
+	}
+	const roomId = paramResult.data.roomId;
+	try {
+		const result = await prisma.$transaction(async tx => {
+			// このroomIdに対してmutexのロックをかけている、他のSQLは処理が終わるまで実行されない
+			await tx.$queryRaw`SELECT id FROM "Room" WHERE id = ${roomId} FOR UPDATE`;
+			const room = await tx.room.findUnique({
+				where: { id: roomId },
+				include: {
+					members: {
+						where: { role: UserRole.PLAYER },
+						include: { user: true },
+						orderBy: { user_id: "asc" },
+					},
+				},
+			});
+			if (!room) throw new Error("Room not found");
+			const playerIds = [
+				room.host_id,
+				...room.members
+					.filter(m => m.user_id !== room.host_id)
+					.map(m => m.user_id),
+			];
+			// 最新のRoundを取得
+			const latestRound = await tx.round.findFirst({
+				where: { room_id: roomId },
+				orderBy: { id: "desc" },
+			});
+			// latestRound の冪等チェック
+			if (latestRound?.started_at === null) {
+				const existing = await tx.round.findUnique({
+					where: { id: latestRound.id },
+					include: { drawer: true },
+				});
+				if (existing) return existing;
+			}
+
+			// 新規ラウンド用にRoomMemberのis_readyのリセット（Game から Prepare に戻ったとき）
+			await tx.roomMember.updateMany({
+				where: { room_id: roomId },
+				data: { is_ready: false },
+			});
+
+			let drawerId: number;
+			// Roundがなければ最初のDrawerをホストに設定
+			if (!latestRound) {
+				drawerId = room.host_id;
+			} else {
+				const currentIndex = playerIds.indexOf(latestRound.drawer_id);
+				const nextIndex =
+					currentIndex >= 0 && currentIndex < playerIds.length - 1
+						? currentIndex + 1
+						: 0;
+				drawerId = playerIds[nextIndex];
+			}
+			return tx.round.create({
+				data: {
+					room_id: roomId,
+					drawer_id: drawerId,
+					duration: 60,
+				},
+				include: { drawer: true },
+			});
+		});
+		return reply.code(201).send(result);
+	} catch (error) {
+		console.error("Error:", error);
+		return reply.code(500).send({ error: "Failed to create round" });
 	}
 };

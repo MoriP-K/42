@@ -55,10 +55,17 @@ export const roomApi = {
 		});
 	},
 
-	joinByToken: async (token: string) => {
+	joinRoomByToken: async (token: string) => {
 		return apiClient("/rooms/join", {
 			method: "POST",
 			body: JSON.stringify({ token }),
+		});
+	},
+
+	createRound: async (roomId: number) => {
+		return apiClient(`/rooms/${roomId}/round`, {
+			method: "POST",
+			body: JSON.stringify({}),
 		});
 	},
 };

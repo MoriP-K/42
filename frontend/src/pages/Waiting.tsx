@@ -14,11 +14,17 @@ const Waiting = () => {
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
 	const { id: roomId } = useParams();
+	const [hostId, setHostId] = useState(0);
 	const [isHost, setIsHost] = useState(false);
 	const [invitationToken, setInvitationToken] = useState<string | null>(null);
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 	const currentUserId = user?.id;
+	const socketRef = useRef<WebSocket | null>(null);
+	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+		null,
+	);
+	const isMountedRef = useRef(false);
 
 	const getRoomDetails = useCallback(async () => {
 		try {
@@ -26,13 +32,14 @@ const Waiting = () => {
 				Number(roomId),
 			)) as RoomDetails;
 			setIsHost(res.host_id === user?.id);
+			setHostId(res.host_id);
 			setGameMode(res.game_mode);
 			const mappedUsers = res.members.map((member: RoomMember) => ({
 				id: member.user.id,
 				name: member.user.name,
 				role: member.role,
-				avatar: member.user.avatar,
-				isReady: member.user.isReady,
+				avatar: member.user.avatar ?? "👤",
+				isReady: member.is_ready,
 			}));
 			setUsers(mappedUsers);
 			setInvitationToken(res.invitation_token ?? null);
@@ -46,50 +53,89 @@ const Waiting = () => {
 		getRoomDetailsRef.current = getRoomDetails;
 	}, [getRoomDetails]);
 
-	// 参加者一覧を取得する
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
-		getRoomDetails();
-	}, [user?.id, roomId, getRoomDetails]);
-
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
-		const ws = createWebSocket();
-		ws.onopen = () => {
-			ws.send(
-				JSON.stringify({
-					type: "join",
-					userId: String(user?.id),
-					roomId: String(roomId),
-				}),
-			);
-		};
-		ws.onmessage = event => {
-			const data = JSON.parse(event.data);
-			if (data.type === "memberJoined") {
+		isMountedRef.current = true;
+		const connect = () => {
+			const ws = createWebSocket();
+			ws.onopen = () => {
+				ws.send(
+					JSON.stringify({
+						type: "join",
+						userId: Number(user?.id),
+						roomId: String(roomId),
+					}),
+				);
 				getRoomDetailsRef.current();
-			}
-			if (data.type === "memberRoleUpdated") {
-				getRoomDetailsRef.current();
-			}
-			if (data.type === "gameModeUpdated") {
-				setGameMode(data.mode);
-			}
+			};
+			socketRef.current = ws;
+
+			ws.onmessage = event => {
+				const data = JSON.parse(event.data);
+				if (data.type === "memberJoined") {
+					getRoomDetailsRef.current();
+				}
+				if (
+					data.type === "memberRoleUpdated" &&
+					data.userId != null &&
+					data.role != null
+				) {
+					setUsers(prev =>
+						prev.map(u =>
+							u.id === Number(data.userId)
+								? { ...u, role: data.role }
+								: u,
+						),
+					);
+				}
+				if (data.type === "gameModeUpdated") {
+					setGameMode(data.mode);
+				}
+				if (data.type === "navigateToPrepare" && data.roomId != null) {
+					navigate(`/prepare/${data.roomId}`);
+				}
+				if (data.type === "userLeft") {
+					getRoomDetailsRef.current();
+				}
+			};
+			ws.onerror = error => console.error("Websocket error:", error);
+			ws.onclose = () => {
+				if (!isMountedRef.current) {
+					return;
+				}
+				reconnectTimeoutRef.current = setTimeout(() => {
+					reconnectTimeoutRef.current = null;
+					connect();
+				}, 1000);
+			};
+			socketRef.current = ws;
 		};
+		connect();
 		return () => {
-			ws.close();
+			isMountedRef.current = true;
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (socketRef.current) {
+				socketRef.current.close();
+				socketRef.current = null;
+			}
 		};
-	}, [roomId, user?.id]);
+	}, [roomId, user?.id, navigate]);
 
 	// URL招待で参加したメンバーをルームに追加する
 	useEffect(() => {
 		if (!token || !user?.id || !roomId) return;
-		roomApi
-			.joinByToken(token)
-			.then(() => {
+		const joinRoomByToken = async () => {
+			try {
+				await roomApi.joinRoomByToken(token);
 				getRoomDetails();
-			})
-			.catch(console.error);
+			} catch (error) {
+				console.error("Error", error);
+			}
+		};
+		joinRoomByToken();
 	}, [token, user?.id, roomId, getRoomDetails]);
 
 	const toggleRole = async (id: number) => {
@@ -139,6 +185,17 @@ const Waiting = () => {
 		setTimeout(() => setShowToast(false), 1500);
 	};
 
+	const handlePrepareClick = () => {
+		const ws = socketRef.current;
+		if (!isHost || !roomId || !ws || ws.readyState !== WebSocket.OPEN) {
+			return;
+		}
+		ws.send(
+			JSON.stringify({ type: "prepareStarted", roomId: String(roomId) }),
+		);
+		navigate(`/prepare/${roomId}`);
+	};
+
 	return (
 		<>
 			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
@@ -165,6 +222,7 @@ const Waiting = () => {
 									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
 								>
 									<span className="font-bold">
+										{hostId === member.id ? <>👑 </> : ""}
 										{member.name}
 									</span>
 									<div className="flex gap-4 w-32 justify-end">
@@ -247,11 +305,24 @@ const Waiting = () => {
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
 					<button
-						onClick={() => navigate(`/prepare/${roomId}`)}
+						onClick={() =>
+							isHost ? handlePrepareClick() : undefined
+						}
 						disabled={!isHost}
-						className="btn w-full text-lg border-none bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+						className={`btn w-full text-lg border-none shadow-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+							isHost
+								? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+								: "bg-gradient-to-r from-indigo-600/70 to-purple-600/70 text-white/90 cursor-not-allowed"
+						}`}
 					>
-						準備完了！
+						{isHost ? (
+							"準備完了！"
+						) : (
+							<>
+								<span className="loading loading-spinner loading-sm"></span>
+								準備中
+							</>
+						)}
 					</button>
 				</div>
 			</div>

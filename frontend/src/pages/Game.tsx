@@ -50,7 +50,7 @@ const Game = () => {
 		};
 
 		fetchUser();
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		if (!currentUserId || !id) return;
@@ -111,6 +111,7 @@ const Game = () => {
 					/**
 					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
 					 */
+					if (id) navigate(`/prepare/${id}`);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);
@@ -172,15 +173,14 @@ const Game = () => {
 			if (currentRound && currentRound.word) {
 				updateRoundState(currentRound.word, currentRound.drawer_id);
 			}
+			const allReady = roomData.members
+				.filter((m: RoomMember) => m.role === GameRole.PLAYER)
+				.every((m: RoomMember) => m.is_ready);
 
 			const currentMember = roomData.members.find(
 				m => m.user_id === currentUserIdRef.current,
 			);
 			setIsSpectator(currentMember?.role === GameRole.SPECTATOR);
-
-			const allReady = roomData.members.every(
-				(m: RoomMember) => m.is_ready,
-			);
 
 			if (allReady && socket.readyState === WebSocket.OPEN) {
 				socket.send(
