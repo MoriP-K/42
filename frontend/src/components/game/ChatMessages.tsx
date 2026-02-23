@@ -13,14 +13,20 @@ interface ChatMessagesProps {
 }
 
 const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
-	const messageEndRef = useRef<HTMLDivElement>(null);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		const container = scrollContainerRef.current;
+		if (container) {
+			container.scrollTop = container.scrollHeight;
+		}
 	}, [messages.length]);
 
 	return (
-		<div className="space-y-2 h-64 overflow-y-auto p-2 bg-base-200 rounded-lg">
+		<div
+			ref={scrollContainerRef}
+			className="space-y-2 h-64 overflow-y-auto p-2 bg-base-200 rounded-lg"
+		>
 			{messages.length === 0 ? (
 				<p className="text-center text-base-content/50">
 					メッセージはまだありません
@@ -29,10 +35,7 @@ const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
 				messages.map(message => {
 					const isOwnMessage = message.sender === currentUserName;
 					return (
-						<div
-							key={message.id}
-							className={`chat ${isOwnMessage ? "chat-start" : "chat-end"}`}
-						>
+						<div key={message.id} className="chat chat-start">
 							<div className="chat-header">
 								<span className="font-semibold">
 									{message.sender}
@@ -47,7 +50,7 @@ const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
 					);
 				})
 			)}
-			<div ref={messageEndRef} />
+			<div />
 		</div>
 	);
 };
