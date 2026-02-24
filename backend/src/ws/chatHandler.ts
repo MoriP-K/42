@@ -1,5 +1,7 @@
 import { prisma } from "../lib/prisma";
 import {
+	addScore,
+	getScores,
 	broadcastToRoom,
 	findClientByUserId,
 	getRoundState,
@@ -94,11 +96,15 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 				currentRound.drawerId,
 			);
 
+			addScore(client.roomId, client.userId, 1);
+			addScore(client.roomId, currentRound.drawerId, 1);
+
 			// 正解通知
 			broadcastToRoom(client.roomId, {
 				type: WebSocketMessageType.CORRECT_ANSWER,
 				userId: client.userId,
 				sender: data.sender,
+				scores: Object.fromEntries(getScores(client.roomId)),
 			});
 
 			// Drawerにお題を送る

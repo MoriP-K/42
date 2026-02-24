@@ -9,6 +9,7 @@ const roomRoundState = new Map<
 	string,
 	{ roundId: number; word: string; drawerId: number }
 >();
+const roomScores = new Map<string, Map<number, number>>();
 
 export const joinRoom = (client: RoomClient) => {
 	// ルームが存在しなければ作成
@@ -89,4 +90,31 @@ export const setRoundState = (
 
 export const getRoundState = (roomId: string) => {
 	return roomRoundState.get(roomId) ?? null;
+};
+
+export const initScores = (roomId: string) => {
+	const room = rooms.get(roomId);
+	console.log("🎯 initScores roomId:", roomId);
+	console.log("🎯 rooms keys:", [...rooms.keys()]);
+	console.log("🎯 room clients:", room?.size);
+
+	if (!room) return;
+
+	const scores = new Map<number, number>();
+	room.forEach(client => {
+		scores.set(client.userId, 0);
+	});
+	roomScores.set(roomId, scores);
+};
+
+export const addScore = (roomId: string, userId: number, points: number) => {
+	const scores = roomScores.get(roomId);
+	if (!scores) return;
+
+	const current = scores.get(userId) ?? 0;
+	scores.set(userId, current + points);
+};
+
+export const getScores = (roomId: string) => {
+	return roomScores.get(roomId) ?? new Map<number, number>();
 };

@@ -17,6 +17,10 @@ import {
 	broadcastToRoom,
 	findClientByUserId,
 	setRoundState,
+	initScores,
+	addScore,
+	getScores,
+	getRoundState,
 } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
@@ -288,6 +292,8 @@ export const handleConnection = (socket: WebSocket) => {
 						currentRound.drawer_id,
 					);
 
+					initScores(currentClient.roomId);
+
 					const drawerClient = findClientByUserId(
 						currentClient.roomId,
 						currentRound.drawer_id,
@@ -329,6 +335,52 @@ export const handleConnection = (socket: WebSocket) => {
 				} catch (error) {
 					console.error(`❌ Failed to start round:`, error);
 				}
+			} else if (data.type === WebSocketMessageType.SKIP) {
+				const currentRound = getRoundState(currentClient.roomId);
+				if (!currentRound) return;
+
+				if (currentClient.userId !== currentRound.drawerId) {
+					console.log("❌ Invalid sender");
+					return;
+				}
+
+				addScore(currentClient.roomId, currentRound.drawerId, -1);
+
+				const word = selectRandomWord();
+
+				setRoundState(
+					currentClient.roomId,
+					currentRound.roundId,
+					word,
+					currentRound.drawerId,
+				);
+
+				const drawerClient = findClientByUserId(
+					currentClient.roomId,
+					currentRound.drawerId,
+				);
+
+				drawerClient?.socket.send(
+					JSON.stringify({
+						type: WebSocketMessageType.NEXT_WORD,
+						word: word,
+					}),
+				);
+
+				const result = await prisma.round.updateMany({
+					where: {
+						id: currentRound.roundId,
+						word: currentRound.word,
+					},
+					data: {
+						word: word,
+					},
+				});
+
+				broadcastToRoom(currentClient.roomId, {
+					type: WebSocketMessageType.SKIPPED,
+					scores: Object.fromEntries(getScores(currentClient.roomId)),
+				});
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
