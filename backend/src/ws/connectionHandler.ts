@@ -16,6 +16,7 @@ import {
 	leaveRoom,
 	broadcastToRoom,
 	findClientByUserId,
+	setRoundState,
 } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
@@ -253,6 +254,13 @@ export const handleConnection = (socket: WebSocket) => {
 						console.log("⚠️ Round already started");
 						return;
 					}
+
+					setRoundState(
+						currentClient.roomId,
+						currentRound.id,
+						word,
+						currentRound.drawer_id,
+					);
 
 					const drawerClient = findClientByUserId(
 						currentClient.roomId,

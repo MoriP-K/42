@@ -1,5 +1,10 @@
 import { prisma } from "../lib/prisma";
-import { broadcastToRoom, findClientByUserId } from "./roomManager";
+import {
+	broadcastToRoom,
+	findClientByUserId,
+	getRoundState,
+	setRoundState,
+} from "./roomManager";
 import { RoomClient, WebSocketMessageType } from "../types/room/room";
 import { selectRandomWord } from "./wordSelector";
 
@@ -18,18 +23,13 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 		return;
 	}
 
-	const currentRound = await prisma.round.findFirst({
-		where: {
-			room_id: Number(client.roomId),
-			started_at: { not: null },
-			ended_time: null,
-		},
-	});
+	const currentRound = getRoundState(client.roomId);
+
 	if (!currentRound || !currentRound.word) return;
 
-	if (client.userId === currentRound.drawer_id) {
+	if (client.userId === currentRound.drawerId) {
 		broadcastToRoom(client.roomId, {
-			type: "chat",
+			type: WebSocketMessageType.CHAT,
 			id: data.id,
 			sender: data.sender,
 			text: data.text,
@@ -45,7 +45,7 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 	if (isCorrect) {
 		// WebSocketで正解配信 + チャット送信
 		broadcastToRoom(client.roomId, {
-			type: "chat",
+			type: WebSocketMessageType.CHAT,
 			id: data.id,
 			sender: data.sender,
 			text: data.text,
@@ -62,14 +62,20 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 		// DB更新
 		const newWord = selectRandomWord();
 		await prisma.round.update({
-			where: { id: currentRound.id },
+			where: { id: currentRound.roundId },
 			data: { word: newWord },
 		});
+		setRoundState(
+			client.roomId,
+			currentRound.roundId,
+			newWord,
+			currentRound.drawerId,
+		);
 
 		// Drawerにお題を送る
 		const drawerClient = findClientByUserId(
 			client.roomId,
-			currentRound.drawer_id,
+			currentRound.drawerId,
 		);
 
 		drawerClient?.socket.send(
@@ -80,7 +86,7 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 		);
 	} else {
 		broadcastToRoom(client.roomId, {
-			type: "chat",
+			type: WebSocketMessageType.CHAT,
 			id: data.id,
 			sender: data.sender,
 			text: data.text,
