@@ -119,8 +119,26 @@ const Game = () => {
 						timestamp: new Date(),
 					};
 					setMessages(prev => [...prev, systemMessage]);
+
+					if (data.scores) {
+						setPlayers(prev =>
+							prev.map(p => ({
+								...p,
+								score: data.scores[p.id] ?? p.score,
+							})),
+						);
+					}
 				} else if (data.type === WebSocketMessageType.NEXT_WORD) {
 					setCurrentWord(data.word);
+				} else if (data.type === WebSocketMessageType.SKIPPED) {
+					if (data.scores) {
+						setPlayers(prev =>
+							prev.map(p => ({
+								...p,
+								score: data.scores[p.id] ?? p.score,
+							})),
+						);
+					}
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);

@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { prisma } from "../lib/prisma";
 import { RoomClient } from "../types/room/room";
 import { stopTimer } from "./timerManager";
 
@@ -94,10 +95,6 @@ export const getRoundState = (roomId: string) => {
 
 export const initScores = (roomId: string) => {
 	const room = rooms.get(roomId);
-	console.log("🎯 initScores roomId:", roomId);
-	console.log("🎯 rooms keys:", [...rooms.keys()]);
-	console.log("🎯 room clients:", room?.size);
-
 	if (!room) return;
 
 	const scores = new Map<number, number>();
@@ -117,4 +114,21 @@ export const addScore = (roomId: string, userId: number, points: number) => {
 
 export const getScores = (roomId: string) => {
 	return roomScores.get(roomId) ?? new Map<number, number>();
+};
+
+export const saveScoresToDB = async (roomId: string) => {
+	const scores = roomScores.get(roomId);
+	if (!scores) return;
+
+	for (const [userId, score] of scores) {
+		await prisma.roomMember.update({
+			where: {
+				room_id_user_id: {
+					room_id: Number(roomId),
+					user_id: userId,
+				},
+			},
+			data: { score },
+		});
+	}
 };

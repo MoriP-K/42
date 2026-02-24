@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { WebSocketMessageType } from "../../types/room";
 
 export interface DrawData {
 	x: number;
@@ -191,7 +192,21 @@ const Canvas = ({
 						<h2 className="card-title font-mono text-base font-semibold mb-1">
 							お題: {currentWord}
 						</h2>
-						<button className="btn btn-sm btn-primary ml-auto">
+						<button
+							className="btn btn-sm btn-primary ml-auto"
+							onClick={() => {
+								if (
+									socket &&
+									socket.readyState === WebSocket.OPEN
+								) {
+									socket.send(
+										JSON.stringify({
+											type: WebSocketMessageType.SKIP,
+										}),
+									);
+								}
+							}}
+						>
 							スキップ
 						</button>
 					</div>

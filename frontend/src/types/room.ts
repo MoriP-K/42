@@ -54,6 +54,8 @@ export const WebSocketMessageType = {
 	TIMER: "timer",
 	CORRECT_ANSWER: "correctAnswer",
 	NEXT_WORD: "nextWord",
+	SKIP: "skip",
+	SKIPPED: "skipped",
 	ERROR: "error",
 };
 
