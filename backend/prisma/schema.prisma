@@ -15,24 +15,26 @@ datasource db {
 }
 
 model User {
-    id                Int      @id @default(autoincrement())
-    name              String   @unique
-    password          String
-    email             String   @unique
-    total_score       Int?     @default(0)
-    first_place_count Int?     @default(0)
-    play_count        Int?     @default(0)
-    avatar            String   @default("👤")
-    created_at        DateTime @default(now())
-    updated_at        DateTime @updatedAt
+    id                   Int      @id @default(autoincrement())
+    name                 String   @unique
+    password             String?
+    email                String   @unique
+    is_profile_complete  Boolean  @default(false)
+    total_score          Int?     @default(0)
+    first_place_count    Int?     @default(0)
+    play_count           Int?     @default(0)
+    avatar               String   @default("👤")
+    created_at           DateTime @default(now())
+    updated_at           DateTime @updatedAt
 
     // relation
     sessions         Session[]
     badges           UserBadge[]
-    hosted_rooms     Room[]       @relation("HostRelation")
-    drawings         Round[]      @relation("DrawerRelation")
-    won_rounds       Round[]      @relation("WinnerRelation")
+    hosted_rooms     Room[]               @relation("HostRelation")
+    drawings         Round[]              @relation("DrawerRelation")
+    won_rounds       Round[]              @relation("WinnerRelation")
     room_memberships RoomMember[]
+    authentications  UserAuthentication[]
 }
 
 model Session {
@@ -47,6 +49,18 @@ model Session {
 
     @@index([expires_at])
     @@index([user_id])
+}
+
+model UserAuthentication {
+    id               Int      @id @default(autoincrement())
+    user_id          Int
+    provider         String
+    provider_user_id String
+    created_at       DateTime @default(now())
+
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@unique([provider, provider_user_id])
 }
 
 model Badge {
