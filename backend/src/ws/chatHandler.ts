@@ -23,8 +23,6 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 		return;
 	}
 
-	console.log("🔍 role:", client.role);
-
 	if (client.role === "SPECTATOR") {
 		client.socket.send(
 			JSON.stringify({

@@ -281,13 +281,6 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
-					console.log(
-						"🔍 setRoundState:",
-						currentClient.roomId,
-						currentRound.id,
-						word,
-						currentRound.drawer_id,
-					);
 					setRoundState(
 						currentClient.roomId,
 						currentRound.id,
