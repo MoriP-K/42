@@ -7,6 +7,7 @@ import { userRoutes } from "./routes/userRoutes";
 import { authRoutes } from "./routes/authRoutes";
 import { googleAuthRoutes } from "./routes/googleAuthRoutes";
 import { roomRoutes } from "./routes/roomRoutes";
+import { gameRoutes } from "./routes/gameRoutes";
 import { handleConnection } from "./ws/connectionHandler";
 
 const fastify = Fastify({
@@ -31,6 +32,7 @@ fastify.register(userRoutes, { prefix: "/api" });
 fastify.register(authRoutes, { prefix: "/api" });
 fastify.register(googleAuthRoutes, { prefix: "/v1/auth" });
 fastify.register(roomRoutes, { prefix: "/api" });
+fastify.register(gameRoutes, { prefix: "/api" });
 
 // WebSocketのルートを定義
 fastify.register(async fastify => {

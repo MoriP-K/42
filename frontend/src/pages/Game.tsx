@@ -2,15 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { createWebSocket } from "../api/wsClient";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { roomApi } from "../api/roomApi";
 import { authApi } from "../api/authApi";
+import { gameApi } from "../api/gameApi";
 import {
-	type RoomDetails,
-	type RoomMember,
 	type Player,
 	WebSocketMessageType,
 	ROUND_DURATION,
 } from "../types/room";
+import { type GameDetails, type GameRoomMember } from "../types/game";
 import Timer from "../components/game/Timer";
 import Canvas, { type DrawData } from "../components/game/Canvas";
 import ScoreBoard from "../components/game/ScoreBoard";
@@ -160,14 +159,14 @@ const Game = () => {
 		if (!id) return;
 
 		try {
-			const roomData: RoomDetails = await roomApi.getRoomDetails(
+			const roomData: GameDetails = await gameApi.getGameRoomDetails(
 				Number(id),
 			);
-			if (!roomData || !roomData.members) return;
+			if (!roomData || !roomData) return;
 
 			const playerData: Player[] = roomData.members
 				.filter(m => m.role === GameRole.PLAYER)
-				.map((m: RoomMember) => ({
+				.map((m: GameRoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
 					score: 0,
@@ -180,12 +179,20 @@ const Game = () => {
 				r => r.started_at !== null && r.ended_time === null,
 			);
 
-			if (currentRound && currentRound.word) {
-				updateRoundState(currentRound.word, currentRound.drawer_id);
+			if (currentRound) {
+				setIsDrawer(
+					currentRound.drawer_id === currentUserIdRef.current,
+				);
+				setPlayers(prev =>
+					prev.map(p => ({
+						...p,
+						isDrawing: p.id === currentRound.drawer_id,
+					})),
+				);
 			}
 			const allReady = roomData.members
-				.filter((m: RoomMember) => m.role === GameRole.PLAYER)
-				.every((m: RoomMember) => m.is_ready);
+				.filter((m: GameRoomMember) => m.role === GameRole.PLAYER)
+				.every((m: GameRoomMember) => m.is_ready);
 
 			const currentMember = roomData.members.find(
 				m => m.user_id === currentUserIdRef.current,

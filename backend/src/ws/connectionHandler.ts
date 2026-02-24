@@ -107,6 +107,15 @@ export const handleConnection = (socket: WebSocket) => {
 					);
 				}
 
+				if (data.userId === activeRound?.drawer_id) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.NEXT_WORD,
+							word: activeRound?.word,
+						}),
+					);
+				}
+
 				return;
 			}
 
