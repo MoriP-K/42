@@ -90,6 +90,23 @@ export const handleConnection = (socket: WebSocket) => {
 
 				joinRoom(currentClient);
 
+				const activeRound = await prisma.round.findFirst({
+					where: {
+						room_id: Number(data.roomId),
+						started_at: { not: null },
+						ended_time: null,
+					},
+				});
+
+				if (activeRound && activeRound.word) {
+					setRoundState(
+						data.roomId,
+						activeRound.id,
+						activeRound.word,
+						activeRound.drawer_id,
+					);
+				}
+
 				return;
 			}
 
@@ -138,7 +155,7 @@ export const handleConnection = (socket: WebSocket) => {
 					roomId: currentClient.roomId,
 				});
 			} else if (data.type === WebSocketMessageType.CHAT) {
-				handleChatMessage(currentClient, data);
+				await handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {
 				console.log(
 					`Draw from ${currentClient.userId} in room ${currentClient.roomId}`,
@@ -255,6 +272,13 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
+					console.log(
+						"🔍 setRoundState:",
+						currentClient.roomId,
+						currentRound.id,
+						word,
+						currentRound.drawer_id,
+					);
 					setRoundState(
 						currentClient.roomId,
 						currentRound.id,
