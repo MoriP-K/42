@@ -5,6 +5,10 @@ import { stopTimer } from "./timerManager";
 // キー：roomId (string)
 // 値: Set<RoomClient>
 const rooms = new Map<string, Set<RoomClient>>();
+const roomRoundState = new Map<
+	string,
+	{ roundId: number; word: string; drawerId: number }
+>();
 
 export const joinRoom = (client: RoomClient) => {
 	// ルームが存在しなければ作成
@@ -72,4 +76,17 @@ export const findClientByUserId = (
 		if (client.userId === userId) return client;
 	}
 	return undefined;
+};
+
+export const setRoundState = (
+	roomId: string,
+	roundId: number,
+	word: string,
+	drawerId: number,
+) => {
+	roomRoundState.set(roomId, { roundId, word, drawerId });
+};
+
+export const getRoundState = (roomId: string) => {
+	return roomRoundState.get(roomId) ?? null;
 };
