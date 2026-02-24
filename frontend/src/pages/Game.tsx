@@ -27,6 +27,7 @@ const Game = () => {
 	const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 	const [players, setPlayers] = useState<Player[]>([]);
 	const [isDrawer, setIsDrawer] = useState(false);
+	const [isSpectator, setIsSpectator] = useState(false);
 	const [currentWord, setCurrentWord] = useState<string | null>(null);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -176,6 +177,11 @@ const Game = () => {
 				.filter((m: RoomMember) => m.role === GameRole.PLAYER)
 				.every((m: RoomMember) => m.is_ready);
 
+			const currentMember = roomData.members.find(
+				m => m.user_id === currentUserIdRef.current,
+			);
+			setIsSpectator(currentMember?.role === GameRole.SPECTATOR);
+
 			if (allReady && socket.readyState === WebSocket.OPEN) {
 				socket.send(
 					JSON.stringify({
@@ -242,8 +248,16 @@ const Game = () => {
 								<h2 className="card-title font-mono text-base font-semibold mb-1">
 									コメント
 								</h2>
-								<ChatMessages messages={messages} />
-								<ChatInput onSendMessage={handleSendMessage} />
+								{currentUserName && (
+									<ChatMessages
+										messages={messages}
+										currentUserName={currentUserName}
+									/>
+								)}
+								<ChatInput
+									onSendMessage={handleSendMessage}
+									disabled={isSpectator}
+								/>
 							</div>
 						</div>
 					</div>

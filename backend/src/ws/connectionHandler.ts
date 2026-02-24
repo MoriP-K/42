@@ -63,10 +63,28 @@ export const handleConnection = (socket: WebSocket) => {
 					leaveRoom(currentClient);
 				}
 
+				const member = await prisma.roomMember.findFirst({
+					where: {
+						room_id: Number(data.roomId),
+						user_id: data.userId,
+					},
+				});
+
+				if (!member) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: "Not a member of this room",
+						}),
+					);
+					return;
+				}
+
 				currentClient = {
 					socket,
 					userId: data.userId,
 					roomId: data.roomId,
+					role: member.role,
 				};
 
 				joinRoom(currentClient);
