@@ -6,7 +6,7 @@ import {
 } from "../../types/auth/register";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
-import { createSessionAndSetCookie } from "./loginController";
+import { createSessionAndSetCookie } from "../../lib/login";
 
 type ValidateResult =
 	| { success: true }

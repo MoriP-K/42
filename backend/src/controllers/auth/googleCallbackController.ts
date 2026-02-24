@@ -4,6 +4,7 @@ import {
 	GoogleCallbackQuerystring,
 	GoogleUserInfo,
 } from "../../types/googleAuth";
+import { createSessionAndSetCookie } from "../../lib/login";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
@@ -27,6 +28,13 @@ const exchangeCodeForUserInfo = async (
 		url: "https://www.googleapis.com/oauth2/v3/userinfo",
 	});
 	return userInfoRes.data;
+};
+
+const createGoogleUser = (string: email, string: sub) => {
+	const userAuth = findUserByGoogleSub(sub);
+	//TODO: UserAuthentication内の重複チェック
+	// TODO: user.emailの重複チェック
+	//TODO: DBへの保存
 };
 
 //TODO: return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");のように、エラーコードをクエリパラメータとして渡して返す
@@ -60,8 +68,18 @@ export const googleCallback = async (
 
 	try {
 		const userInfo = await exchangeCodeForUserInfo(code);
+		const sub = userInfo.sub;
+		const email = userInfo.email;
 
-		// TODO: DBへの保存・セッション作成・名前入力画面へのリダイレクト
+		const user = createGoogleUser(email, sub);
+		if (!user) {
+			//TODO: すでに登録済みのユーザーです。エラー
+		}
+		//セッション作成
+		await createSessionAndSetCookie(reply, user.id);
+
+		//名前入力画面へのリダイレクト
+		return reply.code(302).redirect("/setup-profile");
 		return reply.code(200).send({
 			message: "Google認証成功（デバッグ用レスポンス）",
 			email: userInfo.email,
