@@ -4,6 +4,7 @@ import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
+import { GoogleAccountRegister } from "../components/auth/GoogleAccountRegister";
 import BackButton from "../components/BackButton";
 import { useNavigate } from "react-router-dom";
 
@@ -193,18 +194,7 @@ const AccountRegister = () => {
 				onSubmit={handleSubmit}
 				top={
 					<>
-						<button
-							type="button"
-							className="btn btn-outline w-full"
-						>
-							{/* TODO: Googleアカウントで登録処理*/}
-							<span className="inline-flex items-center gap-2">
-								<span className="i" aria-hidden="true">
-									G
-								</span>
-								Googleアカウントで登録
-							</span>
-						</button>
+						<GoogleAccountRegister />
 						<div className="divider my-0 text-sm text-base-content/60">
 							または
 						</div>

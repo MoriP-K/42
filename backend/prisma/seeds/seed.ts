@@ -21,6 +21,7 @@ async function main() {
 			name: "funa",
 			email: "funa@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -31,6 +32,7 @@ async function main() {
 			name: "ken",
 			email: "ken@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -41,6 +43,7 @@ async function main() {
 			name: "nusu",
 			email: "nusu@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -51,6 +54,7 @@ async function main() {
 			name: "mori",
 			email: "mori@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -61,6 +65,7 @@ async function main() {
 			name: "alice",
 			email: "alice@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
