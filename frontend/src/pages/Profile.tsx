@@ -12,6 +12,8 @@ const Profile = () => {
 		first_place_count: number;
 		play_count: number;
 		badges: string[];
+		user_runk: number;
+		top_runker: Map<string, number>;
 	}
 
 	const [profileData, setProfileData] = useState<profileData | null>(null);
@@ -79,6 +81,13 @@ const Profile = () => {
 						<p className="text-gray-400">まだバッジを持っていません</p>
 					)}
 				</div>
+			</div>
+
+			<div>
+				<p className="font-bold">リーダーボード
+				</p>
+				<p> 自分の順位： {profileData.user_runk + 1}</p>
+				{/* <p> １位 {profileData.top_runker} </p> */}
 			</div>
 			<Footer></Footer>
 		</div>

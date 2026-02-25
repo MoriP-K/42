@@ -2,7 +2,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { randomUUID } from "node:crypto";
 
 export async function seedBadegs(prisma: PrismaClient) {
-	console.log("🔐 Seeding sessions for auth testing...");
+	console.log("🔐 Seeding badges testing...");
 
 	// alice ユーザーを取得（既に seed.ts で作成されている前提）
 	const alice = await prisma.user.findUnique({ where: { name: "alice" } });

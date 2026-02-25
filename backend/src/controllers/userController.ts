@@ -50,13 +50,33 @@ export const getProfile = async (
 			badge: true,
 		},
 	});
-
 	const badges:string[] = [];
 	userBadgesWithDetails.forEach((ub:any) => {
-	if (ub.badge) {
-		badges.push(ub.badge.name);
-	}
-});
+		if (ub.badge) {
+			badges.push(ub.badge.name);
+		}
+	});
+
+	// top runker
+	const runking = await prisma.user.findMany({
+		take: 20,
+		orderBy: {
+			total_score: 'desc'
+		}
+	});
+	const runker = new Map<string, number>();
+	runking.forEach((topuser:any) => {
+			runker.set(topuser.name, topuser.total_score);
+	});
+
+	const user_runk = await prisma.user.count({
+		orderBy: {
+			total_score: 'desc'
+		},
+		where: {
+			total_score: {gt: user.total_score}
+		}
+	});
 
 	const data: ProfileSuccessResponse = {
 		name: user.name,
@@ -64,6 +84,8 @@ export const getProfile = async (
 		first_place_count: user.first_place_count ?? 0,
 		play_count: user.play_count ?? 0,
 		badges: badges ?? 0,
+		user_runk: user_runk ?? 0,
+		top_runker: runker ?? 0,
 	};
 	return data;
 };

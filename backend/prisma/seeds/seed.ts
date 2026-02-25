@@ -3,6 +3,7 @@ import * as bcrypt from "bcrypt";
 import { seedRooms } from "./roomSeeder";
 import { seedSessions } from "./sessionSeeder";
 import { seedBadegs } from "./badgesSeeder";
+import { seedRunking } from "./runkSeeder";
 
 const prisma = new PrismaClient();
 
@@ -140,6 +141,9 @@ async function main() {
 	// 6. badges data & user score update (for profile)
 	console.log("");
 	await seedBadegs(prisma);
+
+	console.log("");
+	await seedRunking(prisma);
 
 	console.log("\n🎉 All seeding completed successfully!");
 }
