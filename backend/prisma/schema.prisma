@@ -115,12 +115,12 @@ model Round {
 }
 
 model RoomMember {
-    room_id		Int
-    user_id		Int
-    is_ready	Boolean		@default(false)
-    role		UserRole	@default(PLAYER)
-	score		Int			@default(0)
-    joined_at	DateTime	@default(now())
+    room_id    Int
+    user_id    Int
+    is_ready   Boolean   @default(false)
+    role       UserRole  @default(PLAYER)
+    score      Int       @default(0)
+    joined_at  DateTime  @default(now())
 
     // relation
     room Room @relation(fields: [room_id], references: [id])
