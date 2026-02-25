@@ -64,7 +64,6 @@ export const getProfile = async (
 		}
 	});
 
-	// jsonはmapを送信できない
 	type RankerMap = Record<string, number>;
 	const ranker:RankerMap[] = [];
 	ranking.forEach((topuser:any) => {
@@ -76,7 +75,7 @@ export const getProfile = async (
 			total_score: 'desc'
 		},
 		where: {
-			total_score: {gt: user.total_score}
+			total_score: {gt: user.total_score ?? 0}
 		}
 	});
 
