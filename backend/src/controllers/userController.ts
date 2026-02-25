@@ -50,8 +50,8 @@ export const getProfile = async (
 			badge: true,
 		},
 	});
-	const badges:string[] = [];
-	userBadgesWithDetails.forEach((ub:any) => {
+	const badges: string[] = [];
+	userBadgesWithDetails.forEach((ub: any) => {
 		if (ub.badge) {
 			badges.push(ub.badge.name);
 		}
@@ -60,23 +60,23 @@ export const getProfile = async (
 	const ranking = await prisma.user.findMany({
 		take: 20,
 		orderBy: {
-			total_score: 'desc'
-		}
+			total_score: "desc",
+		},
 	});
 
 	type RankerMap = Record<string, number>;
-	const ranker:RankerMap[] = [];
-	ranking.forEach((topuser:any) => {
-			ranker.push(topuser.name, topuser.total_score);
+	const ranker: RankerMap[] = [];
+	ranking.forEach((topuser: any) => {
+		ranker.push(topuser.name, topuser.total_score);
 	});
 
 	const user_rank = await prisma.user.count({
 		orderBy: {
-			total_score: 'desc'
+			total_score: "desc",
 		},
 		where: {
-			total_score: {gt: user.total_score ?? 0}
-		}
+			total_score: { gt: user.total_score ?? 0 },
+		},
 	});
 
 	const data: ProfileSuccessResponse = {

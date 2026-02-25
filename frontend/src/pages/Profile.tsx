@@ -13,7 +13,7 @@ const Profile = () => {
 		play_count: number;
 		badges: string[];
 		user_rank: number;
-		top_ranker: {[key:string]: number};
+		top_ranker: { [key: string]: number };
 	}
 
 	const [profileData, setProfileData] = useState<profileData | null>(null);
@@ -41,16 +41,9 @@ const Profile = () => {
 	};
 
 	const BadgeImage = ({ name }: { name: string }) => {
-		if (!imageMap[name])
-			return (null);
-		else
-		{
-			return (
-				<img
-					src={imageMap[name]}
-					width={100}
-				/>
-			);
+		if (!imageMap[name]) return null;
+		else {
+			return <img src={imageMap[name]} width={100} />;
 		}
 	};
 
@@ -78,25 +71,33 @@ const Profile = () => {
 							<BadgeImage key={index} name={badgeName} />
 						))
 					) : (
-						<p className="text-gray-400">まだバッジを持っていません</p>
+						<p className="text-gray-400">
+							まだバッジを持っていません
+						</p>
 					)}
 				</div>
 			</div>
 
 			<div>
-				<p className="font-bold">リーダーボード
-				</p>
+				<p className="font-bold">リーダーボード</p>
 				<p> 自分の順位： {profileData.user_rank + 1}位</p>
 				<div className="flex flex-wrap gap-4 mt-2">
 					{profileData.top_ranker ? (
-						Object.entries(profileData.top_ranker).map(([name, score]) => (
-							<div key={name} className="flex justify-between w-48">
-								<span>{name}</span>
-								<span>{score}点</span>
-							</div>
-						))
+						Object.entries(profileData.top_ranker).map(
+							([name, score]) => (
+								<div
+									key={name}
+									className="flex justify-between w-48"
+								>
+									<span>{name}</span>
+									<span>{score}点</span>
+								</div>
+							),
+						)
 					) : (
-						<p className="text-gray-400">まだランキングはありません</p>
+						<p className="text-gray-400">
+							まだランキングはありません
+						</p>
 					)}
 				</div>
 			</div>

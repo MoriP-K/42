@@ -6,13 +6,12 @@ export async function seedRunking(prisma: PrismaClient) {
 	const saltRounds = 10;
 	const hashedPassword = await bcrypt.hash("Password123", saltRounds);
 
-	for (let i: number = 0; i < 21; i++)
-	{
+	for (let i: number = 0; i < 21; i++) {
 		const user1 = await prisma.user.upsert({
 			where: { name: "user" + i },
 			update: {},
 			create: {
-				name: "user"+i,
+				name: "user" + i,
 				email: "user" + i + "@example.com",
 				password: hashedPassword,
 				is_profile_complete: true,
