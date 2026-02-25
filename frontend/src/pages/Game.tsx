@@ -139,6 +139,16 @@ const Game = () => {
 							})),
 						);
 					}
+
+					const systemMessage: Message = {
+						id: crypto.randomUUID(),
+						sender: "system",
+						text: "⏩ お題がスキップされました",
+						timestamp: new Date(),
+					};
+					setMessages(prev => [...prev, systemMessage]);
+
+					setClearTrigger(prev => prev + 1);
 				}
 			} catch (error) {
 				console.error("❌ Failed to parse message:", error);

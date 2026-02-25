@@ -336,6 +336,11 @@ export const handleConnection = (socket: WebSocket) => {
 					console.error(`❌ Failed to start round:`, error);
 				}
 			} else if (data.type === WebSocketMessageType.SKIP) {
+				if (!currentClient) {
+					console.log("❌ Not joined to any room");
+					return;
+				}
+
 				const currentRound = getRoundState(currentClient.roomId);
 				if (!currentRound) return;
 
@@ -344,9 +349,20 @@ export const handleConnection = (socket: WebSocket) => {
 					return;
 				}
 
-				addScore(currentClient.roomId, currentRound.drawerId, -1);
-
 				const word = selectRandomWord();
+
+				const result = await prisma.round.updateMany({
+					where: {
+						id: currentRound.roundId,
+						word: currentRound.word,
+					},
+					data: {
+						word: word,
+					},
+				});
+				if (result.count === 0) return;
+
+				addScore(currentClient.roomId, currentRound.drawerId, -1);
 
 				setRoundState(
 					currentClient.roomId,
@@ -354,6 +370,11 @@ export const handleConnection = (socket: WebSocket) => {
 					word,
 					currentRound.drawerId,
 				);
+
+				broadcastToRoom(currentClient.roomId, {
+					type: WebSocketMessageType.SKIPPED,
+					scores: Object.fromEntries(getScores(currentClient.roomId)),
+				});
 
 				const drawerClient = findClientByUserId(
 					currentClient.roomId,
@@ -366,21 +387,6 @@ export const handleConnection = (socket: WebSocket) => {
 						word: word,
 					}),
 				);
-
-				const result = await prisma.round.updateMany({
-					where: {
-						id: currentRound.roundId,
-						word: currentRound.word,
-					},
-					data: {
-						word: word,
-					},
-				});
-
-				broadcastToRoom(currentClient.roomId, {
-					type: WebSocketMessageType.SKIPPED,
-					scores: Object.fromEntries(getScores(currentClient.roomId)),
-				});
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);

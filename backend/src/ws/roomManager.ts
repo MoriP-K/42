@@ -23,6 +23,11 @@ export const joinRoom = (client: RoomClient) => {
 		room.add(client);
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
+
+		const scores = roomScores.get(client.roomId);
+		if (scores && !scores.has(client.userId)) {
+			scores.set(client.userId, 0);
+		}
 	}
 };
 
@@ -120,15 +125,21 @@ export const saveScoresToDB = async (roomId: string) => {
 	const scores = roomScores.get(roomId);
 	if (!scores) return;
 
-	for (const [userId, score] of scores) {
-		await prisma.roomMember.update({
+	const updates = [...scores].map(([userId, score]) =>
+		prisma.roomMember.update({
 			where: {
 				room_id_user_id: {
 					room_id: Number(roomId),
 					user_id: userId,
 				},
 			},
-			data: { score },
-		});
-	}
+			data: {
+				score: {
+					increment: score,
+				},
+			},
+		}),
+	);
+
+	await prisma.$transaction(updates);
 };
