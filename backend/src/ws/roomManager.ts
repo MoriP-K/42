@@ -23,6 +23,19 @@ export const joinRoom = (client: RoomClient) => {
 	if (room) {
 		for (const existing of room) {
 			if (existing.userId === client.userId) {
+				try {
+					if (
+						existing.socket &&
+						existing.socket.readyState === WebSocket.OPEN
+					) {
+						existing.socket.close();
+					}
+				} catch (error) {
+					console.error(
+						`⚠️ Failed to close exsiting socket for user ${existing.userId} in room ${client.roomId}:`,
+						error,
+					);
+				}
 				room.delete(existing);
 				break;
 			}
@@ -144,9 +157,7 @@ export const saveScoresToDB = async (roomId: string) => {
 				},
 			},
 			data: {
-				score: {
-					increment: score,
-				},
+				score: score,
 			},
 		}),
 	);
@@ -166,18 +177,18 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 
 	// ended_timeありのラウンド数を数える
 	// PLAYER数を数える
-	const room = await prisma.room.findUnique({
-		where: { id: Number(roomId) },
-		include: { rounds: true, members: true },
+	const completedRounds = await prisma.round.count({
+		where: {
+			room_id: Number(roomId),
+			ended_time: { not: null },
+		},
 	});
-	if (!room) return null;
-
-	const completedRounds = room.rounds.filter(
-		r => r.ended_time !== null,
-	).length;
-	const playerCount = room.members.filter(
-		m => m.role === UserRole.PLAYER,
-	).length;
+	const playerCount = await prisma.roomMember.count({
+		where: {
+			room_id: Number(roomId),
+			role: UserRole.PLAYER,
+		},
+	});
 
 	// ラウンド終了時にそのラウンドステートをクリア
 	roomRoundState.delete(roomId);
