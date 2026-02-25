@@ -96,7 +96,7 @@ const Profile = () => {
 							</div>
 						))
 					) : (
-						<p className="text-gray-400">まだバッジを持っていません</p>
+						<p className="text-gray-400">まだランキングはありません</p>
 					)}
 				</div>
 			</div>
