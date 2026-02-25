@@ -18,8 +18,8 @@ export interface ProfileSuccessResponse {
 	first_place_count: number;
 	play_count: number;
 	badges: String[];
-	user_runk: number;
-	top_runker: Map<string, number>;
+	user_rank: number;
+	top_ranker: Record<string, number>[];
 }
 
 /**

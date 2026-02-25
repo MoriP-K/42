@@ -3,7 +3,7 @@ import * as bcrypt from "bcrypt";
 import { seedRooms } from "./roomSeeder";
 import { seedSessions } from "./sessionSeeder";
 import { seedBadegs } from "./badgesSeeder";
-import { seedRunking } from "./runkSeeder";
+import { seedRanking } from "./rankSeeder";
 
 const prisma = new PrismaClient();
 
@@ -143,7 +143,7 @@ async function main() {
 	await seedBadegs(prisma);
 
 	console.log("");
-	await seedRunking(prisma);
+	await seedRanking(prisma);
 
 	console.log("\n🎉 All seeding completed successfully!");
 }

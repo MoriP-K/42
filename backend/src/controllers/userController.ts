@@ -57,19 +57,21 @@ export const getProfile = async (
 		}
 	});
 
-	// top runker
-	const runking = await prisma.user.findMany({
+	const ranking = await prisma.user.findMany({
 		take: 20,
 		orderBy: {
 			total_score: 'desc'
 		}
 	});
-	const runker = new Map<string, number>();
-	runking.forEach((topuser:any) => {
-			runker.set(topuser.name, topuser.total_score);
+
+	// jsonはmapを送信できない
+	type RankerMap = Record<string, number>;
+	const ranker:RankerMap[] = [];
+	ranking.forEach((topuser:any) => {
+			ranker.push(topuser.name, topuser.total_score);
 	});
 
-	const user_runk = await prisma.user.count({
+	const user_rank = await prisma.user.count({
 		orderBy: {
 			total_score: 'desc'
 		},
@@ -84,8 +86,8 @@ export const getProfile = async (
 		first_place_count: user.first_place_count ?? 0,
 		play_count: user.play_count ?? 0,
 		badges: badges ?? 0,
-		user_runk: user_runk ?? 0,
-		top_runker: runker ?? 0,
+		user_rank: user_rank ?? 0,
+		top_ranker: ranker ?? 0,
 	};
 	return data;
 };
