@@ -99,12 +99,6 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
 				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
-					console.log("ROUND_STARTED received:", {
-						word: data.word,
-						drawerId: data.drawerId,
-						isDrawer: data.drawerId === currentUserId,
-						currentUserId: currentUserIdRef.current,
-					});
 					updateRoundState(data.word, data.drawerId);
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
 					if (data.isGameOver) {

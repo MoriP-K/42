@@ -170,10 +170,6 @@ export const handleConnection = (socket: WebSocket) => {
 			} else if (data.type === WebSocketMessageType.CHAT) {
 				await handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {
-				console.log(
-					`Draw from ${currentClient.userId} in room ${currentClient.roomId}`,
-				);
-
 				if (
 					typeof data.x !== "number" ||
 					typeof data.y !== "number" ||
@@ -299,13 +295,6 @@ export const handleConnection = (socket: WebSocket) => {
 						currentRound.drawer_id,
 					);
 
-					console.log(
-						"drawerClient:",
-						drawerClient?.userId,
-						"drawer_id:",
-						currentRound.drawer_id,
-					);
-
 					drawerClient?.socket.send(
 						JSON.stringify({
 							type: WebSocketMessageType.ROUND_STARTED,
@@ -325,19 +314,7 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 						drawerClient?.socket,
 					);
-					// const latestRound = await prisma.round.findFirst({
-					// 	where: {
-					// 		room_id: Number(currentClient.roomId),
-					// 		started_at: null,
-					// 	},
-					// 	orderBy: { id: "desc" },
-					// });
-					// if (latestRound) {
-					// 	await prisma.round.update({
-					// 		where: { id: latestRound.id },
-					// 		data: { started_at: new Date() },
-					// 	});
-					// }
+
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
 					console.error(`❌ Failed to start round:`, error);
