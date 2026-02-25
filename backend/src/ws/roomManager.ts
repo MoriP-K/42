@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { prisma } from "../lib/prisma";
 import { RoomClient } from "../types/room/room";
 import { stopTimer } from "./timerManager";
 
@@ -9,6 +10,7 @@ const roomRoundState = new Map<
 	string,
 	{ roundId: number; word: string; drawerId: number }
 >();
+const roomScores = new Map<string, Map<number, number>>();
 
 export const joinRoom = (client: RoomClient) => {
 	// ルームが存在しなければ作成
@@ -21,6 +23,11 @@ export const joinRoom = (client: RoomClient) => {
 		room.add(client);
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
+
+		const scores = roomScores.get(client.roomId);
+		if (scores && !scores.has(client.userId)) {
+			scores.set(client.userId, 0);
+		}
 	}
 };
 
@@ -89,4 +96,50 @@ export const setRoundState = (
 
 export const getRoundState = (roomId: string) => {
 	return roomRoundState.get(roomId) ?? null;
+};
+
+export const initScores = (roomId: string) => {
+	const room = rooms.get(roomId);
+	if (!room) return;
+
+	const scores = new Map<number, number>();
+	room.forEach(client => {
+		scores.set(client.userId, 0);
+	});
+	roomScores.set(roomId, scores);
+};
+
+export const addScore = (roomId: string, userId: number, points: number) => {
+	const scores = roomScores.get(roomId);
+	if (!scores) return;
+
+	const current = scores.get(userId) ?? 0;
+	scores.set(userId, current + points);
+};
+
+export const getScores = (roomId: string) => {
+	return roomScores.get(roomId) ?? new Map<number, number>();
+};
+
+export const saveScoresToDB = async (roomId: string) => {
+	const scores = roomScores.get(roomId);
+	if (!scores) return;
+
+	const updates = [...scores].map(([userId, score]) =>
+		prisma.roomMember.update({
+			where: {
+				room_id_user_id: {
+					room_id: Number(roomId),
+					user_id: userId,
+				},
+			},
+			data: {
+				score: {
+					increment: score,
+				},
+			},
+		}),
+	);
+
+	await prisma.$transaction(updates);
 };

@@ -101,5 +101,7 @@ export const WebSocketMessageType = {
 	GAME_MODE_UPDATED: "gameModeUpdated",
 	CORRECT_ANSWER: "correctAnswer",
 	NEXT_WORD: "nextWord",
+	SKIP: "skip",
+	SKIPPED: "skipped",
 	ERROR: "error",
 };
