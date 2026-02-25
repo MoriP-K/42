@@ -201,7 +201,7 @@ const Game = () => {
 				.map((m: GameRoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
-					score: 0,
+					score: m.score,
 					isDrawing: false,
 				}));
 

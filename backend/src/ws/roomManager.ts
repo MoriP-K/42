@@ -21,6 +21,13 @@ export const joinRoom = (client: RoomClient) => {
 
 	const room = rooms.get(client.roomId);
 	if (room) {
+		for (const existing of room) {
+			if (existing.userId === client.userId) {
+				room.delete(existing);
+				break;
+			}
+		}
+
 		room.add(client);
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
@@ -100,6 +107,8 @@ export const getRoundState = (roomId: string) => {
 };
 
 export const initScores = (roomId: string) => {
+	if (roomScores.has(roomId)) return;
+
 	const room = rooms.get(roomId);
 	if (!room) return;
 

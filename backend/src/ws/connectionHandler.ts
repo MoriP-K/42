@@ -299,14 +299,21 @@ export const handleConnection = (socket: WebSocket) => {
 						currentRound.drawer_id,
 					);
 
-					if (drawerClient) {
-						broadcastToRoom(currentClient.roomId, {
+					console.log(
+						"drawerClient:",
+						drawerClient?.userId,
+						"drawer_id:",
+						currentRound.drawer_id,
+					);
+
+					drawerClient?.socket.send(
+						JSON.stringify({
 							type: WebSocketMessageType.ROUND_STARTED,
 							roundId: currentRound.id,
 							drawerId: currentRound.drawer_id,
 							word: word,
-						});
-					}
+						}),
+					);
 
 					broadcastToRoom(
 						currentClient.roomId,

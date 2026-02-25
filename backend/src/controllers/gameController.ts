@@ -27,6 +27,7 @@ export const getGameRoomDetails = async (
 				select: {
 					user_id: true,
 					role: true,
+					score: true,
 					is_ready: true,
 					user: {
 						select: {
