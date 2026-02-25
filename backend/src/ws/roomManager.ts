@@ -2,6 +2,7 @@ import { WebSocket } from "ws";
 import { prisma } from "../lib/prisma";
 import { RoomClient } from "../types/room/room";
 import { stopTimer } from "./timerManager";
+import { UserRole } from "../generated/prisma/enums";
 
 // キー：roomId (string)
 // 値: Set<RoomClient>
@@ -142,4 +143,36 @@ export const saveScoresToDB = async (roomId: string) => {
 	);
 
 	await prisma.$transaction(updates);
+};
+
+export const endRound = async (roomId: string): Promise<boolean | null> => {
+	// 現在のラウンド（started_atあり & ended_timeなし）を終了させる
+	const currentRound = getRoundState(roomId);
+	if (!currentRound) return null;
+
+	await prisma.round.update({
+		where: { id: currentRound.roundId },
+		data: { ended_time: new Date() },
+	});
+
+	// ended_timeありのラウンド数を数える
+	// PLAYER数を数える
+	const room = await prisma.room.findUnique({
+		where: { id: Number(roomId) },
+		include: { rounds: true, members: true },
+	});
+	if (!room) return null;
+
+	const completedRounds = room.rounds.filter(
+		r => r.ended_time !== null,
+	).length;
+	const playerCount = room.members.filter(
+		m => m.role === UserRole.PLAYER,
+	).length;
+
+	// ラウンド終了時にそのラウンドステートをクリア
+	roomRoundState.delete(roomId);
+
+	// 比較してisGameOverを返す
+	return completedRounds >= playerCount;
 };

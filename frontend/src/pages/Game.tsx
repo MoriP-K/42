@@ -107,10 +107,14 @@ const Game = () => {
 					});
 					updateRoundState(data.word, data.drawerId);
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
-					/**
-					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
-					 */
-					if (id) navigate(`/prepare/${id}`);
+					if (data.isGameOver) {
+						// Result画面へ遷移
+						// navigate(`/result/${id}`);
+						alert("ゲーム終了！");
+					} else {
+						// Prepare画面へ遷移
+						navigate(`/prepare/${id}`);
+					}
 				} else if (data.type === WebSocketMessageType.CORRECT_ANSWER) {
 					const systemMessage: Message = {
 						id: crypto.randomUUID(),

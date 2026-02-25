@@ -318,19 +318,19 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 						drawerClient?.socket,
 					);
-					const latestRound = await prisma.round.findFirst({
-						where: {
-							room_id: Number(currentClient.roomId),
-							started_at: null,
-						},
-						orderBy: { id: "desc" },
-					});
-					if (latestRound) {
-						await prisma.round.update({
-							where: { id: latestRound.id },
-							data: { started_at: new Date() },
-						});
-					}
+					// const latestRound = await prisma.round.findFirst({
+					// 	where: {
+					// 		room_id: Number(currentClient.roomId),
+					// 		started_at: null,
+					// 	},
+					// 	orderBy: { id: "desc" },
+					// });
+					// if (latestRound) {
+					// 	await prisma.round.update({
+					// 		where: { id: latestRound.id },
+					// 		data: { started_at: new Date() },
+					// 	});
+					// }
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
 					console.error(`❌ Failed to start round:`, error);
