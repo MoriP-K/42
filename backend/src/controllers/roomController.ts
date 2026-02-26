@@ -22,6 +22,7 @@ import {
 import { updateReadyStatus } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
 import { broadcastToRoom } from "../ws/roomManager";
+import { tuple } from "zod";
 
 /*
  * POST /api/rooms ルーム作成
@@ -296,7 +297,18 @@ export const joinRoomByToken = async (
 		broadcastToRoom(String(roomId), { type: "memberJoined" });
 		return reply.code(200).send({ roomId });
 	} catch (error) {
-		console.error("Error:", error);
+		// Strict Mode の回避策
+		// 複数Requestが同時に来ると、roomMemberのupsertで競合し、2件目以降が500になることがある
+		const existing = await prisma.roomMember.findUnique({
+			where: {
+				room_id_user_id: { room_id: roomId, user_id: userId },
+			},
+		});
+		if (existing) {
+			broadcastToRoom(String(roomId), { type: "memberJoined" });
+			return reply.code(200).send({ roomId });
+		}
+		console.error("Error JoinRoom:", error);
 		return reply.code(500).send("Failed to join room");
 	}
 };
