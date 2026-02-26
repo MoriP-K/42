@@ -13,6 +13,7 @@ export interface GameRoomRound {
 }
 
 export interface GameDetails {
+	game_mode: string;
 	members: GameRoomMember[];
 	rounds: GameRoomRound[];
 }

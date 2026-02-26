@@ -15,6 +15,7 @@ interface CanvasProps {
 	clearTrigger: number;
 	isDrawer: boolean;
 	currentWord: string | null;
+	gameMode: string | null;
 }
 
 const Canvas = ({
@@ -23,10 +24,12 @@ const Canvas = ({
 	clearTrigger,
 	isDrawer,
 	currentWord,
+	gameMode,
 }: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [isEraser, setIsEraser] = useState(false);
+	const [isStrokeDone, setIsStrokeDone] = useState(false);
 	const [color, setColor] = useState("#000000");
 
 	useEffect(() => {
@@ -86,6 +89,13 @@ const Canvas = ({
 
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
+
+		if (isStrokeDone) {
+			ctx.fillStyle = "white";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			setIsStrokeDone(false);
+			socket?.send(JSON.stringify({ type: "clear" }));
+		}
 
 		ctx.beginPath();
 		ctx.moveTo(x, y);
@@ -155,6 +165,10 @@ const Canvas = ({
 		}
 
 		setIsDrawing(false);
+
+		if (gameMode === "ONE_STROKE") {
+			setIsStrokeDone(true);
+		}
 
 		if (socket && socket.readyState === WebSocket.OPEN) {
 			socket.send(
@@ -247,20 +261,24 @@ const Canvas = ({
 								aria-label={label}
 							/>
 						))}
-						<button
-							onClick={() => setIsEraser(!isEraser)}
-							className={`btn btn-sm
+						{gameMode === "DEFAULT" && (
+							<button
+								onClick={() => setIsEraser(!isEraser)}
+								className={`btn btn-sm
 								${isEraser ? "btn-outline btn-accent btn-active" : "btn-ghost"}
 							`}
-						>
-							消しゴム
-						</button>
-						<button
-							onClick={clearCanvas}
-							className="btn btn-sm btn-primary ml-auto"
-						>
-							クリア
-						</button>
+							>
+								消しゴム
+							</button>
+						)}
+						{gameMode === "DEFAULT" && (
+							<button
+								onClick={clearCanvas}
+								className="btn btn-sm btn-primary ml-auto"
+							>
+								クリア
+							</button>
+						)}
 					</div>
 				)}
 			</div>
