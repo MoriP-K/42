@@ -2,6 +2,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import * as bcrypt from "bcrypt";
 import { seedRooms } from "./roomSeeder";
 import { seedSessions } from "./sessionSeeder";
+import { seedBadegs } from "./badgesSeeder";
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,7 @@ async function main() {
 			name: "funa",
 			email: "funa@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -30,6 +32,7 @@ async function main() {
 			name: "ken",
 			email: "ken@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -40,6 +43,7 @@ async function main() {
 			name: "nusu",
 			email: "nusu@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -50,6 +54,7 @@ async function main() {
 			name: "mori",
 			email: "mori@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -60,6 +65,7 @@ async function main() {
 			name: "alice",
 			email: "alice@example.com",
 			password: hashedPassword,
+			is_profile_complete: true,
 		},
 	});
 
@@ -76,16 +82,28 @@ async function main() {
 		},
 	});
 
-	const socialButterfly = await prisma.badge.upsert({
+	const happyPlayer = await prisma.badge.upsert({
 		where: { id: 2 },
-		update: {},
+		update: {
+			name: "happy player",
+			description: "you played 5 times",
+		},
 		create: {
-			name: "Social Butterfly",
-			description: "Played with 5 different users.",
+			name: "happy player",
+			description: "you played 5 times",
 		},
 	});
 
-	console.log("✅ Badges seeded:", { firstWin, socialButterfly });
+	const richScore = await prisma.badge.upsert({
+		where: { id: 3 },
+		update: {},
+		create: {
+			name: "rich score",
+			description: "you get 100 score",
+		},
+	});
+
+	console.log("✅ Badges seeded:", { firstWin, happyPlayer, richScore });
 
 	// 3. Seed UserBadges
 	console.log("\n🎖️  Seeding user badges...");
@@ -112,6 +130,10 @@ async function main() {
 	// 5. Seed Sessions (for auth testing)
 	console.log("");
 	await seedSessions(prisma);
+
+	// 6. badges data & user score update (for profile)
+	console.log("");
+	await seedBadegs(prisma);
 
 	console.log("\n🎉 All seeding completed successfully!");
 }
