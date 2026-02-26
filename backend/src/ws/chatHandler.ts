@@ -64,13 +64,6 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 			data.text.trim().toLowerCase() ===
 			currentRound.word.trim().toLowerCase();
 
-		console.log("🔍 Debug:", {
-			text: data.text,
-			word: currentRound.word,
-			drawerId: currentRound.drawerId,
-			userId: client.userId,
-		});
-
 		if (isCorrect) {
 			// WebSocketで正解配信 + チャット送信
 			broadcastToRoom(client.roomId, {

@@ -99,18 +99,16 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.TIMER) {
 					setTimeLeft(data.timeLeft);
 				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
-					console.log("ROUND_STARTED received:", {
-						word: data.word,
-						drawerId: data.drawerId,
-						isDrawer: data.drawerId === currentUserId,
-						currentUserId: currentUserIdRef.current,
-					});
 					updateRoundState(data.word, data.drawerId);
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
-					/**
-					 * TODO: ラウンド終了時の処理（Prepare画面に戻るかResult画面に遷移するかなど）
-					 */
-					if (id) navigate(`/prepare/${id}`);
+					if (data.isGameOver) {
+						// Result画面へ遷移
+						// navigate(`/result/${id}`);
+						alert("ゲーム終了！");
+					} else {
+						// Prepare画面へ遷移
+						navigate(`/prepare/${id}`);
+					}
 				} else if (data.type === WebSocketMessageType.CORRECT_ANSWER) {
 					const systemMessage: Message = {
 						id: crypto.randomUUID(),
@@ -197,7 +195,7 @@ const Game = () => {
 				.map((m: GameRoomMember) => ({
 					id: m.user_id,
 					name: m.user.name,
-					score: 0,
+					score: m.score,
 					isDrawing: false,
 				}));
 

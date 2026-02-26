@@ -2,6 +2,7 @@ export interface GameRoomMember {
 	user_id: number;
 	role: string;
 	is_ready: boolean;
+	score: number;
 	user: { name: string };
 }
 

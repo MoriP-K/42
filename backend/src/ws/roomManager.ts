@@ -2,6 +2,7 @@ import { WebSocket } from "ws";
 import { prisma } from "../lib/prisma";
 import { RoomClient } from "../types/room/room";
 import { stopTimer } from "./timerManager";
+import { UserRole } from "../generated/prisma/enums";
 
 // キー：roomId (string)
 // 値: Set<RoomClient>
@@ -20,6 +21,26 @@ export const joinRoom = (client: RoomClient) => {
 
 	const room = rooms.get(client.roomId);
 	if (room) {
+		for (const existing of room) {
+			if (existing.userId === client.userId) {
+				try {
+					if (
+						existing.socket &&
+						existing.socket.readyState === WebSocket.OPEN
+					) {
+						existing.socket.close();
+					}
+				} catch (error) {
+					console.error(
+						`⚠️ Failed to close exsiting socket for user ${existing.userId} in room ${client.roomId}:`,
+						error,
+					);
+				}
+				room.delete(existing);
+				break;
+			}
+		}
+
 		room.add(client);
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
@@ -99,6 +120,8 @@ export const getRoundState = (roomId: string) => {
 };
 
 export const initScores = (roomId: string) => {
+	if (roomScores.has(roomId)) return;
+
 	const room = rooms.get(roomId);
 	if (!room) return;
 
@@ -134,12 +157,42 @@ export const saveScoresToDB = async (roomId: string) => {
 				},
 			},
 			data: {
-				score: {
-					increment: score,
-				},
+				score: score,
 			},
 		}),
 	);
 
 	await prisma.$transaction(updates);
+};
+
+export const endRound = async (roomId: string): Promise<boolean | null> => {
+	// 現在のラウンド（started_atあり & ended_timeなし）を終了させる
+	const currentRound = getRoundState(roomId);
+	if (!currentRound) return null;
+
+	await prisma.round.update({
+		where: { id: currentRound.roundId },
+		data: { ended_time: new Date() },
+	});
+
+	// ended_timeありのラウンド数を数える
+	// PLAYER数を数える
+	const completedRounds = await prisma.round.count({
+		where: {
+			room_id: Number(roomId),
+			ended_time: { not: null },
+		},
+	});
+	const playerCount = await prisma.roomMember.count({
+		where: {
+			room_id: Number(roomId),
+			role: UserRole.PLAYER,
+		},
+	});
+
+	// ラウンド終了時にそのラウンドステートをクリア
+	roomRoundState.delete(roomId);
+
+	// 比較してisGameOverを返す
+	return completedRounds >= playerCount;
 };
