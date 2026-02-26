@@ -22,7 +22,6 @@ import {
 import { updateReadyStatus } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
 import { broadcastToRoom } from "../ws/roomManager";
-import { tuple } from "zod";
 
 /*
  * POST /api/rooms ルーム作成

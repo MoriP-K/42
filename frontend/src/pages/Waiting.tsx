@@ -182,20 +182,6 @@ const Waiting = () => {
 		};
 	}, [roomId, user?.id, token, navigate]);
 
-	// URL招待で参加したメンバーをルームに追加する
-	useEffect(() => {
-		if (!token || !user?.id || !roomId) return;
-		const joinRoomByToken = async () => {
-			try {
-				await roomApi.joinRoomByToken(token);
-				getRoomDetails();
-			} catch (error) {
-				console.error("Error", error);
-			}
-		};
-		joinRoomByToken();
-	}, [token, user?.id, roomId, getRoomDetails]);
-
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
 		const targetUser = users.find(user => user.id === id);
