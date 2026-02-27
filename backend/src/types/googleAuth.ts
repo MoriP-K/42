@@ -1,3 +1,12 @@
+export type OAuthState = {
+	nonce: string;
+	mode: "login" | "register";
+};
+
+export type GoogleAuthQuerystring = {
+	mode?: string;
+};
+
 export type GoogleCallbackQuerystring = {
 	code?: string;
 	error?: string;
