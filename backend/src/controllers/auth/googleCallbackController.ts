@@ -7,7 +7,6 @@ import {
 	GoogleUserInfo,
 	OAuthState,
 } from "../../types/googleAuth";
-import { handleGoogleLogin } from "./googleLoginController";
 import { handleGoogleRegister } from "./googleRegisterController";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
@@ -54,6 +53,21 @@ export const googleAuth = async (
 	return reply.redirect(authUrl);
 };
 
+const parseModeFromCookieState = (
+	cookieStateRaw: string | undefined,
+): "login" | "register" | null => {
+	if (!cookieStateRaw) return null;
+	try {
+		const parsed = JSON.parse(cookieStateRaw) as OAuthState;
+		if (parsed.mode === "login" || parsed.mode === "register") {
+			return parsed.mode;
+		}
+		return null;
+	} catch {
+		return null;
+	}
+};
+
 const exchangeCodeForUserInfo = async (
 	code: string,
 ): Promise<GoogleUserInfo> => {
@@ -74,24 +88,14 @@ export const googleCallback = async (
 ) => {
 	const { code, error, state } = request.query;
 
-	// CookieのstateをJSONパース
+	// CookieのstateからmodeをパースしてerrrorBaseを決定
 	const cookieStateRaw = request.cookies?.oauth_state;
-	let parsedState: OAuthState | null = null;
-	try {
-		if (cookieStateRaw) {
-			parsedState = JSON.parse(cookieStateRaw) as OAuthState;
-		}
-	} catch {
+	const mode = parseModeFromCookieState(cookieStateRaw);
+	if (mode === null) {
 		reply.setCookie("oauth_state", "", { maxAge: 0, path: "/" });
 		return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");
 	}
-
-	const mode =
-		parsedState?.mode === "login" || parsedState?.mode === "register"
-			? parsedState.mode
-			: "login"; // エラーリダイレクト先のfallback
-	const errorBase =
-		FRONTEND_URL + (mode === "login" ? "/login" : "/register");
+	const errorBase = `${FRONTEND_URL}/${mode}`;
 
 	// Googleからエラーが返された場合（ユーザーが認証を拒否した場合など）
 	if (error) {
@@ -117,7 +121,7 @@ export const googleCallback = async (
 
 		// modeごとに処理
 		if (mode === "login") {
-			return await handleGoogleLogin(reply, userInfo);
+			//TODO: ログイン処理
 		} else if (mode === "register") {
 			return await handleGoogleRegister(reply, userInfo);
 		} else {
