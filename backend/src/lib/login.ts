@@ -5,6 +5,10 @@ import { AuthSuccessResponse } from "../types/auth/common";
 
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000; //1日
 
+/**
+ * セッションを作成し、session_id を Cookie にセットする
+ * ログイン処理したい時に呼び出す
+ */
 export const createSessionAndSetCookie = async (
 	reply: FastifyReply,
 	userId: number,

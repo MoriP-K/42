@@ -1,5 +1,9 @@
 import { prisma } from "./prisma";
 
+/**
+ * Google の sub（ユーザー識別子）で UserAuthentication を検索し、紐づく User を返す
+ * 該当なし（Googleアカウント未登録）の場合は null を返す
+ */
 export const findUserByGoogleSub = async (sub: string) => {
 	const userAuth = await prisma.userAuthentication.findUnique({
 		where: {
