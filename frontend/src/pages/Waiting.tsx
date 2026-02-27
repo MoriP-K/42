@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
-import { GameMode, type RoomDetails, type RoomMember } from "../types/room";
+import { GameMode, WebSocketMessageType, type RoomDetails, type RoomMember } from "../types/room";
 import Toast from "../components/Toast";
 import { createWebSocket } from "../api/wsClient";
 
@@ -21,10 +21,6 @@ const Waiting = () => {
 	const token = searchParams.get("token");
 	const currentUserId = user?.id;
 	const socketRef = useRef<WebSocket | null>(null);
-	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-		null,
-	);
-	const isMountedRef = useRef(false);
 
 	const getRoomDetails = useCallback(async () => {
 		try {
@@ -53,66 +49,91 @@ const Waiting = () => {
 		getRoomDetailsRef.current = getRoomDetails;
 	}, [getRoomDetails]);
 
+	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+		null,
+	);
+	const isMountedRef = useRef(true);
+	const reconnectAttemptRef = useRef(0);
+
+	// 参加者一覧: 初回 + WebSocketイベント駆動（ポーリングなし）
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
+
 		isMountedRef.current = true;
+		reconnectAttemptRef.current = 0;
+
 		const connect = () => {
 			const ws = createWebSocket();
+
 			ws.onopen = () => {
+				reconnectAttemptRef.current = 0;
 				ws.send(
 					JSON.stringify({
-						type: "join",
-						userId: Number(user?.id),
+						type: WebSocketMessageType.JOIN,
+						userId: Number(user.id),
 						roomId: String(roomId),
 					}),
 				);
 				getRoomDetailsRef.current();
 			};
-			socketRef.current = ws;
 
 			ws.onmessage = event => {
-				const data = JSON.parse(event.data);
-				if (data.type === "memberJoined") {
-					getRoomDetailsRef.current();
-				}
-				if (
-					data.type === "memberRoleUpdated" &&
-					data.userId != null &&
-					data.role != null
-				) {
-					setUsers(prev =>
-						prev.map(u =>
-							u.id === Number(data.userId)
-								? { ...u, role: data.role }
-								: u,
-						),
-					);
-				}
-				if (data.type === "gameModeUpdated") {
-					setGameMode(data.mode);
-				}
-				if (data.type === "navigateToPrepare" && data.roomId != null) {
-					navigate(`/prepare/${data.roomId}`);
-				}
-				if (data.type === "userLeft") {
-					getRoomDetailsRef.current();
+				try {
+					const data = JSON.parse(event.data);
+					if (data.type === "memberJoined") {
+						getRoomDetailsRef.current();
+					}
+					if (data.type === WebSocketMessageType.LEFT) {
+						getRoomDetailsRef.current();
+					}
+					if (
+						data.type === "memberRoleUpdated" &&
+						data.userId != null &&
+						data.role != null
+					) {
+						setUsers(prev =>
+							prev.map(u =>
+								u.id === Number(data.userId)
+									? { ...u, role: data.role }
+									: u,
+							),
+						);
+					}
+					if (data.type === "gameModeUpdated") {
+						setGameMode(data.mode);
+					}
+					if (data.type === "navigateToPrepare" && data.roomId != null) {
+						navigate(`/prepare/${data.roomId}`);
+					}
+				} catch (error) {
+					console.error("Failed to parse WebSocket message:", error);
 				}
 			};
-			ws.onerror = error => console.error("Websocket error:", error);
+
+			ws.onerror = error => {
+				console.error("WebSocket error:", error);
+			};
+
 			ws.onclose = () => {
-				if (!isMountedRef.current) {
-					return;
-				}
+				if (!isMountedRef.current) return;
+
+				const attempt = reconnectAttemptRef.current;
+				reconnectAttemptRef.current += 1;
+				const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+
 				reconnectTimeoutRef.current = setTimeout(() => {
 					reconnectTimeoutRef.current = null;
 					connect();
-				}, 1000);
+				}, delay);
 			};
+
 			socketRef.current = ws;
 		};
+
 		connect();
+
 		return () => {
-			isMountedRef.current = true;
+			isMountedRef.current = false;
 			if (reconnectTimeoutRef.current) {
 				clearTimeout(reconnectTimeoutRef.current);
 				reconnectTimeoutRef.current = null;

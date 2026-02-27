@@ -16,6 +16,11 @@ import {
 	leaveRoom,
 	broadcastToRoom,
 	findClientByUserId,
+	setRoundState,
+	initScores,
+	addScore,
+	getScores,
+	getRoundState,
 } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
@@ -89,6 +94,32 @@ export const handleConnection = (socket: WebSocket) => {
 
 				joinRoom(currentClient);
 
+				const activeRound = await prisma.round.findFirst({
+					where: {
+						room_id: Number(data.roomId),
+						started_at: { not: null },
+						ended_time: null,
+					},
+				});
+
+				if (activeRound && activeRound.word) {
+					setRoundState(
+						data.roomId,
+						activeRound.id,
+						activeRound.word,
+						activeRound.drawer_id,
+					);
+				}
+
+				if (data.userId === activeRound?.drawer_id) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.NEXT_WORD,
+							word: activeRound?.word,
+						}),
+					);
+				}
+
 				return;
 			}
 
@@ -137,12 +168,8 @@ export const handleConnection = (socket: WebSocket) => {
 					roomId: currentClient.roomId,
 				});
 			} else if (data.type === WebSocketMessageType.CHAT) {
-				handleChatMessage(currentClient, data);
+				await handleChatMessage(currentClient, data);
 			} else if (data.type === WebSocketMessageType.DRAW) {
-				console.log(
-					`Draw from ${currentClient.userId} in room ${currentClient.roomId}`,
-				);
-
 				if (
 					typeof data.x !== "number" ||
 					typeof data.y !== "number" ||
@@ -254,19 +281,28 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
+					setRoundState(
+						currentClient.roomId,
+						currentRound.id,
+						word,
+						currentRound.drawer_id,
+					);
+
+					initScores(currentClient.roomId);
+
 					const drawerClient = findClientByUserId(
 						currentClient.roomId,
 						currentRound.drawer_id,
 					);
 
-					if (drawerClient) {
-						broadcastToRoom(currentClient.roomId, {
+					drawerClient?.socket.send(
+						JSON.stringify({
 							type: WebSocketMessageType.ROUND_STARTED,
 							roundId: currentRound.id,
 							drawerId: currentRound.drawer_id,
 							word: word,
-						});
-					}
+						}),
+					);
 
 					broadcastToRoom(
 						currentClient.roomId,
@@ -278,23 +314,63 @@ export const handleConnection = (socket: WebSocket) => {
 						},
 						drawerClient?.socket,
 					);
-					const latestRound = await prisma.round.findFirst({
-						where: {
-							room_id: Number(currentClient.roomId),
-							started_at: null,
-						},
-						orderBy: { id: "desc" },
-					});
-					if (latestRound) {
-						await prisma.round.update({
-							where: { id: latestRound.id },
-							data: { started_at: new Date() },
-						});
-					}
+
 					startTimer(currentClient.roomId, ROUND_DURATION);
 				} catch (error) {
 					console.error(`❌ Failed to start round:`, error);
 				}
+			} else if (data.type === WebSocketMessageType.SKIP) {
+				if (!currentClient) {
+					console.log("❌ Not joined to any room");
+					return;
+				}
+
+				const currentRound = getRoundState(currentClient.roomId);
+				if (!currentRound) return;
+
+				if (currentClient.userId !== currentRound.drawerId) {
+					console.log("❌ Invalid sender");
+					return;
+				}
+
+				const word = selectRandomWord();
+
+				const result = await prisma.round.updateMany({
+					where: {
+						id: currentRound.roundId,
+						word: currentRound.word,
+					},
+					data: {
+						word: word,
+					},
+				});
+				if (result.count === 0) return;
+
+				addScore(currentClient.roomId, currentRound.drawerId, -1);
+
+				setRoundState(
+					currentClient.roomId,
+					currentRound.roundId,
+					word,
+					currentRound.drawerId,
+				);
+
+				broadcastToRoom(currentClient.roomId, {
+					type: WebSocketMessageType.SKIPPED,
+					scores: Object.fromEntries(getScores(currentClient.roomId)),
+				});
+
+				const drawerClient = findClientByUserId(
+					currentClient.roomId,
+					currentRound.drawerId,
+				);
+
+				drawerClient?.socket.send(
+					JSON.stringify({
+						type: WebSocketMessageType.NEXT_WORD,
+						word: word,
+					}),
+				);
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);

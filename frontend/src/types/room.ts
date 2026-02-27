@@ -52,6 +52,10 @@ export const WebSocketMessageType = {
 	ROUND_STARTED: "roundStarted",
 	ROUND_END: "roundEnd",
 	TIMER: "timer",
+	CORRECT_ANSWER: "correctAnswer",
+	NEXT_WORD: "nextWord",
+	SKIP: "skip",
+	SKIPPED: "skipped",
 	ERROR: "error",
 };
 

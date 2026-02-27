@@ -1,4 +1,4 @@
-import { broadcastToRoom } from "./roomManager";
+import { broadcastToRoom, endRound, saveScoresToDB } from "./roomManager";
 import { WebSocketMessageType, ROUND_DURATION } from "../types/room/room";
 interface RoomTimer {
 	roomId: string;
@@ -29,7 +29,7 @@ export const startTimer = (
 		timeLeft: timer.timeLeft,
 	});
 
-	timer.interval = setInterval(() => {
+	timer.interval = setInterval(async () => {
 		timer.timeLeft -= 1;
 
 		broadcastToRoom(roomId, {
@@ -39,9 +39,12 @@ export const startTimer = (
 
 		if (timer.timeLeft <= 0) {
 			stopTimer(roomId);
-
+			await saveScoresToDB(roomId);
+			const isGameOver = await endRound(roomId);
+			if (isGameOver === null) return;
 			broadcastToRoom(roomId, {
 				type: WebSocketMessageType.ROUND_END,
+				isGameOver: isGameOver,
 			});
 		}
 	}, 1000);
