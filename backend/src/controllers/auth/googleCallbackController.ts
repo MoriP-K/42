@@ -88,7 +88,7 @@ export const googleCallback = async (
 ) => {
 	const { code, error, state } = request.query;
 
-	// CookieのstateからmodeをパースしてerrrorBaseを決定
+	// CookieのstateからmodeをパースしてerrorBaseを決定
 	const cookieStateRaw = request.cookies?.oauth_state;
 	const mode = parseModeFromCookieState(cookieStateRaw);
 	if (mode === null) {
@@ -118,7 +118,9 @@ export const googleCallback = async (
 
 	try {
 		const userInfo = await exchangeCodeForUserInfo(code);
-
+		if (!userInfo.email || !userInfo.email_verified) {
+			return reply.redirect(errorBase + "?error=server_error");
+		}
 		// modeごとに処理
 		if (mode === "login") {
 			//TODO: ログイン処理
