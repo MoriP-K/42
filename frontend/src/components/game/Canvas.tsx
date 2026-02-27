@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { WebSocketMessageType } from "../../types/room";
+import { GameMode, WebSocketMessageType } from "../../types/room";
 
 export interface DrawData {
 	x: number;
@@ -15,7 +15,7 @@ interface CanvasProps {
 	clearTrigger: number;
 	isDrawer: boolean;
 	currentWord: string | null;
-	gameMode: string | null;
+	gameMode: (typeof GameMode)[keyof typeof GameMode] | null;
 }
 
 const Canvas = ({
@@ -166,7 +166,7 @@ const Canvas = ({
 
 		setIsDrawing(false);
 
-		if (gameMode === "ONE_STROKE") {
+		if (gameMode === GameMode.ONE_STROKE) {
 			setIsStrokeDone(true);
 		}
 
@@ -261,7 +261,7 @@ const Canvas = ({
 								aria-label={label}
 							/>
 						))}
-						{gameMode === "DEFAULT" && (
+						{gameMode !== GameMode.ONE_STROKE && (
 							<button
 								onClick={() => setIsEraser(!isEraser)}
 								className={`btn btn-sm
@@ -271,7 +271,7 @@ const Canvas = ({
 								消しゴム
 							</button>
 						)}
-						{gameMode === "DEFAULT" && (
+						{gameMode !== GameMode.ONE_STROKE && (
 							<button
 								onClick={clearCanvas}
 								className="btn btn-sm btn-primary ml-auto"
