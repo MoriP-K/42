@@ -1,20 +1,58 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { OAuth2Client } from "google-auth-library";
+import { randomUUID } from "crypto";
 import {
+	GoogleAuthQuerystring,
 	GoogleCallbackQuerystring,
 	GoogleUserInfo,
+	OAuthState,
 } from "../../types/googleAuth";
-import { createSessionAndSetCookie } from "../../lib/login";
+import { handleGoogleLogin } from "./googleLoginController";
+import { handleGoogleRegister } from "./googleRegisterController";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
 const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI ?? "";
+const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
 
 const oauth2Client = new OAuth2Client(
 	GOOGLE_CLIENT_ID,
 	GOOGLE_CLIENT_SECRET,
 	GOOGLE_REDIRECT_URI,
 );
+
+export const googleAuth = async (
+	request: FastifyRequest<{ Querystring: GoogleAuthQuerystring }>,
+	reply: FastifyReply,
+) => {
+	const { mode } = request.query;
+	if (mode !== "login" && mode !== "register") {
+		return reply.code(400).send({
+			message:
+				"modeパラメータは login または register である必要があります",
+		});
+	}
+
+	const nonce = randomUUID();
+	const oauthState: OAuthState = { nonce, mode };
+	const stateStr = JSON.stringify(oauthState);
+
+	reply.setCookie("oauth_state", stateStr, {
+		path: "/",
+		httpOnly: true,
+		sameSite: "lax",
+		secure: process.env.NODE_ENV === "production",
+		maxAge: 60 * 10, // 10分
+	});
+
+	const authUrl = oauth2Client.generateAuthUrl({
+		access_type: "online",
+		scope: ["openid", "email", "profile"],
+		state: stateStr,
+	});
+
+	return reply.redirect(authUrl);
+};
 
 const exchangeCodeForUserInfo = async (
 	code: string,
@@ -30,65 +68,65 @@ const exchangeCodeForUserInfo = async (
 	return userInfoRes.data;
 };
 
-const createGoogleUser = (string: email, string: sub) => {
-	const userAuth = findUserByGoogleSub(sub);
-	//TODO: UserAuthentication内の重複チェック
-	// TODO: user.emailの重複チェック
-	//TODO: DBへの保存
-};
-
-//TODO: return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");のように、エラーコードをクエリパラメータとして渡して返す
 export const googleCallback = async (
 	request: FastifyRequest<{ Querystring: GoogleCallbackQuerystring }>,
 	reply: FastifyReply,
 ) => {
 	const { code, error, state } = request.query;
 
-	if (error) {
-		return reply
-			.code(400)
-			.send({ message: "Google認証がキャンセルされました" });
+	// CookieのstateをJSONパース
+	const cookieStateRaw = request.cookies?.oauth_state;
+	let parsedState: OAuthState | null = null;
+	try {
+		if (cookieStateRaw) {
+			parsedState = JSON.parse(cookieStateRaw) as OAuthState;
+		}
+	} catch {
+		reply.setCookie("oauth_state", "", { maxAge: 0, path: "/" });
+		return reply.redirect(FRONTEND_URL + "/login?error=invalid_request");
 	}
 
-	// CSRF対策: stateの検証
-	const cookieState = request.cookies?.oauth_state;
-	if (!state || !cookieState || state !== cookieState) {
-		console.error("[googleCallback] state不一致", {
-			queryState: state,
-			cookieState: cookieState,
-		});
-		return reply.code(400).send({ message: "不正なリクエストです" });
+	const mode =
+		parsedState?.mode === "login" || parsedState?.mode === "register"
+			? parsedState.mode
+			: "login"; // エラーリダイレクト先のfallback
+	const errorBase =
+		FRONTEND_URL + (mode === "login" ? "/login" : "/register");
+
+	// Googleからエラーが返された場合（ユーザーが認証を拒否した場合など）
+	if (error) {
+		reply.setCookie("oauth_state", "", { maxAge: 0, path: "/" });
+		return reply.redirect(errorBase + "?error=invalid_request");
 	}
-	// 使用済みのstateを削除（再利用防止）
+
+	// state検証（CSRF対策）
+	if (!state || !cookieStateRaw || state !== cookieStateRaw) {
+		reply.setCookie("oauth_state", "", { maxAge: 0, path: "/" });
+		return reply.redirect(errorBase + "?error=invalid_request");
+	}
+
+	// 使用済みstateを削除（再利用防止）
 	reply.setCookie("oauth_state", "", { maxAge: 0, path: "/" });
 
 	if (!code) {
-		return reply.code(400).send({ message: "認証コードが見つかりません" });
+		return reply.redirect(errorBase + "?error=invalid_request");
 	}
 
 	try {
 		const userInfo = await exchangeCodeForUserInfo(code);
-		const sub = userInfo.sub;
-		const email = userInfo.email;
 
-		const user = createGoogleUser(email, sub);
-		if (!user) {
-			//TODO: すでに登録済みのユーザーです。エラー
+		// modeごとに処理
+		if (mode === "login") {
+			return await handleGoogleLogin(reply, userInfo);
+		} else if (mode === "register") {
+			return await handleGoogleRegister(reply, userInfo);
+		} else {
+			return reply.redirect(
+				FRONTEND_URL + "/login?error=invalid_request",
+			);
 		}
-		//セッション作成
-		await createSessionAndSetCookie(reply, user.id);
-
-		//名前入力画面へのリダイレクト
-		return reply.code(302).redirect("/setup-profile");
-		return reply.code(200).send({
-			message: "Google認証成功（デバッグ用レスポンス）",
-			email: userInfo.email,
-			name: userInfo.name,
-		});
 	} catch (err) {
 		console.error("[googleCallback] 予期しないエラー:", err);
-		return reply
-			.code(500)
-			.send({ message: "予期しないエラーが発生しました" });
+		return reply.redirect(errorBase + "?error=server_error");
 	}
 };
