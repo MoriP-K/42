@@ -8,6 +8,7 @@ import {
 	type Player,
 	WebSocketMessageType,
 	ROUND_DURATION,
+	GameMode,
 } from "../types/room";
 import { type GameDetails, type GameRoomMember } from "../types/game";
 import Timer from "../components/game/Timer";
@@ -28,7 +29,9 @@ const Game = () => {
 	const [isDrawer, setIsDrawer] = useState(false);
 	const [isSpectator, setIsSpectator] = useState(false);
 	const [currentWord, setCurrentWord] = useState<string | null>(null);
-	const [gameMode, setGameMode] = useState<string | null>(null);
+	const [gameMode, setGameMode] = useState<
+		(typeof GameMode)[keyof typeof GameMode] | null
+	>(null);
 
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ

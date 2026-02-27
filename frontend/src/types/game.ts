@@ -1,3 +1,5 @@
+import { GameMode } from "../types/room";
+
 export interface GameRoomMember {
 	user_id: number;
 	role: string;
@@ -13,7 +15,7 @@ export interface GameRoomRound {
 }
 
 export interface GameDetails {
-	game_mode: string;
+	game_mode: (typeof GameMode)[keyof typeof GameMode];
 	members: GameRoomMember[];
 	rounds: GameRoomRound[];
 }
