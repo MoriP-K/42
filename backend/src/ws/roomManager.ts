@@ -24,6 +24,12 @@ export const joinRoom = (client: RoomClient) => {
 		for (const existing of room) {
 			if (existing.userId === client.userId) {
 				room.delete(existing);
+				if (
+					existing.socket !== client.socket &&
+					existing.socket.readyState === WebSocket.OPEN
+				) {
+					existing.socket.close();
+				}
 				break;
 			}
 		}
@@ -190,5 +196,8 @@ export const isClientRegistered = (
 ): boolean => {
 	const room = rooms.get(roomId);
 	if (!room) return false;
-	return [...room].some(c => c.socket === socket);
+	for (const client of room) {
+		if (client.socket === socket) return true;
+	}
+	return false;
 };
