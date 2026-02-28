@@ -17,7 +17,9 @@ export interface ProfileSuccessResponse {
 	total_score: number;
 	first_place_count: number;
 	play_count: number;
-	// badges: number[];
+	badges: String[];
+	user_rank: number;
+	top_ranker: Record<string, number>[];
 }
 
 /**

@@ -23,6 +23,7 @@ export const getGameRoomDetails = async (
 			id: Number(request.params.roomId),
 		},
 		select: {
+			game_mode: true,
 			members: {
 				select: {
 					user_id: true,

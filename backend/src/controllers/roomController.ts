@@ -374,8 +374,19 @@ export const leaveRoom = async (
 
 		return reply.code(200).send({ success: true });
 	} catch (error) {
-		console.error("Error leaving room:", error);
-		return reply.code(500).send({ error: "Failed to leave room" });
+		// Strict Mode の回避策
+		// 複数Requestが同時に来ると、roomMemberのupsertで競合し、2件目以降が500になることがある
+		const existing = await prisma.roomMember.findUnique({
+			where: {
+				room_id_user_id: { room_id: roomId, user_id: userId },
+			},
+		});
+		if (existing) {
+			broadcastToRoom(String(roomId), { type: "memberJoined" });
+			return reply.code(200).send({ roomId });
+		}
+		console.error("Error JoinRoom:", error);
+		return reply.code(500).send("Failed to join room");
 	}
 };
 

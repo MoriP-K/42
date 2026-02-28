@@ -34,6 +34,7 @@ const Waiting = () => {
 	const [joinedViaToken, setJoinedViaToken] = useState<boolean | null>(
 		token ? null : true,
 	);
+	const hasJoinedRef = useRef(false);
 
 	const getRoomDetails = useCallback(async () => {
 		try {
@@ -158,7 +159,14 @@ const Waiting = () => {
 			};
 
 			ws.onerror = error => {
-				console.error("WebSocket error:", error);
+				if (ws.readyState !== WebSocket.OPEN) {
+					console.warn(
+						"WebSocket connection error (may retry):",
+						error,
+					);
+				} else {
+					console.error("WebSocket error:", error);
+				}
 			};
 
 			ws.onclose = () => {
@@ -182,7 +190,28 @@ const Waiting = () => {
 			socketRef.current = ws;
 		};
 
-		connect();
+		// 参加者をルームに追加後にWebSocketの通信を確立させ、最新の状態でフロントに反映する
+		const startConnection = async () => {
+			if (token) {
+				if (hasJoinedRef.current) {
+					connect();
+					return;
+				}
+				hasJoinedRef.current = true;
+				try {
+					await roomApi.joinRoomByToken(token);
+					getRoomDetailsRef.current();
+					connect();
+				} catch (error) {
+					hasJoinedRef.current = false;
+					console.error("Error:", error);
+				}
+			} else {
+				connect();
+			}
+		};
+
+		startConnection();
 
 		return () => {
 			isMountedRef.current = false;
