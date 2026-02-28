@@ -42,7 +42,6 @@ export const getProfile = async (
 	});
 	if (!user) return reply.code(404).send({ message: "User not found" });
 
-	// userbadgesから取得
 	const userBadgesWithDetails = await prisma.userBadge.findMany({
 		where: {
 			user_id: Number(userId),
@@ -51,16 +50,43 @@ export const getProfile = async (
 			badge: true,
 		},
 	});
+	const badges: string[] = [];
+	userBadgesWithDetails.forEach((ub: any) => {
+		if (ub.badge) {
+			badges.push(ub.badge.name);
+		}
+	});
 
-	// 取得した結果からバッジの実体だけを取り出す場合
-	// const badges = userBadgesWithDetails.map((ub) => ub.badge);
+	const ranking = await prisma.user.findMany({
+		take: 20,
+		orderBy: {
+			total_score: "desc",
+		},
+	});
+
+	type RankerMap = Record<string, number>;
+	const ranker: RankerMap[] = [];
+	ranking.forEach((topuser: any) => {
+		ranker.push(topuser.name, topuser.total_score);
+	});
+
+	const user_rank = await prisma.user.count({
+		orderBy: {
+			total_score: "desc",
+		},
+		where: {
+			total_score: { gt: user.total_score ?? 0 },
+		},
+	});
 
 	const data: ProfileSuccessResponse = {
 		name: user.name,
 		total_score: user.total_score ?? 0,
 		first_place_count: user.first_place_count ?? 0,
 		play_count: user.play_count ?? 0,
-		// badges: badges.badges ?? 0,
+		badges: badges ?? 0,
+		user_rank: user_rank ?? 0,
+		top_ranker: ranker ?? 0,
 	};
 	return data;
 };

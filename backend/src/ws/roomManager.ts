@@ -23,25 +23,18 @@ export const joinRoom = (client: RoomClient) => {
 	if (room) {
 		for (const existing of room) {
 			if (existing.userId === client.userId) {
-				try {
-					if (
-						existing.socket &&
-						existing.socket.readyState === WebSocket.OPEN
-					) {
-						existing.socket.close();
-					}
-				} catch (error) {
-					console.error(
-						`⚠️ Failed to close exsiting socket for user ${existing.userId} in room ${client.roomId}:`,
-						error,
-					);
-				}
 				room.delete(existing);
+				if (
+					existing.socket !== client.socket &&
+					existing.socket.readyState === WebSocket.OPEN
+				) {
+					existing.socket.close();
+				}
 				break;
 			}
 		}
-
 		room.add(client);
+
 		console.log(`✅ User ${client.userId} joined room ${client.roomId}`);
 		console.log(`📈 Room ${client.roomId} now has ${room.size} members`);
 
@@ -195,4 +188,16 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 
 	// 比較してisGameOverを返す
 	return completedRounds >= playerCount;
+};
+
+export const isClientRegistered = (
+	roomId: string,
+	socket: WebSocket,
+): boolean => {
+	const room = rooms.get(roomId);
+	if (!room) return false;
+	for (const client of room) {
+		if (client.socket === socket) return true;
+	}
+	return false;
 };
