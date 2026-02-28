@@ -21,6 +21,7 @@ import {
 	addScore,
 	getScores,
 	getRoundState,
+	isClientRegistered,
 } from "./roomManager";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
@@ -379,12 +380,13 @@ export const handleConnection = (socket: WebSocket) => {
 
 	socket.on("close", () => {
 		if (currentClient) {
-			broadcastToRoom(currentClient.roomId, {
-				type: WebSocketMessageType.LEFT,
-				userId: currentClient.userId,
-			});
-
-			leaveRoom(currentClient);
+			if (isClientRegistered(currentClient.roomId, socket)) {
+				broadcastToRoom(currentClient.roomId, {
+					type: WebSocketMessageType.LEFT,
+					userId: currentClient.userId,
+				});
+				leaveRoom(currentClient);
+			}
 		}
 		console.log("🔌 Client disconnected");
 	});
