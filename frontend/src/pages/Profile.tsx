@@ -1,21 +1,10 @@
 import { useEffect, useState } from "react";
 import { userApi } from "../api/userApi";
 import Footer from "../components/footer/Footer";
-import test1 from "../images/badges/food_kakuni_manju.png";
-import test2 from "../images/badges/food_ika_ikidukuri_naruko.png";
-import test3 from "../images/badges/food_kanazawa_curry.png";
-import test4 from "../images/badges/food_nasu_yakinasu.png";
+import { type profileData } from "../types/profile";
+import { BadgeImage } from "../components/profile/badges";
 
 const Profile = () => {
-	interface profileData {
-		name: string;
-		total_score: number;
-		first_place_count: number;
-		play_count: number;
-		// badges: string[];
-	}
-
-	// 1ユーザのデータがそのまま帰ってくる
 	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -33,25 +22,6 @@ const Profile = () => {
 
 		fetchProfile();
 	}, []);
-
-	// バッジは直近で取得したもの３つを表示する
-	// 画像のマッピング（Record型を使用）
-	const imageMap: Record<string, string> = {
-		first: test1,
-		second: test2,
-		third: test3,
-		fource: test4,
-	};
-
-	const MyComponent = ({ rank }: { rank: string }) => {
-		return (
-			<img
-				src={imageMap[rank]} // 型の「Rank」ではなく、小文字の変数「rank」を使う
-				alt={`${rank} test`}
-				width={100}
-			/>
-		);
-	};
 
 	if (isLoading) {
 		return <div className="p-10">読み込み中...</div>;
@@ -71,10 +41,41 @@ const Profile = () => {
 
 			<div>
 				<p className="font-bold">バッジ</p>
-				{/* <p>バッジ: {profileData.badges}</p> */}
-				<MyComponent rank="first" />
-				<MyComponent rank="second" />
-				<MyComponent rank="third" />
+				<div className="flex flex-wrap gap-4 mt-2">
+					{profileData.badges && profileData.badges.length > 0 ? (
+						profileData.badges.map((badgeName, index) => (
+							<BadgeImage key={index} name={badgeName} />
+						))
+					) : (
+						<p className="text-gray-400">
+							まだバッジを持っていません
+						</p>
+					)}
+				</div>
+			</div>
+
+			<div>
+				<p className="font-bold">リーダーボード</p>
+				<p> 自分の順位： {profileData.user_rank + 1}位</p>
+				<div className="flex flex-wrap gap-4 mt-2">
+					{profileData.top_ranker ? (
+						Object.entries(profileData.top_ranker).map(
+							([name, score]) => (
+								<div
+									key={name}
+									className="flex justify-between w-48"
+								>
+									<span>{name}</span>
+									<span>{score}点</span>
+								</div>
+							),
+						)
+					) : (
+						<p className="text-gray-400">
+							まだランキングはありません
+						</p>
+					)}
+				</div>
 			</div>
 			<Footer></Footer>
 		</div>
