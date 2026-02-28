@@ -39,6 +39,12 @@ const Game = () => {
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
 
+	const socketRef = useRef<WebSocket | null>(null);
+	const reconnectAttemptRef = useRef(0);
+	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+		null,
+	);
+
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
@@ -58,12 +64,16 @@ const Game = () => {
 	useEffect(() => {
 		if (!currentUserId || !id) return;
 
-		const ws = createWebSocket();
+		let cancelConnect: (() => void) | null = null;
 
-		ws.onopen = () => {
-			console.log("✅ WebSocket connected");
+		const connect = () => {
+			let cancelled = false;
 
-			if (id) {
+			const ws = createWebSocket();
+
+			ws.onopen = () => {
+				console.log("✅ WebSocket connected");
+
 				ws.send(
 					JSON.stringify({
 						type: WebSocketMessageType.JOIN,
@@ -73,104 +83,133 @@ const Game = () => {
 				);
 
 				checkAndStartRound(ws);
-			}
-		};
+			};
 
-		ws.onmessage = event => {
-			try {
-				const data = JSON.parse(event.data);
+			ws.onmessage = event => {
+				try {
+					const data = JSON.parse(event.data);
 
-				if (data.type === WebSocketMessageType.CHAT) {
-					const newMessage: Message = {
-						id: data.id,
-						sender: data.sender,
-						text: data.text,
-						timestamp: new Date(data.timestamp),
-					};
-					setMessages(prev => [...prev, newMessage]);
-				} else if (data.type === WebSocketMessageType.DRAW) {
-					setDrawData({
-						x: data.x,
-						y: data.y,
-						color: data.color,
-						lineWidth: data.lineWidth,
-						isStart: data.isStart,
-					});
-				} else if (data.type === WebSocketMessageType.DRAW_END) {
-					setDrawData(null);
-				} else if (data.type === WebSocketMessageType.CLEAR) {
-					setClearTrigger(prev => prev + 1);
-				} else if (data.type === WebSocketMessageType.TIMER) {
-					setTimeLeft(data.timeLeft);
-				} else if (data.type === WebSocketMessageType.ROUND_STARTED) {
-					updateRoundState(data.word, data.drawerId);
-				} else if (data.type === WebSocketMessageType.ROUND_END) {
-					if (data.isGameOver) {
-						// Result画面へ遷移
-						navigate(`/result/${id}`);
-						// alert("ゲーム終了！");
-					} else {
-						// Prepare画面へ遷移
-						navigate(`/prepare/${id}`);
+					if (data.type === WebSocketMessageType.CHAT) {
+						const newMessage: Message = {
+							id: data.id,
+							sender: data.sender,
+							text: data.text,
+							timestamp: new Date(data.timestamp),
+						};
+						setMessages(prev => [...prev, newMessage]);
+					} else if (data.type === WebSocketMessageType.DRAW) {
+						setDrawData({
+							x: data.x,
+							y: data.y,
+							color: data.color,
+							lineWidth: data.lineWidth,
+							isStart: data.isStart,
+						});
+					} else if (data.type === WebSocketMessageType.DRAW_END) {
+						setDrawData(null);
+					} else if (data.type === WebSocketMessageType.CLEAR) {
+						setClearTrigger(prev => prev + 1);
+					} else if (data.type === WebSocketMessageType.TIMER) {
+						setTimeLeft(data.timeLeft);
+					} else if (
+						data.type === WebSocketMessageType.ROUND_STARTED
+					) {
+						updateRoundState(data.word, data.drawerId);
+					} else if (data.type === WebSocketMessageType.ROUND_END) {
+						if (data.isGameOver) {
+							// Result画面へ遷移
+							navigate(`/result/${id}`);
+							// alert("ゲーム終了！");
+						} else {
+							// Prepare画面へ遷移
+							navigate(`/prepare/${id}`);
+						}
+					} else if (
+						data.type === WebSocketMessageType.CORRECT_ANSWER
+					) {
+						const systemMessage: Message = {
+							id: crypto.randomUUID(),
+							sender: "system",
+							text: `🥳 ${data.sender}が正解しました！`,
+							timestamp: new Date(),
+						};
+						setMessages(prev => [...prev, systemMessage]);
+
+						if (data.scores) {
+							setPlayers(prev =>
+								prev.map(p => ({
+									...p,
+									score: data.scores[p.id] ?? p.score,
+								})),
+							);
+						}
+					} else if (data.type === WebSocketMessageType.NEXT_WORD) {
+						setCurrentWord(data.word);
+					} else if (data.type === WebSocketMessageType.SKIPPED) {
+						if (data.scores) {
+							setPlayers(prev =>
+								prev.map(p => ({
+									...p,
+									score: data.scores[p.id] ?? p.score,
+								})),
+							);
+						}
+
+						const systemMessage: Message = {
+							id: crypto.randomUUID(),
+							sender: "system",
+							text: "⏩ お題がスキップされました",
+							timestamp: new Date(),
+						};
+						setMessages(prev => [...prev, systemMessage]);
+
+						setClearTrigger(prev => prev + 1);
 					}
-				} else if (data.type === WebSocketMessageType.CORRECT_ANSWER) {
-					const systemMessage: Message = {
-						id: crypto.randomUUID(),
-						sender: "system",
-						text: `🥳 ${data.sender}が正解しました！`,
-						timestamp: new Date(),
-					};
-					setMessages(prev => [...prev, systemMessage]);
-
-					if (data.scores) {
-						setPlayers(prev =>
-							prev.map(p => ({
-								...p,
-								score: data.scores[p.id] ?? p.score,
-							})),
-						);
-					}
-				} else if (data.type === WebSocketMessageType.NEXT_WORD) {
-					setCurrentWord(data.word);
-				} else if (data.type === WebSocketMessageType.SKIPPED) {
-					if (data.scores) {
-						setPlayers(prev =>
-							prev.map(p => ({
-								...p,
-								score: data.scores[p.id] ?? p.score,
-							})),
-						);
-					}
-
-					const systemMessage: Message = {
-						id: crypto.randomUUID(),
-						sender: "system",
-						text: "⏩ お題がスキップされました",
-						timestamp: new Date(),
-					};
-					setMessages(prev => [...prev, systemMessage]);
-
-					setClearTrigger(prev => prev + 1);
+				} catch (error) {
+					console.error("❌ Failed to parse message:", error);
 				}
-			} catch (error) {
-				console.error("❌ Failed to parse message:", error);
-			}
+			};
+
+			ws.onerror = error => {
+				console.error("❌ WebSocket error: ", error);
+			};
+
+			ws.onclose = () => {
+				console.log("🔌 WebSocket disconnected");
+				if (cancelled) return;
+
+				const attempt = reconnectAttemptRef.current;
+				reconnectAttemptRef.current += 1;
+				const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+
+				reconnectTimeoutRef.current = setTimeout(() => {
+					reconnectTimeoutRef.current = null;
+					cancelConnect = connect();
+				}, delay);
+			};
+
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setSocket(ws);
+			socketRef.current = ws;
+
+			return () => {
+				cancelled = true;
+			};
 		};
 
-		ws.onerror = error => {
-			console.error("❌ WebSocket error: ", error);
-		};
-
-		ws.onclose = () => {
-			console.log("🔌 WebSocket disconnected");
-		};
-
-		// eslint-disable-next-line react-hooks/set-state-in-effect
-		setSocket(ws);
+		cancelConnect = connect();
 
 		return () => {
-			ws.close();
-			setSocket(null);
+			cancelConnect?.();
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (socketRef.current) {
+				socketRef.current.close();
+				socketRef.current = null;
+				setSocket(null);
+			}
 		};
 	}, [currentUserId, id]);
 
