@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Waiting from "./pages/Waiting";
 import Prepare from "./pages/Prepare";
 import Game from "./pages/Game";
+import Result from "./pages/Result";
 import TermsOfService from "./pages/TermsOfService";
 import AccountRegister from "./pages/AccountRegister";
 import PasswordResetSendMail from "./pages/PasswordResetSendMail";
@@ -74,6 +75,7 @@ const App = () => {
 					<Route path="waiting/:id" element={<Waiting />} />
 					<Route path="prepare/:id" element={<Prepare />} />
 					<Route path="game/:id" element={<Game />} />
+					<Route path="result/:id" element={<Result />} />
 					<Route path="profile" element={<Profile />} />
 				</Route>
 

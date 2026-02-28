@@ -107,8 +107,8 @@ const Game = () => {
 				} else if (data.type === WebSocketMessageType.ROUND_END) {
 					if (data.isGameOver) {
 						// Result画面へ遷移
-						// navigate(`/result/${id}`);
-						alert("ゲーム終了！");
+						navigate(`/result/${id}`);
+						// alert("ゲーム終了！");
 					} else {
 						// Prepare画面へ遷移
 						navigate(`/prepare/${id}`);
