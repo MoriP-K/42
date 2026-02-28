@@ -25,7 +25,11 @@ const RequireGuest = ({ children }: { children: ReactNode }) => {
 	}, [isAuthenticated, isChecking, isInitialized, refreshAuth]);
 
 	// ログイン済みの場合はホーム画面にリダイレクト
-	if (isAuthenticated) return <Navigate to="/" replace />;
+	const redirectEnabled =
+		import.meta.env.VITE_AUTH_REDIRECT_ENABLED !== "false";
+
+	// リダイレクトが有効かつログイン済みの場合はホーム画面にリダイレクト
+	if (redirectEnabled && isAuthenticated) return <Navigate to="/" replace />;
 
 	// /api/me確認中ならローディング表示
 	if (!isInitialized || isChecking) {

@@ -7,6 +7,7 @@ import {
 	updateRoomMemberReady,
 	getRoomMembers,
 	joinRoomByToken,
+	leaveRoom,
 	createRound,
 } from "../controllers/roomController";
 
@@ -21,5 +22,6 @@ export async function roomRoutes(fastify: FastifyInstance) {
 	fastify.patch("/rooms/:roomId/game-mode", updateGameMode);
 	fastify.get("/rooms/:roomId/members", getRoomMembers);
 	fastify.post("/rooms/join", joinRoomByToken);
+	fastify.post("/rooms/:roomId/leave", leaveRoom);
 	fastify.post("/rooms/:roomId/round", createRound);
 }

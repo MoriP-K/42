@@ -5,7 +5,12 @@ import Footer from "../components/footer/Footer";
 
 function Home() {
 	const navigate = useNavigate();
-	const { isAuthenticated, user } = useAuth();
+	const { isAuthenticated, user, logout } = useAuth();
+
+	const handleLogout = async () => {
+		await logout();
+		navigate("/login");
+	};
 
 	const handleCreateRoom = async () => {
 		if (!isAuthenticated || !user) return;
@@ -23,9 +28,17 @@ function Home() {
 			{/* Navbar */}
 			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
 				<div className="flex-1">
-					<a className="btn btn-ghost text-xl text-white">
+					<Link to="/" className="btn btn-ghost text-xl text-white">
 						🎨 おえかきの森
-					</a>
+					</Link>
+				</div>
+				<div className="flex-none gap-2">
+					<button
+						onClick={handleLogout}
+						className="btn btn-primary btn-sm"
+					>
+						ログアウト
+					</button>
 				</div>
 			</div>
 

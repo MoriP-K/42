@@ -31,4 +31,13 @@ export const authApi = {
 			credentials: "include",
 		});
 	},
+
+	// POST /api/logout
+	logout: async () => {
+		return apiClient("/logout", {
+			method: "POST",
+			body: JSON.stringify({}),
+			credentials: "include",
+		});
+	},
 };
