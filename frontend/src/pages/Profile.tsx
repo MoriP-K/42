@@ -5,7 +5,6 @@ import { type profileData } from "../types/profile";
 import { BadgeImage } from "../components/profile/badges";
 
 const Profile = () => {
-
 	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
