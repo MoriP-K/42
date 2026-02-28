@@ -1,8 +1,8 @@
 import { PrismaClient } from "../../src/generated/prisma/client";
 import * as bcrypt from "bcrypt";
 
-export async function seedRunking(prisma: PrismaClient) {
-	console.log("🔐 Seeding runking testing...");
+export async function seedRanking(prisma: PrismaClient) {
+	console.log("🔐 Seeding ranking testing...");
 	const saltRounds = 10;
 	const hashedPassword = await bcrypt.hash("Password123", saltRounds);
 

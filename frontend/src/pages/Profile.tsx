@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
 import { userApi } from "../api/userApi";
 import Footer from "../components/footer/Footer";
-import kakuni from "../images/badges/food_kakuni_manju.png";
-import ika from "../images/badges/food_ika_ikidukuri_naruko.png";
-import curry from "../images/badges/food_kanazawa_curry.png";
+import { type profileData } from "../types/profile";
+import { BadgeImage } from "../components/profile/badges";
 
 const Profile = () => {
-	interface profileData {
-		name: string;
-		total_score: number;
-		first_place_count: number;
-		play_count: number;
-		badges: string[];
-		user_rank: number;
-		top_ranker: { [key: string]: number };
-	}
 
 	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -33,19 +23,6 @@ const Profile = () => {
 
 		fetchProfile();
 	}, []);
-
-	const imageMap: Record<string, string> = {
-		firstWin: kakuni,
-		happyPlayer: ika,
-		richScore: curry,
-	};
-
-	const BadgeImage = ({ name }: { name: string }) => {
-		if (!imageMap[name]) return null;
-		else {
-			return <img src={imageMap[name]} width={100} />;
-		}
-	};
 
 	if (isLoading) {
 		return <div className="p-10">読み込み中...</div>;
