@@ -37,6 +37,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}, []);
 
+	const logout = useCallback(async () => {
+		try {
+			await authApi.logout();
+		} finally {
+			setUser(null);
+			setIsAuthenticated(false);
+		}
+	}, []);
+
 	useEffect(() => {
 		const currentPath = window.location.pathname;
 		if (PUBLIC_PATHS.includes(currentPath)) return;
@@ -52,8 +61,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 			isAuthenticated,
 			refreshAuth,
 			user,
+			logout,
 		}),
-		[isAuthenticated, refreshAuth, user],
+		[isAuthenticated, refreshAuth, user, logout],
 	);
 
 	return (

@@ -76,6 +76,16 @@ export interface RoomClient {
 }
 
 /**
+ * プレイヤー数制限
+ */
+export const MIN_PLAYERS = 2;
+
+/**
+ * ルーム全体の定員（プレイヤー+観戦者の合計）
+ */
+export const MAX_MEMBERS = 8;
+
+/**
  * ラウンドタイマー用の定数
  */
 export const ROUND_DURATION = 60;
@@ -85,6 +95,7 @@ export const ROUND_DURATION = 60;
  */
 export const WebSocketMessageType = {
 	JOIN: "join",
+	LEAVE: "leave",
 	LEFT: "userLeft",
 	CHAT: "chat",
 	DRAW: "draw",

@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { userApi } from "../api/userApi";
+import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { type profileData } from "../types/profile";
 import { BadgeImage } from "../components/profile/badges";
 
 const Profile = () => {
+	const navigate = useNavigate();
+	const { logout } = useAuth();
+
+	const handleLogout = async () => {
+		await logout();
+		navigate("/login");
+	};
+
+	// 1ユーザのデータがそのまま帰ってくる
 	const [profileData, setProfileData] = useState<profileData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -32,7 +43,20 @@ const Profile = () => {
 
 	return (
 		<div>
-			<h1 className="text-5xl font-bold">プロフィール</h1>
+			<div className="flex justify-between items-center mb-6">
+				<h1 className="text-5xl font-bold">プロフィール</h1>
+				<div className="flex gap-2">
+					<Link to="/" className="btn btn-primary btn-sm">
+						ホーム
+					</Link>
+					<button
+						onClick={handleLogout}
+						className="btn btn-error btn-sm"
+					>
+						ログアウト
+					</button>
+				</div>
+			</div>
 			<p>ユーザ名 {profileData.name}</p>
 			<p className="font-bold">実績</p>
 			<p>トータルスコア: {profileData.total_score}</p>

@@ -62,6 +62,13 @@ export const roomApi = {
 		});
 	},
 
+	leaveRoom: async (roomId: number) => {
+		return apiClient(`/rooms/${roomId}/leave`, {
+			method: "POST",
+			body: JSON.stringify({}),
+		});
+	},
+
 	createRound: async (roomId: number) => {
 		return apiClient(`/rooms/${roomId}/round`, {
 			method: "POST",

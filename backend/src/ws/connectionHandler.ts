@@ -4,6 +4,7 @@ import {
 	RoomClient,
 	WebSocketMessageType,
 	ROUND_DURATION,
+	MIN_PLAYERS,
 } from "../types/room/room";
 import {
 	CANVAS_WIDTH,
@@ -23,6 +24,7 @@ import {
 	getRoundState,
 	isClientRegistered,
 } from "./roomManager";
+import { leaveRoomMember } from "../services/roomService";
 import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
 import { selectRandomWord } from "./wordSelector";
@@ -134,6 +136,34 @@ export const handleConnection = (socket: WebSocket) => {
 				);
 
 				return;
+			} else if (data.type === WebSocketMessageType.LEAVE) {
+				try {
+					const roomId = Number(currentClient.roomId);
+					const userId = currentClient.userId;
+
+					const result = await leaveRoomMember(roomId, userId);
+
+					if (!result.success) {
+						socket.send(
+							JSON.stringify({
+								type: WebSocketMessageType.ERROR,
+								message: result.error,
+							}),
+						);
+						return;
+					}
+
+					leaveRoom(currentClient);
+					currentClient = null;
+				} catch (error) {
+					console.error("Error leaving room:", error);
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: "Failed to leave room",
+						}),
+					);
+				}
 			} else if (data.type === WebSocketMessageType.UPDATE_READY) {
 				if (typeof data.isReady !== "boolean") return;
 				try {
@@ -159,9 +189,22 @@ export const handleConnection = (socket: WebSocket) => {
 			} else if (data.type === WebSocketMessageType.PREPARE_STARTED) {
 				const room = await prisma.room.findUnique({
 					where: { id: Number(currentClient.roomId) },
-					select: { host_id: true },
+					include: {
+						members: {
+							where: { role: UserRole.PLAYER },
+						},
+					},
 				});
 				if (!room || room.host_id !== Number(currentClient.userId)) {
+					return;
+				}
+				if (room.members.length < MIN_PLAYERS) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: `プレイヤーは${MIN_PLAYERS}人以上必要です。`,
+						}),
+					);
 					return;
 				}
 				broadcastToRoom(String(currentClient.roomId), {
@@ -249,9 +292,20 @@ export const handleConnection = (socket: WebSocket) => {
 						return;
 					}
 
-					const allReady = room.members
-						.filter(m => m.role === UserRole.PLAYER)
-						.every(m => m.is_ready);
+					const players = room.members.filter(
+						m => m.role === UserRole.PLAYER,
+					);
+					if (players.length < MIN_PLAYERS) {
+						socket.send(
+							JSON.stringify({
+								type: WebSocketMessageType.ERROR,
+								message: `プレイヤーは${MIN_PLAYERS}人以上必要です。`,
+							}),
+						);
+						return;
+					}
+
+					const allReady = players.every(m => m.is_ready);
 					if (!allReady) {
 						console.log(
 							`⚠️ Not all members ready in room ${currentClient.roomId}`,

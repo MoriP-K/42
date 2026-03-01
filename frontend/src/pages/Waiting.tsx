@@ -6,6 +6,8 @@ import { GameRole, type User } from "../types/user";
 import {
 	GameMode,
 	WebSocketMessageType,
+	MIN_PLAYERS,
+	MAX_MEMBERS,
 	type RoomDetails,
 	type RoomMember,
 } from "../types/room";
@@ -18,6 +20,8 @@ const Waiting = () => {
 	const [users, setUsers] = useState<User[]>([]);
 	const [gameMode, setGameMode] = useState(GameMode.DEFAULT);
 	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState("");
+	const [toastType, setToastType] = useState<"success" | "error">("success");
 	const { id: roomId } = useParams();
 	const [hostId, setHostId] = useState(0);
 	const [isHost, setIsHost] = useState(false);
@@ -26,6 +30,10 @@ const Waiting = () => {
 	const token = searchParams.get("token");
 	const currentUserId = user?.id;
 	const socketRef = useRef<WebSocket | null>(null);
+	const leavingRef = useRef(false);
+	const [joinedViaToken, setJoinedViaToken] = useState<boolean | null>(
+		token ? null : true,
+	);
 	const hasJoinedRef = useRef(false);
 
 	const getRoomDetails = useCallback(async () => {
@@ -62,13 +70,29 @@ const Waiting = () => {
 	const reconnectAttemptRef = useRef(0);
 
 	// 参加者一覧: 初回 + WebSocketイベント駆動（ポーリングなし）
+	// 招待URLで参加する場合は joinRoomByToken 成功後にのみ WebSocket を接続
 	useEffect(() => {
 		if (!roomId || !user?.id) return;
+		if (token && joinedViaToken !== true) return;
 
 		isMountedRef.current = true;
 		reconnectAttemptRef.current = 0;
 
+		// 古いソケットの onclose でスケジュールされた再接続をキャンセル
+		if (reconnectTimeoutRef.current) {
+			clearTimeout(reconnectTimeoutRef.current);
+			reconnectTimeoutRef.current = null;
+		}
+
 		const connect = () => {
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (socketRef.current) {
+				socketRef.current.close();
+				socketRef.current = null;
+			}
 			const ws = createWebSocket();
 
 			ws.onopen = () => {
@@ -91,6 +115,12 @@ const Waiting = () => {
 					}
 					if (data.type === WebSocketMessageType.LEFT) {
 						getRoomDetailsRef.current();
+						if (
+							Number(data.userId) === user?.id &&
+							leavingRef.current
+						) {
+							navigate("/");
+						}
 					}
 					if (
 						data.type === "memberRoleUpdated" &&
@@ -114,6 +144,15 @@ const Waiting = () => {
 					) {
 						navigate(`/prepare/${data.roomId}`);
 					}
+					if (
+						data.type === WebSocketMessageType.ERROR &&
+						data.message
+					) {
+						setToastMessage(data.message);
+						setToastType("error");
+						setShowToast(true);
+						setTimeout(() => setShowToast(false), 3000);
+					}
 				} catch (error) {
 					console.error("Failed to parse WebSocket message:", error);
 				}
@@ -132,8 +171,13 @@ const Waiting = () => {
 
 			ws.onclose = () => {
 				if (!isMountedRef.current) return;
+				// このソケットが既に置き換えられている場合は再接続しない
+				if (socketRef.current !== ws) return;
 
+				const MAX_RECONNECT_ATTEMPTS = 5;
 				const attempt = reconnectAttemptRef.current;
+				if (attempt >= MAX_RECONNECT_ATTEMPTS) return;
+
 				reconnectAttemptRef.current += 1;
 				const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
 
@@ -180,7 +224,50 @@ const Waiting = () => {
 				socketRef.current = null;
 			}
 		};
-	}, [roomId, user?.id, token, navigate]);
+	}, [roomId, user?.id, navigate, token, joinedViaToken]);
+
+	// URL招待で参加したメンバーをルームに追加する（成功後に WebSocket 接続可能になる）
+	useEffect(() => {
+		if (!token || !user?.id || !roomId) return;
+		const doJoin = async () => {
+			try {
+				await roomApi.joinRoomByToken(token);
+				setJoinedViaToken(true);
+				getRoomDetails();
+			} catch (error: unknown) {
+				const isExpectedError =
+					error &&
+					typeof error === "object" &&
+					"status" in error &&
+					(error as { status: number }).status === 400;
+				if (!isExpectedError) {
+					console.error("Error joining room:", error);
+				}
+				const msg =
+					error &&
+					typeof error === "object" &&
+					"data" in error &&
+					error.data &&
+					typeof error.data === "object" &&
+					("error" in error.data || "message" in error.data)
+						? String(
+								"error" in error.data
+									? error.data.error
+									: error.data.message,
+							)
+						: "ルームへの参加に失敗しました";
+				setToastMessage(msg);
+				setToastType("error");
+				setShowToast(true);
+				setJoinedViaToken(false);
+				setTimeout(() => {
+					setShowToast(false);
+					navigate("/");
+				}, 2500);
+			}
+		};
+		doJoin();
+	}, [token, user?.id, roomId, getRoomDetails, navigate]);
 
 	const toggleRole = async (id: number) => {
 		// toggleするたびにAPIを叩く、そのプレイヤーのroleを変更する
@@ -198,13 +285,29 @@ const Waiting = () => {
 					user.id === id ? { ...user, role: newRole } : user,
 				),
 			);
-		} catch (error) {
+		} catch (error: unknown) {
 			setUsers(prevUser =>
 				prevUser.map(user =>
 					user.id === id ? { ...user, role: oldRole } : user,
 				),
 			);
-			console.log(error);
+			const msg =
+				error &&
+				typeof error === "object" &&
+				"data" in error &&
+				error.data &&
+				typeof error.data === "object" &&
+				("error" in error.data || "message" in error.data)
+					? String(
+							"error" in error.data
+								? error.data.error
+								: error.data.message,
+						)
+					: "ロールの変更に失敗しました";
+			setToastMessage(msg);
+			setToastType("error");
+			setShowToast(true);
+			setTimeout(() => setShowToast(false), 3000);
 		}
 	};
 
@@ -220,11 +323,20 @@ const Waiting = () => {
 		}
 	};
 
+	const playerCount = users.filter(u => u.role === GameRole.PLAYER).length;
+	const memberCount = users.length;
+	const canStartGame =
+		playerCount >= MIN_PLAYERS && memberCount <= MAX_MEMBERS;
+	const isPlayerFull = playerCount >= MAX_MEMBERS;
+	const isRoomFull = memberCount >= MAX_MEMBERS;
+
 	const copyToClipboard = () => {
 		const url = invitationToken
 			? `${window.location.origin}/waiting/${roomId}?token=${invitationToken}`
 			: window.location.href;
 		navigator.clipboard.writeText(url);
+		setToastMessage("招待URLをコピーしました！");
+		setToastType("success");
 		setShowToast(true);
 		setTimeout(() => setShowToast(false), 1500);
 	};
@@ -234,20 +346,44 @@ const Waiting = () => {
 		if (!isHost || !roomId || !ws || ws.readyState !== WebSocket.OPEN) {
 			return;
 		}
+		if (!canStartGame) return;
 		ws.send(
 			JSON.stringify({ type: "prepareStarted", roomId: String(roomId) }),
 		);
-		navigate(`/prepare/${roomId}`);
+	};
+
+	const handleLeaveRoom = () => {
+		const ws = socketRef.current;
+		if (!roomId || !user?.id) return;
+		if (!ws || ws.readyState !== WebSocket.OPEN) {
+			setToastMessage("接続を待っています...");
+			setToastType("error");
+			setShowToast(true);
+			setTimeout(() => setShowToast(false), 3000);
+			return;
+		}
+		leavingRef.current = true;
+		ws.send(
+			JSON.stringify({
+				type: WebSocketMessageType.LEAVE,
+			}),
+		);
 	};
 
 	return (
 		<>
 			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
 				{/* トースト通知 */}
-				{showToast && (
-					<Toast type="success" message="招待URLをコピーしました！" />
-				)}
-				<div>Waiting Game</div>
+				{showToast && <Toast type={toastType} message={toastMessage} />}
+				<div className="flex items-center justify-between w-full max-w-2xl">
+					<span>Waiting Game</span>
+					<button
+						onClick={handleLeaveRoom}
+						className="btn btn-ghost btn-sm text-gray-500 hover:text-error"
+					>
+						ルームを退出
+					</button>
+				</div>
 
 				{/* 参加者一覧セクション */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300">
@@ -280,8 +416,12 @@ const Waiting = () => {
 												toggleRole(member.id)
 											}
 											disabled={
-												!isHost &&
-												member.id !== currentUserId
+												(!isHost &&
+													member.id !==
+														currentUserId) ||
+												(member.role ===
+													GameRole.SPECTATOR &&
+													isPlayerFull)
 											}
 										/>
 									</div>
@@ -293,6 +433,11 @@ const Waiting = () => {
 
 				{/* 招待URLセクション */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
+					{isRoomFull && (
+						<p className="text-sm text-amber-600 font-medium mb-2">
+							ルームの定員は8人までです
+						</p>
+					)}
 					<button
 						onClick={copyToClipboard}
 						className="btn w-full text-md border-none bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
@@ -348,13 +493,18 @@ const Waiting = () => {
 
 				{/* ゲーム開始ボタン */}
 				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
+					{isHost && !canStartGame && (
+						<p className="text-sm text-amber-600 font-medium mb-2">
+							{`プレイヤーは${MIN_PLAYERS}人以上必要です`}
+						</p>
+					)}
 					<button
 						onClick={() =>
 							isHost ? handlePrepareClick() : undefined
 						}
-						disabled={!isHost}
+						disabled={!isHost || !canStartGame}
 						className={`btn w-full text-lg border-none shadow-xl transition-all duration-200 flex items-center justify-center gap-2 ${
-							isHost
+							isHost && canStartGame
 								? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
 								: "bg-gradient-to-r from-indigo-600/70 to-purple-600/70 text-white/90 cursor-not-allowed"
 						}`}
