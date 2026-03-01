@@ -37,11 +37,14 @@ export const googleAuth = async (
 	const oauthState: OAuthState = { nonce, mode };
 	const stateStr = JSON.stringify(oauthState);
 
+	const useSecure =
+		process.env.NODE_ENV === "production" ||
+		process.env.FRONTEND_URL?.startsWith("https://");
 	reply.setCookie("oauth_state", stateStr, {
 		path: "/",
 		httpOnly: true,
 		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
+		secure: useSecure,
 		maxAge: 60 * 10, // 10分
 	});
 
