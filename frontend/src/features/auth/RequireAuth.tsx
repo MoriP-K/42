@@ -11,7 +11,7 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
 	const [isInitialized, setIsInitialized] = useState(false);
 
 	const redirectEnabled =
-		import.meta.env.VITE_AUTH_REDIRECT_ENABLED !== "false";
+		import.meta.env.VITE_AUTH_REDIRECT_ENABLED === "true";
 
 	useEffect(() => {
 		// すでに認証済み、または初期化済み、または確認中なら何もしない

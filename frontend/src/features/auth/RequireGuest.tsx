@@ -26,7 +26,7 @@ const RequireGuest = ({ children }: { children: ReactNode }) => {
 
 	// ログイン済みの場合はホーム画面にリダイレクト
 	const redirectEnabled =
-		import.meta.env.VITE_AUTH_REDIRECT_ENABLED !== "false";
+		import.meta.env.VITE_AUTH_REDIRECT_ENABLED === "true";
 
 	// リダイレクトが有効かつログイン済みの場合はホーム画面にリダイレクト
 	if (redirectEnabled && isAuthenticated) return <Navigate to="/" replace />;
