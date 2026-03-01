@@ -378,6 +378,7 @@ export const handleConnection = (socket: WebSocket) => {
 					{
 						type: WebSocketMessageType.REMATCH_CREATED,
 						newRoomId: data.newRoomId,
+						token: data.token,
 					},
 					socket,
 				);

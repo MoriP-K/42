@@ -17,6 +17,7 @@ const Result = () => {
 	);
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 	const [newRoomId, setNewRoomId] = useState<number | null>(null);
+	const [rematchToken, setRematchToken] = useState<string | null>(null);
 
 	const socketRef = useRef<WebSocket | null>(null);
 
@@ -52,8 +53,10 @@ const Result = () => {
 
 		ws.onmessage = event => {
 			const data = JSON.parse(event.data);
+			console.log("📥 Result received:", data);
 			if (data.type === WebSocketMessageType.REMATCH_CREATED) {
 				setNewRoomId(data.newRoomId);
+				setRematchToken(data.token);
 			}
 		};
 
@@ -138,7 +141,8 @@ const Result = () => {
 						className="btn btn-secondary"
 						onClick={async () => {
 							if (!currentUserId) return;
-							if (newRoomId) {
+							if (newRoomId && rematchToken) {
+								await roomApi.joinRoomByToken(rematchToken);
 								await roomApi.leaveResult(Number(id));
 								navigate(`/waiting/${newRoomId}`);
 							} else {
@@ -148,6 +152,7 @@ const Result = () => {
 									JSON.stringify({
 										type: WebSocketMessageType.REMATCH_CREATED,
 										newRoomId: newRoom.id,
+										token: newRoom.invitation_token,
 									}),
 								);
 								await roomApi.leaveResult(Number(id));
