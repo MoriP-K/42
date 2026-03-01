@@ -17,11 +17,14 @@ export const logout = async (request: FastifyRequest, reply: FastifyReply) => {
 	}
 
 	// Cookieを削除（setCookie時と同じオプションが必要）
+	const useSecure =
+		process.env.NODE_ENV === "production" ||
+		process.env.FRONTEND_URL?.startsWith("https://");
 	reply.clearCookie(COOKIE_NAME, {
 		path: "/",
 		httpOnly: true,
 		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
+		secure: useSecure,
 		maxAge: 0,
 	});
 
