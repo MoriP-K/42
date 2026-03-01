@@ -31,12 +31,15 @@ export const createSessionAndSetCookie = async (
 		},
 	});
 
-	// Cookie に session_id をセット
+	// Cookie に session_id をセット（HTTPS 時は secure: true）
+	const useSecure =
+		process.env.NODE_ENV === "production" ||
+		process.env.FRONTEND_URL?.startsWith("https://");
 	reply.setCookie("session_id", newSession.id, {
 		path: "/",
 		httpOnly: true,
 		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
+		secure: useSecure,
 		expires: newSession.expires_at,
 	});
 

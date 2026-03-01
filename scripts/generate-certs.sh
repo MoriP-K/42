@@ -12,11 +12,12 @@ if [ -f "$CERT_DIR/cert.pem" ] && [ -f "$CERT_DIR/key.pem" ]; then
 	exit 0
 fi
 
-echo "自己署名証明書を生成中: $CERT_DIR"
+echo "自己署名証明書を生成中: $CERT_DIR (oekakinomori.com)"
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 	-keyout "$CERT_DIR/key.pem" \
 	-out "$CERT_DIR/cert.pem" \
-	-subj "/CN=localhost/O=ft_transcendence/C=JP"
+	-subj "/CN=oekakinomori.com/O=ft_transcendence/C=JP" \
+	-addext "subjectAltName=DNS:oekakinomori.com,DNS:www.oekakinomori.com"
 
 echo "完了: cert.pem, key.pem を生成しました"
 echo "ブラウザで「接続はプライベートではありません」と表示される場合は「詳細」→「安全でないサイトに進む」を選択してください"
