@@ -2,8 +2,8 @@ import type { FastifyRequest } from "fastify";
 import { prisma } from "./prisma";
 
 /**
- * sessionIDからuser_idを取得し、返す
- * sessionIDがない・無効なら、nullを返す
+ * sessionIDからuser_idを取得し、返す。
+ * sessionIDがない・セッションが無効(revoked/期限切れ)なら、nullを返す。
  */
 export const getUserIdFromSessionId = async (
 	sessionId: string | undefined,
@@ -12,10 +12,12 @@ export const getUserIdFromSessionId = async (
 
 	const session = await prisma.session.findUnique({
 		where: { id: sessionId },
-		select: { user_id: true },
+		select: { user_id: true, revoked_at: true, expires_at: true },
 	});
 
 	if (!session) return null;
+	if (session.revoked_at !== null) return null;
+	if (session.expires_at <= new Date()) return null;
 
 	return session.user_id;
 };

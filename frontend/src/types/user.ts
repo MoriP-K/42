@@ -11,6 +11,7 @@ export const PlayerRole = {
 export interface AuthUser {
 	id: number;
 	name: string;
+	is_profile_complete?: boolean;
 }
 
 export interface User {
