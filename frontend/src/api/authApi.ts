@@ -46,6 +46,7 @@ export const authApi = {
 		return apiClient("/me", {
 			method: "PATCH",
 			body: JSON.stringify(data),
+			credentials: "include",
 		});
 	},
 };
