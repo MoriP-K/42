@@ -12,6 +12,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RedirectLogin from "./pages/RedirectLogin";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import SetupProfile from "./pages/SetupProfile";
 import RequireAuth from "./features/auth/RequireAuth";
 import RequireGuest from "./features/auth/RequireGuest";
 
@@ -75,6 +76,7 @@ const App = () => {
 					<Route path="prepare/:id" element={<Prepare />} />
 					<Route path="game/:id" element={<Game />} />
 					<Route path="profile" element={<Profile />} />
+					<Route path="setup-profile" element={<SetupProfile />} />
 				</Route>
 
 				<Route path="/terms" element={<TermsOfService />} />

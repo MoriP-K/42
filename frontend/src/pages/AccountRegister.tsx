@@ -1,12 +1,21 @@
 import Footer from "../components/footer/Footer";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
 import { GoogleAccountRegister } from "../components/auth/GoogleAccountRegister";
 import BackButton from "../components/BackButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+
+const REGISTER_ERROR_MESSAGES: Record<string, string> = {
+	invalid_request:
+		"認証の有効期限が切れたか、不正なリクエストです。再度お試しください",
+	already_registered:
+		"すでに登録済みです。ログイン画面からログインしてください",
+	server_error:
+		"予期しないエラーが発生しました。時間をおいて再度お試しください",
+};
 
 type RegisterError =
 	| { type: "field"; field: "name" | "email" | "password"; message: string }
@@ -68,6 +77,8 @@ const validateRegisterForm = (
 
 const AccountRegister = () => {
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const location = useLocation();
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -78,6 +89,17 @@ const AccountRegister = () => {
 	>({});
 	const [serverError, setServerError] = useState<string | null>(null);
 	const [submitErrors, setSubmitErrors] = useState<FormErrors>({});
+
+	// OAuth コールバックの error を表示し、URL をクリーン
+	useEffect(() => {
+		const error = searchParams.get("error");
+		if (!error) return;
+		const message = REGISTER_ERROR_MESSAGES[error];
+		if (message) {
+			queueMicrotask(() => setServerError(message));
+		}
+		navigate(location.pathname, { replace: true });
+	}, [searchParams, location.pathname, navigate]);
 
 	const validationResult = useMemo(
 		() => validateRegisterForm(name, email, password, passwordConfirm),
