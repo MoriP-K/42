@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by nfunakos, yohatana, ken, kmoriyam.*
+_This project has been created as part of the 42 curriculum by nfunakos, yohatana, ken, kmoriyam._
 
 # Oekaki no Mori (おえかきの森)
 
@@ -27,47 +27,49 @@
 ### Environment Setup
 
 1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
+
+    ```bash
+    cp .env.example .env
+    ```
 
 2. Edit `.env` and configure the following variables:
-   - `DATABASE_URL` – PostgreSQL connection string (default: `postgresql://oekaki:password@localhost:5432/oekaki_db`)
-   - `JWT_SECRET` – Secret key for JWT signing (change in production)
-   - `VITE_API_URL` – Backend API URL for the frontend (default: `http://localhost:3000`)
-   - For Google OAuth: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL`
+    - `DATABASE_URL` – PostgreSQL connection string (default: `postgresql://oekaki:password@localhost:5432/oekaki_db`)
+    - `JWT_SECRET` – Secret key for JWT signing (change in production)
+    - `VITE_API_URL` – Backend API URL for the frontend (default: `http://localhost:3000`)
+    - For Google OAuth: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL`
 
 ### Running the Project
 
 1. Start all services with Docker Compose:
-   ```bash
-   docker compose up -d
-   ```
+
+    ```bash
+    docker compose up -d
+    ```
 
 2. Access the application:
-   - **Frontend**: http://localhost:5173
-   - **Backend API**: http://localhost:3000
-   - **Database**: localhost:5432 (PostgreSQL)
+    - **Frontend**: http://localhost:5173
+    - **Backend API**: http://localhost:3000
+    - **Database**: localhost:5432 (PostgreSQL)
 
 ### Local Development (without Docker)
 
 1. Start PostgreSQL (or use Docker for the database only)
 2. Run migrations:
-   ```bash
-   cd backend && npx prisma migrate dev
-   ```
+    ```bash
+    cd backend && npx prisma migrate dev
+    ```
 3. Seed the database (optional):
-   ```bash
-   cd backend && npx prisma db seed
-   ```
+    ```bash
+    cd backend && npx prisma db seed
+    ```
 4. Start the backend:
-   ```bash
-   cd backend && npm run dev
-   ```
+    ```bash
+    cd backend && npm run dev
+    ```
 5. Start the frontend:
-   ```bash
-   cd frontend && npm run dev
-   ```
+    ```bash
+    cd frontend && npm run dev
+    ```
 
 ---
 
@@ -91,8 +93,8 @@
 
 ## Team Information
 
-| Member   | Assigned Role(s) | Responsibilities |
-|----------|------------------|------------------|
+| Member   | Assigned Role(s)                          | Responsibilities          |
+| -------- | ----------------------------------------- | ------------------------- |
 | nfunakos | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
 | yohatana | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
 | ken      | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
@@ -121,28 +123,28 @@
 
 ### Frontend
 
-| Technology      | Version | Purpose                          |
-|-----------------|---------|----------------------------------|
-| React           | 19      | UI framework                     |
-| Vite            | 7       | Build tool and dev server        |
-| TypeScript      | 5.9     | Type safety                      |
-| React Router    | 7       | Client-side routing              |
-| Tailwind CSS    | 4       | Utility-first CSS                |
-| DaisyUI         | -       | Component library                |
+| Technology   | Version | Purpose                   |
+| ------------ | ------- | ------------------------- |
+| React        | 19      | UI framework              |
+| Vite         | 7       | Build tool and dev server |
+| TypeScript   | 5.9     | Type safety               |
+| React Router | 7       | Client-side routing       |
+| Tailwind CSS | 4       | Utility-first CSS         |
+| DaisyUI      | -       | Component library         |
 
 **Justification**: React and Vite provide a modern SPA experience with fast development and builds. TypeScript ensures type safety across the frontend. Tailwind and DaisyUI enable rapid, consistent UI development.
 
 ### Backend
 
-| Technology      | Version | Purpose                          |
-|-----------------|---------|----------------------------------|
-| Fastify         | 5       | Web framework                    |
-| Prisma          | 6       | ORM and database toolkit         |
-| TypeScript      | 5.9     | Type safety                      |
-| Zod             | -       | Schema validation                |
-| @fastify/websocket | -    | WebSocket support                |
-| bcrypt          | -       | Password hashing                 |
-| JWT             | -       | Session/authentication tokens    |
+| Technology         | Version | Purpose                       |
+| ------------------ | ------- | ----------------------------- |
+| Fastify            | 5       | Web framework                 |
+| Prisma             | 6       | ORM and database toolkit      |
+| TypeScript         | 5.9     | Type safety                   |
+| Zod                | -       | Schema validation             |
+| @fastify/websocket | -       | WebSocket support             |
+| bcrypt             | -       | Password hashing              |
+| JWT                | -       | Session/authentication tokens |
 
 **Justification**: Fastify offers high performance and a plugin-based architecture. Prisma provides type-safe database access and migrations. WebSocket support enables real-time game and chat features.
 
@@ -174,16 +176,16 @@ erDiagram
 
 ### Tables and Relationships
 
-| Table               | Description                                      | Key Fields                                                                 |
-|---------------------|--------------------------------------------------|----------------------------------------------------------------------------|
-| **User**            | User accounts and profile data                   | id, name, email, password, avatar, total_score, first_place_count, play_count |
-| **Session**         | User sessions (JWT/session management)           | id, user_id, expires_at                                                    |
-| **UserAuthentication** | OAuth provider links (e.g. Google)            | user_id, provider, provider_user_id                                         |
-| **Badge**           | Achievement badges                               | id, name, description                                                      |
-| **UserBadge**       | Many-to-many: users and badges                   | user_id, badge_id                                                          |
-| **Room**            | Game rooms                                       | id, host_id, game_mode, invitation_token, status                            |
-| **Round**           | Individual drawing rounds within a room          | id, room_id, drawer_id, word, winner_id, duration                           |
-| **RoomMember**      | Users in a room (players or spectators)          | room_id, user_id, is_ready, role, score                                     |
+| Table                  | Description                             | Key Fields                                                                    |
+| ---------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| **User**               | User accounts and profile data          | id, name, email, password, avatar, total_score, first_place_count, play_count |
+| **Session**            | User sessions (JWT/session management)  | id, user_id, expires_at                                                       |
+| **UserAuthentication** | OAuth provider links (e.g. Google)      | user_id, provider, provider_user_id                                           |
+| **Badge**              | Achievement badges                      | id, name, description                                                         |
+| **UserBadge**          | Many-to-many: users and badges          | user_id, badge_id                                                             |
+| **Room**               | Game rooms                              | id, host_id, game_mode, invitation_token, status                              |
+| **Round**              | Individual drawing rounds within a room | id, room_id, drawer_id, word, winner_id, duration                             |
+| **RoomMember**         | Users in a room (players or spectators) | room_id, user_id, is_ready, role, score                                       |
 
 ### Enums
 
@@ -195,15 +197,15 @@ erDiagram
 
 ## Features List
 
-| Feature                          | Team Member(s) | Description                                                                 |
-|----------------------------------|----------------|-----------------------------------------------------------------------------|
-| Email/Password Authentication    | mfunakos        | Registration, login, password reset via email                              |
-| Google OAuth                     | mfunakos         | Login and register with Google account                                     |
-| Room Creation & Invitation       | kmoriyam         | Create rooms, generate invitation tokens, join via link                     |
-| Game Modes (DEFAULT, ONE_STROKE) | ken         | Two play modes: standard drawing and single-stroke challenge               |
-| Real-time Drawing & Chat         | ken         | WebSocket-based canvas, chat messages, timer, scoreboard                    |
-| Profile, Ranking & Badges        | yohatana         | User profile, avatar, badges, total score, play count, ranking             |
-| Terms of Service & Privacy Policy| yohatana         | Static legal pages                                                          |
+| Feature                           | Team Member(s) | Description                                                    |
+| --------------------------------- | -------------- | -------------------------------------------------------------- |
+| Email/Password Authentication     | mfunakos       | Registration, login, password reset via email                  |
+| Google OAuth                      | mfunakos       | Login and register with Google account                         |
+| Room Creation & Invitation        | kmoriyam       | Create rooms, generate invitation tokens, join via link        |
+| Game Modes (DEFAULT, ONE_STROKE)  | ken            | Two play modes: standard drawing and single-stroke challenge   |
+| Real-time Drawing & Chat          | ken            | WebSocket-based canvas, chat messages, timer, scoreboard       |
+| Profile, Ranking & Badges         | yohatana       | User profile, avatar, badges, total score, play count, ranking |
+| Terms of Service & Privacy Policy | yohatana       | Static legal pages                                             |
 
 ---
 
@@ -213,12 +215,12 @@ erDiagram
 
 ### Module Summary Template
 
-| Module Name   | Type (Major/Minor) | Points | Justification | Implemented By |
-|---------------|--------------------|--------|---------------|----------------|
-| [TODO]        | Major              | 2      | [TODO]        | [TODO]         |
-| [TODO]        | Minor              | 1      | [TODO]        | [TODO]         |
+| Module Name | Type (Major/Minor) | Points | Justification | Implemented By |
+| ----------- | ------------------ | ------ | ------------- | -------------- |
+| [TODO]      | Major              | 2      | [TODO]        | [TODO]         |
+| [TODO]      | Minor              | 1      | [TODO]        | [TODO]         |
 
-*Note: This project implements a drawing guessing game (おえかきの森) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification.*
+_Note: This project implements a drawing guessing game (おえかきの森) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
 
 ---
 
