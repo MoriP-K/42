@@ -1,10 +1,11 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation, type Location } from "react-router-dom";
 import Footer from "../../components/footer/Footer";
 import { useAuth } from "./useAuth";
 
 const RequireGuest = ({ children }: { children: ReactNode }) => {
 	const { isAuthenticated, refreshAuth } = useAuth();
+	const location = useLocation();
 
 	const [isChecking, setIsChecking] = useState(false);
 	const [isInitialized, setIsInitialized] = useState(false);
@@ -28,8 +29,10 @@ const RequireGuest = ({ children }: { children: ReactNode }) => {
 	const redirectEnabled =
 		import.meta.env.VITE_AUTH_REDIRECT_ENABLED === "true";
 
-	// リダイレクトが有効かつログイン済みの場合はホーム画面にリダイレクト
-	if (redirectEnabled && isAuthenticated) return <Navigate to="/" replace />;
+	// リダイレクトが有効かつログイン済みの場合はリダイレクト（招待URL由来なら元のページへ）
+	const from = (location.state as { from?: Location })?.from;
+	if (redirectEnabled && isAuthenticated)
+		return <Navigate to={from ?? "/"} replace />;
 
 	// /api/me確認中ならローディング表示
 	if (!isInitialized || isChecking) {

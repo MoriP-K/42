@@ -60,7 +60,7 @@ const SetupProfile = () => {
 				setServerError("更新に失敗しました。再度お試しください。");
 				return;
 			}
-			navigate(from?.pathname ?? "/", { replace: true });
+			navigate(from ?? "/", { replace: true });
 		} catch (err) {
 			setServerError(normalizeErrResponse(err));
 		}
