@@ -72,8 +72,8 @@ const SetupProfile = () => {
 				<span className="text-2xl font-bold">プロフィール設定</span>
 			</div>
 			{isRedirectedForIncomplete && (
-				<p className="text-center text-base-content/80 mb-4">
-					名前が未設定のため、設定してください。
+				<p className="text-center text-base-content/80 mb-4 text-error">
+					ユーザー名が未設定のため、設定してください。
 				</p>
 			)}
 

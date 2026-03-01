@@ -7,23 +7,12 @@ import { AuthTextField } from "../components/auth/AuthTextField";
 import { GoogleAccountRegister } from "../components/auth/GoogleAccountRegister";
 import BackButton from "../components/BackButton";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
-
-const REGISTER_ERROR_MESSAGES: Record<string, string> = {
-	invalid_request:
-		"認証の有効期限が切れたか、不正なリクエストです。再度お試しください",
-	already_registered:
-		"すでに登録済みです。ログイン画面からログインしてください",
-	server_error:
-		"予期しないエラーが発生しました。時間をおいて再度お試しください",
-};
-
-type RegisterError =
-	| { type: "field"; field: "name" | "email" | "password"; message: string }
-	| { type: "server"; message: string }
-	| { type: "unknown"; message: string };
-
-type RegisterField = "name" | "email" | "password" | "passwordConfirm";
-type FormErrors = Partial<Record<RegisterField, string>>;
+import {
+	REGISTER_ERROR_MESSAGES,
+	type RegisterError,
+	type RegisterField,
+	type FormErrors,
+} from "../types/register";
 
 /** バックエンドと同一のルールでフォームを検証 */
 const validateRegisterForm = (
