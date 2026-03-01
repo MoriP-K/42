@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
+import { getUserIdFromRequest } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { UpdateMeRequest, UpdateMeRoute } from "../../types/auth/me";
 
@@ -10,6 +11,7 @@ import { UpdateMeRequest, UpdateMeRoute } from "../../types/auth/me";
  *
  * 成功: 200 { id, name, is_profile_complete: true }
  * 失敗(未ログイン): 401 { message }
+ * 失敗(名前はすでに設定済み): 403 { message }
  * 失敗(バリデーション・名前重複): 400 { message }
  * 失敗(サーバーエラー): 500 { message }
  */
@@ -17,10 +19,8 @@ export const updateMe = async (
 	request: FastifyRequest<UpdateMeRoute>,
 	reply: FastifyReply<UpdateMeRoute>,
 ) => {
-	const cookieName = "session_id";
-	const sessionId = request.cookies?.[cookieName];
-
-	if (!sessionId) {
+	const userId = await getUserIdFromRequest(request);
+	if (userId === null) {
 		return reply.code(401).send({ message: "Unauthorized" });
 	}
 
@@ -33,27 +33,14 @@ export const updateMe = async (
 	const { name } = parsed.data;
 
 	try {
-		const session = await prisma.session.findUnique({
-			where: { id: sessionId },
-			include: {
-				user: {
-					select: {
-						id: true,
-					},
-				},
-			},
+		const user = await prisma.user.findUnique({
+			where: { id: userId },
+			select: { is_profile_complete: true },
 		});
-
-		//セッションの有効チェック
-		const now = new Date();
-		if (!session) {
-			return reply.code(401).send({ message: "Unauthorized" });
-		}
-		if (session.revoked_at !== null) {
-			return reply.code(401).send({ message: "Unauthorized" });
-		}
-		if (session.expires_at <= now) {
-			return reply.code(401).send({ message: "Unauthorized" });
+		if (user?.is_profile_complete === true) {
+			return reply.code(403).send({
+				message: "すでに名前が設定されています。",
+			});
 		}
 
 		//nameの重複チェック
@@ -63,7 +50,7 @@ export const updateMe = async (
 		});
 		if (
 			existingUserWithName !== null &&
-			existingUserWithName.id !== session.user.id
+			existingUserWithName.id !== userId
 		) {
 			return reply.code(400).send({
 				message: "このユーザー名は既に使用されています",
@@ -72,7 +59,7 @@ export const updateMe = async (
 
 		//DBインサート
 		const updatedUser = await prisma.user.update({
-			where: { id: session.user.id },
+			where: { id: userId },
 			data: {
 				name,
 				is_profile_complete: true,
