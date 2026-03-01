@@ -68,4 +68,11 @@ export const roomApi = {
 			body: JSON.stringify({}),
 		});
 	},
+
+	updateRoomStatus: async (roomId: number, status: string) => {
+		return apiClient(`/rooms/${roomId}/status`, {
+			method: "PATCH",
+			body: JSON.stringify({ status }),
+		});
+	},
 };
