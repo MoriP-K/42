@@ -11,6 +11,8 @@ import {
 	UpdateGameModeRoute,
 	JoinByTokenBodySchema,
 	JoinByTokenRoute,
+	MAX_MEMBERS,
+	MIN_PLAYERS,
 } from "../types/room/room";
 import { UpdateRoomMemberRoleRoute } from "../types/room/roomMember";
 import {
@@ -19,7 +21,7 @@ import {
 	RoomMemberParamsSchema,
 	RoomMemberRoute,
 } from "../types/room/common";
-import { updateReadyStatus } from "../services/roomService";
+import { updateReadyStatus, leaveRoomMember } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
 import { broadcastToRoom } from "../ws/roomManager";
 
@@ -131,7 +133,11 @@ export const updateRoomMemberRole = async (
 	const { role } = request.body;
 	const room = await prisma.room.findUnique({
 		where: { id: roomId },
-		select: { host_id: true },
+		include: {
+			members: {
+				where: { role: UserRole.PLAYER },
+			},
+		},
 	});
 	if (!room) {
 		return reply.code(404).send({ error: "Room not found" });
@@ -139,6 +145,21 @@ export const updateRoomMemberRole = async (
 	const targetUserId = userId;
 	const isHost = room.host_id === requesterId;
 	const isSelf = targetUserId === requesterId;
+	// SPECTATOR→PLAYER への変更時、プレイヤー数が上限を超える場合は拒否
+	if (role === UserRole.PLAYER) {
+		const currentMember = await prisma.roomMember.findUnique({
+			where: {
+				room_id_user_id: { room_id: roomId, user_id: userId },
+			},
+		});
+		const isChangingToPlayer =
+			!currentMember || currentMember.role !== UserRole.PLAYER;
+		if (isChangingToPlayer && room.members.length >= MAX_MEMBERS) {
+			return reply.code(400).send({
+				error: "プレイヤーの定員に達しています。",
+			});
+		}
+	}
 	if (!isHost && !isSelf) {
 		const currentMember = await prisma.roomMember.findUnique({
 			where: {
@@ -273,28 +294,85 @@ export const joinRoomByToken = async (
 
 	const room = await prisma.room.findUnique({
 		where: { invitation_token: token },
+		include: {
+			members: true,
+		},
 	});
 	if (!room) {
 		return reply.code(404).send({ message: "招待が無効です。" });
 	}
 	const roomId = room.id;
+	const existingMember = await prisma.roomMember.findUnique({
+		where: {
+			room_id_user_id: { room_id: roomId, user_id: userId },
+		},
+	});
+	if (!existingMember && room.members.length >= MAX_MEMBERS) {
+		return reply.code(400).send({
+			message: "ルームの定員に達しています。",
+		});
+	}
 	try {
-		await prisma.roomMember.upsert({
-			where: {
-				room_id_user_id: {
-					room_id: roomId,
-					user_id: userId,
-				},
-			},
-			create: {
-				room_id: room.id,
+		if (existingMember) {
+			// 既にメンバーなら何もしない（二重参加・リロード対策）
+			return reply.code(200).send({ roomId });
+		}
+		await prisma.roomMember.create({
+			data: {
+				room_id: roomId,
 				user_id: userId,
 				role: UserRole.PLAYER,
 			},
-			update: {},
 		});
-		broadcastToRoom(String(roomId), { type: "memberJoined" });
+		try {
+			broadcastToRoom(String(roomId), { type: "memberJoined" });
+		} catch (broadcastError) {
+			console.error("Broadcast error (non-fatal):", broadcastError);
+		}
 		return reply.code(200).send({ roomId });
+	} catch (error: unknown) {
+		// P2002: ユニーク制約違反（競合で既に参加済み）→ 成功扱い
+		const prismaError = error as { code?: string };
+		if (prismaError?.code === "P2002") {
+			return reply.code(200).send({ roomId });
+		}
+		console.error("Error joining room:", error);
+		const message =
+			error instanceof Error ? error.message : "Failed to join room";
+		return reply.code(500).send({ error: message });
+	}
+};
+
+/*
+ * POST /api/rooms/:roomId/leave ルームから退出
+ */
+export const leaveRoom = async (
+	request: FastifyRequest<{ Params: { roomId: string } }>,
+	reply: FastifyReply,
+) => {
+	const userId = await getUserIdFromRequest(request);
+	if (!userId) return reply.code(401).send({ error: "Unauthorized" });
+
+	const roomId = Number(request.params.roomId);
+	if (Number.isNaN(roomId) || roomId <= 0) {
+		return reply
+			.code(400)
+			.send({ message: "パラメータに不備があります。" });
+	}
+
+	try {
+		const result = await leaveRoomMember(roomId, userId);
+
+		if (!result.success) {
+			const statusCode =
+				result.error === "Room not found" ||
+				result.error === "Not a member of this room"
+					? 404
+					: 500;
+			return reply.code(statusCode).send({ error: result.error });
+		}
+
+		return reply.code(200).send({ success: true });
 	} catch (error) {
 		// Strict Mode の回避策
 		// 複数Requestが同時に来ると、roomMemberのupsertで競合し、2件目以降が500になることがある
@@ -346,6 +424,9 @@ export const createRound = async (
 					.filter(m => m.user_id !== room.host_id)
 					.map(m => m.user_id),
 			];
+			if (playerIds.length < MIN_PLAYERS) {
+				throw new Error(`プレイヤーは${MIN_PLAYERS}人以上必要です。`);
+			}
 			// 最新のRoundを取得
 			const latestRound = await tx.round.findFirst({
 				where: { room_id: roomId },
@@ -390,6 +471,9 @@ export const createRound = async (
 		return reply.code(201).send(result);
 	} catch (error) {
 		console.error("Error:", error);
-		return reply.code(500).send({ error: "Failed to create round" });
+		const message =
+			error instanceof Error ? error.message : "Failed to create round";
+		const statusCode = message.includes("プレイヤーは") ? 400 : 500;
+		return reply.code(statusCode).send({ error: message });
 	}
 };
