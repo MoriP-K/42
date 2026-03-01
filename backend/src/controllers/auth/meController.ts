@@ -6,7 +6,7 @@ import { MeRoute } from "../../types/auth/me";
 /**
  * GET /api/me
  *
- * 成功(ログイン済み): 200 { id, name }
+ * 成功(ログイン済み): 200 { id, name, is_profile_complete }
  * 失敗(未ログイン): 401 { message }
  * 失敗(サーバーエラー): 500 { message }
  *
@@ -25,7 +25,7 @@ export const me = async (
 
 		const user = await prisma.user.findUnique({
 			where: { id: userId },
-			select: { id: true, name: true },
+			select: { id: true, name: true, is_profile_complete: true },
 		});
 
 		if (!user) {
@@ -35,6 +35,7 @@ export const me = async (
 		return reply.code(200).send({
 			id: user.id,
 			name: user.name,
+			is_profile_complete: user.is_profile_complete,
 		});
 	} catch (err) {
 		request.log?.error?.(err);

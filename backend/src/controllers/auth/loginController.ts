@@ -1,8 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { AuthSuccessResponse } from "../../types/auth/common";
 import { LoginRequest, LoginRoute } from "../../types/auth/login";
 import { prisma } from "../../lib/prisma";
-import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 import { createSessionAndSetCookie } from "../../lib/login";
 

@@ -26,6 +26,7 @@ export const createSessionAndSetCookie = async (
 				select: {
 					id: true,
 					name: true,
+					is_profile_complete: true,
 				},
 			},
 		},
@@ -43,6 +44,7 @@ export const createSessionAndSetCookie = async (
 	const successResponse: AuthSuccessResponse = {
 		id: newSession.user.id,
 		name: newSession.user.name,
+		is_profile_complete: newSession.user.is_profile_complete,
 	};
 	return successResponse;
 };
