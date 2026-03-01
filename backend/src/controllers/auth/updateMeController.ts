@@ -11,8 +11,8 @@ import { UpdateMeRequest, UpdateMeRoute } from "../../types/auth/me";
  *
  * 成功: 200 { id, name, is_profile_complete: true }
  * 失敗(未ログイン): 401 { message }
- * 失敗(名前はすでに設定済み): 403 { message }
- * 失敗(バリデーション・名前重複): 400 { message }
+ * 失敗(ユーザー名はすでに設定済み): 403 { message }
+ * 失敗(バリデーション・ユーザー名重複): 400 { message }
  * 失敗(サーバーエラー): 500 { message }
  */
 export const updateMe = async (
@@ -39,7 +39,8 @@ export const updateMe = async (
 		});
 		if (user?.is_profile_complete === true) {
 			return reply.code(403).send({
-				message: "すでに名前が設定されています。",
+				message:
+					"すでにユーザー名が設定されています。現在、ユーザー名の変更は受け付けておりません。",
 			});
 		}
 

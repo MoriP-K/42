@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
@@ -10,17 +10,10 @@ import { AuthTextField } from "../components/auth/AuthTextField";
 const SetupProfile = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { user, refreshAuth } = useAuth();
+	const { refreshAuth } = useAuth();
 	const [name, setName] = useState("");
 	const [fieldError, setFieldError] = useState<string | null>(null);
 	const [serverError, setServerError] = useState<string | null>(null);
-
-	// プロフィール完了済みならトップへリダイレクト
-	useEffect(() => {
-		if (user?.is_profile_complete === true) {
-			navigate("/", { replace: true });
-		}
-	}, [user?.is_profile_complete, navigate]);
 
 	const normalizeErrResponse = (err: unknown) => {
 		if (!(err instanceof ApiError)) {
@@ -63,11 +56,6 @@ const SetupProfile = () => {
 			setServerError(normalizeErrResponse(err));
 		}
 	};
-
-	// プロフィール完了済みの場合は何も描画しない（useEffect でリダイレクトする）
-	if (user?.is_profile_complete === true) {
-		return null;
-	}
 
 	return (
 		<>
