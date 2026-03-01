@@ -1,17 +1,108 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { authApi } from "../api/authApi";
+import { ApiError } from "../api/apiClient";
+import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
+import { AuthFormShell } from "../components/auth/AuthFormShell";
+import { AuthTextField } from "../components/auth/AuthTextField";
 
 const SetupProfile = () => {
-	return (
-		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white flex flex-col font-sans overflow-hidden">
-			{/* Background Decorations */}
-			<div className="absolute top-10 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-			<div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { user, refreshAuth } = useAuth();
+	const [name, setName] = useState("");
+	const [fieldError, setFieldError] = useState<string | null>(null);
+	const [serverError, setServerError] = useState<string | null>(null);
 
+	// プロフィール完了済みならトップへリダイレクト
+	useEffect(() => {
+		if (user?.is_profile_complete === true) {
+			navigate("/", { replace: true });
+		}
+	}, [user?.is_profile_complete, navigate]);
+
+	const normalizeErrResponse = (err: unknown) => {
+		if (!(err instanceof ApiError)) {
+			return err instanceof Error
+				? err.message
+				: "予期しないエラーが発生しました";
+		}
+		const body =
+			typeof err.data === "object" && err.data !== null
+				? (err.data as { field?: unknown; message?: unknown })
+				: null;
+		const message = typeof body?.message === "string" ? body.message : null;
+		return message ?? "予期しないエラーが発生しました";
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setServerError(null);
+		setFieldError(null);
+
+		const trimmed = name.trim();
+		if (!trimmed) {
+			setFieldError("ユーザー名を入力してください");
+			return;
+		} else if (!/^[a-z0-9_]+$/.test(trimmed)) {
+			setFieldError("ユーザー名には半角英数字と「_」のみ使用できます");
+			return;
+		}
+
+		try {
+			await authApi.updateMe({ name: trimmed });
+			const ok = await refreshAuth();
+			if (!ok) {
+				setServerError("更新に失敗しました。再度お試しください。");
+				return;
+			}
+			const from = (location.state as { from?: Location })?.from;
+			navigate(from?.pathname ?? "/", { replace: true });
+		} catch (err) {
+			setServerError(normalizeErrResponse(err));
+		}
+	};
+
+	// プロフィール完了済みの場合は何も描画しない（useEffect でリダイレクトする）
+	if (user?.is_profile_complete === true) {
+		return null;
+	}
+
+	return (
+		<>
 			<div className="text-center mb-4">
-				<span className="text-2xl font-bold">名前入力画面</span>
+				<span className="text-2xl font-bold">プロフィール設定</span>
 			</div>
+
+			<AuthFormShell
+				serverError={serverError}
+				onSubmit={handleSubmit}
+				actions={
+					<button type="submit" className="btn btn-primary w-full">
+						登録する
+					</button>
+				}
+			>
+				<AuthTextField
+					label="ユーザー名"
+					htmlFor="name"
+					description="半角英字、数字、_を使用できます。"
+					error={fieldError ?? undefined}
+					inputProps={{
+						id: "name",
+						type: "text",
+						name: "name",
+						autoComplete: "name",
+						value: name,
+						onChange: e => setName(e.target.value),
+						placeholder: "ユーザー名を入力",
+					}}
+				/>
+			</AuthFormShell>
+
 			<Footer />
-		</div>
+		</>
 	);
 };
 

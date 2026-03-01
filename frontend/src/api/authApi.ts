@@ -31,4 +31,13 @@ export const authApi = {
 			credentials: "include",
 		});
 	},
+
+	// PATCH /api/me
+	updateMe: async (data: { name: string }): Promise<AuthUser> => {
+		return apiClient("/me", {
+			method: "PATCH",
+			body: JSON.stringify(data),
+			credentials: "include",
+		});
+	},
 };
