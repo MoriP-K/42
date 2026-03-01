@@ -10,6 +10,7 @@ import { z } from "zod";
 export const AuthSuccessResponse = z.object({
 	id: z.number(),
 	name: z.string(),
+	is_profile_complete: z.boolean(),
 });
 export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponse>;
 

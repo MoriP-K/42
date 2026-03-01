@@ -4,7 +4,7 @@ import Footer from "../../components/footer/Footer";
 import { useAuth } from "./useAuth";
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
-	const { isAuthenticated, refreshAuth } = useAuth();
+	const { isAuthenticated, refreshAuth, user } = useAuth();
 	const location = useLocation();
 
 	const [isChecking, setIsChecking] = useState(false);
@@ -28,7 +28,22 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
 	}, [isAuthenticated, isChecking, isInitialized, refreshAuth]);
 
 	//リダイレクトが無効、もしくは、ログイン認証済みであればchildrenページを表示
-	if (!redirectEnabled || isAuthenticated) return <>{children}</>;
+	if (!redirectEnabled || isAuthenticated) {
+		// プロフィール未完了の場合は /setup-profile へリダイレクト
+		if (
+			user?.is_profile_complete === false &&
+			location.pathname !== "/setup-profile"
+		) {
+			return (
+				<Navigate
+					to="/setup-profile"
+					replace
+					state={{ from: location }}
+				/>
+			);
+		}
+		return <>{children}</>;
+	}
 
 	// /api/me確認中ならローディング表示
 	if (!isInitialized || isChecking) {
