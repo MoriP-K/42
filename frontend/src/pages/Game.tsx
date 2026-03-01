@@ -74,6 +74,7 @@ const Game = () => {
 			ws.onopen = () => {
 				console.log("✅ WebSocket connected");
 
+				reconnectAttemptRef.current = 0;
 				ws.send(
 					JSON.stringify({
 						type: WebSocketMessageType.JOIN,

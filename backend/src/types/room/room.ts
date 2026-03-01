@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { WebSocket } from "ws";
-import { GameModeEnum, RoomIdParamsSchema, RoomStatusEnum } from "./common";
+import { GameModeEnum, RoomIdParamsSchema } from "./common";
 
 /**
  * POST /api/rooms リクエスト型
@@ -63,28 +63,6 @@ export type JoinByTokenBody = z.infer<typeof JoinByTokenBodySchema>;
 
 export interface JoinByTokenRoute {
 	Body: JoinByTokenBody;
-}
-
-/**
- * PATCH /api/rooms/:roomId/status パラメータ型
- */
-export const UpdateRoomStatusParamsSchema = RoomIdParamsSchema;
-
-/**
- * PATCH /api/rooms/:roomId/status ボディ型
- */
-export const UpdateRoomStatusBodySchema = z.object({
-	status: RoomStatusEnum,
-});
-
-export type UpdateRoomStatusParams = z.infer<
-	typeof UpdateRoomStatusParamsSchema
->;
-export type UpdateRoomStatusBody = z.infer<typeof UpdateRoomStatusBodySchema>;
-
-export interface UpdateRoomStatusRoute {
-	Params: UpdateRoomStatusParams;
-	Body: UpdateRoomStatusBody;
 }
 
 /**

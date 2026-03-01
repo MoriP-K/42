@@ -52,11 +52,14 @@ const Result = () => {
 		};
 
 		ws.onmessage = event => {
-			const data = JSON.parse(event.data);
-			console.log("📥 Result received:", data);
-			if (data.type === WebSocketMessageType.REMATCH_CREATED) {
-				setNewRoomId(data.newRoomId);
-				setRematchToken(data.token);
+			try {
+				const data = JSON.parse(event.data);
+				if (data.type === WebSocketMessageType.REMATCH_CREATED) {
+					setNewRoomId(data.newRoomId);
+					setRematchToken(data.token);
+				}
+			} catch (error) {
+				console.log("Failed to parse message:", error);
 			}
 		};
 
@@ -131,6 +134,7 @@ const Result = () => {
 					<button
 						className="btn btn-primary"
 						onClick={async () => {
+							socketRef.current?.close();
 							await roomApi.leaveResult(Number(id));
 							navigate("/");
 						}}
@@ -142,6 +146,7 @@ const Result = () => {
 						onClick={async () => {
 							if (!currentUserId) return;
 							if (newRoomId && rematchToken) {
+								socketRef.current?.close();
 								await roomApi.joinRoomByToken(rematchToken);
 								await roomApi.leaveResult(Number(id));
 								navigate(`/waiting/${newRoomId}`);
@@ -155,6 +160,7 @@ const Result = () => {
 										token: newRoom.invitation_token,
 									}),
 								);
+								socketRef.current?.close();
 								await roomApi.leaveResult(Number(id));
 								navigate(`/waiting/${newRoom.id}`);
 							}

@@ -9,9 +9,6 @@ import {
 	UpdateGameModeBodySchema,
 	UpdateGameModeParamsSchema,
 	UpdateGameModeRoute,
-	UpdateRoomStatusBodySchema,
-	UpdateRoomStatusParamsSchema,
-	UpdateRoomStatusRoute,
 	JoinByTokenBodySchema,
 	JoinByTokenRoute,
 } from "../types/room/room";
@@ -255,43 +252,6 @@ export const updateRoomMemberReady = async (
 	} catch (error) {
 		console.log(error);
 		return reply.code(500).send({ error: "Failed to update user status" });
-	}
-};
-
-/**
- * PATCH /api/rooms/:roomId/status ルームステータス変更
- */
-export const updateRoomStatus = async (
-	request: FastifyRequest<UpdateRoomStatusRoute>,
-	reply: FastifyReply,
-) => {
-	const paramResult = UpdateRoomStatusParamsSchema.safeParse(request.params);
-	const bodyResult = UpdateRoomStatusBodySchema.safeParse(request.body);
-
-	if (!paramResult.success) {
-		return reply
-			.code(400)
-			.send({ message: "パラメータに不備があります。 " });
-	}
-
-	if (!bodyResult.success) {
-		return reply
-			.code(400)
-			.send({ message: "リクエストボディに不備があります。" });
-	}
-
-	const roomId = paramResult.data.roomId;
-	const status = bodyResult.data.status;
-
-	try {
-		const updateRoom = await prisma.room.update({
-			where: { id: roomId },
-			data: { status },
-		});
-		return reply.code(200).send(updateRoom);
-	} catch (error) {
-		console.log(error);
-		return reply.code(500).send({ error: "Failed to update room status" });
 	}
 };
 

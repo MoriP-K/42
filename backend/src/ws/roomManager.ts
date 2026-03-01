@@ -225,7 +225,7 @@ export const finalizeGame = async (roomId: string) => {
 	await prisma.$transaction(userUpdates);
 
 	// Room.statusをRESULTに変更
-	const roomUpdate = await prisma.room.update({
+	await prisma.room.update({
 		where: { id: Number(roomId) },
 		data: { status: "RESULT" },
 	});

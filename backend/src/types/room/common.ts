@@ -2,12 +2,6 @@ import { z } from "zod";
 
 export const UserRoleEnum = z.enum(["PLAYER", "SPECTATOR"]);
 export const GameModeEnum = z.enum(["DEFAULT", "ONE_STROKE"]);
-export const RoomStatusEnum = z.enum([
-	"WAITING",
-	"PLAYING",
-	"RESULT",
-	"FINISHED",
-]);
 
 export const RoomMemberParamsSchema = z.object({
 	roomId: z.coerce.number(),
