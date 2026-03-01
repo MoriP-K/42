@@ -38,7 +38,7 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
 				<Navigate
 					to="/setup-profile"
 					replace
-					state={{ from: location }}
+					state={{ from: location, reason: "profile_incomplete" }}
 				/>
 			);
 		}

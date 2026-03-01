@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, type Location } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
+
+type SetupProfileLocationState = {
+	from?: Location;
+	reason?: "profile_incomplete";
+};
 
 const SetupProfile = () => {
 	const navigate = useNavigate();
@@ -14,6 +19,11 @@ const SetupProfile = () => {
 	const [name, setName] = useState("");
 	const [fieldError, setFieldError] = useState<string | null>(null);
 	const [serverError, setServerError] = useState<string | null>(null);
+
+	const from = (location.state as SetupProfileLocationState)?.from;
+	const isRedirectedForIncomplete =
+		(location.state as SetupProfileLocationState)?.reason ===
+		"profile_incomplete";
 
 	const normalizeErrResponse = (err: unknown) => {
 		if (!(err instanceof ApiError)) {
@@ -50,7 +60,6 @@ const SetupProfile = () => {
 				setServerError("更新に失敗しました。再度お試しください。");
 				return;
 			}
-			const from = (location.state as { from?: Location })?.from;
 			navigate(from?.pathname ?? "/", { replace: true });
 		} catch (err) {
 			setServerError(normalizeErrResponse(err));
@@ -62,6 +71,11 @@ const SetupProfile = () => {
 			<div className="text-center mb-4">
 				<span className="text-2xl font-bold">プロフィール設定</span>
 			</div>
+			{isRedirectedForIncomplete && (
+				<p className="text-center text-base-content/80 mb-4">
+					名前が未設定のため、設定してください。
+				</p>
+			)}
 
 			<AuthFormShell
 				serverError={serverError}
