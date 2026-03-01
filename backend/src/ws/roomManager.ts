@@ -230,3 +230,8 @@ export const finalizeGame = async (roomId: string) => {
 		data: { status: "RESULT" },
 	});
 };
+
+export const getRoomSize = (roomId: string): number => {
+	const room = rooms.get(roomId);
+	return room ? room.size : 0;
+};

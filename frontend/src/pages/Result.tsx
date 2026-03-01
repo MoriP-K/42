@@ -4,6 +4,9 @@ import { gameApi } from "../api/gameApi";
 import { GameRole } from "../types/user";
 import { type GameDetails, type GameRoomMember } from "../types/game";
 import { roomApi } from "../api/roomApi";
+import { authApi } from "../api/authApi";
+import { createWebSocket } from "../api/wsClient";
+import { WebSocketMessageType } from "../types/room";
 
 const Result = () => {
 	const { id } = useParams();
@@ -12,6 +15,41 @@ const Result = () => {
 	const [players, setPlayers] = useState<{ name: string; score: number }[]>(
 		[],
 	);
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const user = await authApi.me();
+				setCurrentUserId(user.id);
+			} catch (error) {
+				console.error("Failed to get user:", error);
+				navigate("/login");
+			}
+		};
+
+		fetchUser();
+	}, [navigate]);
+
+	useEffect(() => {
+		if (!id || !currentUserId) return;
+
+		const ws = createWebSocket();
+
+		ws.onopen = () => {
+			ws.send(
+				JSON.stringify({
+					type: WebSocketMessageType.JOIN,
+					userId: currentUserId,
+					roomId: id,
+				}),
+			);
+		};
+
+		return () => {
+			ws.close();
+		};
+	}, [id, currentUserId]);
 
 	useEffect(() => {
 		const fetchResult = async () => {
@@ -78,10 +116,7 @@ const Result = () => {
 					<button
 						className="btn btn-primary"
 						onClick={async () => {
-							await roomApi.updateRoomStatus(
-								Number(id),
-								"FINISHED",
-							);
+							await roomApi.leaveResult(Number(id));
 							navigate("/");
 						}}
 					>
@@ -90,11 +125,11 @@ const Result = () => {
 					<button
 						className="btn btn-secondary"
 						onClick={async () => {
-							await roomApi.updateRoomStatus(
-								Number(id),
-								"WAITING",
-							);
-							navigate(`/waiting/${id}`);
+							if (!currentUserId) return;
+							await roomApi.leaveResult(Number(id));
+							const newRoom =
+								await roomApi.createRoom(currentUserId);
+							navigate(`/waiting/${newRoom.id}`);
 						}}
 					>
 						再戦

@@ -24,7 +24,7 @@ import {
 } from "../types/room/common";
 import { updateReadyStatus } from "../services/roomService";
 import { getUserIdFromRequest } from "../lib/auth";
-import { broadcastToRoom } from "../ws/roomManager";
+import { broadcastToRoom, getRoomSize } from "../ws/roomManager";
 
 /*
  * POST /api/rooms ルーム作成
@@ -431,5 +431,29 @@ export const createRound = async (
 	} catch (error) {
 		console.error("Error:", error);
 		return reply.code(500).send({ error: "Failed to create round" });
+	}
+};
+
+/**
+ * POST /api/rooms/:roomId/leave-result Result画面からの離脱
+ */
+export const leaveResult = async (
+	request: FastifyRequest<GetRoomRoute>,
+	reply: FastifyReply,
+) => {
+	const roomId = Number(request.params.roomId);
+
+	try {
+		const roomSize = getRoomSize(String(roomId));
+		if (roomSize <= 1) {
+			await prisma.room.update({
+				where: { id: roomId },
+				data: { status: "FINISHED" },
+			});
+		}
+		return reply.code(200).send({ ok: true });
+	} catch (error) {
+		console.error(error);
+		return reply.code(500).send({ error: "Failed to leave result" });
 	}
 };

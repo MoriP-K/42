@@ -9,6 +9,7 @@ import {
 	getRoomMembers,
 	joinRoomByToken,
 	createRound,
+	leaveResult,
 } from "../controllers/roomController";
 
 export async function roomRoutes(fastify: FastifyInstance) {
@@ -24,4 +25,5 @@ export async function roomRoutes(fastify: FastifyInstance) {
 	fastify.get("/rooms/:roomId/members", getRoomMembers);
 	fastify.post("/rooms/join", joinRoomByToken);
 	fastify.post("/rooms/:roomId/round", createRound);
+	fastify.post("/rooms/:roomId/leave-result", leaveResult);
 }

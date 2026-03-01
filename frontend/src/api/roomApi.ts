@@ -75,4 +75,11 @@ export const roomApi = {
 			body: JSON.stringify({ status }),
 		});
 	},
+
+	leaveResult: async (roomId: number) => {
+		return apiClient(`/rooms/${roomId}/leave-result`, {
+			method: "POST",
+			body: JSON.stringify({}),
+		});
+	},
 };
