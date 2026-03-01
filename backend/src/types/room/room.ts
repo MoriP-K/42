@@ -125,5 +125,6 @@ export const WebSocketMessageType = {
 	NEXT_WORD: "nextWord",
 	SKIP: "skip",
 	SKIPPED: "skipped",
+	REMATCH_CREATED: "rematchCreated",
 	ERROR: "error",
 };

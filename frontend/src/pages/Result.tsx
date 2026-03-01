@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { gameApi } from "../api/gameApi";
 import { GameRole } from "../types/user";
@@ -16,6 +16,9 @@ const Result = () => {
 		[],
 	);
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+	const [newRoomId, setNewRoomId] = useState<number | null>(null);
+
+	const socketRef = useRef<WebSocket | null>(null);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -35,6 +38,7 @@ const Result = () => {
 		if (!id || !currentUserId) return;
 
 		const ws = createWebSocket();
+		socketRef.current = ws;
 
 		ws.onopen = () => {
 			ws.send(
@@ -46,8 +50,16 @@ const Result = () => {
 			);
 		};
 
+		ws.onmessage = event => {
+			const data = JSON.parse(event.data);
+			if (data.type === WebSocketMessageType.REMATCH_CREATED) {
+				setNewRoomId(data.newRoomId);
+			}
+		};
+
 		return () => {
 			ws.close();
+			socketRef.current = null;
 		};
 	}, [id, currentUserId]);
 
@@ -126,13 +138,24 @@ const Result = () => {
 						className="btn btn-secondary"
 						onClick={async () => {
 							if (!currentUserId) return;
-							await roomApi.leaveResult(Number(id));
-							const newRoom =
-								await roomApi.createRoom(currentUserId);
-							navigate(`/waiting/${newRoom.id}`);
+							if (newRoomId) {
+								await roomApi.leaveResult(Number(id));
+								navigate(`/waiting/${newRoomId}`);
+							} else {
+								const newRoom =
+									await roomApi.createRoom(currentUserId);
+								socketRef.current?.send(
+									JSON.stringify({
+										type: WebSocketMessageType.REMATCH_CREATED,
+										newRoomId: newRoom.id,
+									}),
+								);
+								await roomApi.leaveResult(Number(id));
+								navigate(`/waiting/${newRoom.id}`);
+							}
 						}}
 					>
-						再戦
+						{newRoomId ? "再戦ルームに参加" : "再戦"}
 					</button>
 				</div>
 			</div>
