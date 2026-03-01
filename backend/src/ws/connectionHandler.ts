@@ -426,6 +426,16 @@ export const handleConnection = (socket: WebSocket) => {
 						word: word,
 					}),
 				);
+			} else if (data.type === WebSocketMessageType.REMATCH_CREATED) {
+				broadcastToRoom(
+					currentClient.roomId,
+					{
+						type: WebSocketMessageType.REMATCH_CREATED,
+						newRoomId: data.newRoomId,
+						token: data.token,
+					},
+					socket,
+				);
 			}
 		} catch (error) {
 			console.error("❌ Invalid message: ", error);
