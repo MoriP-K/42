@@ -1,5 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation, type Location } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+	useNavigate,
+	useSearchParams,
+	useLocation,
+	type Location,
+} from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { useAuth } from "../features/auth/useAuth";
@@ -7,9 +12,22 @@ import Footer from "../components/footer/Footer";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
 import BackButton from "../components/BackButton";
+import { GoogleAccountLogin } from "../components/auth/GoogleAccountLogin";
+
+const LOGIN_ERROR_MESSAGES: Record<string, string> = {
+	invalid_request:
+		"認証の有効期限が切れたか、不正なリクエストです。再度お試しください",
+	account_not_found:
+		"Googleアカウントが登録されていません。新規登録からお試しください",
+	email_conflict:
+		"このメールアドレスはすでに別の方法で登録されています。パスワードでログインしてください",
+	server_error:
+		"予期しないエラーが発生しました。時間をおいて再度お試しください",
+};
 
 const Login = () => {
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const location = useLocation();
 	const { refreshAuth } = useAuth();
 	const [email, setEmail] = useState("");
@@ -19,6 +37,16 @@ const Login = () => {
 		Partial<Record<"email" | "password", string>>
 	>({});
 	const [serverError, setServerError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const error = searchParams.get("error");
+		if (!error) return;
+		const message = LOGIN_ERROR_MESSAGES[error];
+		if (message) {
+			queueMicrotask(() => setServerError(message));
+		}
+		navigate("/login", { replace: true });
+	}, [searchParams, navigate]);
 
 	const validateRequired = () => {
 		const nextErrors: Partial<Record<"email" | "password", string>> = {};
@@ -97,18 +125,7 @@ const Login = () => {
 				onSubmit={handleSubmit}
 				top={
 					<>
-						<button
-							type="button"
-							className="btn btn-outline w-full"
-						>
-							{/* TODO: Googleアカウントでログイン処理*/}
-							<span className="inline-flex items-center gap-2">
-								<span className="i" aria-hidden="true">
-									G
-								</span>
-								Googleアカウントでログイン
-							</span>
-						</button>
+						<GoogleAccountLogin />
 						<div className="divider my-0 text-sm text-base-content/60">
 							または
 						</div>

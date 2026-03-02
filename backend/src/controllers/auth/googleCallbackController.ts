@@ -7,6 +7,7 @@ import {
 	GoogleUserInfo,
 	OAuthState,
 } from "../../types/googleAuth";
+import { handleGoogleLogin } from "./googleLoginController";
 import { handleGoogleRegister } from "./googleRegisterController";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
@@ -126,7 +127,7 @@ export const googleCallback = async (
 		}
 		// modeごとに処理
 		if (mode === "login") {
-			//TODO: ログイン処理
+			return await handleGoogleLogin(reply, userInfo);
 		} else if (mode === "register") {
 			return await handleGoogleRegister(reply, userInfo);
 		} else {
