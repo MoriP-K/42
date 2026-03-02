@@ -3,6 +3,7 @@ import {
 	useNavigate,
 	useSearchParams,
 	useLocation,
+	Link,
 	type Location,
 } from "react-router-dom";
 import { authApi } from "../api/authApi";
@@ -113,67 +114,75 @@ const Login = () => {
 
 	return (
 		<>
-			{/* ヘッダー */}
-			{/* TODO: ゲームタイトル */}
-			<div className="text-center mb-4">
-				<span className="text-2xl font-bold">ログイン画面</span>
+			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+				{/* ゲームタイトル */}
+				<div className="text-center ">
+					<h1 className="text-5xl font-bold py-12">
+						お絵描きアイランド
+					</h1>
+				</div>
+
+				{/* 記入フォーム */}
+				<AuthFormShell
+					title="ログイン"
+					serverError={serverError}
+					onSubmit={handleSubmit}
+					top={
+						<>
+							<GoogleAccountLogin />
+							<div className="divider my-0 text-sm text-base-content/60">
+								または
+							</div>
+						</>
+					}
+					actions={
+						<>
+							<button
+								type="submit"
+								className="btn btn-primary w-full"
+							>
+								ログイン
+							</button>
+							<BackButton></BackButton>
+						</>
+					}
+				>
+					<AuthTextField
+						label="メールアドレス"
+						htmlFor="email"
+						error={fieldErrors.email}
+						inputProps={{
+							id: "email",
+							type: "text",
+							name: "email",
+							autoComplete: "email",
+							value: email,
+							onChange: e => setEmail(e.target.value),
+						}}
+					/>
+
+					<AuthTextField
+						label="パスワード"
+						htmlFor="password"
+						error={fieldErrors.password}
+						inputProps={{
+							id: "password",
+							type: "password",
+							name: "password",
+							autoComplete: "current-password",
+							value: password,
+							onChange: e => setPassword(e.target.value),
+						}}
+					/>
+				</AuthFormShell>
+
+				{/* 新規アカウント登録リンク */}
+				<div className="w-full max-w-sm px-2">
+					<Link to="/register" className="btn btn-outline w-full">
+						新規登録はこちら
+					</Link>
+				</div>
 			</div>
-
-			{/* 記入フォーム */}
-			<AuthFormShell
-				serverError={serverError}
-				onSubmit={handleSubmit}
-				top={
-					<>
-						<GoogleAccountLogin />
-						<div className="divider my-0 text-sm text-base-content/60">
-							または
-						</div>
-					</>
-				}
-				actions={
-					<div className="space-y-2">
-						<button
-							type="submit"
-							className="btn btn-primary w-full"
-						>
-							ログイン
-						</button>
-						<BackButton></BackButton>
-					</div>
-				}
-			>
-				<AuthTextField
-					label="メールアドレス"
-					htmlFor="email"
-					error={fieldErrors.email}
-					inputProps={{
-						id: "email",
-						type: "text",
-						name: "email",
-						autoComplete: "email",
-						value: email,
-						onChange: e => setEmail(e.target.value),
-					}}
-				/>
-
-				<AuthTextField
-					label="パスワード"
-					htmlFor="password"
-					error={fieldErrors.password}
-					inputProps={{
-						id: "password",
-						type: "password",
-						name: "password",
-						autoComplete: "current-password",
-						value: password,
-						onChange: e => setPassword(e.target.value),
-					}}
-				/>
-			</AuthFormShell>
-
-			{/* TODO: 新規アカウント登録ボタン */}
-			{/* フッター */}
 			<Footer />
 		</>
 	);

@@ -62,47 +62,49 @@ const SetupProfile = () => {
 			}
 			navigate(from ?? "/", { replace: true });
 		} catch (err) {
-			setServerError(normalizeErrResponse(err));
+			setFieldError(normalizeErrResponse(err));
 		}
 	};
 
 	return (
 		<>
-			<div className="text-center mb-4">
-				<span className="text-2xl font-bold">プロフィール設定</span>
+			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+				{isRedirectedForIncomplete && (
+					<p className="text-center text-base-content/80 text-error">
+						ユーザー名が未設定のため、設定してください。
+					</p>
+				)}
+
+				<AuthFormShell
+					title="プロフィール設定"
+					serverError={serverError}
+					onSubmit={handleSubmit}
+					actions={
+						<button
+							type="submit"
+							className="btn btn-primary w-full"
+						>
+							登録する
+						</button>
+					}
+				>
+					<AuthTextField
+						label="ユーザー名"
+						htmlFor="name"
+						description="半角英字、数字、_を使用できます。"
+						error={fieldError ?? undefined}
+						inputProps={{
+							id: "name",
+							type: "text",
+							name: "name",
+							autoComplete: "name",
+							value: name,
+							onChange: e => setName(e.target.value),
+							placeholder: "ユーザー名を入力",
+						}}
+					/>
+				</AuthFormShell>
 			</div>
-			{isRedirectedForIncomplete && (
-				<p className="text-center text-base-content/80 mb-4 text-error">
-					ユーザー名が未設定のため、設定してください。
-				</p>
-			)}
-
-			<AuthFormShell
-				serverError={serverError}
-				onSubmit={handleSubmit}
-				actions={
-					<button type="submit" className="btn btn-primary w-full">
-						登録する
-					</button>
-				}
-			>
-				<AuthTextField
-					label="ユーザー名"
-					htmlFor="name"
-					description="半角英字、数字、_を使用できます。"
-					error={fieldError ?? undefined}
-					inputProps={{
-						id: "name",
-						type: "text",
-						name: "name",
-						autoComplete: "name",
-						value: name,
-						onChange: e => setName(e.target.value),
-						placeholder: "ユーザー名を入力",
-					}}
-				/>
-			</AuthFormShell>
-
 			<Footer />
 		</>
 	);
