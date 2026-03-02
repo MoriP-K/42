@@ -16,23 +16,21 @@ export function AuthFormShell({
 	actions,
 }: Props) {
 	return (
-		<div className="hero min-h-screen">
-			<div className="w-full max-w-md">
-				<div className="card bg-base-200">
-					<div className="card-body gap-5">
-						{top}
+		<div className="w-full max-w-md">
+			<div className="card bg-base-200">
+				<div className="card-body gap-5">
+					{top}
 
-						{serverError && (
-							<div className="alert alert-error">
-								<span>{serverError}</span>
-							</div>
-						)}
+					{serverError && (
+						<div className="alert alert-error">
+							<span>{serverError}</span>
+						</div>
+					)}
 
-						<form className="space-y-3" onSubmit={onSubmit}>
-							{children}
-							{actions}
-						</form>
-					</div>
+					<form className="space-y-3" onSubmit={onSubmit}>
+						{children}
+						{actions}
+					</form>
 				</div>
 			</div>
 		</div>

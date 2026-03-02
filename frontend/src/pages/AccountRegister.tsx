@@ -194,101 +194,104 @@ const AccountRegister = () => {
 
 	return (
 		<>
-			{/* ヘッダー */}
-			<div className="text-center mb-4">
-				<span className="text-2xl font-bold">アカウント新規作成</span>
-			</div>
+			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+				{/* ヘッダー */}
+				<div className="text-center">
+					<span className="text-2xl font-bold">
+						アカウント新規作成
+					</span>
+				</div>
 
-			{/* 記入フォーム */}
-			<AuthFormShell
-				serverError={serverError}
-				onSubmit={handleSubmit}
-				top={
-					<>
-						<GoogleAccountRegister />
-						<div className="divider my-0 text-sm text-base-content/60">
-							または
+				{/* 記入フォーム */}
+				<AuthFormShell
+					serverError={serverError}
+					onSubmit={handleSubmit}
+					top={
+						<>
+							<GoogleAccountRegister />
+							<div className="divider my-0 text-sm text-base-content/60">
+								または
+							</div>
+						</>
+					}
+					actions={
+						<div className="space-y-2">
+							<button
+								type="submit"
+								className="btn btn-primary w-full"
+								disabled={!isFormValid}
+							>
+								アカウント作成
+							</button>
+							<BackButton></BackButton>
 						</div>
-					</>
-				}
-				actions={
-					<div className="space-y-2">
-						<button
-							type="submit"
-							className="btn btn-primary w-full"
-							disabled={!isFormValid}
-						>
-							アカウント作成
-						</button>
-						<BackButton></BackButton>
-					</div>
-				}
-			>
-				<AuthTextField
-					label="ユーザー名"
-					htmlFor="name"
-					description="半角英字、数字、_を使用できます。"
-					error={fieldErrorsToShow.name}
-					inputProps={{
-						id: "name",
-						type: "text",
-						name: "name",
-						placeholder: "例: user_name",
-						autoComplete: "username",
-						value: name,
-						onChange: e => setName(e.target.value),
-						onBlur: () => setFieldTouched("name"),
-					}}
-				/>
+					}
+				>
+					<AuthTextField
+						label="ユーザー名"
+						htmlFor="name"
+						description="半角英字、数字、_を使用できます。"
+						error={fieldErrorsToShow.name}
+						inputProps={{
+							id: "name",
+							type: "text",
+							name: "name",
+							placeholder: "例: user_name",
+							autoComplete: "username",
+							value: name,
+							onChange: e => setName(e.target.value),
+							onBlur: () => setFieldTouched("name"),
+						}}
+					/>
 
-				<AuthTextField
-					label="メールアドレス"
-					htmlFor="email"
-					error={fieldErrorsToShow.email}
-					inputProps={{
-						id: "email",
-						type: "text",
-						name: "email",
-						placeholder: "example@example.com",
-						autoComplete: "email",
-						value: email,
-						onChange: e => setEmail(e.target.value),
-						onBlur: () => setFieldTouched("email"),
-					}}
-				/>
+					<AuthTextField
+						label="メールアドレス"
+						htmlFor="email"
+						error={fieldErrorsToShow.email}
+						inputProps={{
+							id: "email",
+							type: "text",
+							name: "email",
+							placeholder: "example@example.com",
+							autoComplete: "email",
+							value: email,
+							onChange: e => setEmail(e.target.value),
+							onBlur: () => setFieldTouched("email"),
+						}}
+					/>
 
-				<AuthTextField
-					label="パスワード"
-					htmlFor="password"
-					description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
-					error={fieldErrorsToShow.password}
-					inputProps={{
-						id: "password",
-						type: "password",
-						name: "password",
-						autoComplete: "new-password",
-						value: password,
-						onChange: e => setPassword(e.target.value),
-						onBlur: () => setFieldTouched("password"),
-					}}
-				/>
+					<AuthTextField
+						label="パスワード"
+						htmlFor="password"
+						description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
+						error={fieldErrorsToShow.password}
+						inputProps={{
+							id: "password",
+							type: "password",
+							name: "password",
+							autoComplete: "new-password",
+							value: password,
+							onChange: e => setPassword(e.target.value),
+							onBlur: () => setFieldTouched("password"),
+						}}
+					/>
 
-				<AuthTextField
-					label="パスワード確認"
-					htmlFor="passwordConfirm"
-					error={fieldErrorsToShow.passwordConfirm}
-					inputProps={{
-						id: "passwordConfirm",
-						type: "password",
-						name: "passwordConfirm",
-						autoComplete: "new-password",
-						value: passwordConfirm,
-						onChange: e => setPasswordConfirm(e.target.value),
-						onBlur: () => setFieldTouched("passwordConfirm"),
-					}}
-				/>
-			</AuthFormShell>
-
+					<AuthTextField
+						label="パスワード確認"
+						htmlFor="passwordConfirm"
+						error={fieldErrorsToShow.passwordConfirm}
+						inputProps={{
+							id: "passwordConfirm",
+							type: "password",
+							name: "passwordConfirm",
+							autoComplete: "new-password",
+							value: passwordConfirm,
+							onChange: e => setPasswordConfirm(e.target.value),
+							onBlur: () => setFieldTouched("passwordConfirm"),
+						}}
+					/>
+				</AuthFormShell>
+			</div>
 			{/* フッター */}
 			<Footer />
 		</>

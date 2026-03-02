@@ -17,7 +17,7 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_URL=https://oekakinomori.com
-      - VITE_AUTH_REDIRECT_ENABLED=true # ログイン済みでログイン画面にアクセスしたらホームへリダイレクト
+      # - VITE_AUTH_REDIRECT_ENABLED=true # ログイン済みでログイン画面にアクセスしたらホームへリダイレクト
 
   backend:
     build: ./backend
