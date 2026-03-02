@@ -1,6 +1,8 @@
 import type { FormEventHandler, ReactNode } from "react";
+import { AuthPageTitle } from "./AuthPageTitle";
 
 type Props = {
+	title: ReactNode;
 	serverError?: string | null;
 	onSubmit: FormEventHandler<HTMLFormElement>;
 	top?: ReactNode;
@@ -9,6 +11,7 @@ type Props = {
 };
 
 export function AuthFormShell({
+	title,
 	serverError,
 	onSubmit,
 	top,
@@ -18,7 +21,9 @@ export function AuthFormShell({
 	return (
 		<div className="w-full max-w-md">
 			<div className="card bg-base-200">
-				<div className="card-body gap-5">
+				<div className="card-body gap-5 py-0 px-3">
+					<AuthPageTitle>{title}</AuthPageTitle>
+
 					{top}
 
 					{serverError && (
@@ -27,9 +32,9 @@ export function AuthFormShell({
 						</div>
 					)}
 
-					<form className="space-y-3" onSubmit={onSubmit}>
+					<form className="space-y-7" onSubmit={onSubmit}>
 						{children}
-						{actions}
+						<div className="space-y-3 mt-10">{actions}</div>
 					</form>
 				</div>
 			</div>

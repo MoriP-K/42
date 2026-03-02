@@ -69,9 +69,6 @@ const SetupProfile = () => {
 	return (
 		<>
 			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-				<div className="text-center">
-					<span className="text-2xl font-bold">プロフィール設定</span>
-				</div>
 				{isRedirectedForIncomplete && (
 					<p className="text-center text-base-content/80 text-error">
 						ユーザー名が未設定のため、設定してください。
@@ -79,6 +76,7 @@ const SetupProfile = () => {
 				)}
 
 				<AuthFormShell
+					title="プロフィール設定"
 					serverError={serverError}
 					onSubmit={handleSubmit}
 					actions={

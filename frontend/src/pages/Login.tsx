@@ -121,10 +121,10 @@ const Login = () => {
 						お絵描きアイランド
 					</h1>
 				</div>
-				<span className="text-2xl font-bold">ログイン</span>
 
 				{/* 記入フォーム */}
 				<AuthFormShell
+					title="ログイン"
 					serverError={serverError}
 					onSubmit={handleSubmit}
 					top={
@@ -136,7 +136,7 @@ const Login = () => {
 						</>
 					}
 					actions={
-						<div className="space-y-2">
+						<>
 							<button
 								type="submit"
 								className="btn btn-primary w-full"
@@ -144,7 +144,7 @@ const Login = () => {
 								ログイン
 							</button>
 							<BackButton></BackButton>
-						</div>
+						</>
 					}
 				>
 					<AuthTextField

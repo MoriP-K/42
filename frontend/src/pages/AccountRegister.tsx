@@ -195,15 +195,9 @@ const AccountRegister = () => {
 	return (
 		<>
 			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-				{/* ヘッダー */}
-				<div className="text-center">
-					<span className="text-2xl font-bold">
-						アカウント新規作成
-					</span>
-				</div>
-
 				{/* 記入フォーム */}
 				<AuthFormShell
+					title="アカウント新規作成"
 					serverError={serverError}
 					onSubmit={handleSubmit}
 					top={
@@ -215,7 +209,7 @@ const AccountRegister = () => {
 						</>
 					}
 					actions={
-						<div className="space-y-2">
+						<>
 							<button
 								type="submit"
 								className="btn btn-primary w-full"
@@ -224,7 +218,7 @@ const AccountRegister = () => {
 								アカウント作成
 							</button>
 							<BackButton></BackButton>
-						</div>
+						</>
 					}
 				>
 					<AuthTextField

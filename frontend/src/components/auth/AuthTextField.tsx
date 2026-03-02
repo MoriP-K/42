@@ -25,7 +25,10 @@ export function AuthTextField({
 				<p className="text-sm text-base-content/60">{description}</p>
 			)}
 
-			<input {...inputProps} className="input input-bordered w-full" />
+			<input
+				{...inputProps}
+				className="input input-bordered w-full mt-2"
+			/>
 
 			{error && <p className="text-sm text-error">{error}</p>}
 		</div>
