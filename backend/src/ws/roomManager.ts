@@ -201,3 +201,37 @@ export const isClientRegistered = (
 	}
 	return false;
 };
+
+export const finalizeGame = async (roomId: string) => {
+	// このルームのPLAYERメンバーを取得（scoreも含めて）
+	const roomPlayers = await prisma.roomMember.findMany({
+		where: {
+			room_id: Number(roomId),
+			role: UserRole.PLAYER,
+		},
+	});
+
+	// 各プレイヤーのUser.total_scoreとplay_countを更新
+	const userUpdates = roomPlayers.map(player =>
+		prisma.user.update({
+			where: { id: player.user_id },
+			data: {
+				total_score: { increment: player.score },
+				play_count: { increment: 1 },
+			},
+		}),
+	);
+
+	await prisma.$transaction(userUpdates);
+
+	// Room.statusをRESULTに変更
+	await prisma.room.update({
+		where: { id: Number(roomId) },
+		data: { status: "RESULT" },
+	});
+};
+
+export const getRoomSize = (roomId: string): number => {
+	const room = rooms.get(roomId);
+	return room ? room.size : 0;
+};

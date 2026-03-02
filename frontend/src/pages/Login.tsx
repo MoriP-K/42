@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+	useNavigate,
+	useSearchParams,
+	useLocation,
+	type Location,
+} from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { useAuth } from "../features/auth/useAuth";
@@ -23,6 +28,7 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
 const Login = () => {
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
+	const location = useLocation();
 	const { refreshAuth } = useAuth();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -96,9 +102,8 @@ const Login = () => {
 				setServerError("ログインに失敗しました。再度お試しください。");
 				return;
 			}
-			//TODO: トーストの表示
-			//TODO: 元々アクセスしようとしていたページに戻す(?)
-			navigate("/");
+			const from = (location.state as { from?: Location })?.from;
+			navigate(from ?? "/", { replace: true });
 		} catch (err) {
 			// レスポンスの正規化
 			const result = normalizeErrResponse(err);
