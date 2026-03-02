@@ -177,12 +177,9 @@ const Login = () => {
 				</AuthFormShell>
 
 				{/* 新規アカウント登録リンク */}
-				<div className="text-center">
-					<Link
-						to="/register"
-						className="btn btn-ghost btn-sm link link-hover"
-					>
-						新規アカウント登録はこちら
+				<div className="w-full max-w-sm px-2">
+					<Link to="/register" className="btn btn-outline w-full">
+						新規登録はこちら
 					</Link>
 				</div>
 			</div>
