@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useParams } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Waiting from "./pages/Waiting";
@@ -16,6 +16,11 @@ import Profile from "./pages/Profile";
 import SetupProfile from "./pages/SetupProfile";
 import RequireAuth from "./features/auth/RequireAuth";
 import RequireGuest from "./features/auth/RequireGuest";
+
+const RoomsRedirect = () => {
+	const { roomId } = useParams<{ roomId: string }>();
+	return <Navigate to={roomId ? `/waiting/${roomId}` : "/"} replace />;
+};
 
 const App = () => {
 	return (
@@ -73,6 +78,7 @@ const App = () => {
 					}
 				>
 					<Route index element={<Home />} />
+					<Route path="rooms/:roomId" element={<RoomsRedirect />} />
 					<Route path="waiting/:id" element={<Waiting />} />
 					<Route path="prepare/:id" element={<Prepare />} />
 					<Route path="game/:id" element={<Game />} />
