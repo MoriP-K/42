@@ -13,6 +13,7 @@ import {
 } from "../types/room";
 import Toast from "../components/Toast";
 import { createWebSocket } from "../api/wsClient";
+import { ApiError } from "../api/apiClient";
 
 const Waiting = () => {
 	const { user } = useAuth();
@@ -54,9 +55,13 @@ const Waiting = () => {
 			setUsers(mappedUsers);
 			setInvitationToken(res.invitation_token ?? null);
 		} catch (error) {
+			if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+				navigate("/");
+				return;
+			}
 			console.log(error);
 		}
-	}, [roomId, user]);
+	}, [roomId, user, navigate]);
 
 	const getRoomDetailsRef = useRef(getRoomDetails);
 	useEffect(() => {
@@ -148,6 +153,10 @@ const Waiting = () => {
 						data.type === WebSocketMessageType.ERROR &&
 						data.message
 					) {
+						if (data.message === "Room has finished") {
+							navigate("/");
+							return;
+						}
 						setToastMessage(data.message);
 						setToastType("error");
 						setShowToast(true);
@@ -235,6 +244,10 @@ const Waiting = () => {
 				setJoinedViaToken(true);
 				getRoomDetails();
 			} catch (error: unknown) {
+				if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+					navigate("/");
+					return;
+				}
 				const isExpectedError =
 					error &&
 					typeof error === "object" &&

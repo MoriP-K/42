@@ -7,6 +7,7 @@ import { roomApi } from "../api/roomApi";
 import { authApi } from "../api/authApi";
 import { createWebSocket } from "../api/wsClient";
 import { WebSocketMessageType } from "../types/room";
+import { ApiError } from "../api/apiClient";
 
 const Result = () => {
 	const { id } = useParams();
@@ -58,6 +59,12 @@ const Result = () => {
 					setNewRoomId(data.newRoomId);
 					setRematchToken(data.token);
 				}
+				if (
+					data.type === WebSocketMessageType.ERROR &&
+					data.message === "Room has finished"
+				) {
+					navigate("/");
+				}
 			} catch (error) {
 				console.log("Failed to parse message:", error);
 			}
@@ -67,7 +74,7 @@ const Result = () => {
 			ws.close();
 			socketRef.current = null;
 		};
-	}, [id, currentUserId]);
+	}, [id, currentUserId, navigate]);
 
 	useEffect(() => {
 		const fetchResult = async () => {
@@ -92,12 +99,16 @@ const Result = () => {
 				// setPlayersに保存
 				setPlayers(playerData);
 			} catch (error) {
+				if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+					navigate("/");
+					return;
+				}
 				console.error("Failed to fetch result:", error);
 			}
 		};
 
 		fetchResult();
-	}, [id]);
+	}, [id, navigate]);
 
 	return (
 		<div className="min-h-screen bg-base-200">
