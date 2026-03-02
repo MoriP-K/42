@@ -167,7 +167,10 @@ const Prepare = () => {
 				setCountdownStarted(false);
 				setCountdown(null);
 			} catch (error) {
-				if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+				if (
+					error instanceof ApiError &&
+					(error.status === 403 || error.status === 404)
+				) {
 					navigate("/");
 					return;
 				}

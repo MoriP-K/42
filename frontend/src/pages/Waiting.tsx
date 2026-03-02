@@ -55,7 +55,10 @@ const Waiting = () => {
 			setUsers(mappedUsers);
 			setInvitationToken(res.invitation_token ?? null);
 		} catch (error) {
-			if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+			if (
+				error instanceof ApiError &&
+				(error.status === 403 || error.status === 404)
+			) {
 				navigate("/");
 				return;
 			}
@@ -244,7 +247,10 @@ const Waiting = () => {
 				setJoinedViaToken(true);
 				getRoomDetails();
 			} catch (error: unknown) {
-				if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+				if (
+					error instanceof ApiError &&
+					(error.status === 403 || error.status === 404)
+				) {
 					navigate("/");
 					return;
 				}
