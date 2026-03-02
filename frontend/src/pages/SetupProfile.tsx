@@ -62,7 +62,7 @@ const SetupProfile = () => {
 			}
 			navigate(from ?? "/", { replace: true });
 		} catch (err) {
-			setServerError(normalizeErrResponse(err));
+			setFieldError(normalizeErrResponse(err));
 		}
 	};
 

@@ -27,7 +27,7 @@ export function AuthFormShell({
 					{top}
 
 					{serverError && (
-						<div className="alert alert-error">
+						<div className="text-error text-sm px-3 py-2">
 							<span>{serverError}</span>
 						</div>
 					)}
