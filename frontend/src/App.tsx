@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate, useParams } from "react-router-dom";
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	Outlet,
+	Navigate,
+	useParams,
+} from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Waiting from "./pages/Waiting";
