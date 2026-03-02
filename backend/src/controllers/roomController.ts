@@ -63,16 +63,34 @@ export const getRoomDetails = async (
 		where: {
 			id: Number(request.params.roomId),
 		},
-		include: {
+		select: {
+			id: true,
+			game_mode: true,
+			host_id: true,
+			invitation_token: true,
+			status: true,
 			members: {
-				include: {
-					user: true,
+				select: {
+					room_id: true,
+					user_id: true,
+					is_ready: true,
+					role: true,
+					joined_at: true,
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatar: true,
+						},
+					},
 				},
 				orderBy: {
 					joined_at: "asc",
 				},
 			},
-			rounds: true,
+			rounds: {
+				select: { id: true },
+			},
 		},
 	});
 	if (!room) {
