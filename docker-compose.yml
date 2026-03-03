@@ -16,7 +16,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=https://oekakinomori.com
+      - VITE_API_URL=${APP_URL:-https://unweakening-cara-withdrawn.ngrok-free.dev}
       - VITE_AUTH_REDIRECT_ENABLED=true # ログイン済みでログイン画面にアクセスしたらホームへリダイレクト
 
   backend:
@@ -28,7 +28,7 @@ services:
       - /app/node_modules
     environment:
       - DATABASE_URL=postgresql://oekaki:password@db:5432/oekaki_db
-      - FRONTEND_URL=https://oekakinomori.com
+      - FRONTEND_URL=${APP_URL:-https://unweakening-cara-withdrawn.ngrok-free.dev}
     depends_on:
       - db
 
@@ -42,6 +42,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  ngrok:
+    image: ngrok/ngrok:alpine
+    command: http https://nginx:443
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - nginx
+    profiles:
+      - ngrok
 
 volumes:
   postgres_data:
