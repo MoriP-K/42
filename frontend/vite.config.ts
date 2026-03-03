@@ -5,6 +5,10 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
 	plugins: [react()],
 	server: {
-		allowedHosts: ["oekakinomori.com", "www.oekakinomori.com"],
+		allowedHosts: [
+			// "oekakinomori.com",
+			// "www.oekakinomori.com",
+			".ngrok-free.dev",
+		],
 	},
 });
