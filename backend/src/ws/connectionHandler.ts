@@ -350,6 +350,11 @@ export const handleConnection = (socket: WebSocket) => {
 						currentRound.drawer_id,
 					);
 
+					await prisma.room.update({
+						where: { id: Number(currentClient.roomId) },
+						data: { status: "PLAYING" },
+					});
+
 					drawerClient?.socket.send(
 						JSON.stringify({
 							type: WebSocketMessageType.ROUND_STARTED,
