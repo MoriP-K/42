@@ -169,7 +169,10 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 	});
 
 	const scores = getScores(roomId);
-	const winnerId = [...scores].sort((a, b) => b[1] - a[1])[0]?.[0];
+	const scoreSorted = [...scores].sort((a, b) => b[1] - a[1]);
+	const isTie =
+		scoreSorted.length >= 2 && scoreSorted[0][1] === scoreSorted[1][1];
+	const winnerId = isTie ? null : (scoreSorted[0]?.[0] ?? null);
 
 	if (winnerId) {
 		await prisma.round.update({
@@ -232,11 +235,14 @@ export const finalizeGame = async (roomId: string) => {
 		}),
 	);
 
-	const topPlayer = roomPlayers.sort((a, b) => b.score - a.score)[0];
+	const playerSorted = roomPlayers.sort((a, b) => b.score - a.score);
+	const isTie =
+		playerSorted.length >= 2 &&
+		playerSorted[0].score === playerSorted[1].score;
 
-	if (topPlayer) {
+	if (!isTie && playerSorted[0]) {
 		await prisma.user.update({
-			where: { id: topPlayer.user_id },
+			where: { id: playerSorted[0].user_id },
 			data: { first_place_count: { increment: 1 } },
 		});
 	}
