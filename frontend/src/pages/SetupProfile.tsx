@@ -46,7 +46,7 @@ const SetupProfile = () => {
 		return message ?? "予期しないエラーが発生しました";
 	};
 
-	const validateRegisterForm = (
+	const validateSetupProfileForm = (
 		name: string,
 	): { valid: boolean; errors: FormErrors } => {
 		const errors: FormErrors = {};
@@ -64,7 +64,10 @@ const SetupProfile = () => {
 			errors,
 		};
 	};
-	const validationResult = useMemo(() => validateRegisterForm(name), [name]);
+	const validationResult = useMemo(
+		() => validateSetupProfileForm(name),
+		[name],
+	);
 
 	const isFormValid = validationResult.valid;
 
