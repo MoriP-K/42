@@ -42,67 +42,112 @@ const Profile = () => {
 	}
 
 	return (
-		<div>
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-5xl font-bold">プロフィール</h1>
-				<div className="flex gap-2">
-					<Link to="/" className="btn btn-primary btn-sm">
-						ホーム
-					</Link>
-					<button
-						onClick={handleLogout}
-						className="btn btn-error btn-sm"
-					>
-						ログアウト
-					</button>
-				</div>
-			</div>
-			<p>ユーザ名 {profileData.name}</p>
-			<p className="font-bold">実績</p>
-			<p>トータルスコア: {profileData.total_score}</p>
-			<p>1位回数: {profileData.first_place_count}</p>
-			<p>プレイ回数: {profileData.play_count}</p>
+		<>
+			<div className="min-h-screen flex flex-col items-center px-4 py-8">
+				<div className="w-full space-y-6">
+					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+						<h1 className="text-3xl sm:text-4xl font-bold">
+							プロフィール
+						</h1>
+						<div className="flex gap-2 self-end">
+							<Link to="/" className="btn btn-primary btn-sm">
+								ホーム
+							</Link>
+							<button
+								onClick={handleLogout}
+								className="btn btn-error btn-sm"
+							>
+								ログアウト
+							</button>
+						</div>
+					</div>
 
-			<div>
-				<p className="font-bold">バッジ</p>
-				<div className="flex flex-wrap gap-4 mt-2">
-					{profileData.badges && profileData.badges.length > 0 ? (
-						profileData.badges.map((badgeName, index) => (
-							<BadgeImage key={index} name={badgeName} />
-						))
-					) : (
-						<p className="text-gray-400">
-							まだバッジを持っていません
-						</p>
-					)}
-				</div>
-			</div>
+					<div className="space-y-6">
+						<div className="space-y-4">
+							<div>
+								<p className="text-sm text-base-content/70">
+									ユーザー名
+								</p>
+								<p className="text-2xl font-semibold break-all">
+									{profileData.name}
+								</p>
+							</div>
 
-			<div>
-				<p className="font-bold">リーダーボード</p>
-				<p> 自分の順位： {profileData.user_rank + 1}位</p>
-				<div className="flex flex-wrap gap-4 mt-2">
-					{profileData.top_ranker ? (
-						Object.entries(profileData.top_ranker).map(
-							([name, score]) => (
-								<div
-									key={name}
-									className="flex justify-between w-48"
-								>
-									<span>{name}</span>
-									<span>{score}点</span>
+							<div className="rounded-xl bg-base-200/60 p-4 space-y-2">
+								<p className="font-bold text-base">実績</p>
+								<p>トータルスコア: {profileData.total_score}</p>
+								<p>1位回数: {profileData.first_place_count}</p>
+								<p>プレイ回数: {profileData.play_count}</p>
+							</div>
+
+							<div className="rounded-xl bg-base-200/60 p-4">
+								<p className="font-bold text-base mb-2">
+									バッジ
+								</p>
+								<div className="flex flex-wrap gap-3">
+									{profileData.badges &&
+									profileData.badges.length > 0 ? (
+										profileData.badges.map(
+											(badgeName, index) => (
+												<BadgeImage
+													key={index}
+													name={badgeName}
+												/>
+											),
+										)
+									) : (
+										<p className="text-base-content/50 text-sm">
+											まだバッジを持っていません
+										</p>
+									)}
 								</div>
-							),
-						)
-					) : (
-						<p className="text-gray-400">
-							まだランキングはありません
-						</p>
-					)}
+							</div>
+						</div>
+
+						<div className="rounded-xl bg-base-200/60 p-4 space-y-3">
+							<p className="font-bold text-base">
+								リーダーボード
+							</p>
+							<p className="text-sm">
+								自分の順位:{" "}
+								<span className="font-semibold">
+									{profileData.user_rank + 1}位
+								</span>
+							</p>
+							<div className="flex flex-col gap-2">
+								{profileData.top_ranker ? (
+									Object.entries(profileData.top_ranker).map(
+										([name, score], index) => (
+											<div
+												key={name}
+												className="flex items-center justify-between rounded-lg bg-base-100 px-3 py-2 shadow-sm"
+											>
+												<div className="flex items-center gap-2">
+													<span className="w-6 text-xs font-bold text-base-content/70">
+														{index + 1}位
+													</span>
+													<span className="font-medium break-all">
+														{name}
+													</span>
+												</div>
+												<span className="font-semibold">
+													{score}点
+												</span>
+											</div>
+										),
+									)
+								) : (
+									<p className="text-base-content/50 text-sm">
+										まだランキングはありません
+									</p>
+								)}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<Footer></Footer>
-		</div>
+			<Footer />
+		</>
 	);
 };
 
