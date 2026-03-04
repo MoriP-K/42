@@ -27,6 +27,8 @@ const validateRegisterForm = (
 		errors.name = "ユーザー名を入力してください";
 	} else if (!/^[a-z0-9_]+$/.test(name)) {
 		errors.name = "ユーザー名には半角英数字と「_」のみ使用できます";
+	} else if (name.length > 15) {
+		errors.name = "ユーザー名は15文字以内で入力してください";
 	}
 
 	if (!email.trim()) {
@@ -224,7 +226,7 @@ const AccountRegister = () => {
 					<AuthTextField
 						label="ユーザー名"
 						htmlFor="name"
-						description="半角英字、数字、_を使用できます。"
+						description="半角英字、数字、_を使用できます（15文字以内）。"
 						error={fieldErrorsToShow.name}
 						inputProps={{
 							id: "name",
