@@ -168,6 +168,16 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 		data: { ended_time: new Date() },
 	});
 
+	const scores = getScores(roomId);
+	const winnerId = [...scores].sort((a, b) => b[1] - a[1])[0]?.[0];
+
+	if (winnerId) {
+		await prisma.round.update({
+			where: { id: currentRound.roundId },
+			data: { ended_time: new Date(), winner_id: winnerId },
+		});
+	}
+
 	// ended_timeありのラウンド数を数える
 	// PLAYER数を数える
 	const completedRounds = await prisma.round.count({
@@ -221,6 +231,15 @@ export const finalizeGame = async (roomId: string) => {
 			},
 		}),
 	);
+
+	const topPlayer = roomPlayers.sort((a, b) => b.score - a.score)[0];
+
+	if (topPlayer) {
+		await prisma.user.update({
+			where: { id: topPlayer.user_id },
+			data: { first_place_count: { increment: 1 } },
+		});
+	}
 
 	await prisma.$transaction(userUpdates);
 
