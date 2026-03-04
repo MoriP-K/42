@@ -137,6 +137,16 @@ export const handleConnection = (socket: WebSocket) => {
 					);
 				}
 
+				const scores = getScores(data.roomId);
+				if (scores.size > 0) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.CURRENT_SCORES,
+							scores: Object.fromEntries(scores),
+						}),
+					);
+				}
+
 				return;
 			}
 

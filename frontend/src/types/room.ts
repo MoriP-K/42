@@ -1,5 +1,12 @@
 import { GameRole, type User } from "./user";
 
+export const RoomStatus = {
+	WAITING: "WAITING",
+	PLAYING: "PLAYING",
+	RESULT: "RESULT",
+	FINISHED: "FINISHED",
+};
+
 export const GameMode = {
 	DEFAULT: "DEFAULT",
 	ONE_STROKE: "ONE_STROKE",
@@ -28,6 +35,7 @@ export interface RoomDetails {
 	game_mode: (typeof GameMode)[keyof typeof GameMode];
 	host_id: number;
 	invitation_token?: string;
+	status: (typeof RoomStatus)[keyof typeof RoomStatus];
 	members: RoomMember[];
 	rounds: Round[];
 }
@@ -56,6 +64,7 @@ export const WebSocketMessageType = {
 	CHAT: "chat",
 	DRAW: "draw",
 	DRAW_END: "drawEnd",
+	CURRENT_SOCRES: "currentScores",
 	CLEAR: "clear",
 	NAVIGATE_TO_PREPARE: "navigateToPrepare",
 	PREPARE_STARTED: "prepareStarted",

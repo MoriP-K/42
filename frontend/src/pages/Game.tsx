@@ -167,6 +167,15 @@ const Game = () => {
 
 						setClearTrigger(prev => prev + 1);
 					} else if (
+						data.type === WebSocketMessageType.CURRENT_SOCRES
+					) {
+						setPlayers(prev =>
+							prev.map(p => ({
+								...p,
+								score: data.scores[p.id] ?? p.score,
+							})),
+						);
+					} else if (
 						data.type === WebSocketMessageType.ERROR &&
 						data.message === "Room has finished"
 					) {
