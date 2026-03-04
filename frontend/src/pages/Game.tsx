@@ -17,6 +17,7 @@ import ScoreBoard from "../components/game/ScoreBoard";
 import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 import { GameRole } from "../types/user";
+import { ApiError } from "../api/apiClient";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
@@ -165,6 +166,11 @@ const Game = () => {
 						setMessages(prev => [...prev, systemMessage]);
 
 						setClearTrigger(prev => prev + 1);
+					} else if (
+						data.type === WebSocketMessageType.ERROR &&
+						data.message === "Room has finished"
+					) {
+						navigate("/");
 					}
 				} catch (error) {
 					console.error("❌ Failed to parse message:", error);
@@ -212,7 +218,7 @@ const Game = () => {
 				setSocket(null);
 			}
 		};
-	}, [currentUserId, id]);
+	}, [currentUserId, id, navigate]);
 
 	const updateRoundState = (word: string, drawerId: number) => {
 		setCurrentWord(word);
@@ -279,6 +285,13 @@ const Game = () => {
 				);
 			}
 		} catch (error) {
+			if (
+				error instanceof ApiError &&
+				(error.status === 403 || error.status === 404)
+			) {
+				navigate("/");
+				return;
+			}
 			console.error("❌ Failed to check room status: ", error);
 		}
 	};

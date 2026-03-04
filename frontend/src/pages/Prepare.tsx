@@ -5,6 +5,8 @@ import { roomApi } from "../api/roomApi";
 import { GameRole, PlayerRole, type User } from "../types/user";
 import type { RoomDetails, RoomMember } from "../types/room";
 import { createWebSocket } from "../api/wsClient";
+import { ApiError } from "../api/apiClient";
+import { WebSocketMessageType } from "../types/room";
 
 const Prepare = () => {
 	const navigate = useNavigate();
@@ -57,6 +59,12 @@ const Prepare = () => {
 					if (Number(data.userId) === user?.id) {
 						setIsReady(data.isReady);
 					}
+				}
+				if (
+					data.type === WebSocketMessageType.ERROR &&
+					data.message === "Room has finished"
+				) {
+					navigate("/");
 				}
 			} catch (error) {
 				console.error("Failed to parse message:", error);
@@ -159,11 +167,18 @@ const Prepare = () => {
 				setCountdownStarted(false);
 				setCountdown(null);
 			} catch (error) {
+				if (
+					error instanceof ApiError &&
+					(error.status === 403 || error.status === 404)
+				) {
+					navigate("/");
+					return;
+				}
 				console.error("Failed to create round:", error);
 			}
 		};
 		ensureRound();
-	}, [roomId, user?.id]);
+	}, [roomId, user?.id, navigate]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-6 flex flex-col items-center justify-center font-sans overflow-hidden">

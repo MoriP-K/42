@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
-import { UserRole } from "../generated/prisma/enums";
+import { RoomStatus, UserRole } from "../generated/prisma/enums";
 import { randomUUID } from "node:crypto";
 import {
 	CreateRoomRoute,
@@ -40,7 +40,7 @@ export const createRoom = async (
 				members: {
 					create: {
 						user_id: request.body.hostId,
-						role: "PLAYER",
+						role: UserRole.PLAYER,
 					},
 				},
 			},
@@ -63,18 +63,42 @@ export const getRoomDetails = async (
 		where: {
 			id: Number(request.params.roomId),
 		},
-		include: {
+		select: {
+			id: true,
+			game_mode: true,
+			host_id: true,
+			invitation_token: true,
+			status: true,
 			members: {
-				include: {
-					user: true,
+				select: {
+					room_id: true,
+					user_id: true,
+					is_ready: true,
+					role: true,
+					joined_at: true,
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatar: true,
+						},
+					},
 				},
 				orderBy: {
 					joined_at: "asc",
 				},
 			},
-			rounds: true,
+			rounds: {
+				select: { id: true },
+			},
 		},
 	});
+	if (!room) {
+		return reply.code(404).send({ error: "Room not found" });
+	}
+	if (room.status === RoomStatus.FINISHED) {
+		return reply.code(403).send({ error: "Room has finished" });
+	}
 	return reply.code(200).send(room);
 };
 
@@ -94,6 +118,16 @@ export const getRoomMembers = async (
 
 	const roomId = paramResult.data.roomId;
 	try {
+		const room = await prisma.room.findUnique({
+			where: { id: roomId },
+			select: { status: true },
+		});
+		if (!room) {
+			return reply.code(404).send({ error: "Room not found" });
+		}
+		if (room.status === RoomStatus.FINISHED) {
+			return reply.code(403).send({ error: "Room has finished" });
+		}
 		const roomMembers = await prisma.roomMember.findMany({
 			where: {
 				room_id: roomId,
@@ -301,6 +335,9 @@ export const joinRoomByToken = async (
 	if (!room) {
 		return reply.code(404).send({ message: "招待が無効です。" });
 	}
+	if (room.status === RoomStatus.FINISHED) {
+		return reply.code(403).send({ error: "Room has finished" });
+	}
 	const roomId = room.id;
 	const existingMember = await prisma.roomMember.findUnique({
 		where: {
@@ -492,7 +529,7 @@ export const leaveResult = async (
 		if (roomSize <= 1) {
 			await prisma.room.update({
 				where: { id: roomId },
-				data: { status: "FINISHED" },
+				data: { status: RoomStatus.FINISHED },
 			});
 		}
 		return reply.code(200).send({ ok: true });
