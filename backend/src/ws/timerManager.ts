@@ -1,3 +1,4 @@
+import { prisma } from "../lib/prisma";
 import {
 	broadcastToRoom,
 	endRound,
@@ -49,6 +50,11 @@ export const startTimer = (
 			if (isGameOver === null) return;
 			if (isGameOver) {
 				await finalizeGame(roomId);
+			} else {
+				await prisma.room.update({
+					where: { id: Number(roomId) },
+					data: { status: "WAITING" },
+				});
 			}
 			broadcastToRoom(roomId, {
 				type: WebSocketMessageType.ROUND_END,
