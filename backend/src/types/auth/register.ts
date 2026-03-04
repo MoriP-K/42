@@ -12,6 +12,7 @@ export const RegisterRequest = z.object({
 	name: z
 		.string()
 		.min(1)
+		.max(15, "ユーザー名は15文字以内で入力してください")
 		.regex(
 			/^[a-z0-9_]+$/,
 			"ユーザー名には半角英数字と「_」のみ使用できます",

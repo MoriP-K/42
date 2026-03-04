@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, type Location } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
@@ -12,13 +12,20 @@ type SetupProfileLocationState = {
 	reason?: "profile_incomplete";
 };
 
+export type SetupProfileField = "name";
+export type FormErrors = Partial<Record<SetupProfileField, string>>;
+
 const SetupProfile = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { refreshAuth } = useAuth();
 	const [name, setName] = useState("");
-	const [fieldError, setFieldError] = useState<string | null>(null);
 	const [serverError, setServerError] = useState<string | null>(null);
+
+	const [submitErrors, setSubmitErrors] = useState<FormErrors>({});
+	const [touched, setTouched] = useState<
+		Partial<Record<SetupProfileField, boolean>>
+	>({});
 
 	const from = (location.state as SetupProfileLocationState)?.from;
 	const isRedirectedForIncomplete =
@@ -39,22 +46,61 @@ const SetupProfile = () => {
 		return message ?? "予期しないエラーが発生しました";
 	};
 
+	const validateSetupProfileForm = (
+		name: string,
+	): { valid: boolean; errors: FormErrors } => {
+		const errors: FormErrors = {};
+
+		if (!name.trim()) {
+			errors.name = "ユーザー名を入力してください";
+		} else if (!/^[a-z0-9_]+$/.test(name)) {
+			errors.name = "ユーザー名には半角英数字と「_」のみ使用できます";
+		} else if (name.length > 15) {
+			errors.name = "ユーザー名は15文字以内で入力してください";
+		}
+
+		return {
+			valid: Object.keys(errors).length === 0,
+			errors,
+		};
+	};
+	const validationResult = useMemo(
+		() => validateSetupProfileForm(name),
+		[name],
+	);
+
+	const isFormValid = validationResult.valid;
+
+	const fieldErrorsToShow: FormErrors = useMemo(() => {
+		const result: FormErrors = {};
+		for (const field of ["name"] as const) {
+			const err = submitErrors[field] ?? validationResult.errors[field];
+			if (err && touched[field]) {
+				result[field] = err;
+			}
+		}
+		return result;
+	}, [validationResult.errors, touched, submitErrors]);
+
+	const setFieldTouched = (field: SetupProfileField) => {
+		setTouched(prev => ({ ...prev, [field]: true }));
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setServerError(null);
-		setFieldError(null);
+		setSubmitErrors({});
 
-		const trimmed = name.trim();
-		if (!trimmed) {
-			setFieldError("ユーザー名を入力してください");
-			return;
-		} else if (!/^[a-z0-9_]+$/.test(trimmed)) {
-			setFieldError("ユーザー名には半角英数字と「_」のみ使用できます");
+		if (!validationResult.valid) {
+			setTouched({
+				name: true,
+			});
+			setSubmitErrors(validationResult.errors);
 			return;
 		}
 
 		try {
-			await authApi.updateMe({ name: trimmed });
+			await authApi.updateMe({ name: name.trim() });
 			const ok = await refreshAuth();
 			if (!ok) {
 				setServerError("更新に失敗しました。再度お試しください。");
@@ -62,7 +108,9 @@ const SetupProfile = () => {
 			}
 			navigate(from ?? "/", { replace: true });
 		} catch (err) {
-			setFieldError(normalizeErrResponse(err));
+			const message = normalizeErrResponse(err);
+			setTouched(prev => ({ ...prev, name: true }));
+			setSubmitErrors(prev => ({ ...prev, name: message }));
 		}
 	};
 
@@ -83,6 +131,7 @@ const SetupProfile = () => {
 						<button
 							type="submit"
 							className="btn btn-primary w-full"
+							disabled={!isFormValid}
 						>
 							登録する
 						</button>
@@ -91,16 +140,17 @@ const SetupProfile = () => {
 					<AuthTextField
 						label="ユーザー名"
 						htmlFor="name"
-						description="半角英字、数字、_を使用できます。"
-						error={fieldError ?? undefined}
+						description="半角英字、数字、_を使用できます（15文字以内）。"
+						error={fieldErrorsToShow.name}
 						inputProps={{
 							id: "name",
 							type: "text",
 							name: "name",
+							placeholder: "例: user_name",
 							autoComplete: "name",
 							value: name,
 							onChange: e => setName(e.target.value),
-							placeholder: "ユーザー名を入力",
+							onBlur: () => setFieldTouched("name"),
 						}}
 					/>
 				</AuthFormShell>
