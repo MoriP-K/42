@@ -17,11 +17,14 @@ const FRONTEND_URL_FALLBACK = process.env.FRONTEND_URL ?? FRONTEND_LOCAL;
 
 /** リクエストからオリジンを取得（プロキシ経由時は x-forwarded-host を優先） */
 const getOriginFromRequest = (request: FastifyRequest): string => {
-	const proto = (request.headers["x-forwarded-proto"] as string) || "http";
+	// 複数プロキシ経由時は "https,http" のようにカンマ区切りになるため、最初の値を使用
+	const protoRaw = (request.headers["x-forwarded-proto"] as string) || "http";
+	const proto = protoRaw.split(",")[0].trim();
 	// プロキシ経由時は x-forwarded-host を優先（Vite proxy が Host を backend:3000 に書き換えるため）
-	const host =
+	const hostRaw =
 		(request.headers["x-forwarded-host"] as string) ||
 		(request.headers.host ?? "localhost:3000");
+	const host = hostRaw.split(",")[0].trim();
 	return `${proto}://${host}`;
 };
 
@@ -42,49 +45,57 @@ export const googleAuth = async (
 	request: FastifyRequest<{ Querystring: GoogleAuthQuerystring }>,
 	reply: FastifyReply,
 ) => {
-	const { mode } = request.query;
-	if (mode !== "login" && mode !== "register") {
-		return reply.code(400).send({
-			message:
-				"modeパラメータは login または register である必要があります",
+	try {
+		const { mode } = request.query;
+		if (mode !== "login" && mode !== "register") {
+			return reply.code(400).send({
+				message:
+					"modeパラメータは login または register である必要があります",
+			});
+		}
+
+		const origin = getOriginFromRequest(request);
+		if (!isAllowedOrigin(origin)) {
+			return reply
+				.code(400)
+				.send({ message: "許可されていないオリジンです" });
+		}
+
+		const redirectUri = `${origin}/v1/auth/google/callback`;
+		const oauth2Client = new OAuth2Client(
+			GOOGLE_CLIENT_ID,
+			GOOGLE_CLIENT_SECRET,
+			redirectUri,
+		);
+
+		const nonce = randomUUID();
+		const oauthState: OAuthState = { nonce, mode };
+		const stateStr = JSON.stringify(oauthState);
+
+		const useSecure =
+			process.env.NODE_ENV === "production" ||
+			origin.startsWith("https://");
+		reply.setCookie("oauth_state", stateStr, {
+			path: "/",
+			httpOnly: true,
+			sameSite: "lax",
+			secure: useSecure,
+			maxAge: 60 * 10, // 10分
 		});
+
+		const authUrl = oauth2Client.generateAuthUrl({
+			access_type: "online",
+			scope: ["openid", "email", "profile"],
+			state: stateStr,
+		});
+
+		return reply.redirect(authUrl);
+	} catch (err) {
+		request.log.error(err, "[googleAuth] エラー");
+		const origin = getOriginFromRequest(request);
+		const frontendUrl = getFrontendUrlForRedirect(origin);
+		return reply.redirect(frontendUrl + "/login?error=server_error");
 	}
-
-	const origin = getOriginFromRequest(request);
-	if (!isAllowedOrigin(origin)) {
-		return reply
-			.code(400)
-			.send({ message: "許可されていないオリジンです" });
-	}
-
-	const redirectUri = `${origin}/v1/auth/google/callback`;
-	const oauth2Client = new OAuth2Client(
-		GOOGLE_CLIENT_ID,
-		GOOGLE_CLIENT_SECRET,
-		redirectUri,
-	);
-
-	const nonce = randomUUID();
-	const oauthState: OAuthState = { nonce, mode };
-	const stateStr = JSON.stringify(oauthState);
-
-	const useSecure =
-		process.env.NODE_ENV === "production" || origin.startsWith("https://");
-	reply.setCookie("oauth_state", stateStr, {
-		path: "/",
-		httpOnly: true,
-		sameSite: "lax",
-		secure: useSecure,
-		maxAge: 60 * 10, // 10分
-	});
-
-	const authUrl = oauth2Client.generateAuthUrl({
-		access_type: "online",
-		scope: ["openid", "email", "profile"],
-		state: stateStr,
-	});
-
-	return reply.redirect(authUrl);
 };
 
 const parseModeFromCookieState = (
