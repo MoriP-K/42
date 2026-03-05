@@ -64,8 +64,8 @@ const Profile = () => {
 
 					<div className="space-y-6">
 						<div className="space-y-4">
-							<div className="flex items-stretch gap-3">
-								<div className="w-[30%] shrink-0 rounded-xl bg-base-200/60 p-4">
+							<div className="flex flex-col sm:flex-row items-stretch gap-3">
+								<div className="sm:w-[30%] shrink-0 rounded-xl bg-base-200/60 p-4">
 									<p className="text-sm text-base-content/70">
 										ユーザー名
 									</p>
@@ -78,7 +78,7 @@ const Profile = () => {
 									<p className="text-sm text-base-content/70">
 										実績
 									</p>
-									<div className="grid grid-cols-1 gap-y-1 sm:grid-cols-3 sm:gap-x-6">
+									<div className="grid grid-cols-3 gap-x-6">
 										<p>
 											トータルスコア:{" "}
 											{profileData.total_score}
@@ -98,7 +98,7 @@ const Profile = () => {
 								<p className="text-sm text-base-content/70">
 									バッジ
 								</p>
-								<div className="flex flex-wrap gap-3">
+								<div className="grid grid-cols-3 gap-x-6">
 									{profileData.badges &&
 									profileData.badges.length > 0 ? (
 										profileData.badges.map(
@@ -122,24 +122,34 @@ const Profile = () => {
 							<p className="text-sm text-base-content/70">
 								リーダーボード
 							</p>
-							<p className="text-sm">
+							<p className="text-xl">
 								自分の順位:{" "}
 								<span className="font-semibold">
 									{profileData.user_rank + 1}位
 								</span>
 							</p>
 							<div className="divide-y divide-base-300">
-								{profileData.top_ranker ? (
-									Object.entries(profileData.top_ranker).map(
-										([name, score], index) => (
+								<div className="flex items-center justify-between px-1 sm:px-6 py-2 text-xs font-bold text-base-content/50">
+									<span className="w-6">順位</span>
+									<div className="flex items-center sm:gap-10">
+										<span>ユーザー名</span>
+										<span className="w-20 text-right">
+											点数
+										</span>
+									</div>
+								</div>
+								{profileData.top_ranker &&
+								profileData.top_ranker.length > 0 ? (
+									profileData.top_ranker.map(
+										({ name, score }, index) => (
 											<div
 												key={name}
-												className="flex items-center justify-between px-6 py-4"
+												className="flex items-center justify-between px-1 sm:px-6 py-4"
 											>
 												<span className="w-6 text-xs font-bold text-base-content/70">
 													{index + 1}位
 												</span>
-												<div className="flex items-center gap-10">
+												<div className="flex items-center sm:gap-10">
 													<span className="font-medium break-all">
 														{name}
 													</span>

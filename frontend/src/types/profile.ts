@@ -1,3 +1,8 @@
+export interface Ranker {
+	name: string;
+	score: number;
+}
+
 export interface profileData {
 	name: string;
 	total_score: number;
@@ -5,5 +10,5 @@ export interface profileData {
 	play_count: number;
 	badges: string[];
 	user_rank: number;
-	top_ranker: { [key: string]: number };
+	top_ranker: Ranker[];
 }

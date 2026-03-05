@@ -12,6 +12,11 @@ export interface ProfileRequest {
 /**
  * GET /api/profile
  */
+export interface Ranker {
+	name: string;
+	score: number;
+}
+
 export interface ProfileSuccessResponse {
 	name: String;
 	total_score: number;
@@ -19,7 +24,7 @@ export interface ProfileSuccessResponse {
 	play_count: number;
 	badges: String[];
 	user_rank: number;
-	top_ranker: Record<string, number>[];
+	top_ranker: Ranker[];
 }
 
 /**
