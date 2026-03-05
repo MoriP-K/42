@@ -64,24 +64,38 @@ const Profile = () => {
 
 					<div className="space-y-6">
 						<div className="space-y-4">
-							<div>
-								<p className="text-sm text-base-content/70">
-									ユーザー名
-								</p>
-								<p className="text-2xl font-semibold break-all">
-									{profileData.name}
-								</p>
-							</div>
+							<div className="flex items-stretch gap-3">
+								<div className="w-[30%] shrink-0 rounded-xl bg-base-200/60 p-4">
+									<p className="text-sm text-base-content/70">
+										ユーザー名
+									</p>
+									<p className="text-2xl font-semibold break-all">
+										{profileData.name}
+									</p>
+								</div>
 
-							<div className="rounded-xl bg-base-200/60 p-4 space-y-2">
-								<p className="font-bold text-base">実績</p>
-								<p>トータルスコア: {profileData.total_score}</p>
-								<p>1位回数: {profileData.first_place_count}</p>
-								<p>プレイ回数: {profileData.play_count}</p>
+								<div className="flex-1 rounded-xl bg-base-200/60 p-4 space-y-2">
+									<p className="text-sm text-base-content/70">
+										実績
+									</p>
+									<div className="grid grid-cols-1 gap-y-1 sm:grid-cols-3 sm:gap-x-6">
+										<p>
+											トータルスコア:{" "}
+											{profileData.total_score}
+										</p>
+										<p>
+											1位回数:{" "}
+											{profileData.first_place_count}
+										</p>
+										<p>
+											プレイ回数: {profileData.play_count}
+										</p>
+									</div>
+								</div>
 							</div>
 
 							<div className="rounded-xl bg-base-200/60 p-4">
-								<p className="font-bold text-base mb-2">
+								<p className="text-sm text-base-content/70">
 									バッジ
 								</p>
 								<div className="flex flex-wrap gap-3">
@@ -105,7 +119,7 @@ const Profile = () => {
 						</div>
 
 						<div className="rounded-xl bg-base-200/60 p-4 space-y-3">
-							<p className="font-bold text-base">
+							<p className="text-sm text-base-content/70">
 								リーダーボード
 							</p>
 							<p className="text-sm">
@@ -114,25 +128,25 @@ const Profile = () => {
 									{profileData.user_rank + 1}位
 								</span>
 							</p>
-							<div className="flex flex-col gap-2">
+							<div className="divide-y divide-base-300">
 								{profileData.top_ranker ? (
 									Object.entries(profileData.top_ranker).map(
 										([name, score], index) => (
 											<div
 												key={name}
-												className="flex items-center justify-between rounded-lg bg-base-100 px-3 py-2 shadow-sm"
+												className="flex items-center justify-between px-6 py-4"
 											>
-												<div className="flex items-center gap-2">
-													<span className="w-6 text-xs font-bold text-base-content/70">
-														{index + 1}位
-													</span>
+												<span className="w-6 text-xs font-bold text-base-content/70">
+													{index + 1}位
+												</span>
+												<div className="flex items-center gap-10">
 													<span className="font-medium break-all">
 														{name}
 													</span>
+													<span className="w-20 shrink-0 text-right font-semibold tabular-nums">
+														{score}点
+													</span>
 												</div>
-												<span className="font-semibold">
-													{score}点
-												</span>
 											</div>
 										),
 									)
