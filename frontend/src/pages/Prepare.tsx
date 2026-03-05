@@ -79,7 +79,7 @@ const Prepare = () => {
 			ws.close();
 			setSocket(null);
 		};
-	}, [roomId, user?.id]);
+	}, [roomId, user?.id, navigate]);
 
 	useEffect(() => {
 		if (countdown === null || !countdownStarted) {

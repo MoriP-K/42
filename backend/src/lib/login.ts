@@ -12,6 +12,7 @@ const SESSION_TTL_MS = 24 * 60 * 60 * 1000; //1日
 export const createSessionAndSetCookie = async (
 	reply: FastifyReply,
 	userId: number,
+	options?: { secure?: boolean },
 ) => {
 	// セッションIDとuserIDを紐づけて保存
 	const now = new Date();
@@ -34,8 +35,9 @@ export const createSessionAndSetCookie = async (
 
 	// Cookie に session_id をセット（HTTPS 時は secure: true）
 	const useSecure =
-		process.env.NODE_ENV === "production" ||
-		process.env.FRONTEND_URL?.startsWith("https://");
+		options?.secure ??
+		(process.env.NODE_ENV === "production" ||
+			process.env.FRONTEND_URL?.startsWith("https://"));
 	reply.setCookie("session_id", newSession.id, {
 		path: "/",
 		httpOnly: true,
