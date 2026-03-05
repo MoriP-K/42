@@ -130,7 +130,7 @@ const Profile = () => {
 							</p>
 							<div className="divide-y divide-base-300">
 								<div className="flex items-center justify-between px-1 sm:px-6 py-2 text-xs font-bold text-base-content/50">
-									<span className="w-6">順位</span>
+									<span className="w-10">順位</span>
 									<div className="flex items-center sm:gap-10">
 										<span>ユーザー名</span>
 										<span className="w-20 text-right">
@@ -146,7 +146,7 @@ const Profile = () => {
 												key={name}
 												className="flex items-center justify-between px-1 sm:px-6 py-4"
 											>
-												<span className="w-6 text-xs font-bold text-base-content/70">
+												<span className="w-10 text-xs font-bold text-base-content/70">
 													{index + 1}位
 												</span>
 												<div className="flex items-center sm:gap-10">
