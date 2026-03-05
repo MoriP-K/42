@@ -4,6 +4,7 @@ import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import { GameRole, type User } from "../types/user";
 import {
+	RoomStatus,
 	GameMode,
 	WebSocketMessageType,
 	MIN_PLAYERS,
@@ -42,6 +43,11 @@ const Waiting = () => {
 			const res = (await roomApi.getRoomDetails(
 				Number(roomId),
 			)) as RoomDetails;
+
+			if (res.status === RoomStatus.PLAYING) {
+				navigate(`/game/${roomId}`);
+				return;
+			}
 			setIsHost(res.host_id === user?.id);
 			setHostId(res.host_id);
 			setGameMode(res.game_mode);

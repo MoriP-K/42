@@ -164,7 +164,7 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 	if (!currentRound) return null;
 
 	const scores = getScores(roomId);
-	if (!scores) return null;
+	if (scores.size === 0) return null;
 
 	const scoreSorted = [...scores].sort((a, b) => b[1] - a[1]);
 	const isTie =

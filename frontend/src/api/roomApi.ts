@@ -76,13 +76,6 @@ export const roomApi = {
 		});
 	},
 
-	updateRoomStatus: async (roomId: number, status: string) => {
-		return apiClient(`/rooms/${roomId}/status`, {
-			method: "PATCH",
-			body: JSON.stringify({ status }),
-		});
-	},
-
 	leaveResult: async (roomId: number) => {
 		return apiClient(`/rooms/${roomId}/leave-result`, {
 			method: "POST",
