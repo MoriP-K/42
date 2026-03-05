@@ -163,9 +163,17 @@ export const endRound = async (roomId: string): Promise<boolean | null> => {
 	const currentRound = getRoundState(roomId);
 	if (!currentRound) return null;
 
+	const scores = getScores(roomId);
+	if (!scores) return null;
+
+	const scoreSorted = [...scores].sort((a, b) => b[1] - a[1]);
+	const isTie =
+		scoreSorted.length >= 2 && scoreSorted[0][1] === scoreSorted[1][1];
+	const winnerId = isTie ? null : (scoreSorted[0]?.[0] ?? null);
+
 	await prisma.round.update({
 		where: { id: currentRound.roundId },
-		data: { ended_time: new Date() },
+		data: { ended_time: new Date(), winner_id: winnerId },
 	});
 
 	// ended_timeありのラウンド数を数える
@@ -210,24 +218,32 @@ export const finalizeGame = async (roomId: string) => {
 			role: UserRole.PLAYER,
 		},
 	});
+	const playerSorted = roomPlayers.sort((a, b) => b.score - a.score);
+	const isTie =
+		playerSorted.length >= 2 &&
+		playerSorted[0].score === playerSorted[1].score;
 
-	// 各プレイヤーのUser.total_scoreとplay_countを更新
-	const userUpdates = roomPlayers.map(player =>
-		prisma.user.update({
-			where: { id: player.user_id },
-			data: {
-				total_score: { increment: player.score },
-				play_count: { increment: 1 },
-			},
-		}),
-	);
+	await prisma.$transaction(async tx => {
+		// 各プレイヤーのUser.total_scoreとplay_countを更新
+		for (const player of roomPlayers) {
+			const isWinner =
+				!isTie && player.user_id === playerSorted[0]?.user_id;
 
-	await prisma.$transaction(userUpdates);
+			await tx.user.update({
+				where: { id: player.user_id },
+				data: {
+					total_score: { increment: player.score },
+					play_count: { increment: 1 },
+					...(isWinner && { first_place_count: { increment: 1 } }),
+				},
+			});
+		}
 
-	// Room.statusをRESULTに変更
-	await prisma.room.update({
-		where: { id: Number(roomId) },
-		data: { status: "RESULT" },
+		// Room.statusをRESULTに変更
+		await tx.room.update({
+			where: { id: Number(roomId) },
+			data: { status: "RESULT" },
+		});
 	});
 };
 
