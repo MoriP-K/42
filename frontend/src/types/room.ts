@@ -64,7 +64,7 @@ export const WebSocketMessageType = {
 	CHAT: "chat",
 	DRAW: "draw",
 	DRAW_END: "drawEnd",
-	CURRENT_SOCRES: "currentScores",
+	CURRENT_SCORES: "currentScores",
 	CLEAR: "clear",
 	NAVIGATE_TO_PREPARE: "navigateToPrepare",
 	PREPARE_STARTED: "prepareStarted",

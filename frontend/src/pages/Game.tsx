@@ -167,7 +167,7 @@ const Game = () => {
 
 						setClearTrigger(prev => prev + 1);
 					} else if (
-						data.type === WebSocketMessageType.CURRENT_SOCRES
+						data.type === WebSocketMessageType.CURRENT_SCORES
 					) {
 						setPlayers(prev =>
 							prev.map(p => ({
