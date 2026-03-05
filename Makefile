@@ -1,14 +1,10 @@
-.PHONY: up down restart build logs ps up-ngrok ngrok logs-ngrok url-ngrok setup
+.PHONY: up down restart build logs ps up-ngrok ngrok stop-ngrok logs-ngrok url-ngrok prisma-studio seed
 
-# デフォルト: アプリ起動
+# デフォルト: アプリ起動（http://localhost:5173 でアクセス）
 .DEFAULT_GOAL := up
 
-# .env がなければ backend/.env へのシンボリックリンクを作成（Docker Compose が自動読み込み）
-setup:
-	@if [ -f backend/.env ] && [ ! -f .env ]; then ln -sf backend/.env .env && echo "Created .env -> backend/.env"; fi
-
-up: setup
-	./scripts/start.sh
+up:
+	docker compose up -d
 
 down:
 	docker compose --profile ngrok down
@@ -24,11 +20,16 @@ logs:
 ps:
 	docker compose ps
 
-up-ngrok: setup
+up-ngrok:
 	docker compose --profile ngrok up -d
 
-ngrok: setup
+# ngrok トンネル起動（make up 後に実行 → ngrok URL でアクセス可能に）
+ngrok:
 	docker compose --profile ngrok up -d ngrok
+
+# ngrok のみ停止（frontend/backend/db は起動したまま）
+stop-ngrok:
+	docker compose --profile ngrok stop ngrok
 
 logs-ngrok:
 	docker compose --profile ngrok logs -f ngrok
@@ -36,3 +37,11 @@ logs-ngrok:
 # ngrok のトンネル URL を表示（Traffic Inspector API から取得）
 url-ngrok:
 	@curl -s http://localhost:4040/api/tunnels 2>/dev/null | grep -o '"public_url":"[^"]*"' | head -1 | cut -d'"' -f4 || curl -s http://localhost:4040/api/endpoints 2>/dev/null | grep -o '"url":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "ngrok が起動していません。make ngrok を実行してください。"
+
+# Prisma Studio 起動（http://localhost:5555 でアクセス）
+prisma-studio:
+	docker compose exec backend npx prisma studio
+
+# DB にシードデータを投入
+seed:
+	docker compose exec backend npx prisma db seed
