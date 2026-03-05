@@ -8,18 +8,19 @@ export default defineConfig({
 		allowedHosts: [".ngrok-free.dev"],
 		proxy: {
 			"/api": {
-				target: process.env.VITE_PROXY_TARGET ?? "http://localhost:3000",
+				target:
+					process.env.VITE_PROXY_TARGET ?? "http://localhost:3000",
 				changeOrigin: true,
 			},
 			"/v1": {
-				target: process.env.VITE_PROXY_TARGET ?? "http://localhost:3000",
+				target:
+					process.env.VITE_PROXY_TARGET ?? "http://localhost:3000",
 				changeOrigin: true,
 			},
 			"/ws": {
-				target: (process.env.VITE_PROXY_TARGET ?? "http://localhost:3000").replace(
-					/^http/,
-					"ws",
-				),
+				target: (
+					process.env.VITE_PROXY_TARGET ?? "http://localhost:3000"
+				).replace(/^http/, "ws"),
 				ws: true,
 			},
 		},

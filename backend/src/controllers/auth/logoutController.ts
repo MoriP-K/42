@@ -17,7 +17,9 @@ export const logout = async (request: FastifyRequest, reply: FastifyReply) => {
 	}
 
 	// Cookieを削除（setCookie時と同じオプションが必要）
-	const origin = (request.headers.origin ?? request.headers.referer ?? "") as string;
+	const origin = (request.headers.origin ??
+		request.headers.referer ??
+		"") as string;
 	const useSecure =
 		process.env.NODE_ENV === "production" ||
 		process.env.FRONTEND_URL?.startsWith("https://") ||

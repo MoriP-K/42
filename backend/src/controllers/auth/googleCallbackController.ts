@@ -12,7 +12,8 @@ import { handleGoogleRegister } from "./googleRegisterController";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
-const FRONTEND_URL_FALLBACK = process.env.FRONTEND_URL ?? "http://localhost:5173";
+const FRONTEND_URL_FALLBACK =
+	process.env.FRONTEND_URL ?? "http://localhost:5173";
 
 /** リクエストからオリジンを取得（Host ヘッダーから。プロキシ経由時は x-forwarded-proto を使用） */
 const getOriginFromRequest = (request: FastifyRequest): string => {
@@ -25,7 +26,8 @@ const getOriginFromRequest = (request: FastifyRequest): string => {
 const isAllowedOrigin = (origin: string): boolean => {
 	try {
 		const u = new URL(origin);
-		if (u.hostname === "localhost" || u.hostname === "127.0.0.1") return true;
+		if (u.hostname === "localhost" || u.hostname === "127.0.0.1")
+			return true;
 		if (
 			u.hostname.endsWith(".ngrok-free.dev") ||
 			u.hostname.endsWith(".ngrok.io")
@@ -51,7 +53,9 @@ export const googleAuth = async (
 
 	const origin = getOriginFromRequest(request);
 	if (!isAllowedOrigin(origin)) {
-		return reply.code(400).send({ message: "許可されていないオリジンです" });
+		return reply
+			.code(400)
+			.send({ message: "許可されていないオリジンです" });
 	}
 
 	const redirectUri = `${origin}/v1/auth/google/callback`;
