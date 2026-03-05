@@ -4,11 +4,13 @@ import { createSessionAndSetCookie } from "../../lib/login";
 import { findUserByGoogleSub } from "../../lib/googleOAuth";
 import { prisma } from "../../lib/prisma";
 
-const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
+const FRONTEND_URL_FALLBACK =
+	process.env.FRONTEND_URL ?? "http://localhost:5173";
 
 export const handleGoogleLogin = async (
 	reply: FastifyReply,
 	userInfo: GoogleUserInfo,
+	frontendUrl: string = FRONTEND_URL_FALLBACK,
 ) => {
 	const existingGoogleUser = await findUserByGoogleSub(userInfo.sub);
 	if (!existingGoogleUser) {
@@ -19,12 +21,14 @@ export const handleGoogleLogin = async (
 		});
 		if (emailUser) {
 			// 同一メールがパスワードで登録済み
-			return reply.redirect(FRONTEND_URL + "/login?error=email_conflict");
+			return reply.redirect(frontendUrl + "/login?error=email_conflict");
 		}
 		// Googleアカウント自体が未登録
-		return reply.redirect(FRONTEND_URL + "/login?error=account_not_found");
+		return reply.redirect(frontendUrl + "/login?error=account_not_found");
 	}
 	// 既存Googleユーザー → セッション作成してトップへ
-	await createSessionAndSetCookie(reply, existingGoogleUser.id);
-	return reply.redirect(FRONTEND_URL + "/");
+	await createSessionAndSetCookie(reply, existingGoogleUser.id, {
+		secure: frontendUrl.startsWith("https://"),
+	});
+	return reply.redirect(frontendUrl + "/");
 };

@@ -1,5 +1,6 @@
-const BASE_URL =
-	(import.meta.env.VITE_API_URL || "http://localhost:3000") + "/api";
+import { getBackendBaseUrl } from "./backendUrl";
+
+const BASE_URL = `${getBackendBaseUrl()}/api`;
 
 /**
  * API 通信失敗時に使用するエラークラス。
