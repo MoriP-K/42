@@ -139,6 +139,7 @@ export const handleConnection = (socket: WebSocket) => {
 
 				const scores = getScores(data.roomId);
 				if (scores.size > 0) {
+					console.log("Send CURRENT_SCORES");
 					socket.send(
 						JSON.stringify({
 							type: WebSocketMessageType.CURRENT_SCORES,

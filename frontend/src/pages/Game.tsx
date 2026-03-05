@@ -45,6 +45,7 @@ const Game = () => {
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
 	);
+	const pendingScoresRef = useRef<Record<number, number> | null>(null);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -169,12 +170,16 @@ const Game = () => {
 					} else if (
 						data.type === WebSocketMessageType.CURRENT_SCORES
 					) {
-						setPlayers(prev =>
-							prev.map(p => ({
+						pendingScoresRef.current = data.scores;
+						console.log("⚠️ Received CURRENT_SCORES:", data.scores);
+						setPlayers(prev => {
+							console.log("⚠️ Current players:", prev);
+							if (prev.length === 0) return prev;
+							return prev.map(p => ({
 								...p,
 								score: data.scores[p.id] ?? p.score,
-							})),
-						);
+							}));
+						});
 					} else if (
 						data.type === WebSocketMessageType.ERROR &&
 						data.message === "Room has finished"
@@ -261,6 +266,17 @@ const Game = () => {
 				}));
 
 			setPlayers(playerData);
+
+			if (pendingScoresRef.current) {
+				const scores = pendingScoresRef.current;
+				setPlayers(prev =>
+					prev.map(p => ({
+						...p,
+						score: scores[p.id] ?? p.score,
+					})),
+				);
+				pendingScoresRef.current = null;
+			}
 
 			const currentRound = roomData.rounds?.find(
 				r => r.started_at !== null && r.ended_time === null,
