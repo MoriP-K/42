@@ -29,7 +29,7 @@ function Home() {
 			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
 				<div className="flex-1">
 					<Link to="/" className="btn btn-ghost text-xl text-white">
-						🎨 おえかきの森
+						🎨 お絵描きアイランド
 					</Link>
 				</div>
 				<div className="flex-none gap-2">
@@ -52,7 +52,7 @@ function Home() {
 					{/* Header Section */}
 					<div className="text-center space-y-2 animate-bounce-in">
 						<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
-							おえかきの森
+							お絵描きアイランド
 						</h1>
 						<p className="text-gray-400 tracking-[0.3em] font-light">
 							友達と一緒にお絵かきで遊ぼう
