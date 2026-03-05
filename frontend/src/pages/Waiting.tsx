@@ -13,6 +13,7 @@ import {
 } from "../types/room";
 import Toast from "../components/Toast";
 import { createWebSocket } from "../api/wsClient";
+import { ApiError } from "../api/apiClient";
 
 const Waiting = () => {
 	const { user } = useAuth();
@@ -54,9 +55,16 @@ const Waiting = () => {
 			setUsers(mappedUsers);
 			setInvitationToken(res.invitation_token ?? null);
 		} catch (error) {
+			if (
+				error instanceof ApiError &&
+				(error.status === 403 || error.status === 404)
+			) {
+				navigate("/");
+				return;
+			}
 			console.log(error);
 		}
-	}, [roomId, user]);
+	}, [roomId, user, navigate]);
 
 	const getRoomDetailsRef = useRef(getRoomDetails);
 	useEffect(() => {
@@ -148,6 +156,10 @@ const Waiting = () => {
 						data.type === WebSocketMessageType.ERROR &&
 						data.message
 					) {
+						if (data.message === "Room has finished") {
+							navigate("/");
+							return;
+						}
 						setToastMessage(data.message);
 						setToastType("error");
 						setShowToast(true);
@@ -227,14 +239,27 @@ const Waiting = () => {
 	}, [roomId, user?.id, navigate, token, joinedViaToken]);
 
 	// URL招待で参加したメンバーをルームに追加する（成功後に WebSocket 接続可能になる）
+	const joinInProgressRef = useRef(false);
 	useEffect(() => {
 		if (!token || !user?.id || !roomId) return;
+		if (joinInProgressRef.current) return;
+		joinInProgressRef.current = true;
+
 		const doJoin = async () => {
 			try {
+				// 先にルーム状態を確認（FINISHED なら 403 で throw されるため join を呼ばずにリダイレクト）
+				await roomApi.getRoomDetails(Number(roomId));
 				await roomApi.joinRoomByToken(token);
 				setJoinedViaToken(true);
 				getRoomDetails();
 			} catch (error: unknown) {
+				if (
+					error instanceof ApiError &&
+					(error.status === 403 || error.status === 404)
+				) {
+					navigate("/");
+					return;
+				}
 				const isExpectedError =
 					error &&
 					typeof error === "object" &&
@@ -264,6 +289,8 @@ const Waiting = () => {
 					setShowToast(false);
 					navigate("/");
 				}, 2500);
+			} finally {
+				joinInProgressRef.current = false;
 			}
 		};
 		doJoin();

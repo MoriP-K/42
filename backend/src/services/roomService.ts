@@ -39,6 +39,12 @@ export const leaveRoomMember = async (
 				data: { host_id: otherMembers[0].user_id },
 			});
 		}
+		if (otherMembers.length === 0) {
+			await tx.room.update({
+				where: { id: roomId },
+				data: { status: "FINISHED" },
+			});
+		}
 		await tx.roomMember.delete({
 			where: {
 				room_id_user_id: {

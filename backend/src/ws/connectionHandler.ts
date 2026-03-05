@@ -29,7 +29,7 @@ import { handleChatMessage } from "./chatHandler";
 import { isTimerRunning, startTimer } from "./timerManager";
 import { selectRandomWord } from "./wordSelector";
 import { updateReadyStatus } from "../services/roomService";
-import { UserRole } from "../generated/prisma/enums";
+import { RoomStatus, UserRole } from "../generated/prisma/enums";
 
 export const handleConnection = (socket: WebSocket) => {
 	let currentClient: RoomClient | null = null;
@@ -69,6 +69,20 @@ export const handleConnection = (socket: WebSocket) => {
 
 				if (currentClient) {
 					leaveRoom(currentClient);
+				}
+
+				const room = await prisma.room.findUnique({
+					where: { id: Number(data.roomId) },
+					select: { status: true },
+				});
+				if (room?.status === RoomStatus.FINISHED) {
+					socket.send(
+						JSON.stringify({
+							type: WebSocketMessageType.ERROR,
+							message: "Room has finished",
+						}),
+					);
+					return;
 				}
 
 				const member = await prisma.roomMember.findFirst({
@@ -349,6 +363,11 @@ export const handleConnection = (socket: WebSocket) => {
 						currentClient.roomId,
 						currentRound.drawer_id,
 					);
+
+					await prisma.room.update({
+						where: { id: Number(currentClient.roomId) },
+						data: { status: "PLAYING" },
+					});
 
 					drawerClient?.socket.send(
 						JSON.stringify({
