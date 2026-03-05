@@ -5,7 +5,8 @@ import { createSessionAndSetCookie } from "../../lib/login";
 import { findUserByGoogleSub } from "../../lib/googleOAuth";
 import { prisma } from "../../lib/prisma";
 
-const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
+const FRONTEND_URL_FALLBACK =
+	process.env.FRONTEND_URL ?? "http://localhost:5173";
 
 const createGoogleUser = async (email: string, sub: string) => {
 	return await prisma.$transaction(async tx => {
@@ -35,11 +36,12 @@ const createGoogleUser = async (email: string, sub: string) => {
 export const handleGoogleRegister = async (
 	reply: FastifyReply,
 	userInfo: GoogleUserInfo,
+	frontendUrl: string = FRONTEND_URL_FALLBACK,
 ) => {
 	const existingGoogleUser = await findUserByGoogleSub(userInfo.sub);
 	if (existingGoogleUser) {
 		return reply.redirect(
-			FRONTEND_URL + "/register?error=already_registered",
+			frontendUrl + "/register?error=already_registered",
 		);
 	}
 	// メールアドレスの重複確認
@@ -49,11 +51,13 @@ export const handleGoogleRegister = async (
 	});
 	if (emailUser) {
 		return reply.redirect(
-			FRONTEND_URL + "/register?error=already_registered",
+			frontendUrl + "/register?error=already_registered",
 		);
 	}
 	// 新規ユーザー作成 → セッション作成してプロフィール設定へ
 	const newUser = await createGoogleUser(userInfo.email, userInfo.sub);
-	await createSessionAndSetCookie(reply, newUser.id);
-	return reply.redirect(FRONTEND_URL + "/setup-profile");
+	await createSessionAndSetCookie(reply, newUser.id, {
+		secure: frontendUrl.startsWith("https://"),
+	});
+	return reply.redirect(frontendUrl + "/setup-profile");
 };

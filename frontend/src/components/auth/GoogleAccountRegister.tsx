@@ -1,8 +1,8 @@
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { getBackendBaseUrl } from "../../api/backendUrl";
 
 export function GoogleAccountRegister() {
 	const handleGoogleAuth = () => {
-		window.location.href = `${BACKEND_URL}/v1/auth/google/auth?mode=register`;
+		window.location.href = `${getBackendBaseUrl()}/v1/auth/google/auth?mode=register`;
 	};
 
 	return (
