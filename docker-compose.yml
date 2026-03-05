@@ -18,15 +18,14 @@ services:
     ports:
       - "3000:3000"
       - "5555:5555"
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
       - /app/node_modules
     environment:
       - DATABASE_URL=postgresql://oekaki:password@db:5432/oekaki_db
       - FRONTEND_URL=${APP_URL:-http://localhost:5173}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - db
 

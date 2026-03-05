@@ -10,15 +10,18 @@ import {
 import { handleGoogleLogin } from "./googleLoginController";
 import { handleGoogleRegister } from "./googleRegisterController";
 
+const FRONTEND_LOCAL = "http://localhost:5173";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
-const FRONTEND_URL_FALLBACK =
-	process.env.FRONTEND_URL ?? "http://localhost:5173";
+const FRONTEND_URL_FALLBACK = process.env.FRONTEND_URL ?? FRONTEND_LOCAL;
 
-/** リクエストからオリジンを取得（Host ヘッダーから。プロキシ経由時は x-forwarded-proto を使用） */
+/** リクエストからオリジンを取得（プロキシ経由時は x-forwarded-host を優先） */
 const getOriginFromRequest = (request: FastifyRequest): string => {
 	const proto = (request.headers["x-forwarded-proto"] as string) || "http";
-	const host = request.headers.host ?? "localhost:3000";
+	// プロキシ経由時は x-forwarded-host を優先（Vite proxy が Host を backend:3000 に書き換えるため）
+	const host =
+		(request.headers["x-forwarded-host"] as string) ||
+		(request.headers.host ?? "localhost:3000");
 	return `${proto}://${host}`;
 };
 
@@ -28,11 +31,7 @@ const isAllowedOrigin = (origin: string): boolean => {
 		const u = new URL(origin);
 		if (u.hostname === "localhost" || u.hostname === "127.0.0.1")
 			return true;
-		if (
-			u.hostname.endsWith(".ngrok-free.dev") ||
-			u.hostname.endsWith(".ngrok.io")
-		)
-			return true;
+		if (u.hostname.endsWith(".ngrok-free.dev")) return true;
 		return false;
 	} catch {
 		return false;
@@ -125,8 +124,9 @@ const exchangeCodeForUserInfo = async (
 const getFrontendUrlForRedirect = (origin: string): string => {
 	try {
 		const u = new URL(origin);
+		// localhost:3000 経由のときは常に localhost:5173 へ（FRONTEND_URL が ngrok でも優先）
 		if (u.hostname === "localhost" && u.port === "3000") {
-			return FRONTEND_URL_FALLBACK;
+			return FRONTEND_LOCAL;
 		}
 	} catch {}
 	return isAllowedOrigin(origin) ? origin : FRONTEND_URL_FALLBACK;
