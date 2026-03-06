@@ -1,10 +1,10 @@
 _This project has been created as part of the 42 curriculum by nfunakos, yohatana, ken, kmoriyam._
 
-# Oekaki no Mori (おえかきの森)
+# Oekaki no Mori (お絵描きアイランド)
 
 ## Description
 
-**Oekaki no Mori** (おえかきの森) is a real-time online drawing guessing game built as the final project of the 42 Common Core curriculum. Players create or join game rooms, take turns drawing prompts while others guess the word, and compete for high scores.
+**Oekaki no Mori** (お絵描きアイランド) is a real-time online drawing guessing game built as the final project of the 42 Common Core curriculum. Players create or join game rooms, take turns drawing prompts while others guess the word, and compete for high scores.
 
 ### Key Features
 
@@ -224,7 +224,7 @@ erDiagram
 | [TODO]      | Major              | 2      | [TODO]        | [TODO]         |
 | [TODO]      | Minor              | 1      | [TODO]        | [TODO]         |
 
-_Note: This project implements a drawing guessing game (おえかきの森) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
+_Note: This project implements a drawing guessing game (お絵描きアイランド) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
 
 ---
 

@@ -29,7 +29,7 @@ function Home() {
 			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
 				<div className="flex-1">
 					<Link to="/" className="btn btn-ghost text-xl text-white">
-						🎨 おえかきの森
+						🎨 お絵描きアイランド
 					</Link>
 				</div>
 				<div className="flex-none gap-2">
@@ -52,7 +52,7 @@ function Home() {
 					{/* Header Section */}
 					<div className="text-center space-y-2 animate-bounce-in">
 						<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
-							おえかきの森
+							お絵描きアイランド
 						</h1>
 						<p className="text-gray-400 tracking-[0.3em] font-light">
 							友達と一緒にお絵かきで遊ぼう
@@ -60,8 +60,8 @@ function Home() {
 					</div>
 
 					{/* User Info Card */}
-					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform">
-						<div className="card-body p-6 w-full flex flex-col items-center text-center">
+					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden transition-transform">
+						<div className="card-body p-0 w-full flex flex-col items-center text-center">
 							<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">
 								ログイン中のユーザー
 							</h2>
@@ -88,6 +88,42 @@ function Home() {
 							>
 								プロフィール
 							</Link>
+						</div>
+					</div>
+
+					{/* Game Rules */}
+					<div className="card w-full bg-black/30 border border-white/20 shadow-xl">
+						<div className="card-body p-6 space-y-3">
+							<h2 className="text-lg font-bold text-cyan-300">
+								ゲームのルール
+							</h2>
+							<p className="text-sm text-gray-200 leading-relaxed">
+								このゲームは、
+								<span className="font-semibold text-cyan-300">
+									2人以上
+								</span>
+								で遊べます。
+							</p>
+							<ul className="list-disc list-inside text-sm text-gray-200 space-y-1">
+								<li>書き手がお題の絵を描きます。</li>
+								<li>
+									他の人は、絵だけを見てお題が何かを当てます。
+								</li>
+								<li>
+									正解すると、
+									<span className="font-semibold text-cyan-300">
+										絵を描いた人
+									</span>
+									と
+									<span className="font-semibold text-cyan-300">
+										当てた人
+									</span>
+									に点数が入ります。
+								</li>
+							</ul>
+							<p className="text-sm text-gray-200 leading-relaxed">
+								最終的な点数が高い人が勝ちです。みんなでワイワイ盛り上がりながら遊びましょう！
+							</p>
 						</div>
 					</div>
 

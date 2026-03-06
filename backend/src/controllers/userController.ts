@@ -4,6 +4,7 @@ import {
 	ProfileRequest,
 	ProfileSuccessResponse,
 	ProfileRoute,
+	Ranker,
 } from "../types/profile";
 import { getUserIdFromRequest } from "../lib/auth";
 
@@ -64,11 +65,10 @@ export const getProfile = async (
 		},
 	});
 
-	type RankerMap = Record<string, number>;
-	const ranker: RankerMap[] = [];
-	ranking.forEach((topuser: any) => {
-		ranker.push(topuser.name, topuser.total_score);
-	});
+	const ranker: Ranker[] = ranking.map((topuser: any) => ({
+		name: topuser.name,
+		score: topuser.total_score,
+	}));
 
 	const user_rank = await prisma.user.count({
 		orderBy: {

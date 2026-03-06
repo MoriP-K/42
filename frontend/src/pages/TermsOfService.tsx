@@ -10,7 +10,7 @@ function TermsOfService() {
 			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
 				<div className="flex-1">
 					<Link to="/" className="btn btn-ghost text-xl text-white">
-						🎨 おえかきの森
+						🎨 お絵描きアイランド
 					</Link>
 				</div>
 			</div>
