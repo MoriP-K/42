@@ -8,7 +8,7 @@ export function GoogleAccountRegister() {
 	return (
 		<button
 			type="button"
-			className="btn btn-outline w-full"
+			className="px-3 py-2 rounded w-full font-bold cursor-pointer text-white bg-[#4d8fff] hover:bg-[#3277EC] transition-colors"
 			onClick={handleGoogleAuth}
 		>
 			<span className="inline-flex items-center gap-2">

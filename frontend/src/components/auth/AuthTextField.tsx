@@ -25,12 +25,18 @@ export function AuthTextField({
 
 	return (
 		<div className="form-control">
-			<label htmlFor={htmlFor} className="text-base font-medium">
+			<label
+				htmlFor={htmlFor}
+				className="text-base font-bold"
+				style={{ color: "#6d4c41" }}
+			>
 				{label}
 			</label>
 
 			{description && (
-				<p className="text-sm text-base-content/60">{description}</p>
+				<p className="text-sm" style={{ color: "#6d4c41" }}>
+					{description}
+				</p>
 			)}
 
 			<div className="mt-2">
@@ -38,9 +44,14 @@ export function AuthTextField({
 					<input
 						{...restInputProps}
 						type={resolvedType}
-						className={`input input-bordered w-full ${
+						className={`w-full rounded-lg px-3 py-2 border text-base focus:outline-none focus:ring-2 focus:ring-[#5bad55] focus:border-[#5bad55] ${
 							isPassword ? "pr-10" : ""
 						}`}
+						style={{
+							backgroundColor: "#fffde7",
+							color: "#6d4c41",
+							borderColor: "#6d4c41",
+						}}
 					/>
 					{isPassword && (
 						<button

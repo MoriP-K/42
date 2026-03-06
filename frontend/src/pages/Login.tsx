@@ -12,8 +12,8 @@ import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
-import BackButton from "../components/BackButton";
 import { GoogleAccountLogin } from "../components/auth/GoogleAccountLogin";
+import Logo from "../images/logo.svg";
 
 const LOGIN_ERROR_MESSAGES: Record<string, string> = {
 	invalid_request:
@@ -114,76 +114,106 @@ const Login = () => {
 
 	return (
 		<>
-			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-				{/* ゲームタイトル */}
-				<div className="text-center ">
-					<h1 className="text-5xl font-bold py-12">
-						お絵描きアイランド
-					</h1>
+			<div className="min-h-screen flex flex-col">
+				{/* Navbar with logo only */}
+				<div className="h-25 flex items-center px-6">
+					<div className="flex-1" />
+					<div className="flex-1 flex justify-center">
+						<img
+							src={Logo}
+							alt="お絵描きアイランド"
+							className="h-20 w-auto"
+						/>
+					</div>
+					<div className="flex-1" />
 				</div>
 
-				{/* 記入フォーム */}
-				<AuthFormShell
-					title="ログイン"
-					serverError={serverError}
-					onSubmit={handleSubmit}
-					top={
-						<>
-							<GoogleAccountLogin />
-							<div className="divider my-0 text-sm text-base-content/60">
-								または
-							</div>
-						</>
-					}
-					actions={
-						<>
-							<button
-								type="submit"
-								className="btn btn-primary w-full"
+				{/* Main content */}
+				<div className="flex-1 flex flex-col items-center justify-center p-6">
+					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+						<AuthFormShell
+							title="ログイン"
+							serverError={serverError}
+							onSubmit={handleSubmit}
+							top={
+								<>
+									<GoogleAccountLogin />
+									<div className="w-full flex items-center gap-3">
+										<div
+											className="h-px flex-1"
+											style={{
+												backgroundColor: "#6d4c41",
+											}}
+										/>
+										<span
+											className="text-sm"
+											style={{ color: "#6d4c41" }}
+										>
+											または
+										</span>
+										<div
+											className="h-px flex-1"
+											style={{
+												backgroundColor: "#6d4c41",
+											}}
+										/>
+									</div>
+								</>
+							}
+							actions={
+								<>
+									<button
+										type="submit"
+										className="w-full px-6 py-3 rounded-xl text-base font-bold bg-[#5bad55] text-white cursor-pointer transition-colors hover:bg-[#4e9b49]"
+									>
+										ログイン
+									</button>
+								</>
+							}
+						>
+							<AuthTextField
+								label="メールアドレス"
+								htmlFor="email"
+								error={fieldErrors.email}
+								inputProps={{
+									id: "email",
+									type: "text",
+									name: "email",
+									autoComplete: "email",
+									value: email,
+									onChange: e => setEmail(e.target.value),
+								}}
+							/>
+
+							<AuthTextField
+								label="パスワード"
+								htmlFor="password"
+								error={fieldErrors.password}
+								inputProps={{
+									id: "password",
+									type: "password",
+									name: "password",
+									autoComplete: "current-password",
+									value: password,
+									onChange: e => setPassword(e.target.value),
+								}}
+							/>
+						</AuthFormShell>
+
+						{/* 新規アカウント登録リンク */}
+						<div className="w-full max-w-sm">
+							<Link
+								to="/register"
+								className="inline-flex w-full items-center justify-center px-3 py-3 rounded-lg text-sm font-bold cursor-pointer transition-colors bg-[#ffbf47] text-[#6d4c41] hover:bg-[#ffa726] active:scale-[0.97] focus:outline-none"
 							>
-								ログイン
-							</button>
-							<BackButton></BackButton>
-						</>
-					}
-				>
-					<AuthTextField
-						label="メールアドレス"
-						htmlFor="email"
-						error={fieldErrors.email}
-						inputProps={{
-							id: "email",
-							type: "text",
-							name: "email",
-							autoComplete: "email",
-							value: email,
-							onChange: e => setEmail(e.target.value),
-						}}
-					/>
-
-					<AuthTextField
-						label="パスワード"
-						htmlFor="password"
-						error={fieldErrors.password}
-						inputProps={{
-							id: "password",
-							type: "password",
-							name: "password",
-							autoComplete: "current-password",
-							value: password,
-							onChange: e => setPassword(e.target.value),
-						}}
-					/>
-				</AuthFormShell>
-
-				{/* 新規アカウント登録リンク */}
-				<div className="w-full max-w-sm px-2">
-					<Link to="/register" className="btn btn-outline w-full">
-						新規登録はこちら
-					</Link>
+								新規登録はこちら
+							</Link>
+						</div>
+					</div>
 				</div>
+
+				<Footer />
 			</div>
-			<Footer />
 		</>
 	);
 };

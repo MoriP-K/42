@@ -5,8 +5,13 @@ import { ApiError } from "../api/apiClient";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
 import { GoogleAccountRegister } from "../components/auth/GoogleAccountRegister";
-import BackButton from "../components/BackButton";
-import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import {
+	useNavigate,
+	useSearchParams,
+	useLocation,
+	Link,
+} from "react-router-dom";
+import Logo from "../images/logo.svg";
 import {
 	REGISTER_ERROR_MESSAGES,
 	type RegisterError,
@@ -196,100 +201,148 @@ const AccountRegister = () => {
 
 	return (
 		<>
-			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-				{/* 記入フォーム */}
-				<AuthFormShell
-					title="アカウント新規作成"
-					serverError={serverError}
-					onSubmit={handleSubmit}
-					top={
-						<>
-							<GoogleAccountRegister />
-							<div className="divider my-0 text-sm text-base-content/60">
-								または
-							</div>
-						</>
-					}
-					actions={
-						<>
-							<button
-								type="submit"
-								className="btn btn-primary w-full"
-								disabled={!isFormValid}
-							>
-								アカウント作成
-							</button>
-							<BackButton></BackButton>
-						</>
-					}
-				>
-					<AuthTextField
-						label="ユーザー名"
-						htmlFor="name"
-						description="半角英字、数字、_を使用できます（15文字以内）。"
-						error={fieldErrorsToShow.name}
-						inputProps={{
-							id: "name",
-							type: "text",
-							name: "name",
-							placeholder: "例: user_name",
-							autoComplete: "username",
-							value: name,
-							onChange: e => setName(e.target.value),
-							onBlur: () => setFieldTouched("name"),
-						}}
-					/>
+			<div className="min-h-screen flex flex-col">
+				{/* Navbar with logo only */}
+				<div className="h-25 flex items-center px-6">
+					<div className="flex-1" />
+					<Link to="/" className="flex items-center justify-center">
+						<img
+							src={Logo}
+							alt="お絵描きアイランド"
+							className="h-20 w-auto p-1"
+						/>
+					</Link>
+					<div className="flex-1" />
+				</div>
 
-					<AuthTextField
-						label="メールアドレス"
-						htmlFor="email"
-						error={fieldErrorsToShow.email}
-						inputProps={{
-							id: "email",
-							type: "text",
-							name: "email",
-							placeholder: "example@example.com",
-							autoComplete: "email",
-							value: email,
-							onChange: e => setEmail(e.target.value),
-							onBlur: () => setFieldTouched("email"),
-						}}
-					/>
+				{/* Main content */}
+				<div className="flex-1 flex flex-col items-center justify-center p-6">
+					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+						<AuthFormShell
+							title="アカウント新規作成"
+							serverError={serverError}
+							onSubmit={handleSubmit}
+							top={
+								<>
+									<GoogleAccountRegister />
+									<div className="w-full flex items-center gap-3">
+										<div
+											className="h-px flex-1"
+											style={{
+												backgroundColor: "#6d4c41",
+											}}
+										/>
+										<span
+											className="text-sm"
+											style={{ color: "#6d4c41" }}
+										>
+											または
+										</span>
+										<div
+											className="h-px flex-1"
+											style={{
+												backgroundColor: "#6d4c41",
+											}}
+										/>
+									</div>
+								</>
+							}
+							actions={
+								<>
+									<button
+										type="submit"
+										className="w-full py-3 rounded-xl text-base font-bold text-white cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+										style={{
+											backgroundColor: "#5bad55",
+										}}
+										onMouseEnter={e => {
+											if (isFormValid) {
+												e.currentTarget.style.backgroundColor =
+													"#4e9b49";
+											}
+										}}
+										onMouseLeave={e => {
+											e.currentTarget.style.backgroundColor =
+												"#5bad55";
+										}}
+										disabled={!isFormValid}
+									>
+										アカウント作成
+									</button>
+								</>
+							}
+						>
+							<AuthTextField
+								label="ユーザー名"
+								htmlFor="name"
+								description="半角英字、数字、_を使用できます（15文字以内）。"
+								error={fieldErrorsToShow.name}
+								inputProps={{
+									id: "name",
+									type: "text",
+									name: "name",
+									placeholder: "例: user_name",
+									autoComplete: "username",
+									value: name,
+									onChange: e => setName(e.target.value),
+									onBlur: () => setFieldTouched("name"),
+								}}
+							/>
 
-					<AuthTextField
-						label="パスワード"
-						htmlFor="password"
-						description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
-						error={fieldErrorsToShow.password}
-						inputProps={{
-							id: "password",
-							type: "password",
-							name: "password",
-							autoComplete: "new-password",
-							value: password,
-							onChange: e => setPassword(e.target.value),
-							onBlur: () => setFieldTouched("password"),
-						}}
-					/>
+							<AuthTextField
+								label="メールアドレス"
+								htmlFor="email"
+								error={fieldErrorsToShow.email}
+								inputProps={{
+									id: "email",
+									type: "text",
+									name: "email",
+									placeholder: "example@example.com",
+									autoComplete: "email",
+									value: email,
+									onChange: e => setEmail(e.target.value),
+									onBlur: () => setFieldTouched("email"),
+								}}
+							/>
 
-					<AuthTextField
-						label="パスワード確認"
-						htmlFor="passwordConfirm"
-						error={fieldErrorsToShow.passwordConfirm}
-						inputProps={{
-							id: "passwordConfirm",
-							type: "password",
-							name: "passwordConfirm",
-							autoComplete: "new-password",
-							value: passwordConfirm,
-							onChange: e => setPasswordConfirm(e.target.value),
-							onBlur: () => setFieldTouched("passwordConfirm"),
-						}}
-					/>
-				</AuthFormShell>
+							<AuthTextField
+								label="パスワード"
+								htmlFor="password"
+								description="大文字・小文字・数字を組み合わせて8文字以上で入力してください。"
+								error={fieldErrorsToShow.password}
+								inputProps={{
+									id: "password",
+									type: "password",
+									name: "password",
+									autoComplete: "new-password",
+									value: password,
+									onChange: e => setPassword(e.target.value),
+									onBlur: () => setFieldTouched("password"),
+								}}
+							/>
+
+							<AuthTextField
+								label="パスワード確認"
+								htmlFor="passwordConfirm"
+								error={fieldErrorsToShow.passwordConfirm}
+								inputProps={{
+									id: "passwordConfirm",
+									type: "password",
+									name: "passwordConfirm",
+									autoComplete: "new-password",
+									value: passwordConfirm,
+									onChange: e =>
+										setPasswordConfirm(e.target.value),
+									onBlur: () =>
+										setFieldTouched("passwordConfirm"),
+								}}
+							/>
+						</AuthFormShell>
+					</div>
+				</div>
+				{/* フッター */}
+				<Footer />
 			</div>
-			{/* フッター */}
-			<Footer />
 		</>
 	);
 };
