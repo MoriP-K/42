@@ -25,27 +25,21 @@ function Home() {
 	};
 
 	return (
-		<div
-			className="min-h-screen flex flex-col font-sans"
-			style={{ backgroundColor: "#87ceeb" }}
-		>
+		<div className="min-h-screen flex flex-col">
 			{/* Navbar */}
-			<div
-				className="h-25 flex items-center px-6"
-				// style={{ backgroundColor: "#fffde7" }}
-			>
+			<div className="h-25 flex items-center px-6">
 				<div className="flex-1" />
 				<Link to="/" className="flex items-center justify-center">
 					<img
 						src={Logo}
 						alt="お絵描きアイランド"
-						className="h-20 w-auto"
+						className="h-20 w-auto p-1"
 					/>
 				</Link>
 				<div className="flex-1 flex justify-end">
 					<button
 						onClick={handleLogout}
-						className="px-3 py-1.5 rounded text-sm font-bold text-white"
+						className="px-3 py-2 rounded text-sm font-bold text-white"
 						style={{ backgroundColor: "#6d4c41" }}
 					>
 						ログアウト
