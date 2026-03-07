@@ -199,7 +199,7 @@ const Prepare = () => {
 		>
 			<LogoNavbar />
 
-			<div className="flex-1 flex flex-col items-center justify-center p-6">
+			<div className="flex-1 flex flex-col items-center p-6">
 				<div className="w-full max-w-2xl flex flex-col gap-6">
 					{/* ヘッダー */}
 					<div className="text-center space-y-1">
