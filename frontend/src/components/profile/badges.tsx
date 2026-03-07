@@ -8,9 +8,20 @@ export const imageMap: Record<string, string> = {
 	richScore: curry,
 };
 
+export const nameMap: Record<string, string> = {
+	firstWin: "初めての勝利！",
+	happyPlayer: "5回遊んだ！",
+	richScore: "100点取った！",
+};
+
 export const BadgeImage = ({ name }: { name: string }) => {
 	if (!imageMap[name]) return null;
 	else {
-		return <img src={imageMap[name]} width={100} />;
+		return (
+			<div className="flex flex-col items-center">
+				<img src={imageMap[name]} width={100} />
+				<p>{nameMap[name]}</p>
+			</div>
+		);
 	}
 };
