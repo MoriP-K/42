@@ -18,7 +18,7 @@ const createGoogleUser = async (
 		const user = await tx.user.create({
 			data: {
 				name: randomUUID(),
-				email: email,
+				email,
 				password: null,
 				is_profile_complete: false,
 				avatar: avatarOrDefault(picture),
