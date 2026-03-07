@@ -18,6 +18,7 @@ import ChatMessages, { type Message } from "../components/game/ChatMessages";
 import ChatInput from "../components/game/ChatInput";
 import { GameRole } from "../types/user";
 import { ApiError } from "../api/apiClient";
+import { LogoNavbar } from "../components/LogoNavbar";
 
 const Game = () => {
 	const { id } = useParams<{ id?: string }>(); // URLパラメータ取得
@@ -344,18 +345,13 @@ const Game = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-base-200">
-			{/* ヘッダー */}
-			<div className="navbar bg-base-100 shadow-lg">
-				<div className="flex-1">
-					<span className="text-xl font-bold">🎨 お絵かきの森</span>
-				</div>
-			</div>
+		<div className="min-h-screen flex flex-col">
+			<LogoNavbar linkToHome />
 
-			<div className="w-full max-w-[1280px] mx-auto px-8 py-8">
-				<div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
+			<div className="w-full max-w-2xl md:max-w-7xl px-6 py-6 mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
 					{/* 左カラム: 残り時間, キャンバス */}
-					<div className="space-y-4">
+					<div className="space-y-4 order-1">
 						<Timer totalTime={ROUND_DURATION} timeLeft={timeLeft} />
 						<Canvas
 							socket={socket}
@@ -368,25 +364,29 @@ const Game = () => {
 					</div>
 
 					{/* 右カラム: スコアボード, コメント*/}
-					<div className="space-y-4">
+					<div className="space-y-4 order-2">
 						<ScoreBoard players={players} />
 
-						<div className="card bg-base-100 shadow-xl">
-							<div className="card-body p-0">
-								<h2 className="card-title font-mono text-base font-semibold mb-1">
-									コメント
-								</h2>
-								{currentUserName && (
-									<ChatMessages
-										messages={messages}
-										currentUserName={currentUserName}
-									/>
-								)}
-								<ChatInput
-									onSendMessage={handleSendMessage}
-									disabled={isSpectator}
+						<div
+							className="rounded-lg p-4 flex flex-col gap-2"
+							style={{ backgroundColor: "#fffde7" }}
+						>
+							<p
+								className="text-sm font-bold"
+								style={{ color: "#5bad55" }}
+							>
+								コメント
+							</p>
+							{currentUserName && (
+								<ChatMessages
+									messages={messages}
+									currentUserName={currentUserName}
 								/>
-							</div>
+							)}
+							<ChatInput
+								onSendMessage={handleSendMessage}
+								disabled={isSpectator}
+							/>
 						</div>
 					</div>
 				</div>

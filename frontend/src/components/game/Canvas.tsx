@@ -199,15 +199,21 @@ const Canvas = ({
 	};
 
 	return (
-		<div className="card bg-base-100 shadow-xl">
+		<div className="card bg-[#fffde7]">
 			<div className="card-body p-0">
 				{isDrawer && (
 					<div className="flex items-center justify-between mb-1">
-						<h2 className="card-title font-mono text-base font-semibold mb-1">
+						<h2
+							className="card-title text-1xl font-bold mb-1"
+							style={{
+								color: "#6d4c41",
+							}}
+						>
 							お題: {currentWord}
 						</h2>
 						<button
-							className="btn btn-sm btn-primary ml-auto"
+							className="px-3 py-2 rounded text-sm font-bold text-white cursor-pointer transition-opacity hover:opacity-90 ml-auto"
+							style={{ backgroundColor: "#FF5447" }}
 							onClick={() => {
 								if (
 									socket &&
@@ -234,7 +240,7 @@ const Canvas = ({
 					onMouseMove={isDrawer ? draw : undefined}
 					onMouseUp={isDrawer ? stopDrawing : undefined}
 					onMouseLeave={isDrawer ? stopDrawing : undefined}
-					className={`border border-base-300 rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
+					className={`border-3 border-[#f4d59c] rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
 					aria-label="描画キャンバス"
 				/>
 
@@ -264,9 +270,20 @@ const Canvas = ({
 						{gameMode !== GameMode.ONE_STROKE && (
 							<button
 								onClick={() => setIsEraser(!isEraser)}
-								className={`btn btn-sm
-								${isEraser ? "btn-outline btn-accent btn-active" : "btn-ghost"}
-							`}
+								className="px-3 py-1 rounded text-sm font-bold cursor-pointer transition-opacity hover:opacity-90"
+								style={
+									isEraser
+										? {
+												backgroundColor: "#10b981",
+												border: "2px solid transparent",
+												color: "#fff",
+											}
+										: {
+												backgroundColor: "transparent",
+												border: "2px solid #10b981",
+												color: "#10b981",
+											}
+								}
 							>
 								消しゴム
 							</button>
@@ -274,7 +291,10 @@ const Canvas = ({
 						{gameMode !== GameMode.ONE_STROKE && (
 							<button
 								onClick={clearCanvas}
-								className="btn btn-sm btn-primary ml-auto"
+								className="px-3 py-2 rounded text-sm font-bold text-white cursor-pointer transition-opacity hover:opacity-80! ml-auto"
+								style={{
+									backgroundColor: "#4d8fff",
+								}}
 							>
 								クリア
 							</button>
