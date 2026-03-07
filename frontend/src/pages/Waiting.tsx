@@ -48,6 +48,15 @@ const Waiting = () => {
 			if (res.status === RoomStatus.PLAYING) {
 				navigate(`/game/${roomId}`);
 				return;
+			} else if (res.status === RoomStatus.RESULT) {
+				navigate(`/result/${roomId}`);
+				return;
+			} else if (
+				res.status === RoomStatus.WAITING &&
+				res.rounds?.length > 0
+			) {
+				navigate(`/prepare/${roomId}`);
+				return;
 			}
 			setIsHost(res.host_id === user?.id);
 			setHostId(res.host_id);
