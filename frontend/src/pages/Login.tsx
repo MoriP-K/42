@@ -10,10 +10,10 @@ import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
+import { LogoNavbar } from "../components/LogoNavbar";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
 import { GoogleAccountLogin } from "../components/auth/GoogleAccountLogin";
-import Logo from "../images/logo.svg";
 
 const LOGIN_ERROR_MESSAGES: Record<string, string> = {
 	invalid_request:
@@ -116,17 +116,7 @@ const Login = () => {
 		<>
 			<div className="min-h-screen flex flex-col">
 				{/* Navbar with logo only */}
-				<div className="h-25 flex items-center px-6">
-					<div className="flex-1" />
-					<div className="flex-1 flex justify-center">
-						<img
-							src={Logo}
-							alt="お絵描きアイランド"
-							className="h-20 w-auto"
-						/>
-					</div>
-					<div className="flex-1" />
-				</div>
+				<LogoNavbar linkToHome />
 
 				{/* Main content */}
 				<div className="flex-1 flex flex-col items-center justify-center p-6">

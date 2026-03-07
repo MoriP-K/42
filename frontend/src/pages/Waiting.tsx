@@ -13,9 +13,9 @@ import {
 	type RoomMember,
 } from "../types/room";
 import Toast from "../components/Toast";
+import { LogoNavbar } from "../components/LogoNavbar";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
-import Logo from "../images/logo.svg";
 
 const Waiting = () => {
 	const { user } = useAuth();
@@ -418,15 +418,7 @@ const Waiting = () => {
 			{/* トースト通知 */}
 			{showToast && <Toast type={toastType} message={toastMessage} />}
 			{/* Navbar */}
-			<div className="h-25 flex items-center px-6">
-				<div className="flex-1 flex justify-center">
-					<img
-						src={Logo}
-						alt="お絵描きアイランド"
-						className="h-20 w-auto  p-1"
-					/>
-				</div>
-			</div>
+			<LogoNavbar />
 
 			<div className="min-h-screen flex flex-col gap-6 p-6">
 				{/* 参加者一覧セクション */}

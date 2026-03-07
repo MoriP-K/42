@@ -1,8 +1,7 @@
-import { Link } from "react-router-dom";
 import TermsOfServiceContent from "../components/footer/TermsOfServiceContent";
 import Footer from "../components/footer/Footer";
 import BackButton from "../components/BackButton";
-import Logo from "../images/logo.svg";
+import { LogoNavbar } from "../components/LogoNavbar";
 
 function TermsOfService() {
 	return (
@@ -11,17 +10,7 @@ function TermsOfService() {
 			style={{ backgroundColor: "#87ceeb" }}
 		>
 			{/* Navbar */}
-			<div className="h-25 flex items-center px-6">
-				<div className="flex-1 flex justify-center">
-					<Link to="/" className="flex items-center justify-center">
-						<img
-							src={Logo}
-							alt="お絵描きアイランド"
-							className="h-20 w-auto p-1"
-						/>
-					</Link>
-				</div>
-			</div>
+			<LogoNavbar linkToHome />
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col items-center p-6 overflow-y-auto">
 				<div className="w-full max-w-3xl flex flex-col gap-6">

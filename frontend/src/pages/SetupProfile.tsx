@@ -4,9 +4,9 @@ import { authApi } from "../api/authApi";
 import { ApiError } from "../api/apiClient";
 import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
+import { LogoNavbar } from "../components/LogoNavbar";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
-import Logo from "../images/logo.svg";
 
 type SetupProfileLocationState = {
 	from?: Location;
@@ -119,19 +119,7 @@ const SetupProfile = () => {
 		<>
 			<div className="min-h-screen flex flex-col">
 				{/* Navbar with logo only */}
-				<div className="h-25 flex items-center px-6">
-					<div className="flex-1" />
-					<div className="flex-1 flex justify-center">
-						<a className="flex items-center justify-center">
-							<img
-								src={Logo}
-								alt="お絵描きアイランド"
-								className="h-20 w-auto"
-							/>
-						</a>
-					</div>
-					<div className="flex-1" />
-				</div>
+				<LogoNavbar linkToHome />
 
 				<div className="flex-1 flex flex-col items-center justify-center p-6">
 					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">

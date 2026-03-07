@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import Footer from "../components/footer/Footer";
-import Logo from "../images/logo.svg";
+import { LogoNavbar } from "../components/LogoNavbar";
 
 function Home() {
 	const navigate = useNavigate();
@@ -27,16 +27,9 @@ function Home() {
 	return (
 		<div className="min-h-screen flex flex-col">
 			{/* Navbar */}
-			<div className="h-25 flex items-center px-6">
-				<div className="flex-1" />
-				<Link to="/" className="flex items-center justify-center">
-					<img
-						src={Logo}
-						alt="お絵描きアイランド"
-						className="h-20 w-auto p-1"
-					/>
-				</Link>
-				<div className="flex-1 flex justify-end">
+			<LogoNavbar
+				linkToHome
+				rightSlot={
 					<button
 						onClick={handleLogout}
 						className="px-3 py-2 rounded text-sm font-bold text-white"
@@ -44,8 +37,8 @@ function Home() {
 					>
 						ログアウト
 					</button>
-				</div>
-			</div>
+				}
+			/>
 
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col items-center justify-center p-6">

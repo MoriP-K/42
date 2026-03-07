@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { userApi } from "../api/userApi";
 import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
+import { LogoNavbar } from "../components/LogoNavbar";
 import { type profileData } from "../types/profile";
 import { BadgeImage } from "../components/profile/badges";
-import Logo from "../images/logo.svg";
 
 const Profile = () => {
 	const navigate = useNavigate();
@@ -45,33 +45,25 @@ const Profile = () => {
 	return (
 		<div className="min-h-screen flex flex-col">
 			{/* Navbar */}
-			<div className="h-25 flex items-center px-6">
-				<div className="flex-1">
+			<LogoNavbar
+				linkToHome
+				leftSlot={
 					<Link
 						to="/"
 						className="inline-flex items-center px-3 py-2 rounded text-sm font-bold cursor-pointer text-white bg-[#4d8fff] hover:bg-[#3277EC] transition-colors"
 					>
 						◀︎ ホーム
 					</Link>
-				</div>
-				<div className="flex-1 flex justify-center">
-					<Link to="/" className="flex items-center justify-center">
-						<img
-							src={Logo}
-							alt="お絵描きアイランド"
-							className="h-20 w-auto p-1"
-						/>
-					</Link>
-				</div>
-				<div className="flex-1 flex justify-end">
+				}
+				rightSlot={
 					<button
 						onClick={handleLogout}
 						className="px-3 py-2 rounded text-sm font-bold text-white bg-[#6d4c41] hover:bg-[#5d4037] cursor-pointer transition-colors"
 					>
 						ログアウト
 					</button>
-				</div>
-			</div>
+				}
+			/>
 
 			<div className="flex-1 flex flex-col items-center justify-center p-6">
 				<div className="w-full max-w-2xl flex flex-col gap-6">
