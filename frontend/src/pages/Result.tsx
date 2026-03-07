@@ -8,6 +8,7 @@ import { authApi } from "../api/authApi";
 import { createWebSocket } from "../api/wsClient";
 import { WebSocketMessageType } from "../types/room";
 import { ApiError } from "../api/apiClient";
+import { LogoNavbar } from "../components/LogoNavbar";
 
 const Result = () => {
 	const { id } = useParams();
@@ -114,74 +115,126 @@ const Result = () => {
 	}, [id, navigate]);
 
 	return (
-		<div className="min-h-screen bg-base-200">
-			{/* ヘッダー */}
-			<div className="navbar bg-base-100 shadow-lg">
-				<div className="flex-1">
-					<span className="text-xl font-bold">🎨 お絵かきの森</span>
-				</div>
-			</div>
+		<div
+			className="min-h-screen flex flex-col"
+			style={{ backgroundColor: "#87ceeb" }}
+		>
+			<LogoNavbar linkToHome />
 
-			<div className="flex flex-col items-center mt-10">
-				<h1 className="text-3xl font-bold mb-6">🏆 結果発表</h1>
+			<div className="flex-1 flex flex-col items-center p-6">
+				<div className="w-full max-w-2xl flex flex-col gap-6">
+					{/* 見出し */}
+					<h1
+						className="text-3xl font-black text-center"
+						style={{ color: "#6d4c41" }}
+					>
+						🏆 結果発表
+					</h1>
 
-				<div className="w-full max-w-md space-y-3">
-					{players.map((player, index) => (
-						<div
-							key={player.name}
-							className="flex items-center justify-between bg-base-100 p-4 rounded-lg shadow"
+					{/* プレイヤーランキング */}
+					<div
+						className="rounded-lg p-6 flex flex-col gap-3"
+						style={{ backgroundColor: "#fffde7" }}
+					>
+						<p
+							className="text-sm font-bold"
+							style={{ color: "#5bad55" }}
 						>
-							<div className="flex items-center gap-3">
-								<span className="text-2xl font-bold">
-									{index + 1}位
-								</span>
-								<span className="text-lg">{player.name}</span>
-							</div>
-							<span className="text-lg font-bold">
-								{player.score}pt
-							</span>
+							ランキング
+						</p>
+						<div className="flex flex-col gap-2">
+							{players.map((player, index) => (
+								<div
+									key={player.name}
+									className="flex items-center justify-between px-3 py-3 rounded-md"
+									style={{ backgroundColor: "#f4d59c" }}
+								>
+									<div className="flex items-center gap-3">
+										<span
+											className="text-lg font-bold w-10"
+											style={{ color: "#6d4c41" }}
+										>
+											{index + 1}位
+										</span>
+										<span
+											className="text-base font-medium"
+											style={{ color: "#6d4c41" }}
+										>
+											{player.name}
+										</span>
+									</div>
+									<span
+										className="font-bold tabular-nums"
+										style={{ color: "#6d4c41" }}
+									>
+										{player.score}pt
+									</span>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
+					</div>
 
-				<div className="flex gap-4 mt-8">
-					<button
-						className="btn btn-primary"
-						onClick={async () => {
-							socketRef.current?.close();
-							await roomApi.leaveResult(Number(id));
-							navigate("/");
-						}}
-					>
-						ホームに戻る
-					</button>
-					<button
-						className="btn btn-secondary"
-						onClick={async () => {
-							if (!currentUserId) return;
-							if (newRoomId && rematchToken) {
-								socketRef.current?.close();
-								await roomApi.joinRoomByToken(rematchToken);
-								await roomApi.leaveResult(Number(id));
-								navigate(`/waiting/${newRoomId}`);
-							} else {
-								const newRoom =
-									await roomApi.createRoom(currentUserId);
-								socketRef.current?.send(
-									JSON.stringify({
-										type: WebSocketMessageType.REMATCH_CREATED,
-										newRoomId: newRoom.id,
-										token: newRoom.invitation_token,
-									}),
-								);
-								socketRef.current?.close();
-								await roomApi.leaveResult(Number(id));
-								navigate(`/waiting/${newRoom.id}`);
+					{/* ボタン */}
+					<div className="flex gap-4">
+						<button
+							className="flex-1 py-3 rounded-xl font-bold text-white cursor-pointer"
+							style={{ backgroundColor: "#5bad55" }}
+							onMouseEnter={e =>
+								(e.currentTarget.style.backgroundColor =
+									"#4e9b49")
 							}
-						}}
-					>
-						{newRoomId ? "再戦ルームに参加" : "再戦"}
-					</button>
+							onMouseLeave={e =>
+								(e.currentTarget.style.backgroundColor =
+									"#5bad55")
+							}
+							onClick={async () => {
+								socketRef.current?.close();
+								await roomApi.leaveResult(Number(id));
+								navigate("/");
+							}}
+						>
+							ホームに戻る
+						</button>
+						<button
+							className="flex-1 py-3 rounded-xl font-bold cursor-pointer"
+							style={{
+								backgroundColor: "#ffbf47",
+								color: "#6d4c41",
+							}}
+							onMouseEnter={e =>
+								(e.currentTarget.style.backgroundColor =
+									"#ffa726")
+							}
+							onMouseLeave={e =>
+								(e.currentTarget.style.backgroundColor =
+									"#ffbf47")
+							}
+							onClick={async () => {
+								if (!currentUserId) return;
+								if (newRoomId && rematchToken) {
+									socketRef.current?.close();
+									await roomApi.joinRoomByToken(rematchToken);
+									await roomApi.leaveResult(Number(id));
+									navigate(`/waiting/${newRoomId}`);
+								} else {
+									const newRoom =
+										await roomApi.createRoom(currentUserId);
+									socketRef.current?.send(
+										JSON.stringify({
+											type: WebSocketMessageType.REMATCH_CREATED,
+											newRoomId: newRoom.id,
+											token: newRoom.invitation_token,
+										}),
+									);
+									socketRef.current?.close();
+									await roomApi.leaveResult(Number(id));
+									navigate(`/waiting/${newRoom.id}`);
+								}
+							}}
+						>
+							{newRoomId ? "再戦ルームに参加" : "もう一度遊ぶ"}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
