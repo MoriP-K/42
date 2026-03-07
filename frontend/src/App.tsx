@@ -1,9 +1,8 @@
 import {
-	BrowserRouter,
-	Routes,
-	Route,
+	createBrowserRouter,
 	Outlet,
 	Navigate,
+	RouterProvider,
 	useParams,
 } from "react-router-dom";
 import "./App.css";
@@ -29,76 +28,71 @@ const RoomsRedirect = () => {
 	return <Navigate to={roomId ? `/waiting/${roomId}` : "/"} replace />;
 };
 
+const router = createBrowserRouter([
+	{
+		path: "/login",
+		element: (
+			<RequireGuest>
+				<Login />
+			</RequireGuest>
+		),
+	},
+	{
+		path: "/login/redirect",
+		element: (
+			<RequireGuest>
+				<RedirectLogin />
+			</RequireGuest>
+		),
+	},
+	{
+		path: "/register",
+		element: (
+			<RequireGuest>
+				<AccountRegister />
+			</RequireGuest>
+		),
+	},
+	{
+		path: "/password-reset/send-mail",
+		element: (
+			<RequireGuest>
+				<PasswordResetSendMail />
+			</RequireGuest>
+		),
+	},
+	{
+		path: "/password-reset",
+		element: (
+			<RequireGuest>
+				<PasswordReset />
+			</RequireGuest>
+		),
+	},
+	{
+		path: "/",
+		element: (
+			<RequireAuth>
+				<Outlet />
+			</RequireAuth>
+		),
+		children: [
+			{ index: true, element: <Home /> },
+			{ path: "rooms/:roomId", element: <RoomsRedirect /> },
+			{ path: "waiting/:id", element: <Waiting /> },
+			{ path: "prepare/:id", element: <Prepare /> },
+			{ path: "game/:id", element: <Game /> },
+			{ path: "result/:id", element: <Result /> },
+			{ path: "profile", element: <Profile /> },
+			{ path: "setup-profile", element: <SetupProfile /> },
+		],
+	},
+	{ path: "/terms", element: <TermsOfService /> },
+	{ path: "/privacy-policy", element: <PrivacyPolicy /> },
+]);
+
 const App = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				{/* 未ログインの場合に表示するページ */}
-				<Route
-					path="/login"
-					element={
-						<RequireGuest>
-							<Login />
-						</RequireGuest>
-					}
-				/>
-				<Route
-					path="/login/redirect"
-					element={
-						<RequireGuest>
-							<RedirectLogin />
-						</RequireGuest>
-					}
-				/>
-				<Route
-					path="/register"
-					element={
-						<RequireGuest>
-							<AccountRegister />
-						</RequireGuest>
-					}
-				/>
-				<Route
-					path="/password-reset/send-mail"
-					element={
-						<RequireGuest>
-							<PasswordResetSendMail />
-						</RequireGuest>
-					}
-				/>
-				<Route
-					path="/password-reset"
-					element={
-						<RequireGuest>
-							<PasswordReset />
-						</RequireGuest>
-					}
-				/>
-
-				{/* ↓未ログイン状態でアクセスした場合、ログイン画面にリダイレクトされるページ */}
-				<Route
-					path="/"
-					element={
-						<RequireAuth>
-							<Outlet />
-						</RequireAuth>
-					}
-				>
-					<Route index element={<Home />} />
-					<Route path="rooms/:roomId" element={<RoomsRedirect />} />
-					<Route path="waiting/:id" element={<Waiting />} />
-					<Route path="prepare/:id" element={<Prepare />} />
-					<Route path="game/:id" element={<Game />} />
-					<Route path="result/:id" element={<Result />} />
-					<Route path="profile" element={<Profile />} />
-					<Route path="setup-profile" element={<SetupProfile />} />
-				</Route>
-
-				<Route path="/terms" element={<TermsOfService />} />
-				<Route path="/privacy-policy" element={<PrivacyPolicy />} />
-			</Routes>
-		</BrowserRouter>
-	);
+	return <RouterProvider router={router} />;
 };
 
 export default App;

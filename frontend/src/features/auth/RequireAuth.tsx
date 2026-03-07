@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useBlocker, useLocation } from "react-router-dom";
 import Footer from "../../components/footer/Footer";
 import { useAuth } from "./useAuth";
 
@@ -12,6 +12,23 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
 
 	const redirectEnabled =
 		import.meta.env.VITE_AUTH_REDIRECT_ENABLED === "true";
+
+	// Prepare/Game/Result でブラウザ戻るを無効化（useBlocker は POP を検知してブロック）
+	const blocker = useBlocker(({ currentLocation, historyAction }) => {
+		const path = currentLocation.pathname + currentLocation.search;
+		const isPreventBackPage =
+			path.startsWith("/prepare/") ||
+			path.startsWith("/game/") ||
+			path.startsWith("/result/");
+		return isPreventBackPage && historyAction === "POP";
+	});
+
+	// ブロックされたら reset でその場に留める（確認UIは出さない）
+	useEffect(() => {
+		if (blocker.state === "blocked") {
+			blocker.reset();
+		}
+	}, [blocker.state]);
 
 	useEffect(() => {
 		// すでに認証済み、または初期化済み、または確認中なら何もしない

@@ -108,6 +108,8 @@ const Waiting = () => {
 			reconnectTimeoutRef.current = null;
 		}
 
+		const closedByCleanupRef = { current: false };
+
 		const connect = () => {
 			if (reconnectTimeoutRef.current) {
 				clearTimeout(reconnectTimeoutRef.current);
@@ -117,6 +119,7 @@ const Waiting = () => {
 				socketRef.current.close();
 				socketRef.current = null;
 			}
+			closedByCleanupRef.current = false;
 			const ws = createWebSocket();
 
 			ws.onopen = () => {
@@ -187,6 +190,7 @@ const Waiting = () => {
 			};
 
 			ws.onerror = error => {
+				if (closedByCleanupRef.current) return;
 				if (ws.readyState !== WebSocket.OPEN) {
 					console.warn(
 						"WebSocket connection error (may retry):",
@@ -198,6 +202,7 @@ const Waiting = () => {
 			};
 
 			ws.onclose = () => {
+				if (closedByCleanupRef.current) return;
 				if (!isMountedRef.current) return;
 				// このソケットが既に置き換えられている場合は再接続しない
 				if (socketRef.current !== ws) return;
@@ -243,6 +248,7 @@ const Waiting = () => {
 
 		return () => {
 			isMountedRef.current = false;
+			closedByCleanupRef.current = true;
 			if (reconnectTimeoutRef.current) {
 				clearTimeout(reconnectTimeoutRef.current);
 				reconnectTimeoutRef.current = null;
