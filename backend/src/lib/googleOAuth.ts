@@ -24,3 +24,16 @@ export const findUserByGoogleSub = async (sub: string) => {
 	if (!userAuth) return null;
 	return userAuth.user;
 };
+
+/**
+ * Googleユーザーのアバターを最新のプロフィール画像で更新する
+ */
+export const updateGoogleUserAvatar = async (
+	userId: number,
+	pictureUrl: string,
+) => {
+	await prisma.user.update({
+		where: { id: userId },
+		data: { avatar: pictureUrl },
+	});
+};

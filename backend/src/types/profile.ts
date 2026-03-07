@@ -19,6 +19,7 @@ export interface Ranker {
 
 export interface ProfileSuccessResponse {
 	name: String;
+	avatar: string;
 	total_score: number;
 	first_place_count: number;
 	play_count: number;

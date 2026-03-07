@@ -13,6 +13,8 @@ import {
 	type RoomMember,
 } from "../types/room";
 import Toast from "../components/Toast";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
 import Logo from "../images/logo.svg";
@@ -65,7 +67,7 @@ const Waiting = () => {
 				id: member.user.id,
 				name: member.user.name,
 				role: member.role,
-				avatar: member.user.avatar ?? "👤",
+				avatar: avatarOrDefault(member.user.avatar),
 				isReady: member.is_ready,
 			}));
 			setUsers(mappedUsers);
@@ -460,16 +462,22 @@ const Waiting = () => {
 						{users.map(member => (
 							<div
 								key={member.id}
-								className="flex items-center justify-between px-3 py-3 rounded-md"
+								className="flex items-center justify-between px-3 py-3 rounded-md gap-3"
 								style={{ backgroundColor: "#f4d59c" }}
 							>
-								<span
-									className="font-bold"
-									style={{ color: "#6d4c41" }}
-								>
-									{hostId === member.id ? <>👑 </> : ""}
-									{member.name}
-								</span>
+								<div className="flex items-center gap-3">
+									<Avatar
+										avatar={avatarOrDefault(member.avatar)}
+										size="sm"
+									/>
+									<span
+										className="font-bold"
+										style={{ color: "#6d4c41" }}
+									>
+										{hostId === member.id ? <>👑 </> : ""}
+										{member.name}
+									</span>
+								</div>
 								<div className="flex gap-4 w-32 justify-end">
 									<input
 										className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 cursor-pointer"

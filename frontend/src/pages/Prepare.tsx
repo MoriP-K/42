@@ -7,6 +7,8 @@ import type { RoomDetails, RoomMember } from "../types/room";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
 import { WebSocketMessageType } from "../types/room";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 
 const Prepare = () => {
 	const navigate = useNavigate();
@@ -134,7 +136,7 @@ const Prepare = () => {
 					setCurrentDrawer({
 						id: round.drawer.id,
 						name: round.drawer.name,
-						avatar: round.drawer.avatar ?? "👤",
+						avatar: avatarOrDefault(round.drawer.avatar),
 						role: GameRole.PLAYER,
 						isReady: false,
 					});
@@ -156,7 +158,7 @@ const Prepare = () => {
 						id: m.user_id,
 						name: m.user.name,
 						role: m.role,
-						avatar: m.user.avatar ?? "👤",
+						avatar: avatarOrDefault(m.user.avatar),
 						isReady: m.is_ready,
 					})),
 				);
@@ -211,12 +213,12 @@ const Prepare = () => {
 									今回の書き手
 								</h2>
 								<div className="flex justify-center items-center gap-6">
-									<div className="avatar placeholder">
-										<div className="flex justify-center items-center bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 h-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
-											<span className="text-4xl">
-												{currentDrawer?.avatar}
-											</span>
-										</div>
+									<div className="flex justify-center items-center bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 h-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2 overflow-hidden">
+										<Avatar
+											avatar={avatarOrDefault(currentDrawer?.avatar)}
+											size="lg"
+											className="w-full h-full"
+										/>
 									</div>
 									<div>
 										<p className="text-3xl font-bold">
@@ -278,9 +280,10 @@ const Prepare = () => {
 										className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors"
 									>
 										<div className="flex items-center gap-3">
-											<span className="text-2xl">
-												{player?.avatar ?? "AVATAR"}
-											</span>
+											<Avatar
+												avatar={avatarOrDefault(player?.avatar)}
+												size="sm"
+											/>
 											<span
 												className={`font-semibold ${player.name === "You" ? "text-yellow-400" : "text-white"}`}
 											>

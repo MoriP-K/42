@@ -5,6 +5,8 @@ import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { type profileData } from "../types/profile";
 import { BadgeImage } from "../components/profile/badges";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 import Logo from "../images/logo.svg";
 
 const Profile = () => {
@@ -88,21 +90,27 @@ const Profile = () => {
 						<div className="space-y-4">
 							<div className="flex flex-col sm:flex-row items-stretch gap-3">
 								<div
-									className="sm:w-[30%] shrink-0 rounded-xl p-4"
+									className="sm:w-[30%] shrink-0 rounded-xl p-4 flex flex-col items-center gap-3"
 									style={{
 										backgroundColor: "#fffde7",
 										color: "#6d4c41",
 									}}
 								>
-									<p
-										className="text-sm font-bold"
-										style={{ color: "#5bad55" }}
-									>
-										ユーザー名
-									</p>
-									<p className="text-3xl font-semibold break-all">
-										{profileData.name}
-									</p>
+									<Avatar
+										avatar={avatarOrDefault(profileData.avatar)}
+										size="lg"
+									/>
+									<div className="w-full">
+										<p
+											className="text-sm font-bold"
+											style={{ color: "#5bad55" }}
+										>
+											ユーザー名
+										</p>
+										<p className="text-3xl font-semibold break-all">
+											{profileData.name}
+										</p>
+									</div>
 								</div>
 
 								<div

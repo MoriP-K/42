@@ -3,6 +3,8 @@ import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import Footer from "../components/footer/Footer";
 import Logo from "../images/logo.svg";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 
 function Home() {
 	const navigate = useNavigate();
@@ -63,13 +65,17 @@ function Home() {
 						</p>
 						<div className="flex items-center gap-6">
 							<div
-								className="w-20 h-20 rounded-full flex items-center justify-center border-2"
+								className="w-20 h-20 rounded-full flex items-center justify-center border-2 overflow-hidden"
 								style={{
 									backgroundColor: "#ffd518",
 									borderColor: "#ffa600",
 								}}
 							>
-								<span className="text-4xl">👤</span>
+								<Avatar
+									avatar={avatarOrDefault(user?.avatar)}
+									size="lg"
+									className="w-full h-full"
+								/>
 							</div>
 							<p
 								className="text-3xl font-bold"

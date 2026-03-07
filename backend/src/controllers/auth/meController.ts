@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { getUserIdFromRequest } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { avatarOrDefault } from "../../constants/avatar";
 import { MeRoute } from "../../types/auth/me";
 
 /**
@@ -25,7 +26,12 @@ export const me = async (
 
 		const user = await prisma.user.findUnique({
 			where: { id: userId },
-			select: { id: true, name: true, is_profile_complete: true },
+			select: {
+				id: true,
+				name: true,
+				is_profile_complete: true,
+				avatar: true,
+			},
 		});
 
 		if (!user) {
@@ -36,6 +42,7 @@ export const me = async (
 			id: user.id,
 			name: user.name,
 			is_profile_complete: user.is_profile_complete,
+			avatar: avatarOrDefault(user.avatar),
 		});
 	} catch (err) {
 		request.log?.error?.(err);
