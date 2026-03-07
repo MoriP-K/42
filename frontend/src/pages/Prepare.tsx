@@ -32,14 +32,14 @@ const Prepare = () => {
 	// WebSocketの作成
 	useEffect(() => {
 		if (roomId === undefined || user?.id === undefined) return;
-		// WebSocketの作成
+		const closedByCleanup = { current: false };
 		const ws = createWebSocket();
 
 		ws.onopen = () => {
 			ws.send(
 				JSON.stringify({
 					type: "join",
-					userId: user.id,
+					userId: Number(user.id),
 					roomId: String(roomId),
 				}),
 			);
@@ -56,7 +56,7 @@ const Prepare = () => {
 								: p,
 						),
 					);
-					if (Number(data.userId) === user?.id) {
+					if (Number(data.userId) === Number(user?.id)) {
 						setIsReady(data.isReady);
 					}
 				}
@@ -71,11 +71,22 @@ const Prepare = () => {
 			}
 		};
 
-		ws.onerror = error => console.error("Websocket error:", error);
-		ws.onclose = () => console.log("Websocket disconnected");
+		ws.onerror = error => {
+			if (!closedByCleanup.current) {
+				console.error("Websocket error:", error);
+			}
+		};
+
+		ws.onclose = () => {
+			if (!closedByCleanup.current) {
+				console.log("Websocket disconnected");
+			}
+		};
+
 		queueMicrotask(() => setSocket(ws));
 
 		return () => {
+			closedByCleanup.current = true;
 			ws.close();
 			setSocket(null);
 		};
