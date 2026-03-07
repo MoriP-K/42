@@ -202,67 +202,68 @@ const Prepare = () => {
 							まもなく開始します
 						</p>
 					</div>
-
-					{/* 今回の描き手 */}
-					<div
-						className="rounded-lg p-6 flex flex-col gap-3"
-						style={{ backgroundColor: "#fffde7" }}
-					>
-						<p
-							className="text-sm font-bold"
-							style={{ color: "#5bad55" }}
+					<div className="flex flex-col sm:flex-row flex-nowrap justify-center gap-6 w-full">
+						{/* 今回の描き手 */}
+						<div
+							className="flex-1 min-w-0 rounded-lg p-6 flex flex-col gap-3"
+							style={{ backgroundColor: "#fffde7" }}
 						>
-							今回の描き手
-						</p>
-						<div className="flex items-center justify-center gap-4">
-							<span className="text-4xl">
-								{currentDrawer?.avatar}
-							</span>
 							<p
-								className="text-2xl font-bold"
-								style={{ color: "#6d4c41" }}
+								className="text-sm font-bold"
+								style={{ color: "#5bad55" }}
 							>
-								{currentDrawer?.name ?? "NAME"}
+								今回の描き手
 							</p>
+							<div className="flex items-center justify-center gap-4">
+								<span className="text-4xl">
+									{currentDrawer?.avatar}
+								</span>
+								<p
+									className="text-2xl font-bold"
+									style={{ color: "#6d4c41" }}
+								>
+									{currentDrawer?.name ?? "NAME"}
+								</p>
+							</div>
 						</div>
-					</div>
 
-					{/* あなたの役割 */}
-					<div
-						className="rounded-lg p-6 flex flex-col gap-4"
-						style={{ backgroundColor: "#fffde7" }}
-					>
-						<p
-							className="text-sm font-bold"
-							style={{ color: "#5bad55" }}
+						{/* あなたの役割 */}
+						<div
+							className="flex-1 min-w-0 rounded-lg p-6 flex flex-col gap-4"
+							style={{ backgroundColor: "#fffde7" }}
 						>
-							あなたの役割
-						</p>
-						<div className="flex items-center justify-between">
-							<span
-								className="text-2xl font-black"
-								style={{ color: "#6d4c41" }}
+							<p
+								className="text-sm font-bold"
+								style={{ color: "#5bad55" }}
 							>
-								{role == "DRAWER" ? "描き手" : "回答者"}
-							</span>
-							<button
-								className={`px-6 py-2 rounded-xl border-3 font-bold text-sm cursor-pointer transition-opacity active:scale-[0.97] ${
-									isReady
-										? "hover:bg-[#4e9b49]!"
-										: "hover:bg-[#e04a3f]!"
-								}`}
-								style={{
-									backgroundColor: isReady
-										? "#5bad55"
-										: "#FF5447",
-									color: "#fff",
-								}}
-								onClick={() =>
-									!countdownStarted && toggleIsReady()
-								}
-							>
-								{isReady === true ? "準備完了" : "準備中"}
-							</button>
+								あなたの役割
+							</p>
+							<div className="flex items-center justify-between">
+								<span
+									className="text-2xl font-black"
+									style={{ color: "#6d4c41" }}
+								>
+									{role == "DRAWER" ? "描き手" : "回答者"}
+								</span>
+								<button
+									className={`px-6 py-2 rounded-xl border-3 font-bold text-sm cursor-pointer transition-opacity active:scale-[0.97] ${
+										isReady
+											? "hover:bg-[#4e9b49]!"
+											: "hover:bg-[#e04a3f]!"
+									}`}
+									style={{
+										backgroundColor: isReady
+											? "#5bad55"
+											: "#FF5447",
+										color: "#fff",
+									}}
+									onClick={() =>
+										!countdownStarted && toggleIsReady()
+									}
+								>
+									{isReady === true ? "準備完了" : "準備中"}
+								</button>
+							</div>
 						</div>
 					</div>
 
