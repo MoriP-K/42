@@ -1,6 +1,9 @@
 const PrivacyPolicyContent = () => {
 	return (
-		<div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">
+		<div
+			className="text-sm leading-relaxed whitespace-pre-line"
+			style={{ color: "#6d4c41" }}
+		>
 			<p>
 				＿＿＿＿＿＿＿＿（以下，「当社」といいます。）は，本ウェブサイト上で提供するサービス（以下,「本サービス」といいます。）における，ユーザーの個人情報の取扱いについて，以下のとおりプライバシーポリシー（以下，「本ポリシー」といいます。）を定めます。
 				第1条（個人情報）
