@@ -66,7 +66,7 @@ const Profile = () => {
 			/>
 
 			<div className="flex-1 flex flex-col items-center justify-center p-6">
-				<div className="w-full max-w-2xl flex flex-col gap-6">
+				<div className="w-full max-w-3xl flex flex-col gap-6">
 					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 						<h1
 							className="text-3xl sm:text-4xl font-bold"

@@ -122,7 +122,7 @@ const Result = () => {
 			<LogoNavbar linkToHome />
 
 			<div className="flex-1 flex flex-col items-center p-6">
-				<div className="w-full max-w-2xl flex flex-col gap-6">
+				<div className="w-full max-w-3xl flex flex-col gap-6">
 					{/* 見出し */}
 					<h1
 						className="text-3xl font-black text-center"

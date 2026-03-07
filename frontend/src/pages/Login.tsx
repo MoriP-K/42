@@ -120,7 +120,7 @@ const Login = () => {
 
 				{/* Main content */}
 				<div className="flex-1 flex flex-col items-center justify-center p-6">
-					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+					<div className="w-full max-w-3xl flex flex-col gap-6 items-center">
 						<AuthFormShell
 							title="ログイン"
 							serverError={serverError}

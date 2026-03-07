@@ -348,7 +348,7 @@ const Game = () => {
 		<div className="min-h-screen flex flex-col">
 			<LogoNavbar linkToHome />
 
-			<div className="w-full max-w-2xl md:max-w-7xl px-6 py-6 mx-auto">
+			<div className="w-full max-w-3xl md:max-w-7xl px-6 py-6 mx-auto">
 				<div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
 					{/* 左カラム: 残り時間, キャンバス */}
 					<div className="space-y-4 order-1">
