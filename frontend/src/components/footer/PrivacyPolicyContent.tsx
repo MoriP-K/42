@@ -37,7 +37,9 @@ const PrivacyPolicyContent = () => {
 			<section className="space-y-2">
 				<h2 className="font-bold text-base">第3条（Cookieの利用）</h2>
 				<p>
-					本サービスでは、ログイン状態の維持を目的として Cookie を使用しています。Cookie はユーザーの認証情報を安全に管理するためにのみ使用し、広告や追跡目的には一切使用しません。
+					本サービスでは、ログイン状態の維持を目的として Cookie
+					を使用しています。Cookie
+					はユーザーの認証情報を安全に管理するためにのみ使用し、広告や追跡目的には一切使用しません。
 				</p>
 			</section>
 
@@ -56,7 +58,9 @@ const PrivacyPolicyContent = () => {
 			</section>
 
 			<section className="space-y-2">
-				<h2 className="font-bold text-base">第6条（本ポリシーの変更）</h2>
+				<h2 className="font-bold text-base">
+					第6条（本ポリシーの変更）
+				</h2>
 				<p>
 					本ポリシーの内容は、必要に応じて変更することがあります。変更後のポリシーは本ページに掲載した時点から効力を生じるものとします。
 				</p>

@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../images/logo.svg";
 
 const logoImg = (
-	<img
-		src={Logo}
-		alt="お絵描きアイランド"
-		className="h-20 w-auto p-1"
-	/>
+	<img src={Logo} alt="お絵描きアイランド" className="h-20 w-auto p-1" />
 );
 
 type LogoNavbarProps = {
@@ -36,7 +32,9 @@ export function LogoNavbar({
 	if (!hasSlots) {
 		return (
 			<div className="h-25 flex items-center px-6">
-				<div className="flex-1 flex justify-center">{centerContent}</div>
+				<div className="flex-1 flex justify-center">
+					{centerContent}
+				</div>
 			</div>
 		);
 	}
