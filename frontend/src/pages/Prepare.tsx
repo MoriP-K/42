@@ -215,7 +215,9 @@ const Prepare = () => {
 								<div className="flex justify-center items-center gap-6">
 									<div className="flex justify-center items-center bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 h-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2 overflow-hidden">
 										<Avatar
-											avatar={avatarOrDefault(currentDrawer?.avatar)}
+											avatar={avatarOrDefault(
+												currentDrawer?.avatar,
+											)}
 											size="lg"
 											className="w-full h-full"
 										/>
@@ -281,7 +283,9 @@ const Prepare = () => {
 									>
 										<div className="flex items-center gap-3">
 											<Avatar
-												avatar={avatarOrDefault(player?.avatar)}
+												avatar={avatarOrDefault(
+													player?.avatar,
+												)}
 												size="sm"
 											/>
 											<span

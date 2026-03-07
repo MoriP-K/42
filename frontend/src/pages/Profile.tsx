@@ -97,7 +97,9 @@ const Profile = () => {
 									}}
 								>
 									<Avatar
-										avatar={avatarOrDefault(profileData.avatar)}
+										avatar={avatarOrDefault(
+											profileData.avatar,
+										)}
 										size="lg"
 									/>
 									<div className="w-full">
