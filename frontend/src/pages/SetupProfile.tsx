@@ -6,6 +6,7 @@ import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
+import Logo from "../images/logo.svg";
 
 type SetupProfileLocationState = {
 	from?: Location;
@@ -116,46 +117,78 @@ const SetupProfile = () => {
 
 	return (
 		<>
-			<div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-				{isRedirectedForIncomplete && (
-					<p className="text-center text-base-content/80 text-error">
-						ユーザー名が未設定のため、設定してください。
-					</p>
-				)}
+			<div className="min-h-screen flex flex-col">
+				{/* Navbar with logo only */}
+				<div className="h-25 flex items-center px-6">
+					<div className="flex-1" />
+					<div className="flex-1 flex justify-center">
+						<a className="flex items-center justify-center">
+							<img
+								src={Logo}
+								alt="お絵描きアイランド"
+								className="h-20 w-auto"
+							/>
+						</a>
+					</div>
+					<div className="flex-1" />
+				</div>
 
-				<AuthFormShell
-					title="プロフィール設定"
-					serverError={serverError}
-					onSubmit={handleSubmit}
-					actions={
-						<button
-							type="submit"
-							className="btn btn-primary w-full"
-							disabled={!isFormValid}
+				<div className="flex-1 flex flex-col items-center justify-center p-6">
+					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+						{isRedirectedForIncomplete && (
+							<p className="text-center text-error">
+								ユーザー名が未設定のため、設定してください。
+							</p>
+						)}
+
+						<AuthFormShell
+							title="プロフィール設定"
+							serverError={serverError}
+							onSubmit={handleSubmit}
+							actions={
+								<button
+									type="submit"
+									className="w-full py-3 rounded-xl text-base font-bold text-white cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									style={{
+										backgroundColor: "#5bad55",
+									}}
+									onMouseEnter={e => {
+										if (isFormValid) {
+											e.currentTarget.style.backgroundColor =
+												"#4e9b49";
+										}
+									}}
+									onMouseLeave={e => {
+										e.currentTarget.style.backgroundColor =
+											"#5bad55";
+									}}
+									disabled={!isFormValid}
+								>
+									登録する
+								</button>
+							}
 						>
-							登録する
-						</button>
-					}
-				>
-					<AuthTextField
-						label="ユーザー名"
-						htmlFor="name"
-						description="半角英字、数字、_を使用できます（15文字以内）。"
-						error={fieldErrorsToShow.name}
-						inputProps={{
-							id: "name",
-							type: "text",
-							name: "name",
-							placeholder: "例: user_name",
-							autoComplete: "name",
-							value: name,
-							onChange: e => setName(e.target.value),
-							onBlur: () => setFieldTouched("name"),
-						}}
-					/>
-				</AuthFormShell>
+							<AuthTextField
+								label="ユーザー名"
+								htmlFor="name"
+								description="半角英字、数字、_を使用できます（15文字以内）。"
+								error={fieldErrorsToShow.name}
+								inputProps={{
+									id: "name",
+									type: "text",
+									name: "name",
+									placeholder: "例: user_name",
+									autoComplete: "name",
+									value: name,
+									onChange: e => setName(e.target.value),
+									onBlur: () => setFieldTouched("name"),
+								}}
+							/>
+						</AuthFormShell>
+					</div>
+				</div>
+				<Footer />
 			</div>
-			<Footer />
 		</>
 	);
 };

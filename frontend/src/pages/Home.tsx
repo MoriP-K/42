@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roomApi } from "../api/roomApi";
 import Footer from "../components/footer/Footer";
+import Logo from "../images/logo.svg";
 
 function Home() {
 	const navigate = useNavigate();
@@ -24,104 +25,112 @@ function Home() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white flex flex-col font-sans overflow-hidden">
+		<div className="min-h-screen flex flex-col">
 			{/* Navbar */}
-			<div className="navbar bg-white/10 backdrop-blur-md border-b border-white/10 shadow-lg z-20">
-				<div className="flex-1">
-					<Link to="/" className="btn btn-ghost text-xl text-white">
-						🎨 お絵描きアイランド
-					</Link>
-				</div>
-				<div className="flex-none gap-2">
+			<div className="h-25 flex items-center px-6">
+				<div className="flex-1" />
+				<Link to="/" className="flex items-center justify-center">
+					<img
+						src={Logo}
+						alt="お絵描きアイランド"
+						className="h-20 w-auto p-1"
+					/>
+				</Link>
+				<div className="flex-1 flex justify-end">
 					<button
 						onClick={handleLogout}
-						className="btn btn-primary btn-sm"
+						className="px-3 py-2 rounded text-sm font-bold text-white"
+						style={{ backgroundColor: "#6d4c41" }}
 					>
 						ログアウト
 					</button>
 				</div>
 			</div>
 
-			{/* Background Decorations */}
-			<div className="absolute top-10 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-			<div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-700"></div>
-
 			{/* Main Content */}
-			<div className="flex-1 relative z-10 flex flex-col items-center justify-center p-6">
-				<div className="w-full max-w-2xl flex flex-col gap-8 items-center">
-					{/* Header Section */}
-					<div className="text-center space-y-2 animate-bounce-in">
-						<h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
-							お絵描きアイランド
-						</h1>
-						<p className="text-gray-400 tracking-[0.3em] font-light">
-							友達と一緒にお絵かきで遊ぼう
-						</p>
-					</div>
-
+			<div className="flex-1 flex flex-col items-center justify-center p-6">
+				<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
 					{/* User Info Card */}
-					<div className="card w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden transition-transform">
-						<div className="card-body p-0 w-full flex flex-col items-center text-center">
-							<h2 className="text-sm font-bold text-cyan-400 uppercase tracking-widest mb-4">
-								ログイン中のユーザー
-							</h2>
-							<div className="flex items-center justify-center gap-6 w-full">
-								<div className="avatar placeholder">
-									<div className="flex items-center justify-center bg-gradient-to-tr from-cyan-500 to-blue-500 text-neutral-content rounded-full w-20 ring ring-cyan-400 ring-offset-base-100 ring-offset-2">
-										<span className="text-4xl">👤</span>
-									</div>
-								</div>
-								<div className="text-center">
-									<p className="text-3xl font-bold">
-										{user?.name ?? "ゲスト"}
-									</p>
-									{user?.id != null && (
-										<p className="text-gray-400 text-sm mt-1 font-mono">
-											ID: {user.id}
-										</p>
-									)}
-								</div>
-							</div>
-							<Link
-								to="/profile"
-								className="mt-4 px-6 py-2 rounded-lg text-sm font-bold text-cyan-400 border border-cyan-400/50 hover:bg-cyan-400/10 transition-colors"
+					<div
+						className="w-full rounded-lg p-8 flex flex-col items-center gap-4"
+						style={{ backgroundColor: "#fffde7" }}
+					>
+						<p
+							className="text-base font-bold tracking-widest uppercase"
+							style={{ color: "#5bad55" }}
+						>
+							ログイン中のユーザー
+						</p>
+						<div className="flex items-center gap-6">
+							<div
+								className="w-20 h-20 rounded-full flex items-center justify-center border-2"
+								style={{
+									backgroundColor: "#ffd518",
+									borderColor: "#ffa600",
+								}}
 							>
-								プロフィール
-							</Link>
+								<span className="text-4xl">👤</span>
+							</div>
+							<p
+								className="text-3xl font-bold"
+								style={{ color: "#6d4c41" }}
+							>
+								{user?.name ?? "ゲスト"}
+							</p>
 						</div>
+						<Link
+							to="/profile"
+							className="px-6 py-2 rounded-lg text-base font-bold bg-[#5bad55] text-white transition-colors hover:bg-[#4e9b49]"
+						>
+							プロフィール
+						</Link>
 					</div>
 
 					{/* Game Rules */}
-					<div className="card w-full bg-black/30 border border-white/20 shadow-xl">
-						<div className="card-body p-6 space-y-3">
-							<h2 className="text-lg font-bold text-cyan-300">
-								ゲームのルール
-							</h2>
-							<p className="text-sm text-gray-200 leading-relaxed">
+					<div
+						className="w-full rounded-lg p-8 flex flex-col items-center gap-4"
+						style={{ backgroundColor: "#fffde7" }}
+					>
+						<p
+							className="text-xl font-bold"
+							style={{ color: "#5bad55" }}
+						>
+							ゲームのルール
+						</p>
+						<div
+							className="text-base text-center space-y-2"
+							style={{ color: "#6d4c41" }}
+						>
+							<p>
 								このゲームは、
-								<span className="font-semibold text-cyan-300">
+								<span
+									className="font-bold"
+									style={{ color: "#5bad55" }}
+								>
 									2人以上
 								</span>
 								で遊べます。
 							</p>
-							<ul className="list-disc list-inside text-sm text-gray-200 space-y-1">
-								<li>書き手がお題の絵を描きます。</li>
-								<li>
-									他の人は、絵だけを見てお題が何かを当てます。
-								</li>
-								<li>
-									正解すると、
-									<span className="font-semibold text-cyan-300">
-										絵を描いた人
-									</span>
-									と
-									<span className="font-semibold text-cyan-300">
-										当てた人
-									</span>
-									に点数が入ります。
-								</li>
-							</ul>
-							<p className="text-sm text-gray-200 leading-relaxed">
+							<p>書き手がお題の絵を描きます。</p>
+							<p>他の人は、絵だけを見てお題が何かを当てます。</p>
+							<p>
+								正解すると、
+								<span
+									className="font-bold"
+									style={{ color: "#5bad55" }}
+								>
+									絵を描いた人
+								</span>
+								と
+								<span
+									className="font-bold"
+									style={{ color: "#5bad55" }}
+								>
+									当てた人
+								</span>
+								に点数が入ります。
+							</p>
+							<p>
 								最終的な点数が高い人が勝ちです。みんなでワイワイ盛り上がりながら遊びましょう！
 							</p>
 						</div>
@@ -130,7 +139,7 @@ function Home() {
 					{/* CTA Button */}
 					<button
 						onClick={handleCreateRoom}
-						className="min-w-[16rem] px-8 py-4 rounded-xl font-bold text-lg uppercase tracking-wider cursor-pointer select-none transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-transparent bg-gradient-to-r from-cyan-500 to-purple-500 border border-cyan-400/50 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)]"
+						className="px-16 py-4 rounded-xl bg-[#ffbf47] text-[#6d4c41] font-bold text-xl tracking-wider cursor-pointer transition-colors duration-200 hover:bg-[#ffa726] active:scale-[0.97] focus:outline-none"
 					>
 						ルームを作成する
 					</button>
@@ -138,19 +147,6 @@ function Home() {
 			</div>
 
 			<Footer />
-
-			<style>
-				{`
-				@keyframes bounce-in {
-					0% { transform: translateY(-50px); opacity: 0; }
-					60% { transform: translateY(10px); }
-					100% { transform: translateY(0); opacity: 1; }
-				}
-				.animate-bounce-in {
-					animation: bounce-in 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-				}
-				`}
-			</style>
 		</div>
 	);
 }

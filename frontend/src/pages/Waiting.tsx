@@ -15,6 +15,7 @@ import {
 import Toast from "../components/Toast";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
+import Logo from "../images/logo.svg";
 
 const Waiting = () => {
 	const { user } = useAuth();
@@ -404,80 +405,111 @@ const Waiting = () => {
 	};
 
 	return (
-		<>
-			<div className="min-h-screen bg-base-200 p-8 flex flex-col items-center gap-6 font-sans">
-				{/* トースト通知 */}
-				{showToast && <Toast type={toastType} message={toastMessage} />}
-				<div className="flex items-center justify-between w-full max-w-2xl">
-					<span>Waiting Game</span>
-					<button
-						onClick={handleLeaveRoom}
-						className="btn btn-ghost btn-sm text-gray-500 hover:text-error"
-					>
-						ルームを退出
-					</button>
+		<div className="min-h-screen flex flex-col">
+			{/* トースト通知 */}
+			{showToast && <Toast type={toastType} message={toastMessage} />}
+			{/* Navbar */}
+			<div className="h-25 flex items-center px-6">
+				<div className="flex-1 flex justify-center">
+					<img
+						src={Logo}
+						alt="お絵描きアイランド"
+						className="h-20 w-auto  p-1"
+					/>
 				</div>
+			</div>
 
+			<div className="min-h-screen flex flex-col gap-6 p-6">
 				{/* 参加者一覧セクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300">
-					<div className="card-body p-6">
-						<div className="flex justify-between items-center mb-4">
-							<h2 className="card-title text-lg">参加者一覧</h2>
-							<div className="flex gap-4 text-sm font-bold text-gray-500">
-								<span>観戦者</span>
-								<span>プレイヤー</span>
-							</div>
-						</div>
-						<div className="flex flex-col gap-2">
-							{users.map(member => (
-								<div
-									key={member.id}
-									className="flex items-center justify-between border p-3 rounded-md bg-base-100"
+				<div
+					className="flex flex-col gap-4 p-6 rounded-lg"
+					style={{ backgroundColor: "#fffde7" }}
+				>
+					<div className="flex items-center justify-between">
+						<button
+							onClick={handleLeaveRoom}
+							className="px-4 py-2 rounded text-white text-base font-bold cursor-pointer"
+							style={{ backgroundColor: "#6d4c41" }}
+						>
+							ルームを退出
+						</button>
+						<h2
+							className="text-xl font-bold"
+							style={{ color: "#6d4c41" }}
+						>
+							参加者一覧
+						</h2>
+					</div>
+					<div
+						className="flex gap-4 text-sm font-bold justify-end"
+						style={{ color: "#6d4c41" }}
+					>
+						<span>観戦者</span>
+						<span>プレイヤー</span>
+					</div>
+					<div className="flex flex-col gap-2">
+						{users.map(member => (
+							<div
+								key={member.id}
+								className="flex items-center justify-between px-3 py-3 rounded-md"
+								style={{ backgroundColor: "#f4d59c" }}
+							>
+								<span
+									className="font-bold"
+									style={{ color: "#6d4c41" }}
 								>
-									<span className="font-bold">
-										{hostId === member.id ? <>👑 </> : ""}
-										{member.name}
-									</span>
-									<div className="flex gap-4 w-32 justify-end">
-										<input
-											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
-											type="checkbox"
-											checked={
-												member.role === GameRole.PLAYER
-											}
-											onChange={() =>
-												toggleRole(member.id)
-											}
-											disabled={
-												(!isHost &&
-													member.id !==
-														currentUserId) ||
-												(member.role ===
-													GameRole.SPECTATOR &&
-													isPlayerFull)
-											}
-										/>
-									</div>
+									{hostId === member.id ? <>👑 </> : ""}
+									{member.name}
+								</span>
+								<div className="flex gap-4 w-32 justify-end">
+									<input
+										className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 cursor-pointer"
+										type="checkbox"
+										checked={
+											member.role === GameRole.PLAYER
+										}
+										onChange={() => toggleRole(member.id)}
+										disabled={
+											(!isHost &&
+												member.id !== currentUserId) ||
+											(member.role ===
+												GameRole.SPECTATOR &&
+												isPlayerFull)
+										}
+									/>
 								</div>
-							))}
-						</div>
+							</div>
+						))}
 					</div>
 				</div>
 
 				{/* 招待URLセクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
+				<div
+					className="flex flex-col gap-4 p-6 rounded-lg"
+					style={{ backgroundColor: "#fffde7" }}
+				>
+					<h2
+						className="text-xl font-bold"
+						style={{ color: "#6d4c41" }}
+					>
+						招待URL
+					</h2>
 					{isRoomFull && (
-						<p className="text-sm text-amber-600 font-medium mb-2">
+						<p
+							className="text-sm font-bold"
+							style={{ color: "#d97706" }}
+						>
 							ルームの定員は8人までです
 						</p>
 					)}
 					<button
 						onClick={copyToClipboard}
-						className="btn w-full text-md border-none bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+						className="w-full py-3 rounded-lg text-base font-bold text-white flex items-center justify-center gap-2 cursor-pointer transition-opacity hover:opacity-90"
+						style={{ backgroundColor: "#4d8fff" }}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="h-5 w-5 mr-2"
+							className="h-5 w-5"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -494,30 +526,48 @@ const Waiting = () => {
 				</div>
 
 				{/* ゲームモードセクション */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
-					<h3 className="text-md font-bold text-gray-400 mb-4 uppercase tracking-wider">
+				<div
+					className="flex flex-col gap-4 p-6 rounded-lg"
+					style={{ backgroundColor: "#fffde7" }}
+				>
+					<h2
+						className="text-xl font-bold"
+						style={{ color: "#6d4c41" }}
+					>
 						ゲームモード
-					</h3>
-					<div className="bg-base-200 p-1 rounded-xl flex gap-1 shadow-inner">
+					</h2>
+					<div className="grid grid-cols-2 gap-4">
 						<button
 							onClick={() => updateGameMode(GameMode.DEFAULT)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === GameMode.DEFAULT
-									? "bg-white text-indigo-700 font-bold shadow-md scale-[1.02]"
-									: "text-gray-500 hover:bg-base-300"
-							}`}
+							className="py-3 rounded-lg text-base font-bold cursor-pointer transition-opacity hover:opacity-90 disabled:cursor-not-allowed"
+							style={{
+								backgroundColor:
+									gameMode === GameMode.DEFAULT
+										? "#5bad55"
+										: "#c8e6c9",
+								color:
+									gameMode === GameMode.DEFAULT
+										? "#fff"
+										: "#6d4c41",
+							}}
 						>
 							デフォルト
 						</button>
 						<button
 							onClick={() => updateGameMode(GameMode.ONE_STROKE)}
 							disabled={!isHost}
-							className={`flex-1 py-3 rounded-lg transition-all duration-300 ${
-								gameMode === GameMode.ONE_STROKE
-									? "bg-gradient-to-r from-orange-400 to-rose-500 text-white font-bold shadow-md scale-[1.02]"
-									: "text-gray-500 hover:bg-base-300"
-							}`}
+							className="py-3 rounded-lg text-base font-bold cursor-pointer transition-opacity hover:opacity-90 disabled:cursor-not-allowed"
+							style={{
+								backgroundColor:
+									gameMode === GameMode.ONE_STROKE
+										? "#5bad55"
+										: "#c8e6c9",
+								color:
+									gameMode === GameMode.ONE_STROKE
+										? "#fff"
+										: "#6d4c41",
+							}}
 						>
 							一筆書き
 						</button>
@@ -525,9 +575,15 @@ const Waiting = () => {
 				</div>
 
 				{/* ゲーム開始ボタン */}
-				<div className="card w-full max-w-2xl bg-base-100 shadow-xl border border-base-300 p-6 text-center">
+				<div
+					className="flex flex-col gap-4 p-6 rounded-lg"
+					style={{ backgroundColor: "#fffde7" }}
+				>
 					{isHost && !canStartGame && (
-						<p className="text-sm text-amber-600 font-medium mb-2">
+						<p
+							className="text-sm font-bold"
+							style={{ color: "#d97706" }}
+						>
 							{`プレイヤーは${MIN_PLAYERS}人以上必要です`}
 						</p>
 					)}
@@ -536,11 +592,8 @@ const Waiting = () => {
 							isHost ? handlePrepareClick() : undefined
 						}
 						disabled={!isHost || !canStartGame}
-						className={`btn w-full text-lg border-none shadow-xl transition-all duration-200 flex items-center justify-center gap-2 ${
-							isHost && canStartGame
-								? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-								: "bg-gradient-to-r from-indigo-600/70 to-purple-600/70 text-white/90 cursor-not-allowed"
-						}`}
+						className="w-full py-3 rounded-xl text-base font-bold flex items-center justify-center gap-2 cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+						style={{ backgroundColor: "#ffe066", color: "#6d4c41" }}
 					>
 						{isHost ? (
 							"準備完了！"
@@ -553,7 +606,7 @@ const Waiting = () => {
 					</button>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

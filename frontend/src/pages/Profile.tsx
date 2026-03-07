@@ -5,6 +5,7 @@ import { useAuth } from "../features/auth/useAuth";
 import Footer from "../components/footer/Footer";
 import { type profileData } from "../types/profile";
 import { BadgeImage } from "../components/profile/badges";
+import Logo from "../images/logo.svg";
 
 const Profile = () => {
 	const navigate = useNavigate();
@@ -42,40 +43,79 @@ const Profile = () => {
 	}
 
 	return (
-		<>
-			<div className="min-h-screen flex flex-col items-center px-4 py-8">
-				<div className="w-full space-y-6">
+		<div className="min-h-screen flex flex-col">
+			{/* Navbar */}
+			<div className="h-25 flex items-center px-6">
+				<div className="flex-1">
+					<Link
+						to="/"
+						className="inline-flex items-center px-3 py-2 rounded text-sm font-bold cursor-pointer text-white bg-[#4d8fff] hover:bg-[#3277EC] transition-colors"
+					>
+						◀︎ ホーム
+					</Link>
+				</div>
+				<div className="flex-1 flex justify-center">
+					<Link to="/" className="flex items-center justify-center">
+						<img
+							src={Logo}
+							alt="お絵描きアイランド"
+							className="h-20 w-auto p-1"
+						/>
+					</Link>
+				</div>
+				<div className="flex-1 flex justify-end">
+					<button
+						onClick={handleLogout}
+						className="px-3 py-2 rounded text-sm font-bold text-white bg-[#6d4c41] hover:bg-[#5d4037] cursor-pointer transition-colors"
+					>
+						ログアウト
+					</button>
+				</div>
+			</div>
+
+			<div className="flex-1 flex flex-col items-center justify-center p-6">
+				<div className="w-full max-w-2xl flex flex-col gap-6">
 					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-						<h1 className="text-3xl sm:text-4xl font-bold">
+						<h1
+							className="text-3xl sm:text-4xl font-bold"
+							style={{ color: "#5bad55" }}
+						>
 							プロフィール
 						</h1>
-						<div className="flex gap-2 self-end">
-							<Link to="/" className="btn btn-primary btn-sm">
-								ホーム
-							</Link>
-							<button
-								onClick={handleLogout}
-								className="btn btn-error btn-sm"
-							>
-								ログアウト
-							</button>
-						</div>
 					</div>
 
 					<div className="space-y-6">
 						<div className="space-y-4">
 							<div className="flex flex-col sm:flex-row items-stretch gap-3">
-								<div className="sm:w-[30%] shrink-0 rounded-xl bg-base-200/60 p-4">
-									<p className="text-sm text-base-content/70">
+								<div
+									className="sm:w-[30%] shrink-0 rounded-xl p-4"
+									style={{
+										backgroundColor: "#fffde7",
+										color: "#6d4c41",
+									}}
+								>
+									<p
+										className="text-sm font-bold"
+										style={{ color: "#5bad55" }}
+									>
 										ユーザー名
 									</p>
-									<p className="text-2xl font-semibold break-all">
+									<p className="text-3xl font-semibold break-all">
 										{profileData.name}
 									</p>
 								</div>
 
-								<div className="flex-1 rounded-xl bg-base-200/60 p-4 space-y-2">
-									<p className="text-sm text-base-content/70">
+								<div
+									className="flex-1 rounded-xl p-4 space-y-2"
+									style={{
+										backgroundColor: "#fffde7",
+										color: "#6d4c41",
+									}}
+								>
+									<p
+										className="text-sm font-bold"
+										style={{ color: "#5bad55" }}
+									>
 										実績
 									</p>
 									<div className="grid grid-cols-3 gap-x-6">
@@ -94,8 +134,17 @@ const Profile = () => {
 								</div>
 							</div>
 
-							<div className="rounded-xl bg-base-200/60 p-4">
-								<p className="text-sm text-base-content/70">
+							<div
+								className="rounded-xl p-4"
+								style={{
+									backgroundColor: "#fffde7",
+									color: "#6d4c41",
+								}}
+							>
+								<p
+									className="text-sm font-bold"
+									style={{ color: "#5bad55" }}
+								>
 									バッジ
 								</p>
 								<div className="grid grid-cols-3 gap-x-6">
@@ -110,7 +159,7 @@ const Profile = () => {
 											),
 										)
 									) : (
-										<p className="text-base-content/50 text-sm">
+										<p className="text-sm">
 											まだバッジを持っていません
 										</p>
 									)}
@@ -118,18 +167,30 @@ const Profile = () => {
 							</div>
 						</div>
 
-						<div className="rounded-xl bg-base-200/60 p-4 space-y-3">
-							<p className="text-sm text-base-content/70">
+						<div
+							className="rounded-xl p-4 space-y-3"
+							style={{
+								backgroundColor: "#fffde7",
+								color: "#6d4c41",
+							}}
+						>
+							<p
+								className="text-sm font-bold"
+								style={{ color: "#5bad55" }}
+							>
 								リーダーボード
 							</p>
 							<p className="text-xl">
 								自分の順位:{" "}
-								<span className="font-semibold">
+								<span
+									className="font-semibold"
+									style={{ color: "#5bad55" }}
+								>
 									{profileData.user_rank + 1}位
 								</span>
 							</p>
 							<div className="divide-y divide-base-300">
-								<div className="flex items-center justify-between px-1 sm:px-6 py-2 text-xs font-bold text-base-content/50">
+								<div className="flex items-center justify-between px-1 sm:px-6 py-2 text-xs font-bold">
 									<span className="w-10">順位</span>
 									<div className="flex items-center sm:gap-10">
 										<span>ユーザー名</span>
@@ -146,7 +207,7 @@ const Profile = () => {
 												key={name}
 												className="flex items-center justify-between px-1 sm:px-6 py-4"
 											>
-												<span className="w-10 text-xs font-bold text-base-content/70">
+												<span className="w-10 text-xs font-bold">
 													{index + 1}位
 												</span>
 												<div className="flex items-center sm:gap-10">
@@ -161,7 +222,7 @@ const Profile = () => {
 										),
 									)
 								) : (
-									<p className="text-base-content/50 text-sm">
+									<p className="text-sm">
 										まだランキングはありません
 									</p>
 								)}
@@ -171,7 +232,7 @@ const Profile = () => {
 				</div>
 			</div>
 			<Footer />
-		</>
+		</div>
 	);
 };
 
