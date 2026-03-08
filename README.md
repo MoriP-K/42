@@ -222,18 +222,18 @@ erDiagram
 
 ### Module Summary Template
 
-| Module Name | Type (Major/Minor) | Points | Justification | Implemented By |
-| ----------- | ------------------ | ------ | ------------- | -------------- |
-| Use a framework for both the frontend and backend. | Major | 2 | React + Vite (frontend) and Fastify (backend) provide structure, maintainability, and fast development. | All |
-| Implement real-time features using WebSockets or similar technology. | Major | 2 | Drawing canvas, chat, timer, and scoreboard sync in real time via WebSocket. | keishii |
-| Implement a complete web-based game where users can play against each other. | Major | 2 | Oekaki Island: drawing guessing game where users take turns drawing and guessing. | keishii |
-| Remote players — Enable two players on separate computers to play the same game in real-time. | Major | 2 | Users join rooms via invitation tokens and play together over WebSocket. | keishii |
-| Multiplayer game (more than two players). | Major | 2 | Multiple players join a room; RoomMember supports several players per game. | keishii |
-| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.). | Minor | 1 | Google OAuth for sign-in and registration. | mfunakos |
-| Implement spectator mode for games. | Minor | 1 | UserRole SPECTATOR lets users watch games without playing. | kmoriyam |
-| Game customization options. | Minor | 1 | DEFAULT and ONE_STROKE modes; room host selects game mode. | kmoriyam |
-| Use an ORM for the database. | Minor | 1 | Prisma for type-safe queries, migrations, and schema management. | All |
-| A gamification system to reward users for their actions. | Minor | 1 | Badges, total score, ranking, and play statistics. | yohatana |
+| Module Name                                                                                   | Type (Major/Minor) | Points | Justification                                                                                           | Implemented By |
+| --------------------------------------------------------------------------------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------- | -------------- |
+| Use a framework for both the frontend and backend.                                            | Major              | 2      | React + Vite (frontend) and Fastify (backend) provide structure, maintainability, and fast development. | All            |
+| Implement real-time features using WebSockets or similar technology.                          | Major              | 2      | Drawing canvas, chat, timer, and scoreboard sync in real time via WebSocket.                            | keishii        |
+| Implement a complete web-based game where users can play against each other.                  | Major              | 2      | Oekaki Island: drawing guessing game where users take turns drawing and guessing.                       | keishii        |
+| Remote players — Enable two players on separate computers to play the same game in real-time. | Major              | 2      | Users join rooms via invitation tokens and play together over WebSocket.                                | keishii        |
+| Multiplayer game (more than two players).                                                     | Major              | 2      | Multiple players join a room; RoomMember supports several players per game.                             | keishii        |
+| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.).                    | Minor              | 1      | Google OAuth for sign-in and registration.                                                              | mfunakos       |
+| Implement spectator mode for games.                                                           | Minor              | 1      | UserRole SPECTATOR lets users watch games without playing.                                              | kmoriyam       |
+| Game customization options.                                                                   | Minor              | 1      | DEFAULT and ONE_STROKE modes; room host selects game mode.                                              | kmoriyam       |
+| Use an ORM for the database.                                                                  | Minor              | 1      | Prisma for type-safe queries, migrations, and schema management.                                        | All            |
+| A gamification system to reward users for their actions.                                      | Minor              | 1      | Badges, total score, ranking, and play statistics.                                                      | yohatana       |
 
 _Note: This project implements a drawing guessing game (お絵描きアイランド) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
 
