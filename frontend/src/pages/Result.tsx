@@ -105,9 +105,10 @@ const Result = () => {
 				// setPlayersに保存
 				setPlayers(playerData);
 
-				// DB接続してユーザーバッジを更新
+				// 新規API
+				// playerDataをユーザーテーブルに反映
+				// ユーザーテーブル情報をもとにユーザーバッジを更新
 				// ユーザバッジを新規獲得した場合、トーストで通知する
-				// この辺にトースト追加
 				setToastMessage("を獲得しました");
 				setToastType("info");
 				setShowToast(true);
@@ -167,7 +168,9 @@ const Result = () => {
 									<div className="flex items-center gap-3">
 										<span
 											className="text-lg font-bold w-10"
-											style={{ color: "#6d4c41" }}
+											style={{
+												color: "#playerData6d4c41",
+											}}
 										>
 											{index + 1}位
 										</span>
