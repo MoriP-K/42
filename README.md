@@ -52,8 +52,8 @@ _This project has been created as part of the 42 curriculum by mfunakos, yohatan
     - **Database**: localhost:5432 (PostgreSQL)
 
 3. **Google OAuth**: Register these redirect URIs in Google Cloud Console:
-    - `http://localhost:3000/v1/auth/google/callback`（localhost:5173 からログイン時）
-    - `https://xxx.ngrok-free.dev/v1/auth/google/callback`（ngrok 経由時）
+    - `http://localhost:3000/v1/auth/google/callback` (when logging in from localhost:5173)
+    - `https://xxx.ngrok-free.dev/v1/auth/google/callback` (when using ngrok)
 
 ### Local Development (without Docker)
 
@@ -91,18 +91,24 @@ _This project has been created as part of the 42 curriculum by mfunakos, yohatan
 
 ### AI Usage
 
-[TODO: Describe how AI was used in this project. Specify which tasks and which parts of the project involved AI assistance (e.g., code generation, debugging, documentation, architecture decisions). Be specific and honest.]
+AI was used in the following areas:
+
+- **Database schema**: Assistance with table definitions, relationships, and migrations.
+- **Reference materials**: Translation of documentation and external resources.
+- **UI design**: Support for layout decisions, component structure, and styling.
+- **Code review**: Feedback on implementation and suggestions for improvements.
+- **Debugging**: Help identifying and resolving bugs and errors.
 
 ---
 
 ## Team Information
 
-| Member   | Assigned Role(s)     | Responsibilities             |
-| -------- | -------------------- | ---------------------------- |
-| mfunakos | PM, Developer        | プロジェクトの進行、進捗管理 |
-| yohatana | PO, Developer        | 全体統括、意思決定           |
-| keishii  | Tech Lead, Developer | 技術選定、開発支援           |
-| kmoriyam | Tech Lead, Developer | 技術選定、開発支援           |
+| Member   | Assigned Role(s)     | Responsibilities                          |
+| -------- | -------------------- | ----------------------------------------- |
+| mfunakos | PM, Developer        | Project progress, progress management     |
+| yohatana | PO, Developer        | Overall coordination, decision-making     |
+| keishii  | Tech Lead, Developer | Technology selection, development support |
+| kmoriyam | Tech Lead, Developer | Technology selection, development support |
 
 ---
 
@@ -110,10 +116,9 @@ _This project has been created as part of the 42 curriculum by mfunakos, yohatan
 
 ### Work Organization
 
-[TODO: Describe how the team organized the work: task distribution, meeting schedule, sprint structure, etc.]
-タスクの振り分け：ウェブアプリケーションのページごとに各メンバーがフロントエンドとバックエンドを実装
-ミーティング：Discordで連絡を取りつつ、必要な時に校舎で実施
-ソースコード管理：GitHubでソースコードの管理、レビューを行った
+- **Task distribution**: Each member implemented both frontend and backend for their assigned pages/features of the web application.
+- **Meetings**: Communication via Discord; in-person meetings at the campus when needed.
+- **Source code management**: Version control and code review on GitHub.
 
 ### Tools
 
@@ -183,16 +188,16 @@ erDiagram
 
 ### Tables and Relationships
 
-| Table                  | Description                             | Key Fields                                                                    |
-| ---------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| **User**               | User accounts and profile data          | id, name, email, password, avatar, total_score, first_place_count, play_count |
-| **Session**            | User sessions (JWT/session management)  | id, user_id, expires_at                                                       |
-| **UserAuthentication** | OAuth provider links (e.g. Google)      | user_id, provider, provider_user_id                                           |
-| **Badge**              | Achievement badges                      | id, name, description                                                         |
-| **UserBadge**          | Many-to-many: users and badges          | user_id, badge_id                                                             |
-| **Room**               | Game rooms                              | id, host_id, game_mode, invitation_token, status                              |
-| **Round**              | Individual drawing rounds within a room | id, room_id, drawer_id, word, winner_id, duration                             |
-| **RoomMember**         | Users in a room (players or spectators) | room_id, user_id, is_ready, role, score                                       |
+| Table                  | Description                             | Key Fields (with types)                                                                                                                       |
+| ---------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **User**               | User accounts and profile data          | id (Int), name (String), email (String), password (String?), avatar (String), total_score (Int?), first_place_count (Int?), play_count (Int?) |
+| **Session**            | User sessions (JWT/session management)  | id (String), user_id (Int), expires_at (DateTime)                                                                                             |
+| **UserAuthentication** | OAuth provider links (e.g. Google)      | user_id (Int), provider (String), provider_user_id (String)                                                                                   |
+| **Badge**              | Achievement badges                      | id (Int), name (String?), description (String?)                                                                                               |
+| **UserBadge**          | Many-to-many: users and badges          | user_id (Int), badge_id (Int), createdAt (DateTime)                                                                                           |
+| **Room**               | Game rooms                              | id (Int), host_id (Int), game_mode (GameMode), invitation_token (String?), status (RoomStatus)                                                |
+| **Round**              | Individual drawing rounds within a room | id (Int), room_id (Int), drawer_id (Int), word (String?), winner_id (Int?), duration (Int)                                                    |
+| **RoomMember**         | Users in a room (players or spectators) | room_id (Int), user_id (Int), is_ready (Boolean), role (UserRole), score (Int)                                                                |
 
 ### Enums
 
@@ -218,9 +223,7 @@ erDiagram
 
 ## Modules
 
-[TODO: List all chosen modules (Major and Minor) from the 42 ft_transcendence subject. Include point calculation (Major = 2pts, Minor = 1pt), justification for each module choice, implementation overview, and which team member(s) worked on each module.]
-
-### Module Summary Template
+### Module Summary
 
 | Module Name                                                                                   | Type (Major/Minor) | Points | Justification                                                                                           | Implemented By |
 | --------------------------------------------------------------------------------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------- | -------------- |
@@ -235,6 +238,19 @@ erDiagram
 | Use an ORM for the database.                                                                  | Minor              | 1      | Prisma for type-safe queries, migrations, and schema management.                                        | All            |
 | A gamification system to reward users for their actions.                                      | Minor              | 1      | Badges, total score, ranking, and play statistics.                                                      | yohatana       |
 
+### Implementation Overview
+
+- **Framework (frontend/backend)**: React with Vite for the SPA; Fastify for the REST API. Shared TypeScript across both.
+- **WebSocket**: `@fastify/websocket` on the backend. `connectionHandler` broadcasts draw, chat, timer, and round events. `chatHandler` validates guesses and updates scores.
+- **Complete game**: Round lifecycle (ROUND_START → draw/guess → ROUND_END → RESULT). `wordSelector` picks prompts; correct answers update scores and advance the round.
+- **Remote players**: Users join via invitation links (`/rooms/join` with token). WebSocket keeps all clients in sync regardless of location.
+- **Multiplayer**: `RoomMember` stores players per room. `MAX_MEMBERS` caps room size. Multiple players compete in each round.
+- **OAuth 2.0**: Google OAuth flow with redirect and callback. `UserAuthentication` links provider accounts. State in httpOnly cookie for CSRF protection.
+- **Spectator mode**: `UserRole.SPECTATOR` in `RoomMember`. Host toggles roles in Waiting. Spectators receive game events but cannot chat or draw.
+- **Game customization**: `GameMode` enum (DEFAULT, ONE_STROKE). Host updates via `PATCH /rooms/:id/game-mode`. ONE_STROKE restricts the drawer to a single stroke per turn.
+- **ORM**: Prisma for all DB access. Migrations for schema changes. Type-safe client generated from schema.
+- **Gamification**: `Badge` and `UserBadge` models. `total_score`, `play_count`, `first_place_count` on User. Profile API returns ranking and top players.
+
 _Note: This project implements a drawing guessing game (お絵描きアイランド) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
 
 ---
@@ -243,7 +259,7 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### mfunakos
 
-**Role**: PM, Developer — プロジェクトの進行、進捗管理
+**Role**: PM, Developer — Project progress, progress management
 
 **Features & Modules Implemented**:
 
@@ -260,7 +276,7 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### yohatana
 
-**Role**: PO, Developer — 全体統括、意思決定
+**Role**: PO, Developer — Overall coordination, decision-making
 
 **Features & Modules Implemented**:
 
@@ -276,7 +292,7 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### keishii
 
-**Role**: Tech Lead, Developer — 技術選定、開発支援
+**Role**: Tech Lead, Developer — Technology selection, development support
 
 **Features & Modules Implemented**:
 
@@ -293,7 +309,7 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### kmoriyam
 
-**Role**: Tech Lead, Developer — 技術選定、開発支援
+**Role**: Tech Lead, Developer — Technology selection, development support
 
 **Features & Modules Implemented**:
 
@@ -314,7 +330,6 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### Known Limitations
 
-[TODO: List any known limitations, bugs, or areas for future improvement.]
 There was a discussion regarding how to handle data types sent from the backend to the frontend. Currently, when retrieved data does not exist, it is returned as an HTTP response error. The question arose as to whether this was appropriate, since the absence of data is not truly an error — perhaps simply displaying a message would suffice. Ultimately, the team decided to go with outputting the handled content as a unified approach.
 
 ### License
