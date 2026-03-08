@@ -1,10 +1,10 @@
-_This project has been created as part of the 42 curriculum by nfunakos, yohatana, ken, kmoriyam._
+_This project has been created as part of the 42 curriculum by mfunakos, yohatana, keishii, kmoriyam._
 
-# Oekaki no Mori (お絵描きアイランド)
+# Oekaki Island (お絵描きアイランド)
 
 ## Description
 
-**Oekaki no Mori** (お絵描きアイランド) is a real-time online drawing guessing game built as the final project of the 42 Common Core curriculum. Players create or join game rooms, take turns drawing prompts while others guess the word, and compete for high scores.
+**Oekaki Island** (お絵描きアイランド) is a real-time online drawing guessing game built as the final project of the 42 Common Core curriculum. Players create or join game rooms, take turns drawing prompts while others guess the word, and compete for high scores.
 
 ### Key Features
 
@@ -97,12 +97,12 @@ _This project has been created as part of the 42 curriculum by nfunakos, yohatan
 
 ## Team Information
 
-| Member   | Assigned Role(s)                          | Responsibilities          |
-| -------- | ----------------------------------------- | ------------------------- |
-| nfunakos | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
-| yohatana | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
-| ken      | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
-| kmoriyam | [TODO: e.g. PO, PM, Tech Lead, Developer] | [TODO: Brief description] |
+| Member   | Assigned Role(s)     | Responsibilities             |
+| -------- | -------------------- | ---------------------------- |
+| mfunakos | PM, Developer        | プロジェクトの進行、進捗管理 |
+| yohatana | PO, Developer        | 全体統括、意思決定           |
+| keishii  | Tech Lead, Developer | 技術選定、開発支援           |
+| kmoriyam | Tech Lead, Developer | 技術選定、開発支援           |
 
 ---
 
@@ -111,6 +111,9 @@ _This project has been created as part of the 42 curriculum by nfunakos, yohatan
 ### Work Organization
 
 [TODO: Describe how the team organized the work: task distribution, meeting schedule, sprint structure, etc.]
+タスクの振り分け：ウェブアプリケーションのページごとに各メンバーがフロントエンドとバックエンドを実装
+ミーティング：Discordで連絡を取りつつ、必要な時に校舎で実施
+ソースコード管理：GitHubでソースコードの管理、レビューを行った
 
 ### Tools
 
@@ -206,8 +209,8 @@ erDiagram
 | Email/Password Authentication     | mfunakos       | Registration, login, password reset via email                  |
 | Google OAuth                      | mfunakos       | Login and register with Google account                         |
 | Room Creation & Invitation        | kmoriyam       | Create rooms, generate invitation tokens, join via link        |
-| Game Modes (DEFAULT, ONE_STROKE)  | ken            | Two play modes: standard drawing and single-stroke challenge   |
-| Real-time Drawing & Chat          | ken            | WebSocket-based canvas, chat messages, timer, scoreboard       |
+| Game Modes (DEFAULT, ONE_STROKE)  | keishii        | Two play modes: standard drawing and single-stroke challenge   |
+| Real-time Drawing & Chat          | keishii        | WebSocket-based canvas, chat messages, timer, scoreboard       |
 | Profile, Ranking & Badges         | yohatana       | User profile, avatar, badges, total score, play count, ranking |
 | Terms of Service & Privacy Policy | yohatana       | Static legal pages                                             |
 
