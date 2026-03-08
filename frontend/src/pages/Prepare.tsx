@@ -236,8 +236,7 @@ const Prepare = () => {
 									avatar={avatarOrDefault(
 										currentDrawer?.avatar,
 									)}
-									size="lg"
-									className="w-full h-full"
+									size="md"
 								/>
 								<p
 									className="text-2xl font-bold"
