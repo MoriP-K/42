@@ -233,17 +233,24 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ## Individual Contributions
 
-### nfunakos
+### mfunakos
 
-[TODO: Detailed breakdown of contributions. Specific features, modules, or components implemented. Challenges faced and how they were overcome.]
+I was in charge of implementing the authentication system.
+I was responsible for the login, register, and setup-profile screens and logic.
+Since highly confidential user information is handled, I limited exposure to the front-end and used password hashing.
 
 ### yohatana
 
-[TODO: Detailed breakdown of contributions. Specific features, modules, or components implemented. Challenges faced and how they were overcome.]
+Primarily responsible for the profile screen.
 
-### ken
+In the profile screen, data retrieved from the backend is displayed. Also handled updating badge data based on the user's state after a game ends.
+Additionally, implemented a back button as a reusable shared component.
 
-[TODO: Detailed breakdown of contributions. Specific features, modules, or components implemented. Challenges faced and how they were overcome.]
+### keishii
+
+I was in charge of the initial technical stack selection and environment setup (Docker, project structure).
+I was responsible for the game screen and the result display screen, including real-time gameplay logic.
+Since real-time communication is critical for multiplayer games, I implemented WebSocket connections to ensure smooth interaction between players.
 
 ### kmoriyam
 
@@ -256,6 +263,7 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 ### Known Limitations
 
 [TODO: List any known limitations, bugs, or areas for future improvement.]
+There was a discussion regarding how to handle data types sent from the backend to the frontend. Currently, when retrieved data does not exist, it is returned as an HTTP response error. The question arose as to whether this was appropriate, since the absence of data is not truly an error — perhaps simply displaying a message would suffice. Ultimately, the team decided to go with outputting the handled content as a unified approach.
 
 ### License
 
