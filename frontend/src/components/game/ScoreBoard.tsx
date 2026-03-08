@@ -8,36 +8,36 @@ const ScoreBoard = ({ players }: ScoreBoardProps) => {
 	const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
 	return (
-		<div className="card bg-base-100 shadow-xl">
-			<div className="card-body p-0">
-				<h2 className="card-title font-mono text-base font-semibold mb-1">
-					スコア
-				</h2>
+		<div
+			className="rounded-lg p-4 flex flex-col gap-3"
+			style={{ backgroundColor: "#fffde7" }}
+		>
+			<p className="text-sm font-bold" style={{ color: "#5bad55" }}>
+				スコア
+			</p>
 
-				<div className="space-y-2">
-					{sortedPlayers.map(player => (
-						<div
-							key={player.id}
-							className="flex items-baseline justify-between px-3 py-3 bg-base-200 rounded-lg"
+			<div className="flex flex-col gap-2">
+				{sortedPlayers.map(player => (
+					<div
+						key={player.id}
+						className="flex items-center justify-between px-3 py-3 rounded-md"
+						style={{ backgroundColor: "#f4d59c" }}
+					>
+						<span
+							className="font-semibold"
+							style={{ color: "#6d4c41" }}
 						>
-							<div className="flex items-baseline gap-2">
-								<div className="indicator">
-									{player.isDrawing && (
-										<span className="indicator-item badge badge-ghost badge-xs">
-											🖌
-										</span>
-									)}
-									<span className="font-mono text-base font-semibold pr-2">
-										{player.name}
-									</span>
-								</div>
-							</div>
-							<span className="font-mono text-base font-bold">
-								{player.score}点
-							</span>
-						</div>
-					))}
-				</div>
+							{player.isDrawing ? "🖌 " : ""}
+							{player.name}
+						</span>
+						<span
+							className="font-bold tabular-nums"
+							style={{ color: "#6d4c41" }}
+						>
+							{player.score}点
+						</span>
+					</div>
+				))}
 			</div>
 		</div>
 	);
