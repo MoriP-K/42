@@ -23,7 +23,7 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
 				type="text"
 				value={input}
 				onChange={e => setInput(e.target.value)}
-				className="input input-bordered join-item flex-1 border-0! focus:outline-none focus:ring-0! focus:border-0!"
+				className="input input-bordered join-item flex-1 border-0! focus:outline-none focus:ring-0! focus:border-0! placeholder:text-[#6d4c41] disabled:opacity-50"
 				style={{ backgroundColor: "#f4d59c", color: "#6d4c41" }}
 				placeholder={
 					disabled ? "観戦者はチャットできません" : "コメントを入力…"
