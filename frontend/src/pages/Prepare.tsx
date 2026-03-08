@@ -25,6 +25,9 @@ const Prepare = () => {
 	const [countdownStarted, setCountdownStarted] = useState(false);
 	const [currentDrawer, setCurrentDrawer] = useState<User | null>(null);
 	const [roundNumber, setRoundNumber] = useState(1);
+	const [myRole, setMyRole] = useState<
+		(typeof GameRole)[keyof typeof GameRole] | null
+	>(null);
 	const role =
 		user?.id !== undefined &&
 		currentDrawer?.id !== undefined &&
@@ -177,6 +180,7 @@ const Prepare = () => {
 				const myStatus = members.find(
 					(m: { user: { id: number } }) => m.user.id === user?.id,
 				);
+				setMyRole(myStatus?.role ?? null);
 				setIsReady(myStatus?.is_ready ?? false);
 				setCountdownStarted(false);
 				setCountdown(null);
@@ -260,26 +264,35 @@ const Prepare = () => {
 									className="text-2xl font-black"
 									style={{ color: "#6d4c41" }}
 								>
-									{role == "DRAWER" ? "描き手" : "回答者"}
+									{myRole === GameRole.SPECTATOR
+										? "観戦者"
+										: role === PlayerRole.DRAWER
+											? "描き手"
+											: "回答者"}
 								</span>
-								<button
-									className={`px-6 py-2 rounded-xl border-3 font-bold text-sm cursor-pointer transition-opacity active:scale-[0.97] ${
-										isReady
-											? "hover:bg-[#4e9b49]!"
-											: "hover:bg-[#e04a3f]!"
-									}`}
-									style={{
-										backgroundColor: isReady
-											? "#5bad55"
-											: "#FF5447",
-										color: "#fff",
-									}}
-									onClick={() =>
-										!countdownStarted && toggleIsReady()
-									}
-								>
-									{isReady === true ? "準備完了" : "準備中"}
-								</button>
+								{myRole !== GameRole.SPECTATOR && (
+									<button
+										className={`px-6 py-2 rounded-xl border-3 font-bold text-sm cursor-pointer transition-opacity active:scale-[0.97] ${
+											isReady
+												? "hover:bg-[#4e9b49]!"
+												: "hover:bg-[#e04a3f]!"
+										}`}
+										style={{
+											backgroundColor: isReady
+												? "#5bad55"
+												: "#FF5447",
+											color: "#fff",
+										}}
+										disabled={countdownStarted}
+										onClick={() =>
+											!countdownStarted && toggleIsReady()
+										}
+									>
+										{isReady === true
+											? "準備完了"
+											: "準備中"}
+									</button>
+								)}
 							</div>
 						</div>
 					</div>
