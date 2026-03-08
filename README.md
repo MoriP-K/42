@@ -224,8 +224,16 @@ erDiagram
 
 | Module Name | Type (Major/Minor) | Points | Justification | Implemented By |
 | ----------- | ------------------ | ------ | ------------- | -------------- |
-| [TODO]      | Major              | 2      | [TODO]        | [TODO]         |
-| [TODO]      | Minor              | 1      | [TODO]        | [TODO]         |
+| Use a framework for both the frontend and backend. | Major | 2 | React + Vite (frontend) and Fastify (backend) provide structure, maintainability, and fast development. | All |
+| Implement real-time features using WebSockets or similar technology. | Major | 2 | Drawing canvas, chat, timer, and scoreboard sync in real time via WebSocket. | keishii |
+| Implement a complete web-based game where users can play against each other. | Major | 2 | Oekaki Island: drawing guessing game where users take turns drawing and guessing. | keishii |
+| Remote players — Enable two players on separate computers to play the same game in real-time. | Major | 2 | Users join rooms via invitation tokens and play together over WebSocket. | keishii |
+| Multiplayer game (more than two players). | Major | 2 | Multiple players join a room; RoomMember supports several players per game. | keishii |
+| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.). | Minor | 1 | Google OAuth for sign-in and registration. | mfunakos |
+| Implement spectator mode for games. | Minor | 1 | UserRole SPECTATOR lets users watch games without playing. | kmoriyam |
+| Game customization options. | Minor | 1 | DEFAULT and ONE_STROKE modes; room host selects game mode. | kmoriyam |
+| Use an ORM for the database. | Minor | 1 | Prisma for type-safe queries, migrations, and schema management. | All |
+| A gamification system to reward users for their actions. | Minor | 1 | Badges, total score, ranking, and play statistics. | yohatana |
 
 _Note: This project implements a drawing guessing game (お絵描きアイランド) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
 
@@ -235,26 +243,70 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 
 ### mfunakos
 
-I was in charge of implementing the authentication system.
-I was responsible for the login, register, and setup-profile screens and logic.
-Since highly confidential user information is handled, I limited exposure to the front-end and used password hashing.
+**Role**: PM, Developer — プロジェクトの進行、進捗管理
+
+**Features & Modules Implemented**:
+
+- **Email/Password Authentication**: Implemented registration (`POST /register`) and login (`POST /login`) with bcrypt password hashing. Zod validation for request bodies. Duplicate email/name checks on registration. Auto-login after successful registration via session creation and cookie. Frontend: `AccountRegister.tsx`, `Login.tsx`, `authApi.ts`, `AuthProvider`, `RequireAuth`, `RequireGuest`.
+
+- **Google OAuth**: Implemented OAuth 2.0 flow with Google. Backend: `googleAuth` (redirect to Google), `googleCallback` (exchange code for user info), `handleGoogleLogin`, `handleGoogleRegister`. State stored in httpOnly cookie for CSRF protection. Handles existing users (email conflict, account not found). `UserAuthentication` model links OAuth providers. Frontend: `GoogleAccountLogin`, `GoogleAccountRegister`, `RedirectLogin`, `SetupProfile` (post-OAuth profile setup).
+
+- **Password Reset (UI)**: Added routes and placeholder pages for password reset flow (`/password-reset/send-mail`, `/password-reset`). Backend email sending not yet implemented.
+
+**Challenges & Solutions**:
+
+- **OAuth state validation**: Used httpOnly cookie to store OAuth state (nonce + mode) to prevent CSRF; validated state on callback and cleared after use.
+- **Origin validation**: `isAllowedOrigin` restricts OAuth redirect URIs to configured frontend origins (localhost, ngrok).
 
 ### yohatana
 
-Primarily responsible for the profile screen.
+**Role**: PO, Developer — 全体統括、意思決定
 
-In the profile screen, data retrieved from the backend is displayed. Also handled updating badge data based on the user's state after a game ends.
-Additionally, implemented a back button as a reusable shared component.
+**Features & Modules Implemented**:
+
+- **Profile, Ranking & Badges**: Implemented profile API (`GET /profile`) returning user name, avatar, total_score, first_place_count, play_count, badges, user_rank, and top_ranker (leaderboard). Backend: `userController.getProfile`, Badge/UserBadge models. Frontend: `Profile.tsx` (profile page with stats, badges grid, leaderboard), `BadgeImage` component, `userApi`, `profileData` types.
+
+- **Terms of Service & Privacy Policy**: Implemented static legal pages. Frontend: `TermsOfService.tsx`, `PrivacyPolicy.tsx`, `TermsOfServiceContent`, `PrivacyPolicyContent`, routes `/terms` and `/privacy-policy`. Footer links to both pages.
+
+- **Gamification System**: Badge model and UserBadge many-to-many relation. Badges seeded (e.g. first win, happy player, rich score). Profile displays earned badges. Score and play statistics updated in `roomManager.finalizeGame` (integrated with game flow). Ranking computed by `total_score` DESC.
+
+**Challenges & Solutions**:
+
+- **Ranking calculation**: Used `prisma.user.count` with `where: { total_score: { gt: user.total_score } }` to compute user rank without loading all users.
 
 ### keishii
 
-I was in charge of the initial technical stack selection and environment setup (Docker, project structure).
-I was responsible for the game screen and the result display screen, including real-time gameplay logic.
-Since real-time communication is critical for multiplayer games, I implemented WebSocket connections to ensure smooth interaction between players.
+**Role**: Tech Lead, Developer — 技術選定、開発支援
+
+**Features & Modules Implemented**:
+
+- **Game Modes (DEFAULT, ONE_STROKE)**: ONE_STROKE mode restricts the drawer to a single stroke per turn; `Canvas.tsx` uses `isStrokeDone` to lock drawing until the next round. In ONE_STROKE, clearing the canvas requires starting a new stroke. Game mode passed from room to Canvas and affects drawing behavior.
+
+- **Real-time Drawing & Chat**: WebSocket-based architecture. Backend: `connectionHandler` (JOIN, DRAW, DRAW_END, CLEAR, CHAT, ROUND_START, ROUND_END, TIMER), `chatHandler` (correct-answer detection, score updates, word replacement), `timerManager` (per-room countdown), `roomManager` (broadcast, scores, round state). Frontend: `wsClient`, `Game.tsx` (WebSocket connect, message handling), `Canvas.tsx` (draw events over WebSocket), `ChatMessages`, `ChatInput`, `Timer`, `ScoreBoard`.
+
+- **Complete Game Flow**: Round lifecycle (ROUND_START → word selection, drawer/guesser roles, correct-answer handling → ROUND_END → RESULT). `wordSelector` for random words. `saveScoresToDB`, `endRound`, `finalizeGame` for persistence. Frontend: `Prepare`, `Game`, `Result` pages.
+
+**Challenges & Solutions**:
+
+- **ONE_STROKE UX**: On mouse up, `setIsStrokeDone(true)` locks the canvas; next stroke clears and sends CLEAR to sync all clients.
+- **Correct-answer race**: Chat handler uses `round.updateMany` with `word` in `where` to avoid double-processing when multiple guesses arrive.
 
 ### kmoriyam
 
-[TODO: Detailed breakdown of contributions. Specific features, modules, or components implemented. Challenges faced and how they were overcome.]
+**Role**: Tech Lead, Developer — 技術選定、開発支援
+
+**Features & Modules Implemented**:
+
+- **Room Creation & Invitation**: Implemented room creation API (`POST /rooms`) with UUID-based invitation tokens. Users can create rooms from the Home page and share invitation links. The `joinRoomByToken` endpoint (`POST /rooms/join`) validates tokens, handles duplicate joins (reload-safe), and enforces room capacity (`MAX_MEMBERS`). Frontend: `roomApi`, `Home.tsx` (create room), `Waiting.tsx` (copy invitation URL to clipboard).
+
+- **Spectator Mode**: Added `UserRole` enum (`PLAYER`, `SPECTATOR`) to the schema and `updateRoomMemberRole` API. Hosts can toggle members between player and spectator in the Waiting room. Spectators can watch games in real time but cannot send chat messages (enforced in `chatHandler.ts`). Frontend: role toggle in `Waiting.tsx`, spectator count in `Prepare.tsx`, `isSpectator` handling in `Game.tsx`.
+
+- **Game Customization Options**: Implemented `GameMode` enum (`DEFAULT`, `ONE_STROKE`) and `updateGameMode` API. Hosts can select the game mode before starting the game. Changes are broadcast to the room via WebSocket. Frontend: game mode selection UI in `Waiting.tsx` (host-only).
+
+**Challenges & Solutions**:
+
+- **Player limit when switching roles**: When a spectator switches to player, the backend checks if the room has reached `MAX_MEMBERS` and returns an error to prevent overcapacity.
+- **Invitation token uniqueness**: Migration added a unique constraint on `invitation_token` to avoid collisions.
 
 ---
 
