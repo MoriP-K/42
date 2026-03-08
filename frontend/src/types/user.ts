@@ -12,6 +12,7 @@ export interface AuthUser {
 	id: number;
 	name: string;
 	is_profile_complete: boolean;
+	avatar: string;
 }
 
 export interface User {

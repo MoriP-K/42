@@ -13,6 +13,8 @@ import {
 	type RoomMember,
 } from "../types/room";
 import Toast from "../components/Toast";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 import { LogoNavbar } from "../components/LogoNavbar";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
@@ -65,7 +67,7 @@ const Waiting = () => {
 				id: member.user.id,
 				name: member.user.name,
 				role: member.role,
-				avatar: member.user.avatar ?? "👤",
+				avatar: avatarOrDefault(member.user.avatar),
 				isReady: member.is_ready,
 			}));
 			setUsers(mappedUsers);
@@ -462,6 +464,10 @@ const Waiting = () => {
 									className="flex items-center justify-between px-3 py-3 rounded-md"
 									style={{ backgroundColor: "#f4d59c" }}
 								>
+									<Avatar
+										avatar={avatarOrDefault(member.avatar)}
+										size="sm"
+									/>
 									<span
 										className="font-bold"
 										style={{ color: "#6d4c41" }}
@@ -469,6 +475,7 @@ const Waiting = () => {
 										{hostId === member.id ? <>👑 </> : ""}
 										{member.name}
 									</span>
+
 									<div className="flex gap-4 w-32 justify-end">
 										<input
 											className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 cursor-pointer"

@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
+import { avatarOrDefault } from "../constants/avatar";
 import {
 	ProfileRequest,
 	ProfileSuccessResponse,
@@ -81,6 +82,7 @@ export const getProfile = async (
 
 	const data: ProfileSuccessResponse = {
 		name: user.name,
+		avatar: avatarOrDefault(user.avatar),
 		total_score: user.total_score ?? 0,
 		first_place_count: user.first_place_count ?? 0,
 		play_count: user.play_count ?? 0,

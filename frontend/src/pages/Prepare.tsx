@@ -7,6 +7,8 @@ import type { RoomDetails, RoomMember } from "../types/room";
 import { createWebSocket } from "../api/wsClient";
 import { ApiError } from "../api/apiClient";
 import { WebSocketMessageType } from "../types/room";
+import { Avatar } from "../components/Avatar";
+import { avatarOrDefault } from "../constants/avatar";
 import { LogoNavbar } from "../components/LogoNavbar";
 
 const Prepare = () => {
@@ -146,7 +148,7 @@ const Prepare = () => {
 					setCurrentDrawer({
 						id: round.drawer.id,
 						name: round.drawer.name,
-						avatar: round.drawer.avatar ?? "👤",
+						avatar: avatarOrDefault(round.drawer.avatar),
 						role: GameRole.PLAYER,
 						isReady: false,
 					});
@@ -168,7 +170,7 @@ const Prepare = () => {
 						id: m.user_id,
 						name: m.user.name,
 						role: m.role,
-						avatar: m.user.avatar ?? "👤",
+						avatar: avatarOrDefault(m.user.avatar),
 						isReady: m.is_ready,
 					})),
 				);
@@ -226,9 +228,13 @@ const Prepare = () => {
 								今回の描き手
 							</p>
 							<div className="flex items-center justify-center gap-4">
-								<span className="text-4xl">
-									{currentDrawer?.avatar}
-								</span>
+								<Avatar
+									avatar={avatarOrDefault(
+										currentDrawer?.avatar,
+									)}
+									size="lg"
+									className="w-full h-full"
+								/>
 								<p
 									className="text-2xl font-bold"
 									style={{ color: "#6d4c41" }}
@@ -297,9 +303,12 @@ const Prepare = () => {
 									style={{ backgroundColor: "#f4d59c" }}
 								>
 									<div className="flex items-center gap-3">
-										<span className="text-xl">
-											{player?.avatar ?? "AVATAR"}
-										</span>
+										<Avatar
+											avatar={avatarOrDefault(
+												player?.avatar,
+											)}
+											size="sm"
+										/>
 										<span
 											className="font-semibold"
 											style={{ color: "#6d4c41" }}

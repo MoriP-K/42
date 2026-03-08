@@ -1,7 +1,10 @@
 import { FastifyReply } from "fastify";
 import { GoogleUserInfo } from "../../types/googleAuth";
 import { createSessionAndSetCookie } from "../../lib/login";
-import { findUserByGoogleSub } from "../../lib/googleOAuth";
+import {
+	findUserByGoogleSub,
+	updateGoogleUserAvatar,
+} from "../../lib/googleOAuth";
 import { prisma } from "../../lib/prisma";
 
 const FRONTEND_URL_FALLBACK =
@@ -26,7 +29,11 @@ export const handleGoogleLogin = async (
 		// Googleアカウント自体が未登録
 		return reply.redirect(frontendUrl + "/login?error=account_not_found");
 	}
-	// 既存Googleユーザー → セッション作成してトップへ
+	// 既存Googleユーザー → アバターを最新のプロフィール画像で更新
+	if (userInfo.picture) {
+		await updateGoogleUserAvatar(existingGoogleUser.id, userInfo.picture);
+	}
+	// セッション作成してトップへ
 	await createSessionAndSetCookie(reply, existingGoogleUser.id, {
 		secure: frontendUrl.startsWith("https://"),
 	});

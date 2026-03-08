@@ -1,6 +1,7 @@
 import { FastifyReply } from "fastify";
 import { randomUUID } from "crypto";
 import { GoogleUserInfo } from "../../types/googleAuth";
+import { avatarOrDefault } from "../../constants/avatar";
 import { createSessionAndSetCookie } from "../../lib/login";
 import { findUserByGoogleSub } from "../../lib/googleOAuth";
 import { prisma } from "../../lib/prisma";
@@ -8,7 +9,11 @@ import { prisma } from "../../lib/prisma";
 const FRONTEND_URL_FALLBACK =
 	process.env.FRONTEND_URL ?? "http://localhost:5173";
 
-const createGoogleUser = async (email: string, sub: string) => {
+const createGoogleUser = async (
+	email: string,
+	sub: string,
+	picture: string,
+) => {
 	return await prisma.$transaction(async tx => {
 		const user = await tx.user.create({
 			data: {
@@ -16,6 +21,7 @@ const createGoogleUser = async (email: string, sub: string) => {
 				email,
 				password: null,
 				is_profile_complete: false,
+				avatar: avatarOrDefault(picture),
 			},
 			select: {
 				id: true,
@@ -55,7 +61,11 @@ export const handleGoogleRegister = async (
 		);
 	}
 	// 新規ユーザー作成 → セッション作成してプロフィール設定へ
-	const newUser = await createGoogleUser(userInfo.email, userInfo.sub);
+	const newUser = await createGoogleUser(
+		userInfo.email,
+		userInfo.sub,
+		userInfo.picture,
+	);
 	await createSessionAndSetCookie(reply, newUser.id, {
 		secure: frontendUrl.startsWith("https://"),
 	});
