@@ -9,6 +9,7 @@ import { createWebSocket } from "../api/wsClient";
 import { WebSocketMessageType } from "../types/room";
 import { ApiError } from "../api/apiClient";
 import { LogoNavbar } from "../components/LogoNavbar";
+import Toast from "../components/Toast";
 
 const Result = () => {
 	const { id } = useParams();
@@ -22,6 +23,10 @@ const Result = () => {
 	const [rematchToken, setRematchToken] = useState<string | null>(null);
 
 	const socketRef = useRef<WebSocket | null>(null);
+
+	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState("");
+	const [toastType, setToastType] = useState<"info" | "error">("info");
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -99,6 +104,14 @@ const Result = () => {
 
 				// setPlayersに保存
 				setPlayers(playerData);
+
+				// DB接続してユーザーバッジを更新
+				// ユーザバッジを新規獲得した場合、トーストで通知する
+				// この辺にトースト追加
+				setToastMessage("を獲得しました");
+				setToastType("info");
+				setShowToast(true);
+				setTimeout(() => setShowToast(false), 3000);
 			} catch (error) {
 				if (
 					error instanceof ApiError &&
@@ -119,6 +132,8 @@ const Result = () => {
 			className="min-h-screen flex flex-col"
 			style={{ backgroundColor: "#87ceeb" }}
 		>
+			{/* トースト通知 */}
+			{showToast && <Toast type={toastType} message={toastMessage} />}
 			<LogoNavbar />
 
 			<div className="flex-1 flex flex-col items-center p-6">
