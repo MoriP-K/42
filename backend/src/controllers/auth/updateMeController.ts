@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { getUserIdFromRequest } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { avatarOrDefault } from "../../constants/avatar";
 import { UpdateMeRequest, UpdateMeRoute } from "../../types/auth/me";
 
 /**
@@ -68,6 +69,7 @@ export const updateMe = async (
 			select: {
 				id: true,
 				name: true,
+				avatar: true,
 			},
 		});
 
@@ -75,6 +77,7 @@ export const updateMe = async (
 			id: updatedUser.id,
 			name: updatedUser.name,
 			is_profile_complete: true,
+			avatar: avatarOrDefault(updatedUser.avatar),
 		});
 	} catch (err) {
 		request.log?.error?.(err);

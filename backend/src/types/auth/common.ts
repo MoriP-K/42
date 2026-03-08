@@ -11,6 +11,7 @@ export const AuthSuccessResponse = z.object({
 	id: z.number(),
 	name: z.string(),
 	is_profile_complete: z.boolean(),
+	avatar: z.string(),
 });
 export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponse>;
 

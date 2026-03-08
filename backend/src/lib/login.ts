@@ -2,6 +2,7 @@ import type { FastifyReply } from "fastify";
 import { prisma } from "./prisma";
 import { randomUUID } from "crypto";
 import { AuthSuccessResponse } from "../types/auth/common";
+import { avatarOrDefault } from "../constants/avatar";
 
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000; //1日
 
@@ -28,6 +29,7 @@ export const createSessionAndSetCookie = async (
 					id: true,
 					name: true,
 					is_profile_complete: true,
+					avatar: true,
 				},
 			},
 		},
@@ -50,6 +52,7 @@ export const createSessionAndSetCookie = async (
 		id: newSession.user.id,
 		name: newSession.user.name,
 		is_profile_complete: newSession.user.is_profile_complete,
+		avatar: avatarOrDefault(newSession.user.avatar),
 	};
 	return successResponse;
 };
