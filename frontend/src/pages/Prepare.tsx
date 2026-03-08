@@ -229,12 +229,12 @@ const Prepare = () => {
 							</p>
 							<div className="flex items-center justify-center gap-4">
 								<Avatar
-											avatar={avatarOrDefault(
-												currentDrawer?.avatar,
-											)}
-											size="lg"
-											className="w-full h-full"
-										/>
+									avatar={avatarOrDefault(
+										currentDrawer?.avatar,
+									)}
+									size="lg"
+									className="w-full h-full"
+								/>
 								<p
 									className="text-2xl font-bold"
 									style={{ color: "#6d4c41" }}
@@ -304,11 +304,11 @@ const Prepare = () => {
 								>
 									<div className="flex items-center gap-3">
 										<Avatar
-												avatar={avatarOrDefault(
-													player?.avatar,
-												)}
-												size="sm"
-											/>
+											avatar={avatarOrDefault(
+												player?.avatar,
+											)}
+											size="sm"
+										/>
 										<span
 											className="font-semibold"
 											style={{ color: "#6d4c41" }}
