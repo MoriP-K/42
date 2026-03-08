@@ -23,7 +23,8 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
 				type="text"
 				value={input}
 				onChange={e => setInput(e.target.value)}
-				className="input input-bordered join-item flex-1"
+				className="input input-bordered join-item flex-1 border-0! focus:outline-none focus:ring-0! focus:border-0!"
+				style={{ backgroundColor: "#f4d59c", color: "#6d4c41" }}
 				placeholder={
 					disabled ? "観戦者はチャットできません" : "コメントを入力…"
 				}
@@ -31,7 +32,7 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
 			/>
 			<button
 				type="submit"
-				className="btn btn-primary join-item"
+				className="btn join-item border-0! shadow-none! bg-[#ffbf47] text-[#6d4c41] hover:bg-[#ffa726]"
 				disabled={disabled}
 			>
 				送信

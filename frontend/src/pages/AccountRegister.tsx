@@ -5,13 +5,8 @@ import { ApiError } from "../api/apiClient";
 import { AuthFormShell } from "../components/auth/AuthFormShell";
 import { AuthTextField } from "../components/auth/AuthTextField";
 import { GoogleAccountRegister } from "../components/auth/GoogleAccountRegister";
-import {
-	useNavigate,
-	useSearchParams,
-	useLocation,
-	Link,
-} from "react-router-dom";
-import Logo from "../images/logo.svg";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { LogoNavbar } from "../components/LogoNavbar";
 import {
 	REGISTER_ERROR_MESSAGES,
 	type RegisterError,
@@ -203,21 +198,11 @@ const AccountRegister = () => {
 		<>
 			<div className="min-h-screen flex flex-col">
 				{/* Navbar with logo only */}
-				<div className="h-25 flex items-center px-6">
-					<div className="flex-1" />
-					<Link to="/" className="flex items-center justify-center">
-						<img
-							src={Logo}
-							alt="お絵描きアイランド"
-							className="h-20 w-auto p-1"
-						/>
-					</Link>
-					<div className="flex-1" />
-				</div>
+				<LogoNavbar linkToHome />
 
 				{/* Main content */}
 				<div className="flex-1 flex flex-col items-center justify-center p-6">
-					<div className="w-full max-w-2xl flex flex-col gap-6 items-center">
+					<div className="w-full max-w-3xl flex flex-col gap-6 items-center">
 						<AuthFormShell
 							title="アカウント新規作成"
 							serverError={serverError}

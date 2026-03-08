@@ -25,27 +25,43 @@ const ChatMessages = ({ messages, currentUserName }: ChatMessagesProps) => {
 	return (
 		<div
 			ref={scrollContainerRef}
-			className="space-y-2 h-64 overflow-y-auto p-2 bg-base-200 rounded-lg"
+			className="space-y-2 h-80 overflow-y-auto p-3 rounded-lg"
+			style={{ backgroundColor: "#f4d59c" }}
 		>
 			{messages.length === 0 ? (
-				<p className="text-center text-base-content/50">
+				<p
+					className="text-center text-sm py-2"
+					style={{ color: "#6d4c41" }}
+				>
 					メッセージはまだありません
 				</p>
 			) : (
 				messages.map(message => {
 					const isOwnMessage = message.sender === currentUserName;
 					return (
-						<div key={message.id} className="chat chat-start">
-							<div className="chat-header">
-								<span className="font-semibold">
+						<div key={message.id}>
+							<div className="flex items-baseline gap-4 py-2 px-1">
+								<span
+									className="text-sm shrink-0"
+									style={{
+										color: isOwnMessage
+											? "#5bad55"
+											: "#6d4c41",
+									}}
+								>
 									{message.sender}
+								</span>
+								<span
+									className="text-base font-bold break-all"
+									style={{ color: "#6d4c41" }}
+								>
+									{message.text}
 								</span>
 							</div>
 							<div
-								className={`chat-bubble text-sm ${isOwnMessage ? "chat-bubble-primary" : "chat-bubble-secondary"}`}
-							>
-								{message.text}
-							</div>
+								className="h-px w-full"
+								style={{ backgroundColor: "#fffde7" }}
+							/>
 						</div>
 					);
 				})

@@ -12,13 +12,15 @@ const BackButton = () => {
 			<button
 				type="button"
 				onClick={handleBack}
-				className="px-6 py-2 rounded-lg text-sm font-bold text-cyan-400 border border-cyan-400/50 hover:bg-cyan-400/10 transition-colors"
+				className="inline-flex items-center px-3 py-2 rounded text-sm font-bold cursor-pointer text-white transition-colors"
+				style={{ backgroundColor: "#4d8fff" }}
 			>
-				戻る
+				◀︎ 戻る
 			</button>
 			<Link
 				to="/"
-				className="px-6 py-2 rounded-lg text-sm font-bold text-cyan-400 border border-cyan-400/50 hover:bg-cyan-400/10 transition-colors"
+				className="inline-flex items-center px-3 py-2 rounded text-sm font-bold cursor-pointer text-white transition-colors"
+				style={{ backgroundColor: "#29b6f6" }}
 			>
 				ホームへ
 			</Link>

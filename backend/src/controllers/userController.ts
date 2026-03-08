@@ -60,7 +60,7 @@ export const getProfile = async (
 	});
 
 	const ranking = await prisma.user.findMany({
-		take: 20,
+		take: 10,
 		orderBy: {
 			total_score: "desc",
 		},
