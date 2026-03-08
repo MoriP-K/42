@@ -1,9 +1,10 @@
-.PHONY: up down restart build logs ps local ngrok stop-ngrok logs-ngrok url-ngrok prisma-studio seed
+.PHONY: up down restart build logs ps local ngrok stop-ngrok logs-ngrok url-ngrok prisma-studio seed reset
 
 # ngrok を含めて全サービス起動
 up:
 	docker compose --profile ngrok up -d
-	@sleep 5 && $(MAKE) url-ngrok
+	@sleep 5 && $(MAKE) seed
+	@sleep 5 && printf "\nAccess to:\n" && $(MAKE) url-ngrok
 
 # ngrok 以外を起動（ローカル開発用）
 local:
@@ -45,3 +46,7 @@ prisma-studio:
 # DB にシードデータを投入
 seed:
 	docker compose exec backend npx prisma db seed
+
+# DB をリセット（マイグレーションの再適用のみ、シードは投入しない）
+reset:
+	docker compose exec backend npx prisma migrate reset --force --skip-seed
