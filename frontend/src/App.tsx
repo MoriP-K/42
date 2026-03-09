@@ -13,10 +13,7 @@ import Game from "./pages/Game";
 import Result from "./pages/Result";
 import TermsOfService from "./pages/TermsOfService";
 import AccountRegister from "./pages/AccountRegister";
-import PasswordResetSendMail from "./pages/PasswordResetSendMail";
-import PasswordReset from "./pages/PasswordReset";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RedirectLogin from "./pages/RedirectLogin";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import SetupProfile from "./pages/SetupProfile";
@@ -38,34 +35,10 @@ const router = createBrowserRouter([
 		),
 	},
 	{
-		path: "/login/redirect",
-		element: (
-			<RequireGuest>
-				<RedirectLogin />
-			</RequireGuest>
-		),
-	},
-	{
 		path: "/register",
 		element: (
 			<RequireGuest>
 				<AccountRegister />
-			</RequireGuest>
-		),
-	},
-	{
-		path: "/password-reset/send-mail",
-		element: (
-			<RequireGuest>
-				<PasswordResetSendMail />
-			</RequireGuest>
-		),
-	},
-	{
-		path: "/password-reset",
-		element: (
-			<RequireGuest>
-				<PasswordReset />
 			</RequireGuest>
 		),
 	},
