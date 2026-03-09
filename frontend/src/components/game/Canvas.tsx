@@ -84,7 +84,26 @@ const Canvas = ({
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}, [clearTrigger]);
 
-	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const preventScroll = (e: globalThis.TouchEvent) => {
+			e.preventDefault();
+		};
+
+		canvas.addEventListener("touchstart", preventScroll, {
+			passive: false,
+		});
+		canvas.addEventListener("touchmove", preventScroll, { passive: false });
+
+		return () => {
+			canvas.removeEventListener("touchstart", preventScroll);
+			canvas.removeEventListener("touchmove", preventScroll);
+		};
+	}, []);
+
+	const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
@@ -125,7 +144,7 @@ const Canvas = ({
 		}
 	};
 
-	const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+	const draw = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		if (!isDrawing) return;
 
 		const canvas = canvasRef.current;
@@ -244,10 +263,10 @@ const Canvas = ({
 						ref={canvasRef}
 						width={1280}
 						height={720}
-						onMouseDown={isDrawer ? startDrawing : undefined}
-						onMouseMove={isDrawer ? draw : undefined}
-						onMouseUp={isDrawer ? stopDrawing : undefined}
-						onMouseLeave={isDrawer ? stopDrawing : undefined}
+						onPointerDown={isDrawer ? startDrawing : undefined}
+						onPointerMove={isDrawer ? draw : undefined}
+						onPointerUp={isDrawer ? stopDrawing : undefined}
+						onPointerLeave={isDrawer ? stopDrawing : undefined}
 						className={`border-3 border-[#f4d59c] rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
 						aria-label="描画キャンバス"
 					/>
