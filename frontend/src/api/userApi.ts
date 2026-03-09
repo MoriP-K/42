@@ -13,4 +13,13 @@ export const userApi = {
 	getProfile: async () => {
 		return apiClient("/profile", { credentials: "include" });
 	},
+
+	// POST /api/userbadge
+	updateUserBadge: async () => {
+		return apiClient("/userbadge", {
+			method: "POST",
+			body: JSON.stringify({}),
+			credentials: "include",
+		});
+	},
 };

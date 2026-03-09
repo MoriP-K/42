@@ -9,6 +9,9 @@ import { createWebSocket } from "../api/wsClient";
 import { WebSocketMessageType } from "../types/room";
 import { ApiError } from "../api/apiClient";
 import { LogoNavbar } from "../components/LogoNavbar";
+import Toast from "../components/Toast";
+import { userApi } from "../api/userApi";
+import { nameMap } from "../components/profile/badges";
 
 const Result = () => {
 	const { id } = useParams();
@@ -22,6 +25,10 @@ const Result = () => {
 	const [rematchToken, setRematchToken] = useState<string | null>(null);
 
 	const socketRef = useRef<WebSocket | null>(null);
+
+	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState("");
+	const [toastType, setToastType] = useState<"info" | "error">("info");
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -114,11 +121,39 @@ const Result = () => {
 		fetchResult();
 	}, [id, navigate]);
 
+	useEffect(() => {
+		const fetchBadge = async () => {
+			try {
+				const result = await userApi.updateUserBadge();
+
+				if (result && result.getbadges && result.getbadges.length > 0) {
+					const badgeNames = result.getbadges
+						.map(
+							(badge: { name: string }) =>
+								nameMap[badge.name] ?? badge.name,
+						)
+						.join("・");
+					setToastMessage(`${badgeNames} を獲得しました！`);
+					setToastType("info");
+					setShowToast(true);
+					setTimeout(() => setShowToast(false), 3000);
+				}
+			} catch (error) {
+				// バッジ取得失敗はリダイレクトせず無視する
+				console.error("Failed to fetch badge:", error);
+			}
+		};
+
+		fetchBadge();
+	}, [id]);
+
 	return (
 		<div
 			className="min-h-screen flex flex-col"
 			style={{ backgroundColor: "#87ceeb" }}
 		>
+			{/* トースト通知 */}
+			{showToast && <Toast type={toastType} message={toastMessage} />}
 			<LogoNavbar />
 
 			<div className="flex-1 flex flex-col items-center p-6">
@@ -152,7 +187,9 @@ const Result = () => {
 									<div className="flex items-center gap-3">
 										<span
 											className="text-lg font-bold w-10"
-											style={{ color: "#6d4c41" }}
+											style={{
+												color: "#playerData6d4c41",
+											}}
 										>
 											{index + 1}位
 										</span>
