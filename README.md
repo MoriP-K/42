@@ -40,18 +40,26 @@ _This project has been created as part of the 42 curriculum by mfunakos, yohatan
 
 ### Running the Project
 
-1. Start all services:
+1. Start all services **with ngrok** (for demos / remote play):
 
     ```bash
     make up
     ```
 
-2. Access the application:
-    - **localhost**: http://localhost:5173
-    - **ngrok** (after `make ngrok`): https://xxx.ngrok-free.dev
+    This runs `docker compose --profile ngrok up -d`, seeds the DB, and then prints the ngrok URL.
+
+2. Or start services **without ngrok** (local development only):
+
+    ```bash
+    make local
+    ```
+
+3. Access the application:
+    - **App (localhost)**: http://localhost:5173
+    - **App (ngrok)**: URL printed after `make up` (you can also run `make url-ngrok`)
     - **Database**: localhost:5432 (PostgreSQL)
 
-3. **Google OAuth**: Register these redirect URIs in Google Cloud Console:
+4. **Google OAuth**: Register these redirect URIs in Google Cloud Console:
     - `http://localhost:3000/v1/auth/google/callback` (when logging in from localhost:5173)
     - `https://xxx.ngrok-free.dev/v1/auth/google/callback` (when using ngrok)
 
