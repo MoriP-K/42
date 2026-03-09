@@ -131,13 +131,16 @@ export const updateUserbadge = async (
 		});
 
 		const badgesToAdd: number[] = [];
-		if (user.first_place_count > 0 && !badges.includes(0)) {
+		const firstPlaceCount = user.first_place_count ?? 0; // nullなら0
+		const playCount = user.play_count ?? 0;
+		const totalScore = user.total_score ?? 0;
+		if (firstPlaceCount > 0 && !badges.includes(0)) {
 			badgesToAdd.push(1);
 		}
-		if (user.play_count > 5 && !badges.includes(1)) {
+		if (playCount > 5 && !badges.includes(1)) {
 			badgesToAdd.push(2);
 		}
-		if (user.total_score > 100 && !badges.includes(2)) {
+		if (totalScore > 100 && !badges.includes(2)) {
 			badgesToAdd.push(3);
 		}
 
@@ -157,7 +160,9 @@ export const updateUserbadge = async (
 			const badge_data = await prisma.badge.findUnique({
 				where: { id: badgeId },
 			});
-			get_badges_names.push(badge_data);
+			if (badge_data) {
+				get_badges_names.push(badge_data);
+			}
 		}
 		const data: UserBadgeSuccessResponse = {
 			getbadges: get_badges_names,
