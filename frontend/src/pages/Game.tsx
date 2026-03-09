@@ -75,8 +75,6 @@ const Game = () => {
 			const ws = createWebSocket();
 
 			ws.onopen = () => {
-				console.log("✅ WebSocket connected");
-
 				reconnectAttemptRef.current = 0;
 				ws.send(
 					JSON.stringify({
@@ -172,9 +170,7 @@ const Game = () => {
 						data.type === WebSocketMessageType.CURRENT_SCORES
 					) {
 						pendingScoresRef.current = data.scores;
-						console.log("⚠️ Received CURRENT_SCORES:", data.scores);
 						setPlayers(prev => {
-							console.log("⚠️ Current players:", prev);
 							if (prev.length === 0) return prev;
 							return prev.map(p => ({
 								...p,
@@ -197,7 +193,6 @@ const Game = () => {
 			};
 
 			ws.onclose = () => {
-				console.log("🔌 WebSocket disconnected");
 				if (cancelled) return;
 
 				const attempt = reconnectAttemptRef.current;
