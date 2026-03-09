@@ -144,6 +144,8 @@ const Game = () => {
 								})),
 							);
 						}
+
+						setClearTrigger(prev => prev + 1);
 					} else if (data.type === WebSocketMessageType.NEXT_WORD) {
 						setCurrentWord(data.word);
 					} else if (data.type === WebSocketMessageType.SKIPPED) {
