@@ -13,6 +13,5 @@ export const getWebSocketUrl = () => {
  */
 export const createWebSocket = (): WebSocket => {
 	const url = getWebSocketUrl();
-	console.log("🔗 Connecting to: ", url);
 	return new WebSocket(url);
 };

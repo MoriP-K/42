@@ -56,7 +56,6 @@ const Game = () => {
 				currentUserIdRef.current = user.id;
 				setCurrentUserName(user.name);
 			} catch (error) {
-				console.error("❌ Failed to get user:", error);
 				navigate("/login");
 			}
 		};
@@ -75,8 +74,6 @@ const Game = () => {
 			const ws = createWebSocket();
 
 			ws.onopen = () => {
-				console.log("✅ WebSocket connected");
-
 				reconnectAttemptRef.current = 0;
 				ws.send(
 					JSON.stringify({
@@ -172,9 +169,7 @@ const Game = () => {
 						data.type === WebSocketMessageType.CURRENT_SCORES
 					) {
 						pendingScoresRef.current = data.scores;
-						console.log("⚠️ Received CURRENT_SCORES:", data.scores);
 						setPlayers(prev => {
-							console.log("⚠️ Current players:", prev);
 							if (prev.length === 0) return prev;
 							return prev.map(p => ({
 								...p,
@@ -188,16 +183,15 @@ const Game = () => {
 						navigate("/");
 					}
 				} catch (error) {
-					console.error("❌ Failed to parse message:", error);
+					// 不正なメッセージは無視してアプリの動作を優先
 				}
 			};
 
-			ws.onerror = error => {
-				console.error("❌ WebSocket error: ", error);
+			ws.onerror = () => {
+				// エラー時は onclose で再接続される
 			};
 
 			ws.onclose = () => {
-				console.log("🔌 WebSocket disconnected");
 				if (cancelled) return;
 
 				const attempt = reconnectAttemptRef.current;
@@ -318,18 +312,15 @@ const Game = () => {
 				navigate("/");
 				return;
 			}
-			console.error("❌ Failed to check room status: ", error);
 		}
 	};
 
 	const handleSendMessage = (text: string) => {
 		if (!socket || socket.readyState !== WebSocket.OPEN) {
-			console.error("❌ WebSocket not connected");
 			return;
 		}
 
 		if (!currentUserName) {
-			console.error("❌ User name not found");
 			return;
 		}
 
