@@ -9,6 +9,7 @@ import {
 } from "./roomManager";
 import { RoomClient, WebSocketMessageType } from "../types/room/room";
 import { selectRandomWord } from "./wordSelector";
+import { MAX_CHAT_LENGTH } from "../types/game/chat";
 
 export const handleChatMessage = async (client: RoomClient, data: any) => {
 	console.log(
@@ -20,6 +21,16 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 			JSON.stringify({
 				type: WebSocketMessageType.ERROR,
 				message: "Invalid message format",
+			}),
+		);
+		return;
+	}
+
+	if (data.text.length > MAX_CHAT_LENGTH) {
+		client.socket.send(
+			JSON.stringify({
+				type: WebSocketMessageType.ERROR,
+				message: `Message too long (max ${MAX_CHAT_LENGTH} characters)`,
 			}),
 		);
 		return;

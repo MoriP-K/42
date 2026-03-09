@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_CHAT_LENGTH } from "../../types/game";
 
 interface ChatInputProps {
 	onSendMessage: (text: string) => void;
@@ -21,6 +22,7 @@ const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) => {
 		<form onSubmit={handleSubmit} className="join w-full">
 			<input
 				type="text"
+				maxLength={MAX_CHAT_LENGTH}
 				value={input}
 				onChange={e => setInput(e.target.value)}
 				className="input input-bordered join-item flex-1 border-0! focus:outline-none focus:ring-0! focus:border-0! placeholder:text-[#6d4c41] disabled:opacity-50"

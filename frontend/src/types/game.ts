@@ -1,5 +1,7 @@
 import { GameMode } from "../types/room";
 
+export const MAX_CHAT_LENGTH = 30;
+
 export interface GameRoomMember {
 	user_id: number;
 	role: string;
