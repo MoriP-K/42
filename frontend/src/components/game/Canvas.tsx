@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { GameMode, WebSocketMessageType } from "../../types/room";
+import Maru from "../../images/maru.svg";
 
 export interface DrawData {
 	x: number;
@@ -15,7 +16,10 @@ interface CanvasProps {
 	clearTrigger: number;
 	isDrawer: boolean;
 	currentWord: string | null;
+	correctWord: string | null;
+	correctAnswer: string | null;
 	gameMode: (typeof GameMode)[keyof typeof GameMode] | null;
+	showCorrectOverlay?: boolean;
 }
 
 const Canvas = ({
@@ -24,7 +28,10 @@ const Canvas = ({
 	clearTrigger,
 	isDrawer,
 	currentWord,
+	correctWord,
+	correctAnswer,
 	gameMode,
+	showCorrectOverlay = false,
 }: CanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isDrawing, setIsDrawing] = useState(false);
@@ -232,17 +239,33 @@ const Canvas = ({
 					</div>
 				)}
 
-				<canvas
-					ref={canvasRef}
-					width={1280}
-					height={720}
-					onMouseDown={isDrawer ? startDrawing : undefined}
-					onMouseMove={isDrawer ? draw : undefined}
-					onMouseUp={isDrawer ? stopDrawing : undefined}
-					onMouseLeave={isDrawer ? stopDrawing : undefined}
-					className={`border-3 border-[#f4d59c] rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
-					aria-label="描画キャンバス"
-				/>
+				<div className="relative">
+					<canvas
+						ref={canvasRef}
+						width={1280}
+						height={720}
+						onMouseDown={isDrawer ? startDrawing : undefined}
+						onMouseMove={isDrawer ? draw : undefined}
+						onMouseUp={isDrawer ? stopDrawing : undefined}
+						onMouseLeave={isDrawer ? stopDrawing : undefined}
+						className={`border-3 border-[#f4d59c] rounded-lg bg-white w-full ${isDrawer ? "cursor-crosshair" : "cursor-default"}`}
+						aria-label="描画キャンバス"
+					/>
+					{showCorrectOverlay && (
+						<div className="absolute inset-0 pointer-events-none">
+							<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-center gap-1">
+								<img
+									src={Maru}
+									alt="正解"
+									className="w-40 h-auto opacity-70"
+								/>
+								<p style={{ color: "#6d4c41" }}>
+									回答: {correctWord} 正解者: {correctAnswer}
+								</p>
+							</div>
+						</div>
+					)}
+				</div>
 
 				{isDrawer && (
 					<div className="flex items-center gap-2">

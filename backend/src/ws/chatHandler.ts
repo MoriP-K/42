@@ -108,6 +108,7 @@ export const handleChatMessage = async (client: RoomClient, data: any) => {
 				type: WebSocketMessageType.CORRECT_ANSWER,
 				userId: client.userId,
 				sender: data.sender,
+				word: currentRound.word,
 				scores: Object.fromEntries(getScores(client.roomId)),
 			});
 
