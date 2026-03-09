@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type TouchEvent } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GameMode, WebSocketMessageType } from "../../types/room";
 
 export interface DrawData {
