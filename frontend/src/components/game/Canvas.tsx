@@ -204,7 +204,7 @@ const Canvas = ({
 				{isDrawer && (
 					<div className="flex items-center justify-between mb-1">
 						<h2
-							className="card-title text-1xl font-bold mb-1"
+							className="card-title text-3xl font-bold mb-1"
 							style={{
 								color: "#6d4c41",
 							}}
