@@ -8,7 +8,7 @@ _This project has been created as part of the 42 curriculum by mfunakos, yohatan
 
 ### Key Features
 
-- **Authentication**: Email/password registration and login, Google OAuth, password reset via email
+- **Authentication**: Email/password registration and login, Google OAuth
 - **Game Rooms**: Create rooms with invitation tokens, support for players and spectators
 - **Game Modes**: DEFAULT mode and ONE_STROKE mode (single-stroke drawing challenge)
 - **Real-time Gameplay**: WebSocket-based drawing canvas, chat, timer, and scoreboard
@@ -124,18 +124,21 @@ AI was used in the following areas:
 
 ### Work Organization
 
-- **Task distribution**: Each member implemented both frontend and backend for their assigned pages/features of the web application.
-- **Meetings**: Communication via Discord; in-person meetings at the campus when needed.
-- **Source code management**: Version control and code review on GitHub.
+- **Task distribution**: Each member implemented both frontend and backend for their assigned features. Tasks were managed using GitHub Issues integrated with GitHub Projects, where each member created issues for their own tasks. Typically, one PR corresponded to one issue.
+- **Development workflow**: Pull requests required passing CI checks (frontend/backend builds and formatting via GitHub Actions). Reviews by one or two team members were mandatory before merging. A PR template was used to document the summary, changes, testing steps, and review points.
+- **Meetings**: Team members worked together at the campus daily, enabling continuous in-person communication. Formal meetings were held as needed rather than on a fixed schedule.
+- **Source code management**: Git and GitHub. Branch naming convention: `<issue-number>-<feat|fix>-</description>`(e.g, `42-feat/game_mode`). Direct pushes to main were prohibited.
 
 ### Tools
 
-- **Project Management**: GitHub Issues, Notion
+- **Project Management**: GitHub Issues + GitHub Projects (task tracking), GitHub Actions (CI)
+- **Documentation**: Notion (requirements, game rules, project structure, task overview)
+- **Design**: Figma (UI / visual prototyping)
 - **Version Control**: Git, GitHub
 
 ### Communication
 
-- **Channels**: Discord
+- **Channels**: Discord, in-person at campus
 
 ---
 
@@ -152,7 +155,7 @@ AI was used in the following areas:
 | Tailwind CSS | 4       | Utility-first CSS         |
 | DaisyUI      | -       | Component library         |
 
-**Justification**: React and Vite provide a modern SPA experience with fast development and builds. TypeScript ensures type safety across the frontend. Tailwind and DaisyUI enable rapid, consistent UI development.
+**Justification**: The team chose modern, widely-used technologies for frontend development. React was selected as a poplular and well-surpported UI framework. TypeScript adds type safety over plain JavaScript, reducing bugs. Vite provides fast builds and hot module replacement for a smooth development experience. Tailwind CSS and Daisy UI were chosen for rapid styling, with Daisy UI offering ready-made components that integrate well with React.
 
 ### Backend
 
@@ -166,13 +169,23 @@ AI was used in the following areas:
 | bcrypt             | -       | Password hashing              |
 | JWT                | -       | Session/authentication tokens |
 
-**Justification**: Fastify offers high performance and a plugin-based architecture. Prisma provides type-safe database access and migrations. WebSocket support enables real-time game and chat features.
+**Justification**: Fastify was chosen for its high performance, which is important for real-time game features like drawing and chat over WebSocket. Prisma provides a type-safe and convenient way to interact with the database, with built-in migration support. Zod handles request validation, bcrypt secures password hashing, and JWT manages user authentication - these were adopted as standard tools for building a secure backend.
 
 ### Database
 
 - **PostgreSQL 16** (Alpine image in Docker)
 
-**Justification**: PostgreSQL was chosen for its robustness, support for relational data (users, rooms, rounds, sessions), and excellent Prisma integration. The schema requires complex relationships (users, rooms, rounds, badges) that fit well with a relational model.
+**Justification**: PostgreSQL was chosen as a modern and reliable relational database. The project requires complex relationShips between users, rooms, rounds, and badges, which fit well with a relational model. It also integrates smoothly with Prisma ORM.
+
+### Infrastructure
+
+| Technology              | Purpose                                           |
+| ----------------------- | ------------------------------------------------- |
+| Docker / Docker Compose | Containerization and service orchastration        |
+| Make                    | Build automation and command shortcuts            |
+| ngrok                   | HTTPS tunneling for OAuth testing and remote play |
+
+**Justification**: Docker and Docker Compose are used to containerize and orchestrate the frontend, backend, and database services. Make simplifies common operations (build, start, seed) into sigle commands. ngrok provides HTTPS tunneling, which is needed for Google OAuth and for remote play over the network.
 
 ---
 
@@ -219,7 +232,7 @@ erDiagram
 
 | Feature                           | Team Member(s) | Description                                                    |
 | --------------------------------- | -------------- | -------------------------------------------------------------- |
-| Email/Password Authentication     | mfunakos       | Registration, login, password reset via email                  |
+| Email/Password Authentication     | mfunakos       | Registration, login                                            |
 | Google OAuth                      | mfunakos       | Login and register with Google account                         |
 | Room Creation & Invitation        | kmoriyam       | Create rooms, generate invitation tokens, join via link        |
 | Game Modes (DEFAULT, ONE_STROKE)  | keishii        | Two play modes: standard drawing and single-stroke challenge   |
@@ -233,18 +246,20 @@ erDiagram
 
 ### Module Summary
 
-| Module Name                                                                                   | Type (Major/Minor) | Points | Justification                                                                                           | Implemented By |
-| --------------------------------------------------------------------------------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------- | -------------- |
-| Use a framework for both the frontend and backend.                                            | Major              | 2      | React + Vite (frontend) and Fastify (backend) provide structure, maintainability, and fast development. | All            |
-| Implement real-time features using WebSockets or similar technology.                          | Major              | 2      | Drawing canvas, chat, timer, and scoreboard sync in real time via WebSocket.                            | keishii        |
-| Implement a complete web-based game where users can play against each other.                  | Major              | 2      | Oekaki Island: drawing guessing game where users take turns drawing and guessing.                       | keishii        |
-| Remote players — Enable two players on separate computers to play the same game in real-time. | Major              | 2      | Users join rooms via invitation tokens and play together over WebSocket.                                | keishii        |
-| Multiplayer game (more than two players).                                                     | Major              | 2      | Multiple players join a room; RoomMember supports several players per game.                             | keishii        |
-| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.).                    | Minor              | 1      | Google OAuth for sign-in and registration.                                                              | mfunakos       |
-| Implement spectator mode for games.                                                           | Minor              | 1      | UserRole SPECTATOR lets users watch games without playing.                                              | kmoriyam       |
-| Game customization options.                                                                   | Minor              | 1      | DEFAULT and ONE_STROKE modes; room host selects game mode.                                              | kmoriyam       |
-| Use an ORM for the database.                                                                  | Minor              | 1      | Prisma for type-safe queries, migrations, and schema management.                                        | All            |
-| A gamification system to reward users for their actions.                                      | Minor              | 1      | Badges, total score, ranking, and play statistics.                                                      | yohatana       |
+**Total: 15 points** (5 Major × 2pts + 5 Minor × 1pt)
+
+| Module Name                                                                                   | Type (Major/Minor) | Points | Justification                                                                                           | Implemented By    |
+| --------------------------------------------------------------------------------------------- | ------------------ | ------ | ------------------------------------------------------------------------------------------------------- | ----------------- |
+| Use a framework for both the frontend and backend.                                            | Major              | 2      | React + Vite (frontend) and Fastify (backend) provide structure, maintainability, and fast development. | All               |
+| Implement real-time features using WebSockets or similar technology.                          | Major              | 2      | Drawing canvas, chat, timer, and scoreboard sync in real time via WebSocket.                            | keishii           |
+| Implement a complete web-based game where users can play against each other.                  | Major              | 2      | Oekaki Island: drawing guessing game where users take turns drawing and guessing.                       | keishii           |
+| Remote players — Enable two players on separate computers to play the same game in real-time. | Major              | 2      | Users join rooms via invitation tokens and play together over WebSocket.                                | kmoriyam, keishii |
+| Multiplayer game (more than two players).                                                     | Major              | 2      | Multiple players join a room; RoomMember supports several players per game.                             | kmoriyam          |
+| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.).                    | Minor              | 1      | Google OAuth for sign-in and registration.                                                              | mfunakos          |
+| Implement spectator mode for games.                                                           | Minor              | 1      | UserRole SPECTATOR lets users watch games without playing.                                              | kmoriyam          |
+| Game customization options.                                                                   | Minor              | 1      | DEFAULT and ONE_STROKE modes; room host selects game mode.                                              | kmoriyam, keishii |
+| Use an ORM for the database.                                                                  | Minor              | 1      | Prisma for type-safe queries, migrations, and schema management.                                        | All               |
+| A gamification system to reward users for their actions.                                      | Minor              | 1      | Badges, total score, ranking, and play statistics.                                                      | yohatana          |
 
 ### Implementation Overview
 
@@ -300,16 +315,20 @@ erDiagram
 
 **Features & Modules Implemented**:
 
-- **Game Modes (DEFAULT, ONE_STROKE)**: ONE_STROKE mode restricts the drawer to a single stroke per turn; `Canvas.tsx` uses `isStrokeDone` to lock drawing until the next round. In ONE_STROKE, clearing the canvas requires starting a new stroke. Game mode passed from room to Canvas and affects drawing behavior.
+- **Game Screen**: Built the main game screen with role-based UI. The drawer can draw on the canvas with pen color selection, eraser, canvas clear, and word skip. Guesser cannot see the word or use drawing tools, and their chat messages are checked for correct answers. Spectators can only watch - drawing and chat are both disabled. Shared components include the timer and scoreboard.
+
+- **Game Flow**: Managed the round lifecycle. On `ROUND_START`, a word is selected and the timer begins. When the timer ends, scores are saved to the DB and players return to the Prepare screen for the next round. After all rounds finish, badge-related data is updated and the game moves to the Result screen. Also implemented reconnection handling - when a player joins via invite URL, they are redirected to the correct screen based on the current game state.
 
 - **Real-time Drawing & Chat**: WebSocket-based architecture. Backend: `connectionHandler` (JOIN, DRAW, DRAW_END, CLEAR, CHAT, ROUND_START, ROUND_END, TIMER), `chatHandler` (correct-answer detection, score updates, word replacement), `timerManager` (per-room countdown), `roomManager` (broadcast, scores, round state). Frontend: `wsClient`, `Game.tsx` (WebSocket connect, message handling), `Canvas.tsx` (draw events over WebSocket), `ChatMessages`, `ChatInput`, `Timer`, `ScoreBoard`.
 
-- **Complete Game Flow**: Round lifecycle (ROUND_START → word selection, drawer/guesser roles, correct-answer handling → ROUND_END → RESULT). `wordSelector` for random words. `saveScoresToDB`, `endRound`, `finalizeGame` for persistence. Frontend: `Prepare`, `Game`, `Result` pages.
+- **`ONE_STROKE` Mode**:Implemented as an alternative game mode where the drawer can only draw a single continuous line. If the drawer starts a new stroke, the previous one is automatically cleared from the canvas.
+
+- **Result Screen**: Displays final scores with players sorted by ranking. Players can choose to return to the home screen or start a rematch by creating a new room.
 
 **Challenges & Solutions**:
 
-- **ONE_STROKE UX**: On mouse up, `setIsStrokeDone(true)` locks the canvas; next stroke clears and sends CLEAR to sync all clients.
-- **Correct-answer race**: Chat handler uses `round.updateMany` with `word` in `where` to avoid double-processing when multiple guesses arrive.
+- **Frontend vs Backend responsibility**: Decided to handle most game logic on the backend to prevent cheating. For example, the timer runs server-side to prevent tampering, and WebSocket messages are filtered by role - the word is sent to the drawer but hidden from guessers.
+- **WebSocket reconnection**: Faced an infinite loop where the connection would repeatedly connect, disconnect, and reconnect. Resolved by following React's recommended practice of using cleanup functions in useEffect to properly stop and undo the effect, which prevented duplicate connections.
 
 ### kmoriyam
 
@@ -334,4 +353,9 @@ erDiagram
 
 ### Known Limitations
 
-There was a discussion regarding how to handle data types sent from the backend to the frontend. Currently, when retrieved data does not exist, it is returned as an HTTP response error. The question arose as to whether this was appropriate, since the absence of data is not truly an error — perhaps simply displaying a message would suffice. Ultimately, the team decided to go with outputting the handled content as a unified approach.
+- **Password reset**: Currently not fully implemented.
+- **Game effects**: No animations or sound effects to enhance the gameplay experience.
+- **Mobile support**: The UI is not fully optimized for smartphone screens.
+- **Word generation**: Words are loaded from a static file rather than generated dynamically.
+- **Answer matching**: Only hiragana input is accepted for guessing - katakana or kanji answers are not supported.
+- **Console error interpretation**: The team concluded that the "no errors in browser console" requirement refers to browser-generated errors, not application-level messages intentionally logged by the code.
