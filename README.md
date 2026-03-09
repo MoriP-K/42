@@ -251,8 +251,6 @@ erDiagram
 - **ORM**: Prisma for all DB access. Migrations for schema changes. Type-safe client generated from schema.
 - **Gamification**: `Badge` and `UserBadge` models. `total_score`, `play_count`, `first_place_count` on User. Profile API returns ranking and top players.
 
-_Note: This project implements a drawing guessing game (お絵描きアイランド) instead of the standard Pong game. Custom "Modules of choice" should be documented with clear justification._
-
 ---
 
 ## Individual Contributions
@@ -266,8 +264,6 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 - **Email/Password Authentication**: Implemented registration (`POST /register`) and login (`POST /login`) with bcrypt password hashing. Zod validation for request bodies. Duplicate email/name checks on registration. Auto-login after successful registration via session creation and cookie. Frontend: `AccountRegister.tsx`, `Login.tsx`, `authApi.ts`, `AuthProvider`, `RequireAuth`, `RequireGuest`.
 
 - **Google OAuth**: Implemented OAuth 2.0 flow with Google. Backend: `googleAuth` (redirect to Google), `googleCallback` (exchange code for user info), `handleGoogleLogin`, `handleGoogleRegister`. State stored in httpOnly cookie for CSRF protection. Handles existing users (email conflict, account not found). `UserAuthentication` model links OAuth providers. Frontend: `GoogleAccountLogin`, `GoogleAccountRegister`, `RedirectLogin`, `SetupProfile` (post-OAuth profile setup).
-
-- **Password Reset (UI)**: Added routes and placeholder pages for password reset flow (`/password-reset/send-mail`, `/password-reset`). Backend email sending not yet implemented.
 
 **Challenges & Solutions**:
 
@@ -331,12 +327,3 @@ _Note: This project implements a drawing guessing game (お絵描きアイラン
 ### Known Limitations
 
 There was a discussion regarding how to handle data types sent from the backend to the frontend. Currently, when retrieved data does not exist, it is returned as an HTTP response error. The question arose as to whether this was appropriate, since the absence of data is not truly an error — perhaps simply displaying a message would suffice. Ultimately, the team decided to go with outputting the handled content as a unified approach.
-
-### License
-
-This project is part of the 42 curriculum. See your school's guidelines for usage and distribution.
-
-### Credits
-
-- 42 Common Core – ft_transcendence project
-- Technologies: React, Fastify, Prisma, PostgreSQL, and others listed in Technical Stack
