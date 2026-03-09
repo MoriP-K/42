@@ -11,6 +11,7 @@ import { ApiError } from "../api/apiClient";
 import { LogoNavbar } from "../components/LogoNavbar";
 import Toast from "../components/Toast";
 import { userApi } from "../api/userApi";
+import { nameMap } from "../components/profile/badges";
 
 const Result = () => {
 	const { id } = useParams();
@@ -127,7 +128,10 @@ const Result = () => {
 
 				if (result && result.getbadges && result.getbadges.length > 0) {
 					const badgeNames = result.getbadges
-						.map((badge: { name: string }) => badge.name)
+						.map(
+							(badge: { name: string }) =>
+								nameMap[badge.name] ?? badge.name,
+						)
 						.join("・");
 					setToastMessage(`${badgeNames} を獲得しました！`);
 					setToastType("info");
