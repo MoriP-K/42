@@ -31,6 +31,10 @@ const Game = () => {
 	const [isDrawer, setIsDrawer] = useState(false);
 	const [isSpectator, setIsSpectator] = useState(false);
 	const [currentWord, setCurrentWord] = useState<string | null>(null);
+	const [lastCorrectWord, setLastCorrectWord] = useState<string | null>(null);
+	const [lastCorrectAnser, setLastCorrectAnser] = useState<string | null>(
+		null,
+	);
 	const [gameMode, setGameMode] = useState<
 		(typeof GameMode)[keyof typeof GameMode] | null
 	>(null);
@@ -39,6 +43,7 @@ const Game = () => {
 	const [messages, setMessages] = useState<Message[]>([]); // メッセージデータ
 	const [drawData, setDrawData] = useState<DrawData | null>(null); // 描画データ
 	const [clearTrigger, setClearTrigger] = useState(0); // キャンバスクリア処理
+	const [showCorrectOverlay, setShowCorrectOverlay] = useState(false);
 	const [timeLeft, setTimeLeft] = useState(ROUND_DURATION); // setTimeLeftでtimeLeftを更新する
 
 	const socketRef = useRef<WebSocket | null>(null);
@@ -144,6 +149,12 @@ const Game = () => {
 								})),
 							);
 						}
+
+						setLastCorrectWord(data.word ?? currentWord);
+						setLastCorrectAnser(data.sender);
+						setShowCorrectOverlay(true);
+						setTimeout(() => setShowCorrectOverlay(false), 1500);
+						setClearTrigger(prev => prev + 1);
 					} else if (data.type === WebSocketMessageType.NEXT_WORD) {
 						setCurrentWord(data.word);
 					} else if (data.type === WebSocketMessageType.SKIPPED) {
@@ -350,7 +361,10 @@ const Game = () => {
 							clearTrigger={clearTrigger}
 							isDrawer={isDrawer}
 							currentWord={currentWord}
+							correctWord={lastCorrectWord}
+							correctAnswer={lastCorrectAnser}
 							gameMode={gameMode}
+							showCorrectOverlay={showCorrectOverlay}
 						/>
 					</div>
 
