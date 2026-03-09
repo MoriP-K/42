@@ -11,7 +11,8 @@ export interface UserBadgeRequest {
 
 interface badge_data {
 	id: number;
-	name: string;
+	name: string | null;
+	description: string | null;
 }
 
 export interface UserBadgeSuccessResponse {
