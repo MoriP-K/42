@@ -10,6 +10,7 @@ import { WebSocketMessageType } from "../types/room";
 import { ApiError } from "../api/apiClient";
 import { LogoNavbar } from "../components/LogoNavbar";
 import Toast from "../components/Toast";
+import { userApi } from "../api/userApi";
 
 const Result = () => {
 	const { id } = useParams();
@@ -104,15 +105,6 @@ const Result = () => {
 
 				// setPlayersに保存
 				setPlayers(playerData);
-
-				// 新規API
-				// playerDataをユーザーテーブルに反映
-				// ユーザーテーブル情報をもとにユーザーバッジを更新
-				// ユーザバッジを新規獲得した場合、トーストで通知する
-				setToastMessage("を獲得しました");
-				setToastType("info");
-				setShowToast(true);
-				setTimeout(() => setShowToast(false), 3000);
 			} catch (error) {
 				if (
 					error instanceof ApiError &&
@@ -127,6 +119,29 @@ const Result = () => {
 
 		fetchResult();
 	}, [id, navigate]);
+
+	useEffect(() => {
+		const fetchBadge = async () => {
+			try {
+				const result = await userApi.updateUserBadge();
+
+				if (result && result.getbadges && result.getbadges.length > 0) {
+					const badgeNames = result.getbadges
+						.map((badge: { name: string }) => badge.name)
+						.join("・");
+					setToastMessage(`${badgeNames} を獲得しました！`);
+					setToastType("info");
+					setShowToast(true);
+					setTimeout(() => setShowToast(false), 3000);
+				}
+			} catch (error) {
+				// バッジ取得失敗はリダイレクトせず無視する
+				console.error("Failed to fetch badge:", error);
+			}
+		};
+
+		fetchBadge();
+	}, [id]);
 
 	return (
 		<div

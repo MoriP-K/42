@@ -25,3 +25,10 @@ export const BadgeImage = ({ name }: { name: string }) => {
 		);
 	}
 };
+
+export const BadgeName = ({ name }: { name: string }) => {
+	if (!imageMap[name]) return null;
+	else {
+		return nameMap[name];
+	}
+};

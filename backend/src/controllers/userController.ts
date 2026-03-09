@@ -8,6 +8,11 @@ import {
 	Ranker,
 } from "../types/profile";
 import { getUserIdFromRequest } from "../lib/auth";
+import {
+	UserBadgeRequest,
+	UserBadgeSuccessResponse,
+	UserBadgeRoute,
+} from "../types/userbadge";
 
 /**
  * LaravelのUserControllerに相当
@@ -91,4 +96,75 @@ export const getProfile = async (
 		top_ranker: ranker ?? 0,
 	};
 	return data;
+};
+
+/*
+ * POST /api/userbadge
+ */
+export const updateUserbadge = async (
+	request: FastifyRequest<UserBadgeRoute>,
+	reply: FastifyReply,
+) => {
+	try {
+		const userId = await getUserIdFromRequest(request);
+		if (!userId) return reply.code(404).send({ message: "User not found" });
+
+		const user = await prisma.user.findUnique({
+			where: { id: Number(userId) },
+			include: { badges: true },
+		});
+		if (!user) return reply.code(404).send({ message: "User not found" });
+
+		const userBadgesWithDetails = await prisma.userBadge.findMany({
+			where: {
+				user_id: Number(userId),
+			},
+			include: {
+				badge: true,
+			},
+		});
+		const badges: number[] = [];
+		userBadgesWithDetails.forEach((ub: any) => {
+			if (ub.badge) {
+				badges.push(ub.badge.badge_id);
+			}
+		});
+
+		const badgesToAdd: number[] = [];
+		if (user.first_place_count > 0 && !badges.includes(0)) {
+			badgesToAdd.push(1);
+		}
+		if (user.play_count > 5 && !badges.includes(1)) {
+			badgesToAdd.push(2);
+		}
+		if (user.total_score > 100 && !badges.includes(2)) {
+			badgesToAdd.push(3);
+		}
+
+		for (const badgeId of badgesToAdd) {
+			const existing = await prisma.userBadge.findFirst({
+				where: { user_id: Number(userId), badge_id: badgeId },
+			});
+
+			if (!existing) {
+				await prisma.userBadge.create({
+					data: { user_id: Number(userId), badge_id: badgeId },
+				});
+			}
+		}
+		const get_badges_names = [];
+		for (const badgeId of badgesToAdd) {
+			const badge_data = await prisma.badge.findUnique({
+				where: { id: badgeId },
+			});
+			get_badges_names.push(badge_data);
+		}
+		const data: UserBadgeSuccessResponse = {
+			getbadges: get_badges_names,
+		};
+		return data;
+	} catch (error) {
+		console.log("updateUserbadge:", error);
+		return reply.code(403).send();
+	}
 };
