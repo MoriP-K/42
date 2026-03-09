@@ -3,6 +3,7 @@
 # ngrok を含めて全サービス起動
 up:
 	docker compose --profile ngrok up -d
+	docker compose exec backend npx prisma migrate deploy
 	@sleep 5 && $(MAKE) seed
 	@sleep 5 && printf "\nAccess to:\n" && $(MAKE) url-ngrok
 
