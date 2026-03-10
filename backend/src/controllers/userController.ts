@@ -126,7 +126,7 @@ export const updateUserbadge = async (
 		const badges: number[] = [];
 		userBadgesWithDetails.forEach((ub: any) => {
 			if (ub.badge) {
-				badges.push(ub.badge.badge_id);
+				badges.push(ub.badge.id);
 			}
 		});
 
@@ -134,26 +134,26 @@ export const updateUserbadge = async (
 		const firstPlaceCount = user.first_place_count ?? 0; // nullなら0
 		const playCount = user.play_count ?? 0;
 		const totalScore = user.total_score ?? 0;
-		if (firstPlaceCount > 0 && !badges.includes(0)) {
+		// バッジID 1=firstWin, 2=happyPlayer, 3=richScore
+		if (firstPlaceCount > 0 && !badges.includes(1)) {
 			badgesToAdd.push(1);
 		}
-		if (playCount > 5 && !badges.includes(1)) {
+		if (playCount >= 5 && !badges.includes(2)) {
 			badgesToAdd.push(2);
 		}
-		if (totalScore > 100 && !badges.includes(2)) {
+		if (totalScore >= 100 && !badges.includes(3)) {
 			badgesToAdd.push(3);
 		}
 
-		for (const badgeId of badgesToAdd) {
-			const existing = await prisma.userBadge.findFirst({
-				where: { user_id: Number(userId), badge_id: badgeId },
+		// createMany + skipDuplicates で同時リクエスト時の重複エラーを回避
+		if (badgesToAdd.length > 0) {
+			await prisma.userBadge.createMany({
+				data: badgesToAdd.map(badgeId => ({
+					user_id: Number(userId),
+					badge_id: badgeId,
+				})),
+				skipDuplicates: true,
 			});
-
-			if (!existing) {
-				await prisma.userBadge.create({
-					data: { user_id: Number(userId), badge_id: badgeId },
-				});
-			}
 		}
 		const get_badges_names = [];
 		for (const badgeId of badgesToAdd) {
