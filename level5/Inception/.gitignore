@@ -1,0 +1,7 @@
+srcs/.env
+
+**/data/
+
+*.log
+
+secrets/
