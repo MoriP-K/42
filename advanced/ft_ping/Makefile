@@ -24,4 +24,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re 
+d: CFLAGS :=
+d: re
+
+.PHONY: all clean fclean re dma

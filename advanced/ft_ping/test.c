@@ -1,43 +1,35 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include <netinet/in.h>
+#include <stdint.h>
 #include <string.h>
+#include <sys/_types/_u_int32_t.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <arpa/inet.h>
 
-#define EX_USAGE 64
+/*
+	struct addrinfo {
+		int ai_flags;           // input flags 
+		int ai_family;          // protocol family for socket 
+		int ai_socktype;        // socket type 
+		int ai_protocol;        // protocol for socket 
+		socklen_t ai_addrlen;   // length of socket-address 
+		struct sockaddr *ai_addr; // socket-address for socket 
+		char *ai_canonname;     // canonical name for service location 
+		struct addrinfo *ai_next; // pointer to next in list 
+	}
+*/
 
-void	arg_error(void)
-{
-	const char	msg1[] = "ping: missing host operand\n";
-	const char	msg2[] = "Try 'ping --help' or 'ping --usage' for more information.\n";
-
-	write(STDERR_FILENO, msg1, sizeof(msg1));
-	write(STDERR_FILENO, msg2, sizeof(msg2));
-	exit(EX_USAGE);
-}
-
-// int	get_IP_addr()
-// {
-
-// }
-
-#define PROTO_ICMP 1
-
-int	main(int ac, char *av[])
-{
-	const char hostname[] = "google.com";
+int main() {
 	struct addrinfo hints, *ai;
 	memset(&hints, 0, sizeof(hints));
 	ai = (struct addrinfo *)malloc(sizeof(*ai));
-	// hints.ai_family = AF_INET;
-	// hints.ai_socktype = SOCK_RAW;
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
 	// ai->ai_flags = AI_ADDRCONFIG;
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == -1) {
-		write(STDERR_FILENO, "ERROR\n", 6);
-		return 1;
-	}
+	int8_t info = getaddrinfo("google.com", NULL, &hints, &ai);
 
 	// printf("ai_flags=%d\nai_family=%d\nai_socktype=%d\nai_protocol=%d\nai_addrlen=%d\nai_addr.sa_family=%u\nai_addr.sa_data=%s\nai_canonname=%s\n", ai->ai_flags, ai->ai_family, ai->ai_socktype, ai->ai_protocol, ai->ai_addrlen, ai->ai_addr->sa_family, ai->ai_addr->sa_data, ai->ai_canonname);
 
@@ -46,23 +38,10 @@ int	main(int ac, char *av[])
 	void *ptr = &((struct sockaddr_in * )ai->ai_addr)->sin_addr;
 	char addrbuf[32];
 	const char *address = inet_ntop(ai->ai_family, ptr, addrbuf, sizeof(addrbuf));
-	printf("hostname: %s, address=%s\n", hostname, address);
+	printf("address=%s\n", address);
 	// u_int32_t a = 0x4;
 	// u_int8_t *b = (u_int8_t *)&a;
 
 	// printf("a=%d\n", a);
 	// printf("b[0]=%d, b[1]=%d, b[2]=%d, b[3]=%d\n", b[0], b[1], b[2], b[3]);
-
-	int fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-
-
-	if (ac < 2)
-		arg_error();
-	if (av[1][0] == '-')
-	{
-		// option
-	} else {
-		// IP address or hostname 11
-	}
-	freeaddrinfo(ai);
 }
