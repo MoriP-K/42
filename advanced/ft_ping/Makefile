@@ -4,7 +4,7 @@ CC := cc
 
 CFLAGS := -Wall -Wextra -Werror
 
-SRCS := main.c
+SRCS := main.c args.c utils.c
 
 OBJS := $(SRCS:.c=.o)
 
@@ -27,4 +27,6 @@ re: fclean all
 d: CFLAGS :=
 d: re
 
-.PHONY: all clean fclean re dma
+.PHONY: all clean fclean re d
+
+# --leak-check=full --show-leak-kinds=all --track-origins=yes

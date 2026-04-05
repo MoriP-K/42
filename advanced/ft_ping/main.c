@@ -1,68 +1,88 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <netdb.h>
+#include "ft_ping.h"
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <unistd.h>
 
-#define EX_USAGE 64
+volatile sig_atomic_t g_running = 1;
+
+void alarm_handler(int sig)
+{
+	(void)sig;
+	// send_ping(&g_ping);
+	alarm(1);
+}
+
+// signal handler
 
 void	arg_error(void)
 {
-	const char	msg1[] = "ping: missing host operand\n";
-	const char	msg2[] = "Try 'ping --help' or 'ping --usage' for more information.\n";
+	const char	msg1[] = "ft_ping: missing host operand\n";
+	const char	msg2[] = "Try 'ft_ping --help' or 'ft_ping --usage' for more information.\n";
 
 	write(STDERR_FILENO, msg1, sizeof(msg1));
 	write(STDERR_FILENO, msg2, sizeof(msg2));
 	exit(EX_USAGE);
 }
 
-// int	get_IP_addr()
-// {
+struct addrinfo	*get_IP_addr(const char *hostname)
+{
+	struct addrinfo hints, *ai;
 
-// }
+	ai = NULL;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET; // IPv4
+	hints.ai_socktype = SOCK_RAW; // Bypass Transport Layer
+	hints.ai_protocol = IPPROTO_ICMP; // ICMP
+	if (getaddrinfo(hostname, NULL, &hints, &ai) != 0) {
+		error_getaddrinfo();
+		error_func("getaddrinfo() failure");
+	}
 
-#define PROTO_ICMP 1
+	return (ai);
+}
 
 int	main(int ac, char *av[])
 {
-	const char hostname[] = "google.com";
-	struct addrinfo hints, *ai;
-	memset(&hints, 0, sizeof(hints));
-	ai = (struct addrinfo *)malloc(sizeof(*ai));
-	// hints.ai_family = AF_INET;
-	// hints.ai_socktype = SOCK_RAW;
-	// ai->ai_flags = AI_ADDRCONFIG;
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == -1) {
-		write(STDERR_FILENO, "ERROR\n", 6);
-		return 1;
-	}
+	t_ping ping;
+	struct addrinfo *addr_info;
+	int sock;
 
-	// printf("ai_flags=%d\nai_family=%d\nai_socktype=%d\nai_protocol=%d\nai_addrlen=%d\nai_addr.sa_family=%u\nai_addr.sa_data=%s\nai_canonname=%s\n", ai->ai_flags, ai->ai_family, ai->ai_socktype, ai->ai_protocol, ai->ai_addrlen, ai->ai_addr->sa_family, ai->ai_addr->sa_data, ai->ai_canonname);
+	memset(&ping, 0, sizeof(ping));
+	ping.icmp_id = getpid() & 0xFFFF;
 
-	struct in_addr sa = ((struct sockaddr_in *)ai->ai_addr)->sin_addr;
-	printf("sin_addr=%s\n", inet_ntoa(sa));
-	void *ptr = &((struct sockaddr_in * )ai->ai_addr)->sin_addr;
-	char addrbuf[32];
-	const char *address = inet_ntop(ai->ai_family, ptr, addrbuf, sizeof(addrbuf));
-	printf("hostname: %s, address=%s\n", hostname, address);
-	// u_int32_t a = 0x4;
-	// u_int8_t *b = (u_int8_t *)&a;
+	// handle option
+	parse_args(&ping, ac, av);
 
-	// printf("a=%d\n", a);
-	// printf("b[0]=%d, b[1]=%d, b[2]=%d, b[3]=%d\n", b[0], b[1], b[2], b[3]);
-
-	int fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-
-
-	if (ac < 2)
-		arg_error();
-	if (av[1][0] == '-')
+	sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	if (sock < 0)
 	{
-		// option
-	} else {
-		// IP address or hostname 11
+		error_func("socket() failure");
 	}
-	freeaddrinfo(ai);
+
+	// get IP address from hostname
+	addr_info = get_IP_addr(ping.hostname);
+	if (addr_info == NULL)
+	{
+		error_func("get_IP_addr() failure");
+	}
+	memcpy(&ping.dest_addr, addr_info->ai_addr, sizeof(struct sockaddr_in));
+	inet_ntop(AF_INET, &ping.dest_addr.sin_addr, ping.ip_str, sizeof(ping.ip_str));
+	
+	// DEBUG
+	printf("%u\n", ping.dest_addr.sin_addr.s_addr);
+	printf("host name: %s, host IP: %s\n", ping.hostname, ping.ip_str);
+	//
+
+	ping.sockfd = sock;
+
+	printf("PING %s (%s) 56 bytes of data\n", ping.hostname, ping.ip_str);
+	// create ICMP header
+
+	// send
+
+	// recv
+	freeaddrinfo(addr_info);
+	close(sock);
+	exit(EXIT_SUCCESS);
 }

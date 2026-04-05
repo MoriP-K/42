@@ -8,14 +8,18 @@ RUN apt-get update && apt-get install -y \
     wget \
     xz-utils \
     libncurses5-dev \
+	sudo \
+	valgrind \
+	less \
+	netbase \
     && rm -rf /var/lib/apt/lists/*
 
 # inetutils-2.0 をソースからビルド
-RUN wget https://ftp.gnu.org/gnu/inetutils/inetutils-2.0.tar.xz \
+RUN wget https://ftpmirror.gnu.org/gnu/inetutils/inetutils-2.0.tar.xz \
     && tar -xf inetutils-2.0.tar.xz \
     && cd inetutils-2.0 \
     && ./configure --disable-servers --disable-clients --enable-ping \
     && make \
-    && cp ping/ping /usr/local/bin/inet-ping
+    && cp ping/ping /usr/local/bin/ping
 
 WORKDIR /app
