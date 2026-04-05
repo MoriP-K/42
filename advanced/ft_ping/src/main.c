@@ -80,6 +80,7 @@ int	main(int ac, char *av[])
 	// create ICMP header
 
 	// send
+	send_ping(&ping);
 
 	// recv
 	freeaddrinfo(addr_info);

@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/time.h>
 
 typedef struct s_ping
 {
@@ -22,7 +23,6 @@ typedef struct s_ping
 
 	// socket
 	int sockfd;
-
 
 	// ICMP
 	uint16_t icmp_id;
@@ -53,6 +53,11 @@ typedef struct s_icmp_header
 
 } t_icmp_header;
 
+#define ICMP_ECHO_REQUEST 8
+#define ICMP_ECHO_REPLY 0
+#define PING_DATA_SIZE 56
+#define PING_PACKET_SIZE (sizeof(t_icmp_header) + PING_DATA_SIZE)
+
 typedef struct s_ip_header
 {
 	uint8_t ihl_version; // 下位4bit = IHL, 上位4bit = version
@@ -75,7 +80,9 @@ int parse_args(t_ping *ping, int ac, char *av[]);
 void print_help(void);
 void error_func(const char *msg);
 void error_getaddrinfo(void);
-	
+
+void send_ping(t_ping *ping);
+uint16_t checksum(void *data, int len);
 
 #define PROTO_ICMP 1
 #define  EX_USAGE 64

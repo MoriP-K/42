@@ -1,5 +1,6 @@
 - sockaddr_inは16byteの構造体
 - sockaddrも16byteの構造体
+
 ```c
 struct sockaddr							
 {										
@@ -19,3 +20,15 @@ struct sockaddr_in
 ```
 
 `net_ntop`(network to presentation): バイトオーダーを4区切りのIPアドレスの文字列に変換
+
+
+ネットワークインターフェース eth0 を流れる ICMP パケットをリアルタイムで表示するコマンド。
+ft_ping が実際にパケットを送受信しているかを目視確認するのに使った。
+
+```text
+tcpdump -i eth0 icmp -n
+         │       │    │
+         │       │    └─ -n: IPアドレスをホスト名に逆引きしない（数字のまま表示）
+         │       └────── icmp: ICMPパケットだけフィルタ（TCP/UDP等は無視）
+         └────────────── -i eth0: eth0 インターフェースを監視
+```

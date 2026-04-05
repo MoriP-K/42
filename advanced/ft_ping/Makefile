@@ -5,7 +5,7 @@ CC := cc
 CFLAGS := -Wall -Wextra -Werror -I include
 
 SRCDIR := src
-SRCS := $(SRCDIR)/main.c $(SRCDIR)/args.c $(SRCDIR)/utils.c
+SRCS := $(SRCDIR)/main.c $(SRCDIR)/args.c $(SRCDIR)/utils.c $(SRCDIR)/icmp.c
 
 OBJDIR := obj
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
