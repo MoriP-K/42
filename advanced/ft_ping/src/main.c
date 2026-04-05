@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include "../include/ft_ping.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -76,7 +76,7 @@ int	main(int ac, char *av[])
 
 	ping.sockfd = sock;
 
-	printf("PING %s (%s) 56 bytes of data\n", ping.hostname, ping.ip_str);
+	printf("PING %s (%s): 56 data bytes\n", ping.hostname, ping.ip_str);
 	// create ICMP header
 
 	// send
