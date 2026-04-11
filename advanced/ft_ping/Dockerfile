@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
 	valgrind \
 	less \
 	netbase \
-	tcpdump \
     && rm -rf /var/lib/apt/lists/*
 
 # inetutils-2.0 をソースからビルド

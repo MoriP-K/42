@@ -2,12 +2,12 @@
 - sockaddrも16byteの構造体
 
 ```c
-struct sockaddr						
-{									
+struct sockaddr					
+{								
 	sa_family_t sa_family;	// 2byte
 	char sa_data[14]; 		// 14bytes
-									
-									
+								
+								
 };
 
 struct sockaddr_in
@@ -16,7 +16,7 @@ struct sockaddr_in
 	in_port_t    sin_port;     	← sa_data[0..1]		// 2byte
 	struct in_addr sin_addr;  	← sa_data[2..5]		// 4byte
 	char sin_zero[8];      		← sa_data[6..13]	// 8byte
-};									
+};								
 ```
 
 `net_ntop`(network to presentation): バイトオーダーを4区切りのIPアドレスの文字列に変換
@@ -33,13 +33,22 @@ tcpdump -i eth0 icmp -n
 ```
 
 - SOCK_RAW
+
   - 実行にはsudoが必要
+
     - OSの管理をバイパスしIPヘッダやTCP／UDPヘッダなどパケットの生のデータを直接作成・送受信できる
   - パケットの偽装（Spoofing）
+
     - 送信もとIPアドレスやポート番号を書き換えて他の機器になりすましてパケットを送信できできてしまう
   - 通信の盗聴
+
     - ネットワークインターフェースを通過する他ユーザのパケットも含め全パケットを受信できるから管理者権限が必要
 - \_\_attribute_\_((packed))
+
   - コンパイラはCPUが読み書きしやすいように4バイト境界などでアラインメントしようとする
   - これは効率を無視してパディングをゼロにする
     - パケットやバイナリファイルでよく使う
+
+* volatile
+  * **コンパイラ最適化の抑制:**` volatile`変数は、コンパイラが「この変数は変更されていない」と判断してレジスタ上の値を使い回す最適化（レジスタ・キャッシュ）を防ぐ
+  * メモリへの直接アクセス: 常にメモリから読み込み、常にメモリに書き戻す
