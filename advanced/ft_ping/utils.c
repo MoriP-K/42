@@ -1,6 +1,8 @@
-void print_help(void)
+#include "ft_ping.h"
+
+void print_usage(void)
 {
-	printf("Usage: ping [OPTION...] HOST ...\n");
+	printf("Usage: ft_ping [OPTION...] HOST ...\n");
 	printf("Send ICMP ECHO_REQUEST packets to network hosts.\n");
 	printf("\n");
 	printf(" Options controlling ICMP request types:\n");
@@ -23,9 +25,14 @@ void print_help(void)
 	printf("  -w, --timeout=N            stop after N seconds\n");
 	printf("  -W, --linger=N             number of seconds to wait for response\n");
 	printf("\n");
+	print_usage2();
+}
+
+void	print_usage2(void)
+{
 	printf(" Options valid for --echo requests:\n");
 	printf("\n");
-	printf("  -f, --flood                flood ping (root only)\n");
+	printf("  -f, --flood                flood ft_ (root only)\n");
 	printf("      --ip-timestamp=FLAG    IP timestamp of type FLAG, which is one of\n");
 	printf("                             \"tsonly\" and \"tsaddr\"\n");
 	printf("  -l, --preload=NUMBER       send NUMBER packets as fast as possible before\n");
@@ -44,5 +51,6 @@ void print_help(void)
 	printf("\n");
 	printf("Options marked with (root only) are available only to superuser.\n");
 	printf("\n");
-	printf("Report bugs to <bug-inetutils@gnu.org>.\n");
+	printf("Report bugs to <kmoriyam@student.42tokyo.jp>.\n");
+	exit(EXIT_SUCCESS);
 }

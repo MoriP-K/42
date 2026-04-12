@@ -6,11 +6,12 @@
 /*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:19:34 by morip             #+#    #+#             */
-/*   Updated: 2026/04/12 15:24:58 by morip            ###   ########.fr       */
+/*   Updated: 2026/04/12 19:14:25 by morip            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef FT_PING
+#define FT_PING
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -25,52 +26,60 @@
 #include <signal.h>
 #include <math.h>
 
-volatile sig_atomic_t intr = 0; // for handling signal
+extern volatile sig_atomic_t	g_intr;
 
-typedef struct s_icmp
+typedef struct	s_icmp
 {
-	uint8_t type;
-	uint8_t code;
-	uint16_t checksum;
-	uint16_t id;
-	uint16_t sequence;
-	// uint32_t data;
-	char data[56];
+	uint8_t	type;
+	uint8_t	code;
+	uint16_t	checksum;
+	uint16_t	id;
+	uint16_t	sequence;
+	// uint32_t	data;
+	char	data[56];
 } __attribute__((packed)) t_icmp;
 
-typedef struct s_res
+typedef struct	s_res
 {
-	char buf[1024];
-	struct sockaddr_in from;
-	socklen_t from_len;
+	char	buf[1024];
+	struct sockaddr_in	from;
+	socklen_t	from_len;
 } t_res;
 
-typedef struct s_stat
+typedef struct	s_stat
 {
-	struct timeval start;
-	struct timeval end;
-	double max;
-	double min;
-	double avg;
-	double m2;
-	double stddev;
-	double total;
-	unsigned char ttl;
-	double rtt;
-	double time;
-	size_t sequence;
-	size_t received;
-	size_t count;
-	char *hostname;
+	struct timeval	start;
+	struct timeval	end;
+	double	max;
+	double	min;
+	double	avg;
+	double	m2;
+	double	stddev;
+	double	total;
+	unsigned char	ttl;
+	double	rtt;
+	double	time;
+	size_t	sequence;
+	size_t	received;
+	size_t	count;
 } t_stat;
 
-typedef struct s_ping
+typedef struct	s_ping
 {
-	t_icmp packet;
-	t_stat stat;
-	t_res res;
-	struct addrinfo *ai;
-	struct addrinfo hints;
-	struct sockaddr_in sock_in;
-	int sock_fd;
+	t_icmp	packet;
+	t_stat	stat;
+	t_res	res;
+	char 	*hostname;
+	char	*ip;
+	struct addrinfo 	*ai;
+	struct addrinfo	hints;
+	struct sockaddr_in	sock_in;
+	int	sock_fd;
+	int opt;
+	int verbose;
 } t_ping;
+
+void	print_usage(void);
+void	print_usage2(void);
+
+#endif
