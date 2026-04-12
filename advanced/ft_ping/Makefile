@@ -2,7 +2,7 @@ NAME := ft_ping
 
 CC := cc
 
-CFLAGS := -Wall -Wextra -Werror -I include
+CFLAGS := -Wall -Wextra -Werror -lm -I include
 
 SRCDIR := src
 SRCS := $(SRCDIR)/main.c $(SRCDIR)/args.c $(SRCDIR)/utils.c $(SRCDIR)/icmp.c
