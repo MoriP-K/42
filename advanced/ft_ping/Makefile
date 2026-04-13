@@ -2,32 +2,34 @@ NAME := ft_ping
 
 CC := cc
 
-CFLAGS := -Wall -Wextra -Werror -lm -I include
+CFLAGS := -Wall -Wextra -Werror -I include
+LDFLAGS := -lm
 
-SRCDIR := src
-SRCS := $(SRCDIR)/main.c $(SRCDIR)/args.c $(SRCDIR)/utils.c $(SRCDIR)/icmp.c
+# SRCDIR := src
+SRCS := main.c utils.c print.c
 
-OBJDIR := obj
-OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+# OBJDIR := obj
+OBJS := $(SRCS:.c=.o)
+
+HDR := ft_ping.h
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c include/ft_ping.h
-	@mkdir -p $(OBJDIR)
+%.o: %.c $(HDR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
 
-d: CFLAGS := -I include
+d: CFLAGS += -g
 d: re
 
 .PHONY: all clean fclean re d
