@@ -6,7 +6,7 @@ CFLAGS := -Wall -Wextra -Werror -I include
 LDFLAGS := -lm
 
 # SRCDIR := src
-SRCS := main.c utils.c print.c
+SRCS := main.c utils.c print.c usage.c icmp.c set.c
 
 # OBJDIR := obj
 OBJS := $(SRCS:.c=.o)

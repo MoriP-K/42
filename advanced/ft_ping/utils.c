@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/15 00:35:10 by morip             #+#    #+#             */
+/*   Updated: 2026/04/15 00:54:09 by morip            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ping.h"
 
 u_int16_t	checksum(void *data, size_t len)
@@ -42,22 +54,16 @@ void	update_stat(t_stat *stat, double latest_time, size_t count, char *buf)
 	stat->total += latest_time;
 }
 
-void	set_timeout(int sock_fd, struct addrinfo *ai)
-{
-	struct timeval	tv;
-
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-	if (setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
-	{
-		perror("setsockopt");
-		freeaddrinfo(ai);
-		exit(EXIT_FAILURE);
-	}
-}
-
 void	signal_handler(int signum)
 {
 	(void)signum;
 	g_intr = 1;
+}
+
+void	throw_error(const char *func_name, struct addrinfo *ai)
+{
+	perror(func_name);
+	if (ai)
+		freeaddrinfo(ai);
+	exit(EXIT_FAILURE);
 }

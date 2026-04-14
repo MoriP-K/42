@@ -6,7 +6,7 @@
 /*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:19:34 by morip             #+#    #+#             */
-/*   Updated: 2026/04/14 01:00:09 by morip            ###   ########.fr       */
+/*   Updated: 2026/04/15 01:00:39 by morip            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,24 @@ typedef struct s_ping
 	int					verbose;
 }	t_ping;
 
+int			receive_packet(t_ping *ping);
+void		handle_icmp_error(t_ping *ping, t_icmp *error_packet);
+
+int			set_socket(int *sock_fd);
+void		set_timeout(int sock_fd, struct addrinfo *ai);
+
 u_int16_t	checksum(void *data, size_t len);
 void		update_stat(t_stat *stat, double latest_time, \
 				size_t count, char *buf);
-void		set_timeout(int sock_fd, struct addrinfo *ai);
 void		signal_handler(int signum);
+void		throw_error(const char *func_name, struct addrinfo *ai);
 
 void		print_reply_status(t_ping *ping);
 void		print_target(t_ping *ping);
 void		print_result(t_stat stat, char *hostname, struct addrinfo *ai);
+
 void		print_usage(void);
 void		print_usage2(void);
+void		print_usage3(void);
 
 #endif
