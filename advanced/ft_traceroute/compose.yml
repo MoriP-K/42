@@ -1,0 +1,9 @@
+services:
+  debian:
+    container_name: debian
+    build: .
+    volumes:
+      - .:/app
+    cap_add:
+      - NET_RAW
+    tty: true
