@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
 	less \
 	netbase \
 	traceroute \
+	lldb \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
