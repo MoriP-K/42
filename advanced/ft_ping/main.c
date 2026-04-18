@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:18:38 by morip             #+#    #+#             */
-/*   Updated: 2026/04/15 01:48:56 by morip            ###   ########.fr       */
+/*   Updated: 2026/04/18 17:54:05 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@ volatile sig_atomic_t	g_intr;
 void	arg_error(void)
 {
 	const char	msg1[] = "ft_ping: missing host operand\n";
-	const char	msg2[] = "Try 'ft_ping --help' or \
-		'ft_ping --usage' for more information.\n";
+	const char	msg2[] = "Try 'ft_ping --help' or ";
+	const char	msg3[] = "'ft_ping --usage' for more information.\n";
 
 	write(STDERR_FILENO, msg1, sizeof(msg1));
 	write(STDERR_FILENO, msg2, sizeof(msg2));
+	write(STDERR_FILENO, msg3, sizeof(msg3));
 	exit(1);
 }
 
@@ -49,8 +50,8 @@ void	get_options(int ac, char *av[], t_ping *ping)
 			print_usage();
 		else
 		{
-			fprintf(stderr, "Try 'ft_ping --help' or \
-				'ft_ping --usage' for more information.\n");
+			fprintf(stderr, "Try 'ft_ping --help' or ");
+			fprintf(stderr, "'ft_ping --usage' for more information.\n");
 			exit(64);
 		}
 	}
@@ -93,7 +94,7 @@ int	main(int ac, char *av[])
 {
 	t_ping	ping;
 
-	if (ac < 1)
+	if (ac < 2)
 		arg_error();
 	init_memory(&ping);
 	ping.hints.ai_family = AF_INET;

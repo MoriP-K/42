@@ -2,7 +2,7 @@ NAME := ft_ping
 
 CC := cc
 
-CFLAGS := -Wall -Wextra -Werror -I include
+CFLAGS := -Wall -Wextra -Werror
 LDFLAGS := -lm
 
 # SRCDIR := src
