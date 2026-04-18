@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_ping.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/11 16:19:34 by morip             #+#    #+#             */
-/*   Updated: 2026/04/15 01:00:39 by morip            ###   ########.fr       */
+/*   Created: 2026/04/18 17:52:58 by kmoriyam          #+#    #+#             */
+/*   Updated: 2026/04/18 17:53:00 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <stdlib.h>
 # include <signal.h>
 # include <math.h>
+# include <getopt.h>
 
 extern volatile sig_atomic_t	g_intr;
 
