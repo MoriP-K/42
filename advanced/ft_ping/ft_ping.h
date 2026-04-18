@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 17:52:58 by kmoriyam          #+#    #+#             */
-/*   Updated: 2026/04/18 17:53:00 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/04/18 18:34:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ typedef struct s_icmp
 	uint16_t	checksum;
 	uint16_t	id;
 	uint16_t	sequence;
-	// uint32_t	data;
 	char		data[56];
 } __attribute__((packed))	t_icmp;
 
@@ -73,7 +72,6 @@ typedef struct s_ping
 	char				*hostname;
 	char				*ip;
 	struct addrinfo		*ai;
-	struct addrinfo		hints;
 	struct sockaddr_in	sock_in;
 	int					sock_fd;
 	int					opt;
@@ -85,6 +83,7 @@ void		handle_icmp_error(t_ping *ping, t_icmp *error_packet);
 
 int			set_socket(int *sock_fd);
 void		set_timeout(int sock_fd, struct addrinfo *ai);
+int			resolve_host(t_ping *ping);
 
 u_int16_t	checksum(void *data, size_t len);
 void		update_stat(t_stat *stat, double latest_time, \

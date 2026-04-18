@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:18:38 by morip             #+#    #+#             */
-/*   Updated: 2026/04/18 17:54:05 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/04/18 18:30:43 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	init_memory(t_ping *ping)
 {
 	memset(ping, 0, sizeof(t_ping));
 	memset(&ping->ai, 0, sizeof(struct addrinfo *));
-	memset(&ping->hints, 0, sizeof(struct addrinfo));
 	memset(&ping->stat, 0, sizeof(t_stat));
 	memset(&ping->packet, 0, sizeof(t_icmp));
 	memset(&ping->sock_in, 0, sizeof(struct sockaddr_in));
@@ -97,14 +96,10 @@ int	main(int ac, char *av[])
 	if (ac < 2)
 		arg_error();
 	init_memory(&ping);
-	ping.hints.ai_family = AF_INET;
-	ping.hints.ai_socktype = SOCK_RAW;
-	ping.hints.ai_protocol = IPPROTO_ICMP;
 	get_options(ac, av, &ping);
 	ping.hostname = av[optind];
-	if (getaddrinfo(ping.hostname, NULL, \
-		(const struct addrinfo *)&ping.hints, &ping.ai) != 0)
-		throw_error("getaddrinfo", ping.ai);
+	if (resolve_host(&ping) == 0)
+		exit (2);
 	if (set_socket(&ping.sock_fd) == -1)
 		throw_error("socket", ping.ai);
 	ping.packet.type = 8;
