@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/15 00:35:08 by morip             #+#    #+#             */
-/*   Updated: 2026/04/15 00:40:18 by morip            ###   ########.fr       */
+/*   Updated: 2026/04/18 19:39:06 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	print_target(t_ping *ping)
 	sin = (struct sockaddr_in *)ping->ai->ai_addr;
 	ping->ip = inet_ntoa(sin->sin_addr);
 	ping->sock_in.sin_addr = sin->sin_addr;
-	printf("FT_PING %s (%s): %lu data bytes", \
+	printf("FT_PING %s (%s): %lu data bytes,", \
 		ping->hostname, ping->ip, sizeof(t_icmp) - 8);
 	if (ping->verbose)
 		printf(" id %#02x = %u", ping->packet.id, ping->packet.id);
