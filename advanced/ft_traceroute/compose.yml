@@ -1,6 +1,6 @@
 services:
   debian:
-    container_name: debian
+    container_name: debian-traceroute
     build: .
     volumes:
       - .:/app
