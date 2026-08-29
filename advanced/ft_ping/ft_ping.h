@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 17:52:58 by kmoriyam          #+#    #+#             */
-/*   Updated: 2026/04/18 18:34:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/08/29 21:32:16 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,20 @@
 # include <getopt.h>
 
 extern volatile sig_atomic_t	g_intr;
+
+typedef struct s_ip_header
+{
+	uint8_t		ver_ihl;
+	uint8_t 	tos;
+	uint16_t	total_length;
+	uint16_t	id;
+	uint16_t	flag_fragment;
+	uint8_t		ttl;
+	uint8_t		protocol;
+	u_int16_t	header_checksum;
+	uint32_t	src_address;
+	uint32_t	dst_address;
+}	t_ip_header;
 
 typedef struct s_icmp
 {
@@ -79,9 +93,8 @@ typedef struct s_ping
 }	t_ping;
 
 int			receive_packet(t_ping *ping);
-void		handle_icmp_error(t_ping *ping, t_icmp *error_packet);
+void		handle_icmp_error(t_ping *ping, t_ip_header ip_header, t_icmp *error_packet);
 
-int			set_socket(int *sock_fd);
 void		set_timeout(int sock_fd, struct addrinfo *ai);
 int			resolve_host(t_ping *ping);
 

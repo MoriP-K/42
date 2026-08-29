@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:18:38 by morip             #+#    #+#             */
-/*   Updated: 2026/08/28 10:06:04 by morip            ###   ########.fr       */
+/*   Updated: 2026/08/29 19:52:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,14 @@ void	run(t_ping *ping)
 	}
 }
 
-// void	set_ttl_one(int sock_fd)
-// {
-// 	int	ttl;
+void	set_ttl_one(int sock_fd)
+{
+	int	ttl;
 
-// 	ttl = 1;
-// 	if (setsockopt(sock_fd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0)
-// 		perror("setsockopt IP_TTL");
-// }
+	ttl = 1;
+	if (setsockopt(sock_fd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0)
+		perror("setsockopt IP_TTL");
+}
 
 int	main(int ac, char *av[])
 {
@@ -106,6 +106,7 @@ int	main(int ac, char *av[])
 	ping.sock_fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	if (ping.sock_fd == -1)
 		throw_error("socket", ping.ai);
+	set_ttl_one(ping.sock_fd);
 	print_target(&ping);
 	signal(SIGINT, signal_handler);
 	set_timeout(ping.sock_fd, ping.ai);

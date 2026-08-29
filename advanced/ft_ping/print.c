@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/15 00:35:08 by morip             #+#    #+#             */
-/*   Updated: 2026/08/27 15:07:29 by morip            ###   ########.fr       */
+/*   Updated: 2026/08/29 20:01:52 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	print_target(t_ping *ping)
 	printf("FT_PING %s (%s): %lu data bytes", \
 		ping->hostname, ping->ip, sizeof(t_icmp) - 8);
 	if (ping->verbose)
-		printf(" id %#02x = %u", ping->packet.id, ping->packet.id);
+		printf(", id %#02x = %u", ping->packet.id, ping->packet.id);
 	printf("\n");
 }
 
