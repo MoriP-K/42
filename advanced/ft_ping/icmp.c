@@ -35,7 +35,7 @@ int	check_reply(t_ping *ping, t_icmp *reply)
 	return (0);
 }
 
-int	handle_receive_packet(t_ping *ping)
+ssize_t	handle_receive_packet(t_ping *ping)
 {
 	ssize_t	rec;
 
@@ -43,19 +43,21 @@ int	handle_receive_packet(t_ping *ping)
 		(struct sockaddr *)&ping->res.from, &ping->res.from_len);
 	if (g_intr == 1 || (rec < 0 && errno == EINTR))
 		print_result(ping->stat, ping->hostname, ping->ai);
-	if (rec < 0)
-		return (0);
-	return (1);
+	// if (rec < 0)
+	// 	return (0);
+	return (rec);
 }
 
 int	receive_packet(t_ping *ping)
 {
 	t_icmp	*reply;
 	t_ip_header	*ip_header;
+	ssize_t recv_data;
 
 	while (1)
 	{
-		if (handle_receive_packet(ping) == 0)
+		recv_data = handle_receive_packet(ping);
+		if (recv_data < 0)
 			break ;
 		ip_header = (t_ip_header *)ping->res.buf;
 		reply = (t_icmp *)(ping->res.buf + 20);
@@ -71,7 +73,7 @@ int	receive_packet(t_ping *ping)
 		{
 			// printf("type: %d\n", reply->type);
 			// if (ping->verbose)
-				handle_icmp_error(ping, *ip_header, reply);
+				handle_icmp_error(ping, *ip_header, reply, recv_data);
 			continue ;
 		}
 	}
@@ -92,7 +94,7 @@ void print_header_dump(t_icmp packet, t_ip_header ip_header, t_ping ping)
 		ip_header.id, ip_header.flag_fragment,\
 		ip_header.ttl, ip_header.protocol, ip_header.header_checksum,\
 		ip_header.src_address, ip_header.dst_address);
-	printf("Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src    Dst    Data\n");
+	printf("Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst     Data\n");
 	printf(" %x  %x  %02x %04x %04x   %d %04x  %02d  %02d %04x %s  %s \n",\
 		ip_header.ver_ihl << 8, ip_header.ver_ihl, ip_header.tos, ip_header.total_length,\
 		ip_header.id, ip_header.flag_fragment, ip_header.flag_fragment,\
@@ -111,7 +113,29 @@ void print_header_dump(t_icmp packet, t_ip_header ip_header, t_ping ping)
 //  4  5  00 0054 be79   2 0000  01  01 08c2 10.0.2.15  142.251.23.100  
 // ICMP: type 8, code 0, size 64, id 0x154e, seq 0x0000
 
-void	handle_icmp_error(t_ping *ping, t_ip_header ip_header, t_icmp *error_packet)
+// root@2363c26b6a05:/app# ping --ttl 1 -v google.com
+// PING google.com (142.251.24.139): 56 data bytes, id 0x0044 = 68
+// 92 bytes from omarchy (172.20.0.1): Time to live exceeded
+// IP Hdr Dump:
+//  4500 0054 ee3b 4000 0101 37d1 ac14 0002 8efb 188b
+// Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst     Data
+//  4  5  00 0054 ee3b   2 0000  01  01 37d1 172.20.0.2  142.251.24.139
+// ICMP: type 8, code 0, size 64, id 0x0044, seq 0x0000
+// ^C--- google.com ping statistics ---
+// 1 packets transmitted, 0 packets received, 100% packet loss
+
+// root@2363c26b6a05:/app# sudo ./ft_ping -v google.com
+// FT_PING google.com (142.251.24.139): 56 data bytes, id 0x4700 = 18176
+// 36 bytes from 172.20.0.1: Time to live exceeded
+// IP Hdr Dump:
+//  0045 00c0 7000 5349 0000 0040 0001 4ed8 10014ac 20014ac
+// Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src    Dst    Data
+//  4500  45  c0 7000 5349   0 0000  64  01 4ed8 172.20.0.1  172.20.0.1
+// ICMP: type 11, code 0, size 64, id 0000, seq 0000
+// ^C--- google.com ft_ping statistics ---
+// 1 packets transmitted, 0 packets received, 100% packet loss
+
+void	handle_icmp_error(t_ping *ping, t_ip_header ip_header, t_icmp *error_packet, ssize_t recv_data)
 {
 	t_icmp	*original_icmp;
 	char	*from_ip;
