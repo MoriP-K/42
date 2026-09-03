@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:04:43 by morip             #+#    #+#             */
-/*   Updated: 2026/04/18 02:09:18 by morip            ###   ########.fr       */
+/*   Updated: 2026/09/03 19:56:04 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,6 @@ exit 2
 success? 130
 */
 
-void	print_help(void)
-{
-	sleep(1);
-}
-
 void	set_hints(struct addrinfo *hints)
 {
 	memset(hints, 0, sizeof(struct addrinfo));
@@ -42,7 +37,7 @@ void	set_hints(struct addrinfo *hints)
 	hints->ai_protocol = IPPROTO_ICMP;
 }
 
-int	resolve_host(t_traceroute *tr)
+int	resolve_host(t_tr *tr)
 {
 	struct addrinfo	hints;
 	int				error;
@@ -58,7 +53,7 @@ int	resolve_host(t_traceroute *tr)
 	return (1);
 }
 
-void	set_socket(t_traceroute *tr)
+void	set_socket(t_tr *tr)
 {
 	tr->sock_fd = socket(tr->ai->ai_family, tr->ai->ai_socktype, tr->ai->ai_protocol);
 	if (tr->sock_fd == -1)
@@ -68,7 +63,8 @@ void	set_socket(t_traceroute *tr)
 		exit(2);
 	}
 }
-int	validate_pakcet_len(char *av[], t_traceroute *tr)
+
+int	validate_pakcet_len(char *av[], t_tr *tr)
 {
 	int packet_len;
 
@@ -84,8 +80,8 @@ int	validate_pakcet_len(char *av[], t_traceroute *tr)
 	return (1);
 }
 
-// ./ft_traceroute <hostname or IP> [packetlen] (extra arg)
-int	validate_arg(int ac, char *av[], t_traceroute *tr)
+// ./ft_tr <hostname or IP> [packetlen] (extra arg)
+int	validate_arg(int ac, char *av[], t_tr *tr)
 {
 	if (ac == 1)
 		print_help();
@@ -110,9 +106,9 @@ int	validate_arg(int ac, char *av[], t_traceroute *tr)
 	return (1);
 }
 
-void	init_vars(t_traceroute *tr)
+void	init_traceroute(t_tr *tr)
 {
-	memset(tr, 0, sizeof(t_traceroute));
+	memset(tr, 0, sizeof(t_tr));
 	memset(&tr->icmp, 0, sizeof(t_icmp));
 	tr->hostname = NULL;
 	tr->sock_fd = -1;
@@ -120,15 +116,19 @@ void	init_vars(t_traceroute *tr)
 
 int	main(int ac, char *av[])
 {
-	t_traceroute tr;
+	t_tr tr;
 
 	// init vars
-	init_vars(&tr);
+	init_traceroute(&tr);
 
 	// validate arg
 	if (validate_arg(ac, av, &tr) == 0)
 	{
 		exit(2);
+	}
+	if (resolve_host(&tr) == 0)
+	{
+		printf("%\n", );
 	}
 	// set data into packets
 	set_icmp_header();
