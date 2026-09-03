@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/11 16:18:38 by morip             #+#    #+#             */
-/*   Updated: 2026/08/29 19:52:55 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/03 18:28:24 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void	arg_error(void)
 	write(STDERR_FILENO, msg3, sizeof(msg3));
 	exit(1);
 }
-
 
 void	get_options(int ac, char *av[], t_ping *ping)
 {
@@ -47,15 +46,6 @@ void	get_options(int ac, char *av[], t_ping *ping)
 	}
 }
 
-void set_ping_defaults(t_ping *ping)
-{
-	ping->packet.type = 8;
-	ping->packet.code = 0;
-	ping->packet.id = htons(getpid() & 0xFFFF);
-	ping->sock_in.sin_family = AF_INET;
-	ping->sock_in.sin_port = 0;
-}
-
 void	run(t_ping *ping)
 {
 	ssize_t	n;
@@ -71,7 +61,7 @@ void	run(t_ping *ping)
 		n = sendto(ping->sock_fd, &ping->packet, sizeof(ping->packet), 0, \
 			(struct sockaddr *)&ping->sock_in, sizeof(ping->sock_in));
 		if (n < 0)
-			throw_error("sentdo", ping->ai);
+			throw_error("sendto", ping->ai);
 		ping->res.from_len = sizeof(ping->res.from);
 		receive_packet(ping);
 		if (g_intr == 1)

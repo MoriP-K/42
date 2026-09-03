@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: morip <morip@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/15 00:53:52 by morip             #+#    #+#             */
-/*   Updated: 2026/08/27 15:06:32 by morip            ###   ########.fr       */
+/*   Updated: 2026/09/03 18:28:41 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,13 @@ int	resolve_host(t_ping *ping)
 		return (0);
 	}
 	return (1);
+}
+
+void	set_ping_defaults(t_ping *ping)
+{
+	ping->packet.type = 8;
+	ping->packet.code = 0;
+	ping->packet.id = htons(getpid() & 0xFFFF);
+	ping->sock_in.sin_family = AF_INET;
+	ping->sock_in.sin_port = 0;
 }
