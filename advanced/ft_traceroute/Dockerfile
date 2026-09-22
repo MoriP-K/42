@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
 	sudo \
 	valgrind \
 	less \
+    man-db \
 	netbase \
 	traceroute \
 	lldb \

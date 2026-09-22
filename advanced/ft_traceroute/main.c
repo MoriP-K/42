@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:04:43 by morip             #+#    #+#             */
-/*   Updated: 2026/09/03 19:56:04 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/22 14:53:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,17 @@ void	set_hints(struct addrinfo *hints)
 	hints->ai_protocol = IPPROTO_ICMP;
 }
 
+void	set_socket(t_tr *tr)
+{
+	tr->sock_fd = socket(tr->ai->ai_family, tr->ai->ai_socktype, tr->ai->ai_protocol);
+	if (tr->sock_fd == -1)
+	{
+		printf("socket: %s\n", strerror(EINVAL));
+		freeaddrinfo(tr->ai);
+		exit(2);
+	}
+}
+
 int	resolve_host(t_tr *tr)
 {
 	struct addrinfo	hints;
@@ -50,18 +61,8 @@ int	resolve_host(t_tr *tr)
 		printf("Cannot handle \"host\" cmdline arg `%s\' on position 1 (argc 1)\n", tr->hostname);
 		return (0);
 	}
+	set_socket(tr);
 	return (1);
-}
-
-void	set_socket(t_tr *tr)
-{
-	tr->sock_fd = socket(tr->ai->ai_family, tr->ai->ai_socktype, tr->ai->ai_protocol);
-	if (tr->sock_fd == -1)
-	{
-		printf("socket: %s\n", strerror(EINVAL));
-		freeaddrinfo(tr->ai);
-		exit(2);
-	}
 }
 
 int	validate_pakcet_len(char *av[], t_tr *tr)
@@ -84,25 +85,22 @@ int	validate_pakcet_len(char *av[], t_tr *tr)
 int	validate_arg(int ac, char *av[], t_tr *tr)
 {
 	if (ac == 1)
-		print_help();
-	else if (ac > 1)
 	{
-		tr->hostname = av[1];
-		if (resolve_host(tr) == 0)
-			return (0);
-		if (ac > 2)
-		{
-			if (validate_pakcet_len(av, tr) == 0)
-				return (0);
-		}
-		if (ac > 3)
-		{
-			printf("Extra arg `%s' (position 3, argc 3)\n", av[3]);
-			freeaddrinfo(tr->ai);
-			return (0);
-		}
-		set_socket(tr);
+		print_help();
+		return (0);
 	}
+	tr->hostname = av[1];
+	// if (ac > 2)
+	// {
+	// 	if (validate_pakcet_len(av, tr) == 0)
+	// 		return (0);
+	// }
+	// if (ac > 3)
+	// {
+	// 	printf("Extra arg `%s' (position 3, argc 3)\n", av[3]);
+	// 	freeaddrinfo(tr->ai);
+	// 	return (0);
+	// }
 	return (1);
 }
 
@@ -123,23 +121,20 @@ int	main(int ac, char *av[])
 
 	// validate arg
 	if (validate_arg(ac, av, &tr) == 0)
-	{
-		exit(2);
-	}
+		return (0);
 	if (resolve_host(&tr) == 0)
-	{
-		printf("%\n", );
-	}
+		exit(2);
+	write(2, "G\n", 2);
 	// set data into packets
-	set_icmp_header();
+	// set_icmp_header();
 	// loop send packet, receive packets
-	while (1)
-	{
-		char	from[1024];
-		ssize_t	from_len;
-		sendto();
-		recvfrom();
-	}
+	// while (1)
+	// {
+	// 	char	from[1024];
+	// 	ssize_t	from_len;
+	// 	sendto();
+	// 	recvfrom();
+	// }
 	// print the ttl, ip, rtt from the packet
 	// error handling
 	// free addrinfo

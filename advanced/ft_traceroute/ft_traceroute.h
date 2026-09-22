@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:03:49 by morip             #+#    #+#             */
-/*   Updated: 2026/09/03 19:46:01 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/22 14:53:52 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,6 @@ typedef struct s_traceroute
 	int				sock_fd;
 }					t_tr;
 
+void	print_help(void);
+void	print_help6(void);
 #endif

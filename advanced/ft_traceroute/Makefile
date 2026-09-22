@@ -4,11 +4,13 @@ CC := cc
 
 CFLAGS := -Wall -Werror -Wextra
 
-SRCS := main.c utils.c
+SRCS := main.c icmp.c utils.c print.c print2.c
 
 OBJS := $(SRCS:.c=.o)
 
 HDR := ft_traceroute.h
+
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
@@ -20,7 +22,7 @@ clean:
 	rm -rf $(OBJS)
 
 fclean: clean
-	rm -rf $(NAME)
+	rm -rf $(NAME) a.out
 
 re: fclean all
 
