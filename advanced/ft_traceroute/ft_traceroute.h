@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:03:49 by morip             #+#    #+#             */
-/*   Updated: 2026/09/22 14:53:52 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/22 15:58:09 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,13 @@ typedef struct s_icmp
 	char			data[52];
 } __attribute__((packed)) t_icmp;
 
-typedef struct s_traceroute
+typedef struct s_tr
 {
 	t_icmp			icmp;
 	struct addrinfo	*ai;
 	char			*hostname;
 	int				sock_fd;
+	size_t			max_ttl;
 }					t_tr;
 
 void	print_help(void);
