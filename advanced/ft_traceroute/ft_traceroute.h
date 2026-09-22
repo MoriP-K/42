@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:03:49 by morip             #+#    #+#             */
-/*   Updated: 2026/09/22 15:58:09 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/22 16:50:05 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,16 @@ typedef struct s_tr
 {
 	t_icmp			icmp;
 	struct addrinfo	*ai;
+	struct sockaddr_in	sock_in;
 	char			*hostname;
 	int				sock_fd;
+	
 	size_t			max_ttl;
 }					t_tr;
+
+void	set_icmp_header(t_tr *tr);
+
+u_int16_t	checksum(void *data, size_t len);
 
 void	print_help(void);
 void	print_help6(void);

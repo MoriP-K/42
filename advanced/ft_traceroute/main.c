@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 00:04:43 by morip             #+#    #+#             */
-/*   Updated: 2026/09/22 14:55:59 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2026/09/22 16:46:24 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	main(int ac, char *av[])
 		exit(2);
 	write(2, "G\n", 2);
 	// set data into packets
-	set_icmp_header();
+	set_icmp_header(&tr);
 	// loop send packet, receive packets
 	// while (1)
 	// {
