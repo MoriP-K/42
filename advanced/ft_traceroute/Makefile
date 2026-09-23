@@ -4,7 +4,7 @@ CC := cc
 
 CFLAGS := -Wall -Werror -Wextra
 
-SRCS := main.c icmp.c utils.c print.c print2.c
+SRCS := main.c icmp.c set.c utils.c print.c print_2.c
 
 OBJS := $(SRCS:.c=.o)
 
